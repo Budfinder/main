@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personal Matt-Nav</title>
+  <link rel="icon" type="images/x-icon" href="images/IMG_5124.ico">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- Routing Machine CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js"></script>
+
+  <style>
+    /* Desktop: map 75% left, directions 25% right */
+    @media (min-width: 768px) {
+      #map {
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 25%;
+      }
+      #instructions {
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 25%;
+      }
+    }
+
+    /* Mobile: map top 2/3, directions bottom 1/3 */
+    @media (max-width: 767px) {
+      #map {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 33%;
+      }
+      #instructions {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 33%;
+        width: 100%;
+      }
+    }
+
+    /* Common styles */
+    #map,
+    #instructions {
+      background: #fafafa;
+      overflow: auto;
+      padding: 8px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .controls {
+      position: absolute;
+      display: none;           /* hidden until CSV is loaded */
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 8px;
+      border-radius: 4px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+      font-family: sans-serif;
+      z-index: 1002;
+    }
+
+    #upload-panel {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+      text-align: center;
+      font-family: sans-serif;
+      z-index: 1003;
+    }
+
+    #ui-toggles {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1004;
+      display: none;           /* shown after CSV load */
+      background: white;
+      padding: 6px;
+      border-radius: 4px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+      font-family: sans-serif;
+    }
+
+    #ui-toggles button {
+      margin: 2px 0;
+      width: 120px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Initial panel to load the CSV -->
+  <div id="upload-panel">
+    <h3>Load locations CSV</h3>
+    <input type="file" id="file-input" accept=".csv" />
+  </div>
+
+  <!-- Map and directions containers -->
+  <div id="map"></div>
+  <div id="instructions"></div>
+
+  <!-- Small UI toggle buttons (controls + directions) -->
+  <div id="ui-toggles">
+    <button id="toggle-controls">Hide controls</button><br>
+    <button id="toggle-directions">Show directions</button>
+  </div>
+
+  <!-- Main controls panel -->
+  <div class="controls">
+    <label for="destination-select">Destination:</label>
+    <select id="destination-select"></select><br>
+
+    <label for="mode">Mode:</label>
+    <select id="mode">
+      <option value="walking">Walking</option>
+      <option value="driving">Driving</option>
+      <option value="cycling">Cycling</option>
+    </select><br>
+
+    <div id="time-estimate" style="margin-top:8px;">ETA: --</div>
+    <div id="distance-info"></div>
+    <br>
+
+    <!-- Category filters as tick boxes -->
+    <div id="category-filters">
+      <!-- Checkboxes injected here by JS -->
+    </div>
+
+    <button id="nearest-btn">Nearest</button><br>
+  </div>
+
+  <!-- Leaflet + Routing JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+  <script>
+    // --- Global state -------------------------------------------------------
+
+    let map, routingControl, lastPosition, csvUrl = null;
+    let locations = [];            // parsed locations from CSV
+    let markers = [];              // Leaflet markers
+    let controlsVisible = true;    // controls panel visibility
+    let directionsVisible = false; // directions panel visibility
+
+    // Favourite indices stored in localStorage
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+    // Multi-select categories: 'all', 'favourites', and CSV Y/N flags
+    let selectedCategories = ['all'];
+    let categoryOptions = [];
+
+    // Colour/icon setup for category-based markers
+    const _markerColors = ['red','blue','green','orange','yellow','violet','grey','black'];
+    const categoryColors = {};
+    const categoryIcons = {};
+    let defaultIcon;
+
+    // Distance at which we consider "already at this location" (in meters)
+    const VISITED_RADIUS_METERS = 5;
+
+    // --- Icons --------------------------------------------------------------
+
+    /**
+     * Initialise marker icons for each category, with different colours.
+     */
+    function initCategoryIcons() {
+      // Assign each category (except 'all' and 'favourites') a colour
+      categoryOptions
+        .filter(c => c !== 'all' && c !== 'favourites')
+        .forEach((cat, idx) => {
+          categoryColors[cat] = _markerColors[idx % _markerColors.length];
+        });
+
+      // Create actual Leaflet icons
+      Object.entries(categoryColors).forEach(([cat, color]) => {
+        categoryIcons[cat] = new L.Icon({
+          iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
+          shadowUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
+      });
+
+      // Default grey icon if no category match
+      defaultIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+        shadowUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+    }
+
+    // --- Rating stars -------------------------------------------------------
+
+    /**
+     * Convert a rating 0–5 to a "★★★☆☆" string.
+     */
+    function renderStars(rating) {
+      const r = Math.max(0, Math.min(5, rating || 0));
+      const full = '★'.repeat(r);
+      const empty = '☆'.repeat(5 - r);
+      return full + empty;
+    }
+
+    // --- CSV loading --------------------------------------------------------
+
+    document.getElementById('file-input').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: results => {
+          // Map each CSV row into a location object
+          locations = results.data.map(r => {
+            const obj = {
+              name: r.name,
+              coords: [parseFloat(r.lat), parseFloat(r.lng)],
+              website: r.website,
+              visited: false,
+              rating: 0
+            };
+
+            // Parse visited flag (Y/N)
+            if (typeof r.visited === 'string') {
+              obj.visited = r.visited.trim().toLowerCase() === 'y';
+            }
+
+            // Parse rating as integer 1–5 (anything invalid -> 0 = no rating)
+            if (r.rating !== undefined && r.rating !== null && r.rating !== '') {
+              const pr = parseInt(r.rating, 10);
+              if (!isNaN(pr)) {
+                obj.rating = Math.max(1, Math.min(5, pr));
+              }
+            }
+
+            // Parse other boolean Y/N fields as category flags
+            Object.entries(r).forEach(([k, v]) => {
+              if (['name','lat','lng','website','visited','rating'].includes(k)) return;
+              if (typeof v === 'string' && v.trim() !== '') {
+                obj[k] = v.toLowerCase() === 'y';
+              }
+            });
+
+            return obj;
+          });
+
+          // Determine which keys are boolean flags (Y/N) and not special fields
+          categoryOptions = Object.keys(locations[0]).filter(
+            key =>
+              !['name','coords','website','visited','rating'].includes(key) &&
+              typeof locations[0][key] === 'boolean'
+          );
+
+          // Add synthetic categories
+          categoryOptions.unshift('favourites');
+          categoryOptions.unshift('all');
+
+          // Default to showing all locations
+          selectedCategories = ['all'];
+
+          initCategoryIcons();
+          populateCategorySelect();
+
+          // Hide upload, show map + controls
+          document.getElementById('upload-panel').style.display = 'none';
+          document.getElementById('map').style.display = 'block';
+          document.querySelector('.controls').style.display = 'block';
+          document.getElementById('ui-toggles').style.display = 'block';
+
+          // Start with directions hidden and map using full area
+          document.getElementById('instructions').style.display = 'none';
+          const mapDiv = document.getElementById('map');
+          mapDiv.style.right = '0';
+          mapDiv.style.bottom = '0';
+          document.getElementById('toggle-directions').textContent = 'Show directions';
+
+          csvUrl = URL.createObjectURL(file);
+          initApp();
+        }
+      });
+    });
+
+    // --- Map initialisation -------------------------------------------------
+
+    /**
+     * Set up the map, markers, routing, and event listeners.
+     */
+    function initApp() {
+      // Create the Leaflet map
+      map = L.map('map').setView([0, 0], 2);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OSM contributors'
+      }).addTo(map);
+
+      // Create a marker for each location
+      locations.forEach((loc, i) => {
+        // Choose icon based on first matching category
+        let icon = defaultIcon;
+        for (const cat of categoryOptions) {
+          if (cat === 'all' || cat === 'favourites') continue;
+          if (loc[cat] && categoryIcons[cat]) {
+            icon = categoryIcons[cat];
+            break;
+          }
+        }
+
+        const marker = L.marker(loc.coords, { icon: icon, zIndexOffset: 1000 })
+          .addTo(map)
+          .bindPopup(
+            `<strong>${loc.name}</strong><br>` +
+            `<a href="${loc.website}" target="_blank">` +
+              `<img src="https://image.thum.io/get/width/300/${loc.website}" ` +
+                   `alt="Thumbnail of ${loc.name}" ` +
+                   `style="width:100%;height:auto;margin:8px 0;">` +
+            `</a><br>` +
+            `<a href="${loc.website}" target="_blank">Website</a><br>` +
+            `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
+            `<button class="fav-btn" data-index="${i}">` +
+              `${favorites.includes(i) ? 'Remove from Favorites' : 'Add to Favorites'}` +
+            `</button>` +
+            `<br>` +
+            `<label><input type="checkbox" class="visited-checkbox" data-index="${i}" ${loc.visited ? 'checked' : ''}> Visited</label><br>` +
+            `<span class="rating-label">Rating: </span>` +
+            `<span class="rating-stars" data-index="${i}" data-rating="${loc.rating}">${renderStars(loc.rating)}</span>`
+          )
+          .on('click', function () {
+            this.openPopup();
+          });
+
+        markers[i] = marker;
+      });
+
+      // Fit map view to show all markers
+      if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds(), { padding: [20, 20] });
+      }
+
+      updateDestinationDropdown();
+      updateDistanceInfo();
+      updateMarkers();
+
+      // Recalculate route if mode changes
+      document.getElementById('mode').addEventListener('change', () => {
+        if (lastPosition) {
+          findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
+        }
+      });
+
+      // Change destination from dropdown
+      document.getElementById('destination-select').addEventListener('change', () => {
+        if (lastPosition) {
+          findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
+
+          const destIndex = document.getElementById('destination-select').value;
+          const destCoords = locations[destIndex].coords;
+          map.panTo(destCoords);
+          markers[destIndex].openPopup();
+          markers[destIndex].bringToFront();
+          updateDistanceInfo();
+        }
+      });
+
+      // Watch user location via Geolocation API
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+          p => {
+            const np = [p.coords.latitude, p.coords.longitude];
+            // Only update if moved a reasonable distance
+            if (!lastPosition || haversineDistance(lastPosition, np) > 10) {
+              lastPosition = np;
+              findRoute(p);
+
+              // On first route, focus initial destination marker
+              const initialIndex = document.getElementById('destination-select').value;
+              const initialCoords = locations[initialIndex].coords;
+              map.panTo(initialCoords);
+              markers[initialIndex].openPopup();
+              markers[initialIndex].bringToFront();
+              updateDestinationDropdown();
+              updateDistanceInfo();
+            }
+          },
+          err => alert(err.message),
+          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+        );
+      } else {
+        alert('Geolocation not supported.');
+      }
+    }
+
+    // --- Distance helpers ---------------------------------------------------
+
+    /**
+     * Haversine distance between two [lat,lng] in meters.
+     */
+    function haversineDistance([a1, a2], [b1, b2]) {
+      const R = 6371e3;
+      const t = d => d * Math.PI / 180;
+      const φ1 = t(a1);
+      const φ2 = t(b1);
+      const Δφ = t(b1 - a1);
+      const Δλ = t(b2 - a2);
+
+      const a = Math.sin(Δφ / 2) ** 2 +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) ** 2;
+
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    // --- Routing ------------------------------------------------------------
+
+    /**
+     * Draw a route from user position to selected destination,
+     * and populate ETA + text directions.
+     */
+    function findRoute(position) {
+      const userCoords = [position.coords.latitude, position.coords.longitude];
+      const di = document.getElementById('destination-select').value;
+      const destCoords = locations[di].coords;
+
+      if (routingControl) map.removeControl(routingControl);
+
+      routingControl = L.Routing.control({
+        waypoints: [L.latLng(...userCoords), L.latLng(...destCoords)],
+        router: L.Routing.osrmv1({
+          serviceUrl: 'https://router.project-osrm.org/route/v1',
+          profile: document.getElementById('mode').value
+        }),
+        fitSelectedRoutes: false,
+        addWaypoints: false,
+        show: false
+      }).addTo(map);
+
+      routingControl.on('routesfound', e => {
+        const summary = e.routes[0].summary;
+        const mode = document.getElementById('mode').value;
+        let totalSec;
+
+        // Different speeds for different modes
+        if (mode === 'walking') {
+          // Walking: ~5 km/h => 1.3889 m/s
+          totalSec = summary.totalDistance / 1.3889;
+        } else if (mode === 'cycling') {
+          // Cycling: ~15 km/h => 4.1667 m/s
+          totalSec = summary.totalDistance / 4.1667;
+        } else {
+          // Driving: use OSRM's estimated time
+          totalSec = summary.totalTime;
+        }
+
+        const hours   = Math.floor(totalSec / 3600);
+        const minutes = Math.floor((totalSec % 3600) / 60);
+        const seconds = Math.floor(totalSec % 60);
+
+        let eta = '';
+        if (hours > 0)   eta += hours + 'h ';
+        if (minutes > 0) eta += minutes + 'm ';
+        eta += seconds + 's';
+
+        document.getElementById('time-estimate').textContent = 'ETA: ' + eta;
+
+        const ins = document.getElementById('instructions');
+        ins.innerHTML = '<h4>Directions</h4>';
+        const ol = document.createElement('ol');
+        e.routes[0].instructions.forEach(i => {
+          const li = document.createElement('li');
+          li.textContent = i.text;
+          ol.appendChild(li);
+        });
+        ins.appendChild(ol);
+
+        updateDistanceInfo();
+      });
+    }
+
+    // --- Category filters (checkbox UI) ------------------------------------
+
+    /**
+     * Build the list of category checkboxes.
+     */
+    function populateCategorySelect() {
+      const container = document.getElementById('category-filters');
+      if (!container) return;
+
+      container.innerHTML = '<span>Categories:</span><br>';
+
+      const cats = selectedCategories || [];
+
+      categoryOptions.forEach(cat => {
+        const id = 'cat-' + cat;
+        const labelEl = document.createElement('label');
+        labelEl.style.display = 'block';
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.className = 'category-checkbox';
+        input.value = cat;
+        input.id = id;
+
+        // Check the box if it's currently selected, or default to 'all'
+        if ((cats.length === 0 && cat === 'all') || cats.includes(cat)) {
+          input.checked = true;
+        }
+
+        const niceName = cat.charAt(0).toUpperCase() + cat.slice(1);
+        labelEl.appendChild(input);
+        labelEl.appendChild(document.createTextNode(' ' + niceName));
+        container.appendChild(labelEl);
+      });
+
+      updateNearestLabel();
+    }
+
+    /**
+     * Update the "Nearest ..." button label based on selected categories.
+     */
+    function updateNearestLabel() {
+      const btn = document.getElementById('nearest-btn');
+      if (!btn) return;
+
+      const cats = selectedCategories || [];
+      let label = 'Location';
+
+      // If nothing selected or 'all' selected, keep generic label
+      if (cats.length === 0 || cats.includes('all')) {
+        label = 'Location';
+      } else {
+        const nonAll = cats.filter(c => c !== 'all');
+        // Only favourites selected
+        if (nonAll.length === 1 && nonAll[0] === 'favourites') {
+          label = 'Favourite';
+        } else if (nonAll.length === 1 && nonAll[0] !== 'favourites') {
+          const cat = nonAll[0];
+          label = cat.charAt(0).toUpperCase() + cat.slice(1);
+        } else {
+          // Multiple specific categories selected
+          label = 'Location';
+        }
+      }
+
+      btn.textContent = 'Nearest ' + label;
+    }
+
+    /**
+     * Check whether a location passes the currently selected category filters.
+     */
+    function passesCategoryFilter(loc, index) {
+      const cats = (Array.isArray(selectedCategories) && selectedCategories.length > 0)
+        ? selectedCategories.slice()
+        : ['all'];
+
+      // If 'all' is selected, don't filter by category
+      if (cats.includes('all')) {
+        return true;
+      }
+
+      const isFav = favorites.includes(index);
+      const nonSpecial = cats.filter(c => c !== 'favourites');
+
+      // Base match: by category flags from CSV
+      let baseMatch;
+      if (nonSpecial.length === 0) {
+        // No normal categories selected (only 'favourites')
+        baseMatch = true;
+      } else {
+        baseMatch = nonSpecial.some(cat => loc[cat]);
+      }
+
+      // If 'favourites' is selected, require it as well
+      if (cats.includes('favourites')) {
+        return isFav && baseMatch;
+      }
+
+      return baseMatch;
+    }
+
+    // Handle changes to category checkboxes (multi-select categories)
+    document.getElementById('category-filters').addEventListener('change', e => {
+      if (!e.target.classList.contains('category-checkbox')) return;
+
+      const cat = e.target.value;
+      const checked = e.target.checked;
+
+      let current = Array.isArray(selectedCategories) ? selectedCategories.slice() : [];
+
+      if (checked) {
+        if (cat === 'all') {
+          // 'All' overrides everything else
+          current = ['all'];
+          // Uncheck all other boxes
+          document.querySelectorAll('.category-checkbox').forEach(cb => {
+            if (cb.value !== 'all') cb.checked = false;
+          });
+        } else {
+          // Add this category, remove 'all' if present
+          current = current.filter(c => c !== 'all');
+          if (!current.includes(cat)) current.push(cat);
+          // Uncheck 'all'
+          const allCb = document.querySelector('.category-checkbox[value="all"]');
+          if (allCb) allCb.checked = false;
+        }
+      } else {
+        // Removing a category
+        current = current.filter(c => c !== cat);
+        // If nothing left, default back to 'all'
+        if (current.length === 0) {
+          current = ['all'];
+          const allCb = document.querySelector('.category-checkbox[value="all"]');
+          if (allCb) allCb.checked = true;
+        }
+      }
+
+      selectedCategories = current;
+      updateNearestLabel();
+      updateDestinationDropdown();
+      updateDistanceInfo();
+      updateMarkers();
+    });
+
+    // --- Destination dropdown + markers ------------------------------------
+
+    /**
+     * Rebuild the destination dropdown based on filters, sorting favourites first.
+     */
+    function updateDestinationDropdown() {
+      const destSelect = document.getElementById('destination-select');
+      destSelect.innerHTML = '';
+
+      const items = locations
+        .map((loc, i) => {
+          // Filter by category selection
+          if (!passesCategoryFilter(loc, i)) return null;
+
+          const isFav = favorites.includes(i);
+          const distText = lastPosition
+            ? (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km'
+            : '';
+
+          return { index: i, name: loc.name, distText, isFav };
+        })
+        .filter(x => x);
+
+      // Sort favourites first, then alphabetically
+      items.sort((a, b) => {
+        if (a.isFav && !b.isFav) return -1;
+        if (!a.isFav && b.isFav) return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.index;
+        opt.text = item.name + (item.isFav ? ' ★' : '');
+        destSelect.appendChild(opt);
+      });
+
+      updateDistanceInfo();
+    }
+
+    /**
+     * Update distance label for currently selected destination.
+     */
+    function updateDistanceInfo() {
+      const sel = document.getElementById('destination-select');
+      const i = parseInt(sel.value);
+      const distanceDiv = document.getElementById('distance-info');
+
+      if (lastPosition && !isNaN(i)) {
+        const distText = (haversineDistance(lastPosition, locations[i].coords) / 1000).toFixed(2) + ' km';
+        distanceDiv.textContent = 'Distance: ' + distText;
+      }
+      // else we leave the existing text alone
+    }
+
+    /**
+     * Show or hide markers based on category filters.
+     */
+    function updateMarkers() {
+      locations.forEach((loc, i) => {
+        const visible = passesCategoryFilter(loc, i);
+        if (visible) {
+          if (!map.hasLayer(markers[i])) map.addLayer(markers[i]);
+        } else {
+          if (map.hasLayer(markers[i])) map.removeLayer(markers[i]);
+        }
+      });
+    }
+
+    // --- Favourites, visited, rating interactions ---------------------------
+
+    // Handle favourite (Add / Remove) button clicks in popups
+    document.body.addEventListener('click', e => {
+      if (e.target.classList.contains('fav-btn')) {
+        const i = parseInt(e.target.getAttribute('data-index'));
+        const idx = favorites.indexOf(i);
+
+        if (idx > -1) {
+          favorites.splice(idx, 1);
+        } else if (favorites.length < 10) {
+          favorites.push(i);
+        } else {
+          return alert('Maximum of 10 favorites reached.');
+        }
+
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        updateDestinationDropdown();
+
+        e.target.textContent = favorites.includes(i)
+          ? 'Remove from Favorites'
+          : 'Add to Favorites';
+      }
+    });
+
+    // Handle visited checkbox changes
+    document.body.addEventListener('change', e => {
+      if (e.target.classList.contains('visited-checkbox')) {
+        const i = parseInt(e.target.getAttribute('data-index'));
+        if (!isNaN(i) && locations[i]) {
+          locations[i].visited = e.target.checked;
+        }
+      }
+    });
+
+    // Handle rating star clicks: cycle rating from 1–5
+    document.body.addEventListener('click', e => {
+      if (e.target.classList.contains('rating-stars')) {
+        const i = parseInt(e.target.getAttribute('data-index'));
+        if (isNaN(i) || !locations[i]) return;
+
+        let current = locations[i].rating || 0;
+        // Cycle 1 → 2 → 3 → 4 → 5 → 1 ...
+        current = current >= 5 ? 1 : current + 1;
+
+        locations[i].rating = current;
+        e.target.setAttribute('data-rating', current);
+        e.target.textContent = renderStars(current);
+      }
+    });
+
+    // --- Nearest button -----------------------------------------------------
+
+    document.getElementById('nearest-btn').addEventListener('click', () => {
+      if (!lastPosition) {
+        return alert('Current position not available yet.');
+      }
+
+      let nearestOutsideRadius = null;
+      let minOutside = Infinity;
+      let nearestAny = null;
+      let minAny = Infinity;
+
+      locations.forEach((loc, idx) => {
+        if (!passesCategoryFilter(loc, idx)) return;
+
+        const d = haversineDistance(lastPosition, loc.coords);
+
+        // Track absolute nearest (for fallback)
+        if (d < minAny) {
+          minAny = d;
+          nearestAny = idx;
+        }
+
+        // Track nearest that isn't effectively "where we already are"
+        if (d > VISITED_RADIUS_METERS && d < minOutside) {
+          minOutside = d;
+          nearestOutsideRadius = idx;
+        }
+      });
+
+      // Prefer a location not essentially on top of us
+      const chosenIndex = (nearestOutsideRadius !== null) ? nearestOutsideRadius : nearestAny;
+      if (chosenIndex === null) {
+        return alert('No locations found for selected categories.');
+      }
+
+      const destSelect = document.getElementById('destination-select');
+      destSelect.value = chosenIndex;
+      destSelect.dispatchEvent(new Event('change'));
+    });
+
+    // --- UI toggles (controls + directions) ---------------------------------
+
+    // Show/hide controls panel
+    document.getElementById('toggle-controls').addEventListener('click', () => {
+      controlsVisible = !controlsVisible;
+      const controlsDiv = document.querySelector('.controls');
+      controlsDiv.style.display = controlsVisible ? 'block' : 'none';
+      document.getElementById('toggle-controls').textContent =
+        controlsVisible ? 'Hide controls' : 'Show controls';
+
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    });
+
+    // Show/hide directions panel and resize map accordingly
+    document.getElementById('toggle-directions').addEventListener('click', () => {
+      directionsVisible = !directionsVisible;
+      const directionsDiv = document.getElementById('instructions');
+      const mapDiv = document.getElementById('map');
+
+      if (directionsVisible) {
+        // Show directions panel
+        directionsDiv.style.display = 'block';
+        document.getElementById('toggle-directions').textContent = 'Hide directions';
+
+        // Restore split layout depending on viewport size
+        if (window.innerWidth >= 768) {
+          // Desktop: map 75% left, directions 25% right
+          mapDiv.style.right = '25%';
+          mapDiv.style.bottom = '0';
+        } else {
+          // Mobile: map top 2/3, directions bottom 1/3
+          mapDiv.style.bottom = '33%';
+          mapDiv.style.right = '0';
+        }
+      } else {
+        // Hide directions panel and let map fill the space
+        directionsDiv.style.display = 'none';
+        document.getElementById('toggle-directions').textContent = 'Show directions';
+        mapDiv.style.right = '0';
+        mapDiv.style.bottom = '0';
+      }
+
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    });
+
+    // --- Service worker (optional offline support) --------------------------
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+</body>
+</html>
