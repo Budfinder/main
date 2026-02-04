@@ -1,19 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bud Finder</title>
-  <link rel="icon" type="images/x-icon" href="images/IMG_5124.ico">
+
+  <!--
+    OPTIONAL:
+    - Update these paths to match your project structure.
+    - Favicon path must exist, or remove this line.
+  -->
+  <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <!-- Routing Machine CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
   <!-- PapaParse for CSV parsing -->
   <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js"></script>
 
   <style>
+    /* =========================================================
+       Layout
+       ========================================================= */
+
     /* Desktop: map 75% left, directions 25% right */
     @media (min-width: 768px) {
       #map {
@@ -108,12 +119,30 @@
       margin: 2px 0;
       width: 120px;
     }
+
+    /* =========================================================
+       NEW: Logo marker styling (purely visual polish)
+       =========================================================
+       Leaflet applies the icon image to <img> tags, but we can
+       still use a className for easy CSS polishing.
+    */
+    .shop-logo-icon {
+      border-radius: 8px;
+      background: white;
+      padding: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
   </style>
 </head>
+
 <body>
   <!-- Initial panel to load the CSV -->
   <div id="upload-panel">
     <h3>Load locations CSV</h3>
+    <p style="max-width: 360px; margin: 0 auto 12px; font-size: 14px; color: #444;">
+      Tip: add a <strong>logo</strong> column (e.g. <code>boerejongens.png</code>) and
+      place files in <code>images/logos/</code>.
+    </p>
     <input type="file" id="file-input" accept=".csv" />
   </div>
 
@@ -123,32 +152,32 @@
 
   <!-- Small UI toggle buttons (controls + directions) -->
   <div id="ui-toggles">
-    <button id="toggle-controls">Hide controls</button><br>
+    <button id="toggle-controls">Hide controls</button><br />
     <button id="toggle-directions">Show directions</button>
   </div>
 
   <!-- Main controls panel -->
   <div class="controls">
     <label for="destination-select">Destination:</label>
-    <select id="destination-select"></select><br>
+    <select id="destination-select"></select><br />
 
     <label for="mode">Mode:</label>
     <select id="mode">
       <option value="walking">Walking</option>
       <option value="driving">Driving</option>
       <option value="cycling">Cycling</option>
-    </select><br>
+    </select><br />
 
     <div id="time-estimate" style="margin-top:8px;">ETA: --</div>
     <div id="distance-info"></div>
-    <br>
+    <br />
 
     <!-- Category filters as tick boxes -->
     <div id="category-filters">
       <!-- Checkboxes injected here by JS -->
     </div>
 
-    <button id="nearest-btn">Nearest</button><br>
+    <button id="nearest-btn">Nearest</button><br />
   </div>
 
   <!-- Leaflet + Routing JS -->
@@ -156,7 +185,9 @@
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
   <script>
-    // --- Global state -------------------------------------------------------
+    // =========================================================
+    // Global state
+    // =========================================================
 
     let map, routingControl, lastPosition, csvUrl = null;
     let locations = [];            // parsed locations from CSV
@@ -171,7 +202,7 @@
     let selectedCategories = ['all'];
     let categoryOptions = [];
 
-    // Colour/icon setup for category-based markers
+    // Colour/icon setup for category-based markers (fallback when no logo)
     const _markerColors = ['red','blue','green','orange','yellow','violet','grey','black'];
     const categoryColors = {};
     const categoryIcons = {};
@@ -180,10 +211,17 @@
     // Distance at which we consider "already at this location" (in meters)
     const VISITED_RADIUS_METERS = 5;
 
-    // --- Icons --------------------------------------------------------------
+    // NEW: where your downloaded logos live relative to this HTML file
+    // e.g. images/logos/boerejongens.png
+    const LOGO_BASE_PATH = 'images/logos/';
+
+    // =========================================================
+    // Icons
+    // =========================================================
 
     /**
      * Initialise marker icons for each category, with different colours.
+     * These are used when a location doesn't have a logo.
      */
     function initCategoryIcons() {
       // Assign each category (except 'all' and 'favourites') a colour
@@ -193,7 +231,7 @@
           categoryColors[cat] = _markerColors[idx % _markerColors.length];
         });
 
-      // Create actual Leaflet icons
+      // Create actual Leaflet icons for category pins
       Object.entries(categoryColors).forEach(([cat, color]) => {
         categoryIcons[cat] = new L.Icon({
           iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
@@ -216,7 +254,56 @@
       });
     }
 
-    // --- Rating stars -------------------------------------------------------
+    /**
+     * NEW:
+     * Create a Leaflet icon using a coffee shop logo filename from the CSV.
+     * If logo is missing/blank, return null so we can fall back to pin icons.
+     *
+     * CSV column: logo
+     * Example value: boerejongens.png
+     */
+    function createLogoIcon(logoFilename) {
+      if (!logoFilename || typeof logoFilename !== 'string') return null;
+      const trimmed = logoFilename.trim();
+      if (!trimmed) return null;
+
+      return L.icon({
+        iconUrl: `${LOGO_BASE_PATH}${trimmed}`,
+        // You can tweak these sizes to your taste
+        iconSize: [40, 40],
+        // Anchor at bottom-centre so the logo "points" to the location nicely
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40],
+        className: 'shop-logo-icon'
+      });
+    }
+
+    /**
+     * Decide which icon to use for a location:
+     *  1) Use logo icon if present
+     *  2) Else fall back to category pin icon
+     *  3) Else default icon
+     */
+    function chooseMarkerIcon(loc) {
+      // 1) Prefer logo icon if available
+      const logoIcon = createLogoIcon(loc.logo);
+      if (logoIcon) return logoIcon;
+
+      // 2) Fall back to first matching category pin
+      let icon = defaultIcon;
+      for (const cat of categoryOptions) {
+        if (cat === 'all' || cat === 'favourites') continue;
+        if (loc[cat] && categoryIcons[cat]) {
+          icon = categoryIcons[cat];
+          break;
+        }
+      }
+      return icon;
+    }
+
+    // =========================================================
+    // Rating stars
+    // =========================================================
 
     /**
      * Convert a rating 0–5 to a "★★★☆☆" string.
@@ -228,7 +315,9 @@
       return full + empty;
     }
 
-    // --- CSV loading --------------------------------------------------------
+    // =========================================================
+    // CSV loading
+    // =========================================================
 
     document.getElementById('file-input').addEventListener('change', e => {
       const file = e.target.files[0];
@@ -238,12 +327,16 @@
         header: true,
         skipEmptyLines: true,
         complete: results => {
-          // Map each CSV row into a location object
+          // Map each CSV row into a location object.
+          // NOTE:
+          //  - "logo" is NEW. It's optional: leave blank if you don't have it.
+          //  - Any additional Y/N columns become boolean flags (categories).
           locations = results.data.map(r => {
             const obj = {
               name: r.name,
               coords: [parseFloat(r.lat), parseFloat(r.lng)],
               website: r.website,
+              logo: r.logo,         // NEW: expected e.g. "shop.png" placed in images/logos/
               visited: false,
               rating: 0
             };
@@ -262,8 +355,9 @@
             }
 
             // Parse other boolean Y/N fields as category flags
+            // IMPORTANT: we ignore special fields including "logo"
             Object.entries(r).forEach(([k, v]) => {
-              if (['name','lat','lng','website','visited','rating'].includes(k)) return;
+              if (['name','lat','lng','website','visited','rating','logo'].includes(k)) return;
               if (typeof v === 'string' && v.trim() !== '') {
                 obj[k] = v.toLowerCase() === 'y';
               }
@@ -273,9 +367,10 @@
           });
 
           // Determine which keys are boolean flags (Y/N) and not special fields
+          // We deliberately exclude "logo" from categories.
           categoryOptions = Object.keys(locations[0]).filter(
             key =>
-              !['name','coords','website','visited','rating'].includes(key) &&
+              !['name','coords','website','visited','rating','logo'].includes(key) &&
               typeof locations[0][key] === 'boolean'
           );
 
@@ -308,7 +403,9 @@
       });
     });
 
-    // --- Map initialisation -------------------------------------------------
+    // =========================================================
+    // Map initialisation
+    // =========================================================
 
     /**
      * Set up the map, markers, routing, and event listeners.
@@ -316,6 +413,7 @@
     function initApp() {
       // Create the Leaflet map
       map = L.map('map').setView([0, 0], 2);
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OSM contributors'
@@ -323,20 +421,20 @@
 
       // Create a marker for each location
       locations.forEach((loc, i) => {
-        // Choose icon based on first matching category
-        let icon = defaultIcon;
-        for (const cat of categoryOptions) {
-          if (cat === 'all' || cat === 'favourites') continue;
-          if (loc[cat] && categoryIcons[cat]) {
-            icon = categoryIcons[cat];
-            break;
-          }
-        }
+        // NEW: choose icon, preferring logo if available
+        const icon = chooseMarkerIcon(loc);
+
+        // Optional: show logo in popup if you want (safe fallback if missing)
+        const logoHtml = (loc.logo && typeof loc.logo === 'string' && loc.logo.trim())
+          ? `<img src="${LOGO_BASE_PATH}${loc.logo.trim()}" alt="${loc.name} logo"
+                  style="width:80px;height:80px;object-fit:contain;display:block;margin:8px auto;">`
+          : '';
 
         const marker = L.marker(loc.coords, { icon: icon, zIndexOffset: 1000 })
           .addTo(map)
           .bindPopup(
             `<strong>${loc.name}</strong><br>` +
+            logoHtml +
             `<a href="${loc.website}" target="_blank">` +
               `<img src="https://image.thum.io/get/width/300/${loc.website}" ` +
                    `alt="Thumbnail of ${loc.name}" ` +
@@ -395,6 +493,7 @@
         navigator.geolocation.watchPosition(
           p => {
             const np = [p.coords.latitude, p.coords.longitude];
+
             // Only update if moved a reasonable distance
             if (!lastPosition || haversineDistance(lastPosition, np) > 10) {
               lastPosition = np;
@@ -418,7 +517,9 @@
       }
     }
 
-    // --- Distance helpers ---------------------------------------------------
+    // =========================================================
+    // Distance helpers
+    // =========================================================
 
     /**
      * Haversine distance between two [lat,lng] in meters.
@@ -438,7 +539,9 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    // --- Routing ------------------------------------------------------------
+    // =========================================================
+    // Routing
+    // =========================================================
 
     /**
      * Draw a route from user position to selected destination,
@@ -504,7 +607,9 @@
       });
     }
 
-    // --- Category filters (checkbox UI) ------------------------------------
+    // =========================================================
+    // Category filters (checkbox UI)
+    // =========================================================
 
     /**
      * Build the list of category checkboxes.
@@ -648,7 +753,9 @@
       updateMarkers();
     });
 
-    // --- Destination dropdown + markers ------------------------------------
+    // =========================================================
+    // Destination dropdown + markers
+    // =========================================================
 
     /**
      * Rebuild the destination dropdown based on filters, sorting favourites first.
@@ -717,7 +824,9 @@
       });
     }
 
-    // --- Favourites, visited, rating interactions ---------------------------
+    // =========================================================
+    // Favourites, visited, rating interactions
+    // =========================================================
 
     // Handle favourite (Add / Remove) button clicks in popups
     document.body.addEventListener('click', e => {
@@ -768,7 +877,9 @@
       }
     });
 
-    // --- Nearest button -----------------------------------------------------
+    // =========================================================
+    // Nearest button
+    // =========================================================
 
     document.getElementById('nearest-btn').addEventListener('click', () => {
       if (!lastPosition) {
@@ -809,7 +920,9 @@
       destSelect.dispatchEvent(new Event('change'));
     });
 
-    // --- UI toggles (controls + directions) ---------------------------------
+    // =========================================================
+    // UI toggles (controls + directions)
+    // =========================================================
 
     // Show/hide controls panel
     document.getElementById('toggle-controls').addEventListener('click', () => {
@@ -858,7 +971,9 @@
       }
     });
 
-    // --- Service worker (optional offline support) --------------------------
+    // =========================================================
+    // Service worker (optional offline support)
+    // =========================================================
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
