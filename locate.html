@@ -140,6 +140,87 @@
       width: 120px;
     }
 
+    #strain-list-panel {
+      position: absolute;
+      top: 100px;
+      right: 10px;
+      z-index: 1004;
+      display: none;
+      width: min(88vw, 280px);
+      max-height: 72vh;
+      background: white;
+      padding: 8px;
+      border-radius: 8px;
+      box-shadow: 0 1px 7px rgba(0,0,0,0.3);
+      font-family: sans-serif;
+    }
+
+    .strain-list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    #strain-list-search {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 6px;
+    }
+
+    #strain-list-status {
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: #444;
+    }
+
+    #strain-list {
+      max-height: 48vh;
+      overflow-y: auto;
+      border: 1px solid #ececec;
+      border-radius: 6px;
+      background: #fafafa;
+      padding: 4px;
+    }
+
+    .strain-item {
+      width: 100%;
+      margin: 3px 0;
+      text-align: left;
+      border: 1px solid #d8d8d8;
+      background: white;
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .strain-item.active {
+      background: #e8f2ff;
+      border-color: #7aa7e8;
+      font-weight: 700;
+    }
+
+    .strain-empty {
+      padding: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    @media (max-width: 767px) {
+      #strain-list-panel {
+        top: 52px;
+        right: 10px;
+        width: calc(100vw - 20px);
+        max-height: 52vh;
+      }
+
+      #strain-list {
+        max-height: 36vh;
+      }
+    }
+
     /* =========================================================
        NEW: Logo marker styling (purely visual polish)
        =========================================================
@@ -188,7 +269,8 @@
   <!-- Small UI toggle buttons (controls + directions) -->
   <div id="ui-toggles">
     <button id="toggle-controls">Hide controls</button><br />
-    <button id="toggle-directions">Show directions</button>
+    <button id="toggle-directions">Show directions</button><br />
+    <button id="toggle-strain-list">Show strains</button>
   </div>
 
   <!-- Main controls panel -->
@@ -226,6 +308,16 @@
     <div id="db-status" style="display:none; margin-top:6px; font-size:12px; color:#444;"></div>
   </div>
 
+  <div id="strain-list-panel">
+    <div class="strain-list-head">
+      <strong>Active strains</strong>
+      <button id="close-strain-list" type="button">Close</button>
+    </div>
+    <input id="strain-list-search" type="text" placeholder="Filter strains..." />
+    <div id="strain-list-status">Load CSV first.</div>
+    <div id="strain-list"></div>
+  </div>
+
   <!-- Leaflet + Routing JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
@@ -240,6 +332,7 @@
     let markers = [];              // Leaflet markers
     let controlsVisible = true;    // controls panel visibility
     let directionsVisible = false; // directions panel visibility
+    let strainListVisible = false; // strain list panel visibility
 
     // Favourite indices stored in localStorage
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -278,6 +371,7 @@
     let strainAllowedNameCityKeys = null; // Set<string> | null
     let strainIndexRows = null;      // cached JSON strain index
     let activeOfferingsRows = null;  // cached JSON offerings rows
+    let activeStrainNames = [];      // clickable strain list for UI panel
 
     function normaliseText(s) {
       return (s || '').toString().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -671,6 +765,99 @@
       return { ids, nameCityKeys, source: 'active_offerings' };
     }
 
+    function dedupeAndSortStrainNames(names) {
+      const byKey = new Map();
+      (names || []).forEach(name => {
+        const n = (name || '').toString().trim();
+        const key = normaliseText(n);
+        if (!key) return;
+        if (!byKey.has(key)) byKey.set(key, n);
+      });
+      return Array.from(byKey.values()).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    }
+
+    async function fetchActiveStrainNames() {
+      try {
+        const rows = await loadStrainIndexRows();
+        const names = rows.map(r => (r && (r.strain_name_display || r.strain_name_normalised)) || '');
+        const out = dedupeAndSortStrainNames(names);
+        if (out.length) return out;
+      } catch (_err) {
+        // Fallback below.
+      }
+
+      const rows = await loadActiveOfferingsRows();
+      const names = rows.map(r => (r && (r.strain_name || r.strain_name_normalised)) || '');
+      return dedupeAndSortStrainNames(names);
+    }
+
+    function updateStrainListSelection() {
+      const key = normaliseText(strainFilterText || '');
+      document.querySelectorAll('#strain-list .strain-item').forEach(btn => {
+        const btnKey = normaliseText(btn.getAttribute('data-strain') || '');
+        btn.classList.toggle('active', key !== '' && btnKey === key);
+      });
+    }
+
+    function renderStrainList() {
+      const listEl = document.getElementById('strain-list');
+      const searchEl = document.getElementById('strain-list-search');
+      if (!listEl || !searchEl) return;
+
+      const q = normaliseText(searchEl.value || '');
+      const names = activeStrainNames.filter(name => !q || normaliseText(name).includes(q));
+      listEl.innerHTML = '';
+
+      if (!names.length) {
+        listEl.innerHTML = '<div class="strain-empty">No strains found.</div>';
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      names.forEach(name => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'strain-item';
+        btn.setAttribute('data-strain', name);
+        btn.textContent = name;
+        frag.appendChild(btn);
+      });
+      listEl.appendChild(frag);
+      updateStrainListSelection();
+    }
+
+    async function populateStrainListPanel() {
+      const statusEl = document.getElementById('strain-list-status');
+      const listEl = document.getElementById('strain-list');
+      if (!statusEl || !listEl) return;
+
+      if (!activeStrainNames.length) {
+        statusEl.textContent = 'Loading active strains...';
+        listEl.innerHTML = '';
+        try {
+          activeStrainNames = await fetchActiveStrainNames();
+        } catch (_err) {
+          statusEl.textContent = 'Strain list unavailable';
+          listEl.innerHTML = '<div class="strain-empty">Unable to load strain data.</div>';
+          return;
+        }
+      }
+
+      statusEl.textContent = `${activeStrainNames.length} active strains`;
+      renderStrainList();
+    }
+
+    function setStrainListVisible(show) {
+      strainListVisible = !!show;
+      const panel = document.getElementById('strain-list-panel');
+      const toggleBtn = document.getElementById('toggle-strain-list');
+      if (panel) panel.style.display = strainListVisible ? 'block' : 'none';
+      if (toggleBtn) toggleBtn.textContent = strainListVisible ? 'Hide strains' : 'Show strains';
+      if (strainListVisible) {
+        populateStrainListPanel();
+      }
+    }
+
     async function ensureDbIntegration() {
       if (dbIntegrationReady) return true;
       let rows = [];
@@ -763,6 +950,7 @@
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
+        updateStrainListSelection();
         return;
       }
 
@@ -801,6 +989,7 @@
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
+        updateStrainListSelection();
       } catch (err) {
         status.textContent = 'Strain filter unavailable: missing JSON index files';
       }
@@ -817,6 +1006,7 @@
       updateDestinationDropdown();
       updateDistanceInfo();
       updateMarkers();
+      updateStrainListSelection();
     }
 
     // =========================================================
@@ -1305,6 +1495,27 @@
         e.preventDefault();
         await applyStrainFilter();
       }
+    });
+
+    document.getElementById('toggle-strain-list').addEventListener('click', () => {
+      setStrainListVisible(!strainListVisible);
+    });
+
+    document.getElementById('close-strain-list').addEventListener('click', () => {
+      setStrainListVisible(false);
+    });
+
+    document.getElementById('strain-list-search').addEventListener('input', () => {
+      renderStrainList();
+    });
+
+    document.getElementById('strain-list').addEventListener('click', async e => {
+      const target = e.target.closest('.strain-item');
+      if (!target) return;
+      const strain = target.getAttribute('data-strain') || '';
+      const input = document.getElementById('strain-filter');
+      if (input) input.value = strain;
+      await applyStrainFilter();
     });
 
     // =========================================================
