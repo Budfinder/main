@@ -94,12 +94,32 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background: white;
-      padding: 20px;
-      border-radius: 4px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
-      text-align: center;
+      width: min(92vw, 420px);
+      padding: 18px;
+      border-radius: 10px;
+      border: 1px solid #e5e5e5;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.14);
+      text-align: left;
       font-family: sans-serif;
       z-index: 1003;
+    }
+
+    #upload-panel h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    #upload-panel .upload-hint {
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #444;
+    }
+
+    #upload-panel input[type="file"] {
+      display: block;
+      width: 100%;
+      font-size: 14px;
     }
 
     #ui-toggles {
@@ -139,9 +159,7 @@
   <!-- Initial panel to load the CSV -->
   <div id="upload-panel">
     <h3>Load locations CSV</h3>
-    <p style="max-width: 360px; margin: 0 auto 12px; font-size: 14px; color: #444;">
-      Tip: Keep calm and support West Ham.
-    </p>
+    <p class="upload-hint">Choose the CSV file to start map navigation and filters.</p>
     <input type="file" id="file-input" accept=".csv" />
   </div>
 
@@ -176,7 +194,18 @@
       <!-- Checkboxes injected here by JS -->
     </div>
 
+    <div style="margin-top:8px;">
+      <label for="strain-filter">Strain filter (database)</label>
+      <input id="strain-filter" type="text" placeholder="e.g. amnesia haze" style="width:100%;">
+      <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+        <button id="apply-strain-btn" type="button">Apply strain filter</button>
+        <button id="clear-strain-btn" type="button">Clear strain filter</button>
+      </div>
+      <div id="strain-status" style="margin-top:6px; font-size:12px; color:#444;">Strain filter: off</div>
+    </div>
+
     <button id="nearest-btn">Nearest</button><br />
+    <div id="db-status" style="display:none; margin-top:6px; font-size:12px; color:#444;"></div>
   </div>
 
   <!-- Leaflet + Routing JS -->
@@ -210,9 +239,74 @@
     // Distance at which we consider "already at this location" (in meters)
     const VISITED_RADIUS_METERS = 5;
 
-    // NEW: where your downloaded logos live relative to this HTML file
-    // e.g. images/logos/boerejongens.png
-    const LOGO_BASE_PATH = 'images/logos/';
+    // Where downloaded logos might live (try in order)
+    const LOGO_BASE_PATHS = ['logos/', 'images/logos/', '/logos/', '/images/logos/'];
+
+    // DB integration state
+    let dbIntegrationReady = false;
+    let dbIntegrationSource = 'none'; // 'flask' | 'json' | 'none'
+    let dbRouteLinksEnabled = false;
+    let dbByPath = new Map();       // "/cs-shop.html" -> shop_id
+    let dbByNameCity = new Map();   // "name|city" -> shop_id
+    let dbByUniqueName = new Map(); // "name" -> shop_id when unique
+
+    // Strain filter state (DB-backed)
+    let strainFilterText = '';
+    let strainAllowedShopIds = null; // Set<number> | null
+    let strainAllowedNameCityKeys = null; // Set<string> | null
+    let strainIndexRows = null;      // cached JSON strain index
+    let activeOfferingsRows = null;  // cached JSON offerings rows
+
+    function normaliseText(s) {
+      return (s || '').toString().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    }
+
+    function normaliseNameCityKey(name, city) {
+      return `${normaliseText(name)}|${normaliseText(city)}`;
+    }
+
+    function normaliseUrlPath(url) {
+      const raw = (url || '').toString().trim();
+      if (!raw) return '';
+      try {
+        const u = new URL(raw, window.location.href);
+        return (u.pathname || '').toLowerCase().replace(/\/+$/, '');
+      } catch {
+        return '';
+      }
+    }
+
+    function extractShopIdFromHref(href) {
+      const m = (href || '').match(/\/shop\/(\d+)/);
+      if (!m) return null;
+      const id = parseInt(m[1], 10);
+      return Number.isFinite(id) ? id : null;
+    }
+
+    function logoCandidates(logoFilename) {
+      const raw = (logoFilename || '').toString().trim();
+      if (!raw) return [];
+      const encoded = encodeURIComponent(raw);
+      const out = [];
+      LOGO_BASE_PATHS.forEach(base => {
+        out.push(`${base}${encoded}`);
+        out.push(`${base}${raw}`);
+      });
+      return Array.from(new Set(out));
+    }
+
+    // Used by popup <img onerror> to try fallback logo paths.
+    function popupLogoFallback(imgEl) {
+      const all = (imgEl.dataset.candidates || '').split('|').filter(Boolean);
+      const i = parseInt(imgEl.dataset.idx || '0', 10) + 1;
+      if (i < all.length) {
+        imgEl.dataset.idx = String(i);
+        imgEl.src = all[i];
+      } else {
+        imgEl.style.display = 'none';
+      }
+    }
+    window.popupLogoFallback = popupLogoFallback;
 
     // =========================================================
     // Icons
@@ -262,12 +356,12 @@
      * Example value: boerejongens.png
      */
     function createLogoIcon(logoFilename) {
-      if (!logoFilename || typeof logoFilename !== 'string') return null;
-      const trimmed = logoFilename.trim();
-      if (!trimmed) return null;
+      const candidates = logoCandidates(logoFilename);
+      if (!candidates.length) return null;
 
       return L.icon({
-        iconUrl: `${LOGO_BASE_PATH}${trimmed}`,
+        // Marker icons cannot retry onerror, so we use the first candidate.
+        iconUrl: candidates[0],
         // You can tweak these sizes to your taste
         iconSize: [40, 40],
         // Anchor at bottom-centre so the logo "points" to the location nicely
@@ -300,6 +394,17 @@
       return icon;
     }
 
+    function popupLogoHtml(loc) {
+      const candidates = logoCandidates(loc.logo);
+      if (!candidates.length) return '';
+      const joined = candidates.map(u => u.replace(/"/g, '&quot;')).join('|');
+      const first = candidates[0];
+      return `<img src="${first}" alt="${loc.name} logo"
+                  data-candidates="${joined}" data-idx="0"
+                  onerror="popupLogoFallback(this)"
+                  style="width:80px;height:80px;object-fit:contain;display:block;margin:8px auto;">`;
+    }
+
     // =========================================================
     // Rating stars
     // =========================================================
@@ -314,6 +419,347 @@
       return full + empty;
     }
 
+    async function fetchDbIndex() {
+      const res = await fetch('/browse?table=shops&limit=5000', { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(`DB index unavailable (${res.status})`);
+
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const rows = [];
+
+      doc.querySelectorAll('tbody tr').forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length < 4) return;
+        const id = parseInt((tds[0].textContent || '').trim(), 10);
+        if (!Number.isFinite(id)) return;
+        rows.push({
+          shop_id: id,
+          name: (tds[1].textContent || '').trim(),
+          city: (tds[2].textContent || '').trim(),
+          shop_url: (tds[3].textContent || '').trim(),
+        });
+      });
+      return rows;
+    }
+
+    function setDbStatus(text) {
+      const el = document.getElementById('db-status');
+      if (!el) return;
+      if (!text) {
+        el.textContent = '';
+        el.style.display = 'none';
+        return;
+      }
+      el.textContent = text;
+      el.style.display = 'block';
+    }
+
+    function normaliseDbRow(raw) {
+      const shopId = parseInt(raw && (raw.shop_id ?? raw.id), 10);
+      if (!Number.isFinite(shopId)) return null;
+      return {
+        shop_id: shopId,
+        name: ((raw && raw.name) || '').toString().trim(),
+        city: ((raw && raw.city) || '').toString().trim(),
+        shop_url: ((raw && (raw.shop_url || raw.website)) || '').toString().trim(),
+      };
+    }
+
+    async function fetchDbIndexFromJson() {
+      const candidates = [
+        'shop_lookup.json',
+        './shop_lookup.json',
+        '/shop_lookup.json',
+        'shops.json',
+        './shops.json',
+        '/shops.json',
+      ];
+
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          let rows = [];
+
+          if (Array.isArray(data)) {
+            rows = data.map(normaliseDbRow).filter(Boolean);
+          } else if (data && typeof data === 'object') {
+            rows = Object.values(data).map(normaliseDbRow).filter(Boolean);
+          }
+
+          if (rows.length) return rows;
+        } catch (_err) {
+          // Try next candidate path.
+        }
+      }
+
+      throw new Error('No JSON shop index available');
+    }
+
+    async function fetchStrainShopIdsFromFlask(q) {
+      const res = await fetch(`/strain_lookup?q=${encodeURIComponent(q)}&limit=5000`, { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const ids = new Set();
+
+      doc.querySelectorAll('tbody tr').forEach(tr => {
+        const link = tr.querySelector('a[href*="/shop/"]');
+        if (!link) return;
+        const id = extractShopIdFromHref(link.getAttribute('href') || '');
+        if (id) ids.add(id);
+      });
+      return ids;
+    }
+
+    async function loadStrainIndexRows() {
+      if (Array.isArray(strainIndexRows)) return strainIndexRows;
+
+      const candidates = ['strain_index.json', './strain_index.json', '/strain_index.json'];
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            strainIndexRows = data;
+            return strainIndexRows;
+          }
+        } catch (_err) {
+          // Try next candidate path.
+        }
+      }
+
+      throw new Error('No strain index JSON available');
+    }
+
+    async function loadActiveOfferingsRows() {
+      if (Array.isArray(activeOfferingsRows)) return activeOfferingsRows;
+
+      const candidates = ['active_offerings.json', './active_offerings.json', '/active_offerings.json'];
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            activeOfferingsRows = data;
+            return activeOfferingsRows;
+          }
+        } catch (_err) {
+          // Try next candidate path.
+        }
+      }
+
+      throw new Error('No active offerings JSON available');
+    }
+
+    async function fetchStrainShopIdsFromJson(q) {
+      const qNorm = normaliseText(q);
+      if (!qNorm) return { ids: new Set(), nameCityKeys: new Set(), source: 'none' };
+
+      try {
+        const rows = await loadStrainIndexRows();
+        const exactMatches = [];
+        const partialMatches = [];
+
+        rows.forEach(r => {
+          const n = normaliseText((r && (r.strain_name_normalised || r.strain_name_display)) || '');
+          if (!n) return;
+          if (n === qNorm) {
+            exactMatches.push(r);
+          } else if (n.includes(qNorm)) {
+            partialMatches.push(r);
+          }
+        });
+
+        const matchedRows = exactMatches.length ? exactMatches : partialMatches;
+        const ids = new Set();
+        const nameCityKeys = new Set();
+        matchedRows.forEach(r => {
+          const shops = (r && Array.isArray(r.shops)) ? r.shops : [];
+          shops.forEach(s => {
+            const id = parseInt(s && s.shop_id, 10);
+            if (Number.isFinite(id)) ids.add(id);
+            const key = normaliseNameCityKey(s && s.shop_name, s && s.shop_city);
+            if (key !== '|') nameCityKeys.add(key);
+          });
+        });
+        return { ids, nameCityKeys, source: 'strain_index' };
+      } catch (_strainErr) {
+        // Fallback to active_offerings.json when strain_index.json is missing.
+      }
+
+      const rows = await loadActiveOfferingsRows();
+      const exact = rows.filter(r => {
+        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
+        return n === qNorm;
+      });
+      const partial = rows.filter(r => {
+        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
+        return n.includes(qNorm);
+      });
+      const matchedRows = exact.length ? exact : partial;
+      const ids = new Set();
+      const nameCityKeys = new Set();
+      matchedRows.forEach(r => {
+        const id = parseInt(r && r.shop_id, 10);
+        if (Number.isFinite(id)) ids.add(id);
+        const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
+        if (key !== '|') nameCityKeys.add(key);
+      });
+      return { ids, nameCityKeys, source: 'active_offerings' };
+    }
+
+    async function ensureDbIntegration() {
+      if (dbIntegrationReady) return true;
+      let rows = [];
+
+      try {
+        rows = await fetchDbIndex();
+        dbIntegrationSource = 'flask';
+        dbRouteLinksEnabled = true;
+      } catch (_flaskErr) {
+        try {
+          rows = await fetchDbIndexFromJson();
+          dbIntegrationSource = 'json';
+          dbRouteLinksEnabled = false;
+        } catch (_jsonErr) {
+          dbIntegrationReady = false;
+          dbIntegrationSource = 'none';
+          dbRouteLinksEnabled = false;
+          setDbStatus('');
+          return false;
+        }
+      }
+
+      dbByPath = new Map();
+      dbByNameCity = new Map();
+      const nameCounts = new Map();
+
+      rows.forEach(r => {
+        const p = normaliseUrlPath(r.shop_url);
+        if (p) dbByPath.set(p, r.shop_id);
+        const nc = normaliseNameCityKey(r.name, r.city);
+        if (nc !== '|') dbByNameCity.set(nc, r.shop_id);
+        const nk = normaliseText(r.name);
+        nameCounts.set(nk, (nameCounts.get(nk) || 0) + 1);
+      });
+
+      dbByUniqueName = new Map();
+      rows.forEach(r => {
+        const nk = normaliseText(r.name);
+        if ((nameCounts.get(nk) || 0) === 1) {
+          dbByUniqueName.set(nk, r.shop_id);
+        }
+      });
+
+      dbIntegrationReady = true;
+      if (dbIntegrationSource === 'flask') {
+        setDbStatus(`DB links: connected (${rows.length} shops indexed)`);
+      } else {
+        // No warning banner for JSON/static mode.
+        setDbStatus('');
+      }
+      return true;
+    }
+
+    function bindDbShopIdToLocation(loc) {
+      let shopId = null;
+
+      const byPath = normaliseUrlPath(loc.website);
+      if (byPath && dbByPath.has(byPath)) {
+        shopId = dbByPath.get(byPath);
+      }
+
+      if (!shopId) {
+        const nc = normaliseNameCityKey(loc.name, loc.city || '');
+        if (dbByNameCity.has(nc)) {
+          shopId = dbByNameCity.get(nc);
+        }
+      }
+
+      if (!shopId) {
+        const nk = normaliseText(loc.name);
+        if (dbByUniqueName.has(nk)) {
+          shopId = dbByUniqueName.get(nk);
+        }
+      }
+
+      loc.db_shop_id = shopId || null;
+    }
+
+    async function applyStrainFilter() {
+      const input = document.getElementById('strain-filter');
+      const status = document.getElementById('strain-status');
+      if (!input || !status) return;
+
+      const q = (input.value || '').trim();
+      if (!q) {
+        strainFilterText = '';
+        strainAllowedShopIds = null;
+        strainAllowedNameCityKeys = null;
+        status.textContent = 'Strain filter: off';
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+        return;
+      }
+
+      const dbOk = await ensureDbIntegration();
+
+      // If DB index is available, link shop ids now.
+      if (dbOk) {
+        locations.forEach(bindDbShopIdToLocation);
+      }
+
+      try {
+        let result;
+        if (dbRouteLinksEnabled) {
+          try {
+            const ids = await fetchStrainShopIdsFromFlask(q);
+            result = { ids, nameCityKeys: new Set(), source: 'flask' };
+          } catch (_err) {
+            // Flask endpoint not available: fall back to JSON index.
+            dbRouteLinksEnabled = false;
+            result = await fetchStrainShopIdsFromJson(q);
+          }
+        } else {
+          result = await fetchStrainShopIdsFromJson(q);
+        }
+
+        strainFilterText = q;
+        strainAllowedShopIds = result.ids;
+        strainAllowedNameCityKeys = result.nameCityKeys.size ? result.nameCityKeys : null;
+        const matchedCount = locations.filter((loc, idx) => {
+          const key = normaliseNameCityKey(loc.name, loc.city || '');
+          const byId = loc.db_shop_id && strainAllowedShopIds.has(loc.db_shop_id);
+          const byKey = strainAllowedNameCityKeys && strainAllowedNameCityKeys.has(key);
+          return byId || byKey;
+        }).length;
+        status.textContent = `Strain filter: "${q}" (${matchedCount} shops)`;
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+      } catch (err) {
+        status.textContent = 'Strain filter unavailable: missing JSON index files';
+      }
+    }
+
+    function clearStrainFilter() {
+      const input = document.getElementById('strain-filter');
+      const status = document.getElementById('strain-status');
+      if (input) input.value = '';
+      strainFilterText = '';
+      strainAllowedShopIds = null;
+      strainAllowedNameCityKeys = null;
+      if (status) status.textContent = 'Strain filter: off';
+      updateDestinationDropdown();
+      updateDistanceInfo();
+      updateMarkers();
+    }
+
     // =========================================================
     // CSV loading
     // =========================================================
@@ -325,7 +771,7 @@
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
-        complete: results => {
+        complete: async results => {
           // Map each CSV row into a location object.
           // NOTE:
           //  - "logo" is NEW. It's optional: leave blank if you don't have it.
@@ -333,11 +779,13 @@
           locations = results.data.map(r => {
             const obj = {
               name: r.name,
+              city: r.city || '',
               coords: [parseFloat(r.lat), parseFloat(r.lng)],
               website: r.website,
               logo: r.logo,         // NEW: expected e.g. "shop.png" placed in images/logos/
               visited: false,
-              rating: 0
+              rating: 0,
+              db_shop_id: null
             };
 
             // Parse visited flag (Y/N)
@@ -364,6 +812,17 @@
 
             return obj;
           });
+
+          if (!locations.length) {
+            alert('No valid rows found in CSV.');
+            return;
+          }
+
+          // Link CSV shops to DB shop ids (if backend is reachable).
+          const dbOk = await ensureDbIntegration();
+          if (dbOk) {
+            locations.forEach(bindDbShopIdToLocation);
+          }
 
           // Determine which keys are boolean flags (Y/N) and not special fields
           // We deliberately exclude "logo" from categories.
@@ -423,10 +882,15 @@
         // NEW: choose icon, preferring logo if available
         const icon = chooseMarkerIcon(loc);
 
-        // Optional: show logo in popup if you want (safe fallback if missing)
-        const logoHtml = (loc.logo && typeof loc.logo === 'string' && loc.logo.trim())
-          ? `<img src="${LOGO_BASE_PATH}${loc.logo.trim()}" alt="${loc.name} logo"
-                  style="width:80px;height:80px;object-fit:contain;display:block;margin:8px auto;">`
+        // Popup logo supports multiple fallback paths.
+        const logoHtml = popupLogoHtml(loc);
+
+        // If this CSV shop maps to a DB shop, show quick links.
+        const dbMenuLinks = (dbRouteLinksEnabled && loc.db_shop_id)
+          ? (
+              `<a href="/shop/${loc.db_shop_id}/digitised" target="_blank">Menu (database)</a><br>` +
+              `<a href="/shop/${loc.db_shop_id}" target="_blank">Edit menu entry</a><br>`
+            )
           : '';
 
         const marker = L.marker(loc.coords, { icon: icon, zIndexOffset: 1000 })
@@ -439,6 +903,7 @@
                    `alt="Thumbnail of ${loc.name}" ` +
                    `style="width:100%;height:auto;margin:8px 0;">` +
             `</a><br>` +
+            dbMenuLinks +
             `<a href="${loc.website}" target="_blank">Website</a><br>` +
             `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
             `<button class="fav-btn" data-index="${i}">` +
@@ -684,29 +1149,45 @@
         ? selectedCategories.slice()
         : ['all'];
 
-      // If 'all' is selected, don't filter by category
-      if (cats.includes('all')) {
-        return true;
+      let categoryOk = true;
+      if (!cats.includes('all')) {
+        const isFav = favorites.includes(index);
+        const nonSpecial = cats.filter(c => c !== 'favourites');
+
+        // Base match: by category flags from CSV
+        let baseMatch;
+        if (nonSpecial.length === 0) {
+          // No normal categories selected (only 'favourites')
+          baseMatch = true;
+        } else {
+          baseMatch = nonSpecial.some(cat => loc[cat]);
+        }
+
+        // If 'favourites' is selected, require it as well
+        if (cats.includes('favourites')) {
+          categoryOk = isFav && baseMatch;
+        } else {
+          categoryOk = baseMatch;
+        }
       }
 
-      const isFav = favorites.includes(index);
-      const nonSpecial = cats.filter(c => c !== 'favourites');
-
-      // Base match: by category flags from CSV
-      let baseMatch;
-      if (nonSpecial.length === 0) {
-        // No normal categories selected (only 'favourites')
-        baseMatch = true;
-      } else {
-        baseMatch = nonSpecial.some(cat => loc[cat]);
+      if (!categoryOk) {
+        return false;
       }
 
-      // If 'favourites' is selected, require it as well
-      if (cats.includes('favourites')) {
-        return isFav && baseMatch;
+      // Optional DB strain filter: include only DB-mapped shops in the allowed set.
+      if (strainAllowedShopIds !== null || strainAllowedNameCityKeys !== null) {
+        if (loc.db_shop_id && strainAllowedShopIds && strainAllowedShopIds.has(loc.db_shop_id)) {
+          return true;
+        }
+        if (strainAllowedNameCityKeys) {
+          const key = normaliseNameCityKey(loc.name, loc.city || '');
+          return strainAllowedNameCityKeys.has(key);
+        }
+        return false;
       }
 
-      return baseMatch;
+      return true;
     }
 
     // Handle changes to category checkboxes (multi-select categories)
@@ -750,6 +1231,21 @@
       updateDestinationDropdown();
       updateDistanceInfo();
       updateMarkers();
+    });
+
+    document.getElementById('apply-strain-btn').addEventListener('click', async () => {
+      await applyStrainFilter();
+    });
+
+    document.getElementById('clear-strain-btn').addEventListener('click', () => {
+      clearStrainFilter();
+    });
+
+    document.getElementById('strain-filter').addEventListener('keydown', async e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        await applyStrainFilter();
+      }
     });
 
     // =========================================================
@@ -969,6 +1465,9 @@
         setTimeout(() => map.invalidateSize(), 200);
       }
     });
+
+    // Optional: probe DB routes early so status is visible before CSV upload.
+    ensureDbIntegration();
 
     // =========================================================
     // Service worker (optional offline support)
