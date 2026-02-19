@@ -295,6 +295,7 @@
     <h3 id="upload-title">Loading locations CSV</h3>
     <p id="upload-message" class="upload-hint">Looking for the first CSV in locations/...</p>
     <button id="manual-csv-btn" type="button">Choose CSV manually</button>
+    <button id="folder-csv-btn" type="button">Choose locations folder</button>
   </div>
 
   <!-- Map and directions containers -->
@@ -423,9 +424,14 @@
       const title = document.getElementById('upload-title');
       const message = document.getElementById('upload-message');
       const manualBtn = document.getElementById('manual-csv-btn');
+      const folderBtn = document.getElementById('folder-csv-btn');
+      const isLocalFile = window.location.protocol === 'file:';
+      const supportsDirPicker = typeof window.showDirectoryPicker === 'function';
       if (title) title.textContent = titleText || '';
       if (message) message.textContent = messageText || '';
       if (manualBtn) manualBtn.style.display = allowManualCsv ? 'inline-block' : 'none';
+      if (folderBtn) folderBtn.style.display =
+        (allowManualCsv && isLocalFile && supportsDirPicker) ? 'inline-block' : 'none';
       if (panel) panel.style.display = titleText || messageText || allowManualCsv ? 'block' : 'none';
     }
 
@@ -1169,6 +1175,50 @@
       return out[0] || null;
     }
 
+    function buildCsvPathVariants(pathLike) {
+      const raw = (pathLike || '').toString().trim();
+      if (!raw) return [];
+
+      const out = [];
+      const seen = new Set();
+      const pushUnique = p => {
+        const v = (p || '').toString().trim();
+        if (!v || seen.has(v)) return;
+        seen.add(v);
+        out.push(v);
+      };
+
+      pushUnique(raw);
+
+      const isAbsoluteUrl = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw);
+      const isDataUrl = raw.toLowerCase().startsWith('data:');
+      if (isAbsoluteUrl || isDataUrl) {
+        return out;
+      }
+
+      const stripped = raw.replace(/^\.\/+/, '').replace(/^\/+/, '');
+      if (!stripped) {
+        return out;
+      }
+
+      pushUnique(stripped);
+      pushUnique(`./${stripped}`);
+      pushUnique(`/${stripped}`);
+
+      if (stripped.toLowerCase().startsWith('locations/')) {
+        const withoutPrefix = stripped.slice('locations/'.length);
+        pushUnique(withoutPrefix);
+        pushUnique(`./${withoutPrefix}`);
+        pushUnique(`/${withoutPrefix}`);
+      } else {
+        pushUnique(`locations/${stripped}`);
+        pushUnique(`./locations/${stripped}`);
+        pushUnique(`/locations/${stripped}`);
+      }
+
+      return out;
+    }
+
     async function discoverFirstCsvInLocations() {
       const jsonCandidates = ['locations/index.json', './locations/index.json', '/locations/index.json'];
       for (const url of jsonCandidates) {
@@ -1359,11 +1409,56 @@
       await applyCsvRows(rows);
     }
 
+    async function loadFirstCsvFromDirectoryHandle(dirHandle) {
+      if (!dirHandle || typeof dirHandle.entries !== 'function') {
+        throw new Error('Folder picker is not available.');
+      }
+
+      const csvFileNames = [];
+      for await (const [, handle] of dirHandle.entries()) {
+        if (handle && handle.kind === 'file' && /\.csv$/i.test(handle.name || '')) {
+          csvFileNames.push(handle.name);
+        }
+      }
+
+      csvFileNames.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      const firstCsv = csvFileNames[0];
+      if (!firstCsv) {
+        throw new Error('No .csv files found in selected folder.');
+      }
+
+      const fileHandle = await dirHandle.getFileHandle(firstCsv);
+      const file = await fileHandle.getFile();
+      await loadCsvFromFile(file);
+      return firstCsv;
+    }
+
     async function loadCsvFromPath(path) {
       const csvPath = (path || '').toString().trim();
       if (!csvPath) throw new Error('CSV path is empty.');
-      const rows = await parseCsvInput(csvPath, { download: true });
-      await applyCsvRows(rows);
+
+      const variants = buildCsvPathVariants(csvPath);
+      const attempts = [];
+
+      for (const candidate of variants) {
+        try {
+          const rows = await parseCsvInput(candidate, { download: true });
+          await applyCsvRows(rows);
+          return;
+        } catch (err) {
+          const reason = (err && err.message) ? err.message : 'unknown error';
+          attempts.push(`${candidate}: ${reason}`);
+        }
+      }
+
+      if (window.location.protocol === 'file:') {
+        throw new Error(
+          'Browser security blocks auto-loading local files from file://. ' +
+          'Use "Choose CSV manually", "Choose locations folder", or run a local HTTP server.'
+        );
+      }
+
+      throw new Error(attempts.slice(0, 3).join(' | ') || 'Could not fetch CSV.');
     }
 
     async function bootstrapInitialCsvLoad() {
@@ -1371,6 +1466,15 @@
 
       const firstCsv = await discoverFirstCsvInLocations();
       if (!firstCsv) {
+        if (window.location.protocol === 'file:') {
+          setUploadPanelState(
+            'Could not auto-load CSV on file://',
+            'Browser security blocks folder discovery in local-file mode. Choose CSV manually, choose locations folder, or run a local server.',
+            true
+          );
+          return;
+        }
+
         setUploadPanelState(
           'No CSV found in locations/',
           'Add a .csv file to locations/ or choose one manually.',
@@ -1394,6 +1498,38 @@
     document.getElementById('manual-csv-btn').addEventListener('click', () => {
       const input = document.getElementById('file-input');
       if (input) input.click();
+    });
+
+    document.getElementById('folder-csv-btn').addEventListener('click', async () => {
+      if (typeof window.showDirectoryPicker !== 'function') {
+        setUploadPanelState(
+          'Folder picker not supported',
+          'Use "Choose CSV manually" or run the page on a local HTTP server.',
+          true
+        );
+        return;
+      }
+
+      try {
+        setUploadPanelState(
+          'Loading CSV from selected folder',
+          'Scanning for the first .csv file...',
+          false
+        );
+        const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+        await loadFirstCsvFromDirectoryHandle(dirHandle);
+      } catch (err) {
+        if (err && err.name === 'AbortError') {
+          setUploadPanelState(
+            'CSV not loaded yet',
+            'Choose CSV manually or choose locations folder.',
+            true
+          );
+          return;
+        }
+        const reason = err && err.message ? err.message : 'unknown error';
+        setUploadPanelState('Could not load CSV folder', `Error: ${reason}`, true);
+      }
     });
 
     document.getElementById('change-csv-btn').addEventListener('click', () => {
