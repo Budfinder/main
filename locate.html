@@ -176,18 +176,17 @@
     }
 
     #strain-list-panel {
-      position: absolute;
-      top: 100px;
-      right: 10px;
-      z-index: 1004;
       display: none;
-      width: min(88vw, 280px);
-      max-height: 72vh;
+      width: 100%;
+      max-height: 46vh;
       background: white;
+      margin-top: 8px;
       padding: 8px;
+      border: 1px solid #ececec;
       border-radius: 8px;
-      box-shadow: 0 1px 7px rgba(0,0,0,0.3);
+      box-shadow: inset 0 0 3px rgba(0,0,0,0.05);
       font-family: sans-serif;
+      box-sizing: border-box;
     }
 
     .strain-list-head {
@@ -231,10 +230,61 @@
       cursor: pointer;
     }
 
-    .strain-item.active {
+    .strain-item.active,
+    .popup-strain-btn.active {
+      box-shadow: inset 0 0 0 1px #5b88c9;
+      border-color: #4f79b5;
+      font-weight: 700;
+    }
+
+    .strain-item.type-sativa,
+    .popup-strain-btn.type-sativa {
       background: #e8f2ff;
       border-color: #7aa7e8;
+      color: #103f7a;
+    }
+
+    .strain-item.type-indica,
+    .popup-strain-btn.type-indica {
+      background: #ffecec;
+      border-color: #e28b8b;
+      color: #7a1e1e;
+    }
+
+    .strain-item.type-hybrid,
+    .popup-strain-btn.type-hybrid {
+      background: #e8f8ea;
+      border-color: #88c792;
+      color: #1f5c2a;
+    }
+
+    .strain-item.is-cali,
+    .popup-strain-btn.is-cali {
+      border-width: 2px;
+      border-style: solid;
+      border-color: #d4a12f;
+    }
+
+    .strain-item-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .strain-cali-badge {
+      flex: 0 0 auto;
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
       font-weight: 700;
+      line-height: 1.2;
+      color: #5a3d00;
+      background: #ffe7a6;
+      border: 1px solid #e0bc63;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
 
     .strain-empty {
@@ -300,10 +350,7 @@
 
     @media (max-width: 767px) {
       #strain-list-panel {
-        top: 52px;
-        right: 10px;
-        width: calc(100vw - 20px);
-        max-height: 52vh;
+        max-height: 42vh;
       }
 
       #strain-list {
@@ -409,18 +456,18 @@
       <div id="strain-status" style="margin-top:6px; font-size:12px; color:#444;">Strain filter: off</div>
     </div>
 
+    <div id="strain-list-panel">
+      <div class="strain-list-head">
+        <strong>Active strains</strong>
+        <button id="close-strain-list" type="button">Close</button>
+      </div>
+      <input id="strain-list-search" type="text" placeholder="Filter strains..." />
+      <div id="strain-list-status">Load CSV first.</div>
+      <div id="strain-list"></div>
+    </div>
+
     <button id="nearest-btn">Nearest</button><br />
     <div id="db-status" style="display:none; margin-top:6px; font-size:12px; color:#444;"></div>
-  </div>
-
-  <div id="strain-list-panel">
-    <div class="strain-list-head">
-      <strong>Active strains</strong>
-      <button id="close-strain-list" type="button">Close</button>
-    </div>
-    <input id="strain-list-search" type="text" placeholder="Filter strains..." />
-    <div id="strain-list-status">Load CSV first.</div>
-    <div id="strain-list"></div>
   </div>
 
   <!-- Leaflet + Routing JS -->
@@ -484,6 +531,7 @@
     let popupStrainsByNameCity = new Map();    // "name|city" -> [strain names]
     let popupStrainIndexReady = false;
     let popupStrainIndexPromise = null;
+    let strainMetaByKey = new Map(); // normalised strain name -> visual metadata
     let discoveredCsvPaths = [];     // discovered CSV paths in the hosted folder
     let currentCsvPath = '';         // current CSV path when loaded from URL
 
@@ -580,6 +628,61 @@
 
     function normaliseNameCityKey(name, city) {
       return `${normaliseText(name)}|${normaliseText(city)}`;
+    }
+
+    function normaliseStrainBaseType(value) {
+      const t = normaliseText(value || '');
+      if (t === 'sativa' || t === 'indica' || t === 'hybrid') return t;
+      return '';
+    }
+
+    function ensureStrainMetaEntry(key, displayName) {
+      if (!key) return null;
+      if (!strainMetaByKey.has(key)) {
+        strainMetaByKey.set(key, {
+          name: (displayName || '').toString().trim(),
+          typeCounts: { sativa: 0, indica: 0, hybrid: 0 },
+          isCali: false
+        });
+      }
+      const meta = strainMetaByKey.get(key);
+      if (displayName && !meta.name) {
+        meta.name = (displayName || '').toString().trim();
+      }
+      return meta;
+    }
+
+    function mergeStrainMeta(displayName, baseTypeValue, isCaliValue) {
+      const name = (displayName || '').toString().trim();
+      const key = normaliseText(name);
+      if (!key) return;
+      const meta = ensureStrainMetaEntry(key, name);
+      if (!meta) return;
+
+      const baseType = normaliseStrainBaseType(baseTypeValue);
+      if (baseType) {
+        meta.typeCounts[baseType] = (meta.typeCounts[baseType] || 0) + 1;
+      }
+      if (Number(isCaliValue) === 1 || isCaliValue === true) {
+        meta.isCali = true;
+      }
+    }
+
+    function deriveStrainBaseType(meta) {
+      if (!meta || !meta.typeCounts) return 'unknown';
+      const types = ['sativa', 'indica', 'hybrid'].filter(t => (meta.typeCounts[t] || 0) > 0);
+      if (types.length === 1) return types[0];
+      if (types.length > 1) return 'hybrid';
+      return 'unknown';
+    }
+
+    function getStrainVisualMeta(name) {
+      const key = normaliseText(name || '');
+      const meta = key ? strainMetaByKey.get(key) : null;
+      return {
+        baseType: deriveStrainBaseType(meta),
+        isCali: !!(meta && meta.isCali)
+      };
     }
 
     function normaliseUrlPath(url) {
@@ -1016,6 +1119,7 @@
           rows.forEach(r => {
             const strainName = ((r && (r.strain_name_display || r.strain_name_normalised)) || '').toString().trim();
             if (!strainName) return;
+            mergeStrainMeta(strainName, '', 0);
             const shops = (r && Array.isArray(r.shops)) ? r.shops : [];
             shops.forEach(s => {
               const id = parseInt(s && s.shop_id, 10);
@@ -1038,6 +1142,7 @@
           rows.forEach(r => {
             const strainName = ((r && (r.strain_name || r.strain_name_normalised)) || '').toString().trim();
             if (!strainName) return;
+            mergeStrainMeta(strainName, r && r.base_type, r && r.is_cali);
             const id = parseInt(r && r.shop_id, 10);
             if (Number.isFinite(id)) {
               pushStrainIntoIndex(byIdRaw, String(id), strainName);
@@ -1145,10 +1250,17 @@
         const n = (name || '').toString();
         const key = normaliseText(n);
         const isActive = activeKey !== '' && key === activeKey;
+        const meta = getStrainVisualMeta(n);
+        const typeClass = meta.baseType !== 'unknown' ? ` type-${meta.baseType}` : '';
+        const caliClass = meta.isCali ? ' is-cali' : '';
+        const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
         return (
           `<li>` +
-            `<button type="button" class="popup-strain-btn${isActive ? ' active' : ''}" data-strain="${escapeHtmlAttr(n)}">` +
-              `${escapeHtml(n)}` +
+            `<button type="button" class="popup-strain-btn${typeClass}${caliClass}${isActive ? ' active' : ''}" data-strain="${escapeHtmlAttr(n)}">` +
+              `<span class="strain-item-main">` +
+                `<span>${escapeHtml(n)}</span>` +
+                `${caliBadge}` +
+              `</span>` +
             `</button>` +
           `</li>`
         );
@@ -1160,22 +1272,37 @@
 
     async function fetchActiveStrainNames() {
       try {
-        const rows = await loadStrainIndexRows();
-        const names = rows.map(r => (r && (r.strain_name_display || r.strain_name_normalised)) || '');
+        await ensurePopupStrainIndex();
+        const namesFromMeta = Array.from(strainMetaByKey.values())
+          .map(meta => meta && meta.name)
+          .filter(Boolean);
+        const outFromMeta = dedupeAndSortStrainNames(namesFromMeta);
+        if (outFromMeta.length) return outFromMeta;
+      } catch (_err) {
+        // Fallback below.
+      }
+
+      try {
+        const rows = await loadActiveOfferingsRows();
+        const names = rows.map(r => (r && (r.strain_name || r.strain_name_normalised)) || '');
         const out = dedupeAndSortStrainNames(names);
         if (out.length) return out;
       } catch (_err) {
         // Fallback below.
       }
 
-      const rows = await loadActiveOfferingsRows();
-      const names = rows.map(r => (r && (r.strain_name || r.strain_name_normalised)) || '');
+      const rows = await loadStrainIndexRows();
+      const names = rows.map(r => (r && (r.strain_name_display || r.strain_name_normalised)) || '');
       return dedupeAndSortStrainNames(names);
     }
 
     function updateStrainListSelection() {
       const key = normaliseText(strainFilterText || '');
       document.querySelectorAll('#strain-list .strain-item').forEach(btn => {
+        const btnKey = normaliseText(btn.getAttribute('data-strain') || '');
+        btn.classList.toggle('active', key !== '' && btnKey === key);
+      });
+      document.querySelectorAll('.popup-strain-btn').forEach(btn => {
         const btnKey = normaliseText(btn.getAttribute('data-strain') || '');
         btn.classList.toggle('active', key !== '' && btnKey === key);
       });
@@ -1201,7 +1328,20 @@
         btn.type = 'button';
         btn.className = 'strain-item';
         btn.setAttribute('data-strain', name);
-        btn.textContent = name;
+        const meta = getStrainVisualMeta(name);
+        if (meta.baseType !== 'unknown') {
+          btn.classList.add(`type-${meta.baseType}`);
+        }
+        if (meta.isCali) {
+          btn.classList.add('is-cali');
+        }
+
+        const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
+        btn.innerHTML =
+          `<span class="strain-item-main">` +
+            `<span>${escapeHtml(name)}</span>` +
+            `${caliBadge}` +
+          `</span>`;
         frag.appendChild(btn);
       });
       listEl.appendChild(frag);
@@ -2428,13 +2568,6 @@
       if (!strain) return;
 
       await applyStrainFilter(strain);
-
-      // Keep popup strain buttons visually in sync with the active filter.
-      const activeKey = normaliseText(strainFilterText || '');
-      document.querySelectorAll('.popup-strain-btn').forEach(el => {
-        const key = normaliseText(el.getAttribute('data-strain') || '');
-        el.classList.toggle('active', activeKey !== '' && key === activeKey);
-      });
     });
 
     // =========================================================
