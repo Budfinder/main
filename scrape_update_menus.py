@@ -27,7 +27,6 @@ Inputs
 
 Run
 ---
-  pip install requests beautifulsoup4
   python scrape_update_menus.py --shops /path/to/csd.csv --db coffeeshops.sqlite --out-dir menus_downloaded
 """
 
@@ -39,14 +38,14 @@ import hashlib
 import os
 import re
 import sqlite3
+import ssl
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from html.parser import HTMLParser
 from typing import Dict, List, Optional, Tuple
-from urllib.parse import urljoin, urlparse
-
-import requests
-from bs4 import BeautifulSoup
+from urllib.parse import quote, unquote, urljoin, urlparse, urlsplit, urlunsplit
+from urllib.request import Request, urlopen
 
 
 # -----------------------------
@@ -63,6 +62,12 @@ ALLOWED_DOMAINS = {"www.coffeeshopmenus.org", "coffeeshopmenus.org"}
 # Prefer menu images that live in /Menus/ (common on coffeeshopmenus)
 MENU_PATH_HINT = "/Menus/"
 
+# macOS/python installs can have missing CA trust setup. We first try strict
+# verification, then optionally fall back to an unverified TLS context only
+# when certificate verification fails.
+ALLOW_INSECURE_SSL_FALLBACK = True
+_warned_insecure_ssl_fallback = False
+
 
 # -----------------------------
 # Data models
@@ -74,6 +79,7 @@ class ShopRow:
     shop: str
     city: str
     shop_url: str
+    show_in_admin: bool
 
 
 # -----------------------------
@@ -97,6 +103,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             name TEXT NOT NULL,
             city TEXT NOT NULL,
             shop_url TEXT NOT NULL,
+            show_in_admin INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
             UNIQUE(name, city)
@@ -184,6 +191,10 @@ def db_init(conn: sqlite3.Connection) -> None:
         CREATE INDEX IF NOT EXISTS idx_offerings_status ON shop_offerings(status);
         """
     )
+    # Backward-compatible migration for existing DBs.
+    cols = {str(r["name"]) for r in conn.execute("PRAGMA table_info(shops);").fetchall()}
+    if "show_in_admin" not in cols:
+        conn.execute("ALTER TABLE shops ADD COLUMN show_in_admin INTEGER NOT NULL DEFAULT 1;")
     conn.commit()
 
 
@@ -192,18 +203,20 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def upsert_shop(conn: sqlite3.Connection, name: str, city: str, shop_url: str) -> int:
+def upsert_shop(conn: sqlite3.Connection, name: str, city: str, shop_url: str, show_in_admin: bool) -> int:
     """Create shop if missing, return shop_id."""
     now = utc_now_iso()
+    show_int = 1 if show_in_admin else 0
     conn.execute(
         """
-        INSERT INTO shops(name, city, shop_url, created_at, updated_at)
-        VALUES(?, ?, ?, ?, ?)
+        INSERT INTO shops(name, city, shop_url, show_in_admin, created_at, updated_at)
+        VALUES(?, ?, ?, ?, ?, ?)
         ON CONFLICT(name, city) DO UPDATE SET
             shop_url = excluded.shop_url,
+            show_in_admin = excluded.show_in_admin,
             updated_at = excluded.updated_at;
         """,
-        (name.strip(), city.strip(), shop_url.strip(), now, now),
+        (name.strip(), city.strip(), shop_url.strip(), show_int, now, now),
     )
     row = conn.execute(
         "SELECT id FROM shops WHERE name = ? AND city = ?;",
@@ -272,6 +285,7 @@ def read_shops_csv(path: str) -> List[ShopRow]:
       - shop name: either `shop` OR `name`
       - city: `city`
       - shop page url: `shop_url`
+      - optional admin toggle: `show_in_admin` (or `enabled`)
 
     Extra columns (e.g. `address`) are ignored.
     """
@@ -303,9 +317,23 @@ def read_shops_csv(path: str) -> List[ShopRow]:
             if not shop_url or not shop:
                 continue
 
-            out.append(ShopRow(shop=shop, city=city or "Unknown", shop_url=shop_url))
+            show_raw = (r.get("show_in_admin") or r.get("enabled") or "").strip()
+            show = parse_csv_bool(show_raw, default=True)
+            out.append(ShopRow(shop=shop, city=city or "Unknown", shop_url=shop_url, show_in_admin=show))
 
     return out
+
+
+def parse_csv_bool(raw: str, default: bool = True) -> bool:
+    """Parse common CSV truthy/falsey toggles."""
+    t = (raw or "").strip().lower()
+    if not t:
+        return default
+    if t in {"1", "true", "t", "yes", "y", "on"}:
+        return True
+    if t in {"0", "false", "f", "no", "n", "off"}:
+        return False
+    return default
 
 # -----------------------------
 # Scraping / downloading helpers
@@ -324,24 +352,84 @@ def is_allowed_image_url(url: str) -> bool:
     return ext in ALLOWED_IMAGE_EXTS
 
 
-def download_text(session: requests.Session, url: str) -> str:
+def _ssl_context(verify: bool) -> ssl.SSLContext:
+    """Build TLS context, preferring certifi CA bundle when available."""
+    if not verify:
+        return ssl._create_unverified_context()
+    try:
+        import certifi  # type: ignore
+        return ssl.create_default_context(cafile=certifi.where())
+    except Exception:
+        return ssl.create_default_context()
+
+
+def _is_cert_verify_error(err: Exception) -> bool:
+    """True when exception indicates TLS certificate verification failure."""
+    if isinstance(err, ssl.SSLCertVerificationError):
+        return True
+    if isinstance(err, ssl.SSLError) and "CERTIFICATE_VERIFY_FAILED" in str(err):
+        return True
+    reason = getattr(err, "reason", None)
+    if isinstance(reason, ssl.SSLCertVerificationError):
+        return True
+    if isinstance(reason, ssl.SSLError) and "CERTIFICATE_VERIFY_FAILED" in str(reason):
+        return True
+    return False
+
+
+def normalise_url(url: str) -> str:
+    """Encode unsafe URL characters (e.g. spaces) without changing semantics."""
+    raw = (url or "").strip()
+    if not raw:
+        return ""
+    p = urlsplit(raw)
+    path = quote(unquote(p.path), safe="/%:@&+$,;=-._~()")
+    query = quote(unquote(p.query), safe="=&%:@/+$,;?-._~")
+    fragment = quote(unquote(p.fragment), safe="%:@/+$,;?-._~")
+    return urlunsplit((p.scheme, p.netloc, path, query, fragment))
+
+
+def _http_get(url: str) -> Tuple[bytes, str]:
+    """Download raw bytes and return (body, content_type)."""
+    req = Request(normalise_url(url), headers={"User-Agent": USER_AGENT})
+    try:
+        with urlopen(req, timeout=HTTP_TIMEOUT, context=_ssl_context(verify=True)) as resp:
+            body = resp.read()
+            content_type = (resp.headers.get("Content-Type") or "").strip()
+        return body, content_type
+    except Exception as err:
+        if not (ALLOW_INSECURE_SSL_FALLBACK and _is_cert_verify_error(err)):
+            raise
+
+    global _warned_insecure_ssl_fallback
+    if not _warned_insecure_ssl_fallback:
+        print("[WARN] SSL verification failed; falling back to insecure TLS for this run.")
+        _warned_insecure_ssl_fallback = True
+
+    with urlopen(req, timeout=HTTP_TIMEOUT, context=_ssl_context(verify=False)) as resp:
+        body = resp.read()
+        content_type = (resp.headers.get("Content-Type") or "").strip()
+    return body, content_type
+
+
+def download_text(url: str) -> str:
     """Download HTML."""
-    r = session.get(url, timeout=HTTP_TIMEOUT)
-    r.raise_for_status()
-    return r.text
+    body, content_type = _http_get(url)
+    m = re.search(r"charset=([a-zA-Z0-9._-]+)", content_type, flags=re.IGNORECASE)
+    encoding = m.group(1) if m else "utf-8"
+    return body.decode(encoding, errors="replace")
 
 
-def download_image_bytes(session: requests.Session, url: str) -> bytes:
+def download_image_bytes(url: str) -> bytes:
     """
     Download bytes of an image URL with a safety Content-Type check.
     If the server returns HTML (e.g. blocked page), we raise ValueError.
     """
-    r = session.get(url, timeout=HTTP_TIMEOUT)
-    r.raise_for_status()
-    ctype = (r.headers.get("Content-Type") or "").lower().strip()
+    body, content_type = _http_get(url)
+    ctype = content_type.lower().strip()
     if ctype and not ctype.startswith("image/"):
         raise ValueError(f"Non-image response (Content-Type={ctype}) for {url}")
-    return r.content
+    return body
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -359,6 +447,27 @@ def slugify(text: str) -> str:
     return t or "unknown"
 
 
+class _TagCollector(HTMLParser):
+    """Collect href/src values from anchor/img tags."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.anchor_hrefs: List[str] = []
+        self.img_srcs: List[str] = []
+
+    def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]) -> None:
+        attrs_dict = {k.lower(): (v or "") for k, v in attrs}
+        t = tag.lower()
+        if t == "a":
+            href = attrs_dict.get("href", "").strip()
+            if href:
+                self.anchor_hrefs.append(href)
+        elif t == "img":
+            src = attrs_dict.get("src", "").strip()
+            if src:
+                self.img_srcs.append(src)
+
+
 def extract_menu_image_urls(page_url: str, html: str) -> List[str]:
     """
     Extract candidate menu image URLs from coffeeshopmenus shop page HTML.
@@ -369,15 +478,13 @@ def extract_menu_image_urls(page_url: str, html: str) -> List[str]:
     - De-duplicate, preserve order
     - Sort so /Menus/ URLs come first
     """
-    soup = BeautifulSoup(html, "html.parser")
+    parser = _TagCollector()
+    parser.feed(html)
     candidates: List[str] = []
 
     # Prefer anchors that link to an image file
-    for a in soup.find_all("a"):
-        href = a.get("href")
-        if not href:
-            continue
-        abs_url = urljoin(page_url, href)
+    for href in parser.anchor_hrefs:
+        abs_url = normalise_url(urljoin(page_url, href))
         if not restrict_domain_ok(abs_url):
             continue
         if not is_allowed_image_url(abs_url):
@@ -385,11 +492,8 @@ def extract_menu_image_urls(page_url: str, html: str) -> List[str]:
         candidates.append(abs_url)
 
     # Add img tags that look like actual menus (avoid logos/buttons)
-    for img in soup.find_all("img"):
-        src = img.get("src")
-        if not src:
-            continue
-        abs_url = urljoin(page_url, src)
+    for src in parser.img_srcs:
+        abs_url = normalise_url(urljoin(page_url, src))
         if not restrict_domain_ok(abs_url):
             continue
         if not is_allowed_image_url(abs_url):
@@ -427,7 +531,7 @@ def save_image(out_dir: str, city: str, shop: str, sha: str, image_url: str, dat
     """
     os.makedirs(out_dir, exist_ok=True)
     path = urlparse(image_url).path
-    base = os.path.basename(path) or "menu.jpg"
+    base = unquote(os.path.basename(path)) or "menu.jpg"
     city_slug = slugify(city)
     shop_slug = slugify(shop)
     sha8 = sha[:8]
@@ -455,12 +559,10 @@ def main() -> int:
     conn = db_connect(args.db)
     db_init(conn)
 
-    session = requests.Session()
-    session.headers.update({"User-Agent": USER_AGENT})
-
     new_count = 0
     unchanged = 0
     errors = 0
+    skipped = 0
 
     for i, s in enumerate(shops, start=1):
         print(f"[{i}/{len(shops)}] {s.city} - {s.shop}")
@@ -469,11 +571,16 @@ def main() -> int:
         shop_url = s.shop_url
         if shop_url.startswith("/"):
             shop_url = urljoin("https://www.coffeeshopmenus.org/", shop_url)
+        shop_url = normalise_url(shop_url)
 
-        shop_id = upsert_shop(conn, s.shop, s.city, shop_url)
+        shop_id = upsert_shop(conn, s.shop, s.city, shop_url, s.show_in_admin)
+        if not s.show_in_admin:
+            skipped += 1
+            print("  [SKIP] show_in_admin disabled in CSV.")
+            continue
 
         try:
-            html = download_text(session, shop_url)
+            html = download_text(shop_url)
             urls = extract_menu_image_urls(shop_url, html)
             menu_url = choose_latest_menu_url(urls)
             if not menu_url:
@@ -493,7 +600,7 @@ def main() -> int:
                 time.sleep(SLEEP_BETWEEN_SHOPS_SEC)
                 continue
 
-            data = download_image_bytes(session, menu_url)
+            data = download_image_bytes(menu_url)
             sha = sha256_bytes(data)
             prev_sha = get_existing_menu_sha(conn, shop_id)
 
@@ -550,6 +657,7 @@ def main() -> int:
     print("\n[SUMMARY]")
     print(f"  New menus:      {new_count}")
     print(f"  Unchanged:      {unchanged}")
+    print(f"  Skipped:        {skipped}")
     print(f"  Errors:         {errors}")
     print(f"  DB:             {os.path.abspath(args.db)}")
     print(f"  Images folder:  {os.path.abspath(args.out_dir)}")

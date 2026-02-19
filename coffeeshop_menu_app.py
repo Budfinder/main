@@ -445,6 +445,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             name TEXT NOT NULL,
             city TEXT NOT NULL,
             shop_url TEXT NOT NULL,
+            show_in_admin INTEGER NOT NULL DEFAULT 1,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
             UNIQUE(name, city)
@@ -516,6 +517,10 @@ def db_init(conn: sqlite3.Connection) -> None:
         CREATE INDEX IF NOT EXISTS idx_offerings_status ON shop_offerings(status);
         """
     )
+    # Backward-compatible migration for existing DBs.
+    cols = {str(r["name"]) for r in conn.execute("PRAGMA table_info(shops);").fetchall()}
+    if "show_in_admin" not in cols:
+        conn.execute("ALTER TABLE shops ADD COLUMN show_in_admin INTEGER NOT NULL DEFAULT 1;")
     conn.commit()
 
 
@@ -1707,7 +1712,7 @@ PAGE_TMPL = """
                 style="display:inline;">
             <button class="ghost" type="submit">Load active offerings</button>
           </form>
-          <button class="primary" type="button" onclick="document.getElementById('entryForm').requestSubmit();">Save</button>
+          <button class="primary" type="button" onclick="submitEntryForm();">Save</button>
           {% if finish_requires_mass_confirm %}
             <button class="danger" type="button"
                     onclick="if (confirm('Finish now will discontinue all active offerings for this shop. Continue?')) navTo('{{ url_for('finish_menu', shop_id=shop_id, allow_mass=1) }}');">
@@ -1917,11 +1922,18 @@ PAGE_TMPL = """
     if (s) s.focus();
   }
 
+  function submitEntryForm() {
+    setSectionView('add', true);
+    const form = document.getElementById('entryForm');
+    if (!form) return;
+    form.requestSubmit();
+  }
+
   const SECTION_VIEW_KEY = 'shop_view_visible_section_v1';
   const SECTION_VIEW_VALUES = ['add', 'entries', 'catalogue'];
 
   function normalizeSectionView(value) {
-    return SECTION_VIEW_VALUES.includes(value) ? value : 'add';
+    return SECTION_VIEW_VALUES.indexOf(value) >= 0 ? value : 'add';
   }
 
   function getSectionViewBlocks() {
@@ -1939,7 +1951,8 @@ PAGE_TMPL = """
   function setSectionView(value, persist = true) {
     const view = normalizeSectionView(value);
     const blocks = getSectionViewBlocks();
-    Object.entries(blocks).forEach(([name, el]) => {
+    ['add', 'entries', 'catalogue'].forEach((name) => {
+      const el = blocks[name];
       if (!el) return;
       el.classList.toggle('is-hidden', name !== view);
     });
@@ -1957,21 +1970,13 @@ PAGE_TMPL = """
     }
   }
 
-  function loadSectionView() {
-    try {
-      return normalizeSectionView(localStorage.getItem(SECTION_VIEW_KEY));
-    } catch (_err) {
-      return 'add';
-    }
-  }
-
   function initSectionView() {
     getSectionViewRadios().forEach((radio) => {
       radio.addEventListener('change', () => {
         if (radio.checked) setSectionView(radio.value, true);
       });
     });
-    setSectionView(loadSectionView(), false);
+    setSectionView('add', false);
   }
 
   initSectionView();
@@ -2070,8 +2075,7 @@ PAGE_TMPL = """
         ? document.activeElement.tagName.toLowerCase() : '';
       if (activeTag !== 'button') {
         e.preventDefault();
-        const form = document.getElementById('entryForm');
-        if (form) form.requestSubmit();
+        submitEntryForm();
       }
     }
   });
@@ -2801,8 +2805,41 @@ def create_app(
     # Query helpers
     # -------------------------------------------------------------------------
 
-    def get_menu_counts(c: sqlite3.Connection) -> Dict[str, int]:
+    def get_menu_counts(c: sqlite3.Connection, only_visible: bool = False) -> Dict[str, int]:
         """Counts of menus by status."""
+        if only_visible:
+            return {
+                "new": int(
+                    c.execute(
+                        """
+                        SELECT COUNT(*) AS n
+                        FROM menus m
+                        JOIN shops s ON s.id = m.shop_id
+                        WHERE m.status = 'new' AND COALESCE(s.show_in_admin, 1) = 1;
+                        """
+                    ).fetchone()["n"]
+                ),
+                "error": int(
+                    c.execute(
+                        """
+                        SELECT COUNT(*) AS n
+                        FROM menus m
+                        JOIN shops s ON s.id = m.shop_id
+                        WHERE m.status = 'error' AND COALESCE(s.show_in_admin, 1) = 1;
+                        """
+                    ).fetchone()["n"]
+                ),
+                "processed": int(
+                    c.execute(
+                        """
+                        SELECT COUNT(*) AS n
+                        FROM menus m
+                        JOIN shops s ON s.id = m.shop_id
+                        WHERE m.status = 'processed' AND COALESCE(s.show_in_admin, 1) = 1;
+                        """
+                    ).fetchone()["n"]
+                ),
+            }
         return {
             "new": int(c.execute("SELECT COUNT(*) AS n FROM menus WHERE status='new';").fetchone()["n"]),
             "error": int(c.execute("SELECT COUNT(*) AS n FROM menus WHERE status='error';").fetchone()["n"]),
@@ -2826,6 +2863,7 @@ def create_app(
             SELECT s.id AS shop_id, s.name, s.city, m.status
             FROM shops s
             JOIN menus m ON m.shop_id = s.id
+            WHERE COALESCE(s.show_in_admin, 1) = 1
             ORDER BY s.city, s.name;
             """
         ).fetchall()
@@ -2837,7 +2875,7 @@ def create_app(
             SELECT s.id
             FROM shops s
             JOIN menus m ON m.shop_id = s.id
-            WHERE m.status = 'new'
+            WHERE m.status = 'new' AND COALESCE(s.show_in_admin, 1) = 1
             ORDER BY s.city, s.name;
             """
         ).fetchall()
@@ -2928,7 +2966,7 @@ def create_app(
             and would_auto_discontinue == active_unlocked_count
         )
 
-        counts = get_menu_counts(c)
+        counts = get_menu_counts(c, only_visible=True)
 
         local_path = row["local_path"] or ""
         file_exists = bool(local_path and os.path.exists(local_path))
@@ -3196,12 +3234,13 @@ def create_app(
             FROM shops s
             JOIN menus m ON m.shop_id = s.id
             WHERE m.status IN ('new', 'error', 'processed')
+              AND COALESCE(s.show_in_admin, 1) = 1
             ORDER BY
               CASE m.status WHEN 'new' THEN 0 WHEN 'error' THEN 1 ELSE 2 END,
               s.city, s.name;
             """
         ).fetchall()
-        counts = get_menu_counts(c)
+        counts = get_menu_counts(c, only_visible=True)
         c.close()
         return Response(render_template_string(QUEUE_TMPL, css=BASE_CSS, rows=rows, counts=counts))
 

@@ -1,4 +1,4 @@
-name,city,address,shop_url
+name,city,address,shop_url,show_in_admin
 The Canna Club,The Hague,"The Canna Club, Nieuwstraat 4, The Hague 2511 AV",https://www.coffeeshopmenus.org/cs-canna-club.html
 The Squad,Zaandam,"The Squad, Parkstraat 8, Zaandam 1503 WD",https://www.coffeeshopmenus.org/cs-squad.html
 Empire,Haarlem,"Empire, Krocht 8, 2011 PT Haarlem",https://www.coffeeshopmenus.org/cs-empire.html
@@ -44,6 +44,7 @@ Balboa Family,Amsterdam,"Balboa Family, Halvemaansteeg 1, 1017 CR Amsterdam",htt
 Het Ballonnetje,Amsterdam,"Het Ballonnetje, Roetersstraat 12, 1018 WD Amsterdam",https://www.coffeeshopmenus.org/cs-ballonnetje.html
 Balou,Amsterdam,"Balou, Halvemaansteeg 5, 1017 CR Amsterdam",https://www.coffeeshopmenus.org/cs-balou.html
 Bambu High Tea,Rotterdam,"Bambu High Tea, Noordsingel 201, 3035 ER, Rotterdam",https://www.coffeeshopmenus.org/cs-bambu-high-tea.html
+Barney's,Amsterdam,"Barney's, Haarlemmerstraat 102, 1013 EW Amsterdam",https://www.coffeeshopmenus.org/cs-barneys.html
 BarberShop,Hellevoetsluis,"BarberShop, Kerkstraat 24, Hellevoetsluis 3221 AG",https://www.coffeeshopmenus.org/cs-barbershop.html
 de Baron,Breda,"de Baron, Boschstraat 127, 4811 GG Breda",https://www.coffeeshopmenus.org/cs-baron.html
 Barraka,Amsterdam,"Barraka, Gravensstraat 9, 1012 NL Amsterdam",https://www.coffeeshopmenus.org/cs-barraka.html
