@@ -120,6 +120,18 @@
     ]
   },
   {
+    "strain_name_normalised": "BLUE GELATO 41",
+    "strain_name_display": "BLUE GELATO 41",
+    "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "CLOUD 9",
     "strain_name_display": "CLOUD 9",
     "shops": [
@@ -366,6 +378,18 @@
     ]
   },
   {
+    "strain_name_normalised": "amaretto",
+    "strain_name_display": "Amaretto",
+    "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "amazing",
     "strain_name_display": "Amazing",
     "shops": [
@@ -520,6 +544,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 44,
         "shop_key": "cs-balou",
         "shop_name": "Balou",
@@ -621,6 +651,12 @@
     "strain_name_normalised": "apple fritter",
     "strain_name_display": "Apple Fritter",
     "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 105,
         "shop_key": "cs-dampkring",
@@ -735,6 +771,12 @@
     "strain_name_normalised": "big buddha cheese",
     "strain_name_display": "Big Buddha Cheese",
     "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 44,
         "shop_key": "cs-balou",
@@ -2044,6 +2086,12 @@
     "strain_name_display": "Gelonade",
     "shops": [
       {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 49,
         "shop_key": "cs-basjoe",
         "shop_name": "Basjoe",
@@ -2761,6 +2809,12 @@
         "shop_id": 12,
         "shop_key": "cs-abraxas",
         "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
         "shop_city": "Amsterdam"
       },
       {
@@ -3490,6 +3544,12 @@
     "strain_name_display": "Oreoz",
     "shops": [
       {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
@@ -3858,6 +3918,18 @@
     ]
   },
   {
+    "strain_name_normalised": "purple pussy",
+    "strain_name_display": "Purple Pussy",
+    "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "purple runch",
     "strain_name_display": "Purple Runch",
     "shops": [
@@ -4158,6 +4230,18 @@
     ]
   },
   {
+    "strain_name_normalised": "sky walker og",
+    "strain_name_display": "Sky Walker OG",
+    "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "slapz",
     "strain_name_display": "Slapz",
     "shops": [
@@ -4311,6 +4395,12 @@
     "strain_name_normalised": "strawberry haze",
     "strain_name_display": "Strawberry Haze",
     "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 111,
         "shop_key": "cs-d-l",
@@ -4474,6 +4564,12 @@
     "strain_name_display": "Super Lemon Haze",
     "shops": [
       {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
@@ -4633,6 +4729,18 @@
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "tiramisu",
+    "strain_name_display": "Tiramisu",
+    "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4930,6 +5038,12 @@
     "strain_name_display": "Watermelon Zkittlez",
     "shops": [
       {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
@@ -5089,6 +5203,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "white trufflez",
+    "strain_name_display": "White Trufflez",
+    "shops": [
+      {
+        "shop_id": 42,
+        "shop_key": "cs-balboa-family",
+        "shop_name": "Balboa Family",
         "shop_city": "Amsterdam"
       }
     ]

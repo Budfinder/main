@@ -1354,9 +1354,6 @@ BASE_CSS = """
   --warn: #f6ad55;
   --good: #68d391;
   --bad: #fc8181;
-  --add-entry-h: 290px;
-  --entries-h: 260px;
-  --catalogue-h: 320px;
 }
 
 * { box-sizing: border-box; }
@@ -1416,6 +1413,7 @@ body {
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
+  align-items: start;
   align-content: start;
 }
 
@@ -1474,41 +1472,38 @@ button.danger { border-color: rgba(252,129,129,.45); color: var(--bad); }
 
 .tableWrap { overflow:auto; border-top: 1px solid var(--border); }
 .tableWrap.entries {
-  height: var(--entries-h);
-  min-height: 140px;
-  max-height: 75vh;
-  resize: vertical;
+  min-height: 180px;
+  max-height: clamp(180px, calc(100vh - 320px), 72vh);
 }
 .tableWrap.catalogue {
-  height: var(--catalogue-h);
-  min-height: 140px;
-  max-height: 75vh;
-  resize: vertical;
+  min-height: 180px;
+  max-height: clamp(180px, calc(100vh - 320px), 72vh);
 }
 .tableWrap.browse { max-height: 70vh; }
 .tableWrap.browse td { word-break: break-word; }
 
-.panelSizer {
+.viewSwitch {
   margin-bottom: 10px;
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: rgba(255,255,255,.02);
 }
-.panelSizerGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(180px, 1fr));
-  gap: 10px;
+
+.viewSwitchGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
   margin-top: 8px;
 }
-.panelSizerGrid input[type="range"] { width: 100%; }
+
+.viewSection.is-hidden { display: none; }
 
 .addEntryPanel {
-  height: var(--add-entry-h);
-  min-height: 180px;
-  max-height: 75vh;
+  min-height: 220px;
+  max-height: clamp(220px, calc(100vh - 320px), 72vh);
   overflow: auto;
-  resize: vertical;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 10px;
@@ -1608,7 +1603,6 @@ pre.log {
   .container { grid-template-columns: 1fr; }
   .menuImg { height: 60vh; }
   .menuGrid { grid-template-columns: 1fr; }
-  .panelSizerGrid { grid-template-columns: 1fr; }
 }
 
 @media (max-height: 820px) {
@@ -1739,75 +1733,68 @@ PAGE_TMPL = """
             Verify current entries before finishing.
           </div>
         {% endif %}
-        <div class="panelSizer">
-          <div class="small"><b>Panel sizes</b> (saved in this browser)</div>
-          <div class="panelSizerGrid">
-            <label for="size_add">Add entry (px)
-              <input id="size_add" type="range" min="180" max="760" step="10" value="290">
-            </label>
-            <label for="size_entries">Current entries (px)
-              <input id="size_entries" type="range" min="140" max="760" step="10" value="260">
-            </label>
-            <label for="size_catalogue">Offerings catalogue (px)
-              <input id="size_catalogue" type="range" min="140" max="760" step="10" value="320">
-            </label>
-          </div>
-          <div class="btnrow" style="margin-top:8px;">
-            <button class="ghost" type="button" onclick="resetSectionSizes();">Reset sizes</button>
+        <div class="viewSwitch">
+          <div class="small"><b>View</b></div>
+          <div class="viewSwitchGroup" role="radiogroup" aria-label="Section view">
+            <label class="radioOption"><input type="radio" name="shop_section_view" value="add" checked><span>Add entry</span></label>
+            <label class="radioOption"><input type="radio" name="shop_section_view" value="entries"><span>Current entries</span></label>
+            <label class="radioOption"><input type="radio" name="shop_section_view" value="catalogue"><span>Offerings catalogue</span></label>
           </div>
         </div>
 
-        <div id="addEntryPanel" class="addEntryPanel">
-          <form id="entryForm" method="post" action="{{ url_for('add_entry', shop_id=shop_id) }}">
-            <div>
-              <label for="strain_name">Strain name</label>
-              <input id="strain_name" name="strain_name" list="strain_suggestions" autocomplete="off"
-         autocapitalize="none" autocorrect="off" spellcheck="false"
-         placeholder="e.g. Gelato, Amnesia Haze, AK47" required>
-              <datalist id="strain_suggestions"></datalist>
-            </div>
-
-            <div class="grid2" style="margin-top:10px;">
+        <div id="sectionAdd" class="viewSection">
+          <div id="addEntryPanel" class="addEntryPanel">
+            <form id="entryForm" method="post" action="{{ url_for('add_entry', shop_id=shop_id) }}">
               <div>
-                <label>Type</label>
-                <div class="radioGroup">
-                  <label class="radioOption"><input type="radio" name="base_type" value="sativa" required><span>Sativa</span></label>
-                  <label class="radioOption"><input type="radio" name="base_type" value="indica" required><span>Indica</span></label>
-                  <label class="radioOption"><input type="radio" name="base_type" value="hybrid" required><span>Hybrid</span></label>
-                  <label class="radioOption"><input type="radio" name="base_type" value="hash" required><span>Hash</span></label>
-                  <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
-                  <label class="radioOption"><input type="checkbox" name="is_cali" value="1"><span>Cali</span></label>
-                </div>
-                <div class="small">Type is one-of; Cali is an overlay.</div>
+                <label for="strain_name">Strain name</label>
+                <input id="strain_name" name="strain_name" list="strain_suggestions" autocomplete="off"
+           autocapitalize="none" autocorrect="off" spellcheck="false"
+           placeholder="e.g. Gelato, Amnesia Haze, AK47" required>
+                <datalist id="strain_suggestions"></datalist>
               </div>
 
-              <div>
-                <label>Price per {{ unit }}</label>
-                <div style="display:grid; grid-template-columns: 110px 1fr; gap:10px; align-items:center;">
-                  <select name="price_currency" aria-label="currency">
-                    <option value="€" selected>€ EUR</option>
-                    <option value="£">£ GBP</option>
-                    <option value="$">$ USD</option>
-                  </select>
-                  <input id="price_amount" name="price_amount" inputmode="decimal" placeholder="e.g. 12 or 12.5" required>
+              <div class="grid2" style="margin-top:10px;">
+                <div>
+                  <label>Type</label>
+                  <div class="radioGroup">
+                    <label class="radioOption"><input type="radio" name="base_type" value="sativa" required><span>Sativa</span></label>
+                    <label class="radioOption"><input type="radio" name="base_type" value="indica" required><span>Indica</span></label>
+                    <label class="radioOption"><input type="radio" name="base_type" value="hybrid" required><span>Hybrid</span></label>
+                    <label class="radioOption"><input type="radio" name="base_type" value="hash" required><span>Hash</span></label>
+                    <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
+                    <label class="radioOption"><input type="checkbox" name="is_cali" value="1"><span>Cali</span></label>
+                  </div>
+                  <div class="small">Type is one-of; Cali is an overlay.</div>
                 </div>
-                <div class="small" style="margin-top:6px;">Stored as <b>currency/amount/{{ unit }}</b>.</div>
+
+                <div>
+                  <label>Price per {{ unit }}</label>
+                  <div style="display:grid; grid-template-columns: 110px 1fr; gap:10px; align-items:center;">
+                    <select name="price_currency" aria-label="currency">
+                      <option value="€" selected>€ EUR</option>
+                      <option value="£">£ GBP</option>
+                      <option value="$">$ USD</option>
+                    </select>
+                    <input id="price_amount" name="price_amount" inputmode="decimal" placeholder="e.g. 12 or 12.5" required>
+                  </div>
+                  <div class="small" style="margin-top:6px;">Stored as <b>currency/amount/{{ unit }}</b>.</div>
+                </div>
               </div>
-            </div>
 
-            <div style="margin-top:10px;">
-              <label for="notes">Notes</label>
-              <textarea id="notes" name="notes" placeholder="e.g. top shelf, citrus, 25%"></textarea>
-            </div>
+              <div style="margin-top:10px;">
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" placeholder="e.g. top shelf, citrus, 25%"></textarea>
+              </div>
 
-            <div class="btnrow" style="margin-top:10px;">
-              <button class="primary" type="submit">Save</button>
-              <button class="ghost" type="button" onclick="clearForm();">Clear</button>
-            </div>
-          </form>
+              <div class="btnrow" style="margin-top:10px;">
+                <button class="primary" type="submit">Save</button>
+                <button class="ghost" type="button" onclick="clearForm();">Clear</button>
+              </div>
+            </form>
+          </div>
         </div>
 
-        <div style="margin-top:14px;">
+        <div id="sectionEntries" class="viewSection" style="margin-top:14px;">
           <div style="display:flex; align-items:baseline; justify-content: space-between; gap:10px; flex-wrap:wrap;">
             <div style="font-weight:800;">Current menu entries</div>
             <div class="small">Load active offerings, then keep/remove/edit what changed.</div>
@@ -1856,7 +1843,7 @@ PAGE_TMPL = """
           </div>
         </div>
 
-        <div style="margin-top:16px;">
+        <div id="sectionCatalogue" class="viewSection" style="margin-top:16px;">
           <div style="display:flex; align-items:baseline; justify-content: space-between; gap:10px; flex-wrap:wrap;">
             <div style="font-weight:800;">Offerings catalogue</div>
             <div class="small">Active / discontinued · manual lock</div>
@@ -1930,126 +1917,64 @@ PAGE_TMPL = """
     if (s) s.focus();
   }
 
-  const SECTION_SIZE_KEY = 'shop_view_section_sizes_v1';
-  const SECTION_SIZE_DEFAULTS = { add: 290, entries: 260, catalogue: 320 };
-  const SECTION_SIZE_LIMITS = {
-    add: [180, 760],
-    entries: [140, 760],
-    catalogue: [140, 760],
-  };
+  const SECTION_VIEW_KEY = 'shop_view_visible_section_v1';
+  const SECTION_VIEW_VALUES = ['add', 'entries', 'catalogue'];
 
-  function clampSize(val, min, max) {
-    return Math.max(min, Math.min(max, val));
+  function normalizeSectionView(value) {
+    return SECTION_VIEW_VALUES.includes(value) ? value : 'add';
   }
 
-  function parseSize(val, fallback, min, max) {
-    const n = Number.parseInt(String(val || ''), 10);
-    if (Number.isNaN(n)) return fallback;
-    return clampSize(n, min, max);
-  }
-
-  function getSectionElements() {
+  function getSectionViewBlocks() {
     return {
-      add: document.getElementById('addEntryPanel'),
-      entries: document.getElementById('entriesWrap'),
-      catalogue: document.getElementById('catalogueWrap'),
+      add: document.getElementById('sectionAdd'),
+      entries: document.getElementById('sectionEntries'),
+      catalogue: document.getElementById('sectionCatalogue'),
     };
   }
 
-  function getSectionInputs() {
-    return {
-      add: document.getElementById('size_add'),
-      entries: document.getElementById('size_entries'),
-      catalogue: document.getElementById('size_catalogue'),
-    };
+  function getSectionViewRadios() {
+    return Array.from(document.querySelectorAll('input[name="shop_section_view"]'));
   }
 
-  function saveSectionSizes(sizes) {
-    try {
-      localStorage.setItem(SECTION_SIZE_KEY, JSON.stringify(sizes));
-    } catch (_err) {
-      // no-op
+  function setSectionView(value, persist = true) {
+    const view = normalizeSectionView(value);
+    const blocks = getSectionViewBlocks();
+    Object.entries(blocks).forEach(([name, el]) => {
+      if (!el) return;
+      el.classList.toggle('is-hidden', name !== view);
+    });
+
+    getSectionViewRadios().forEach((radio) => {
+      radio.checked = radio.value === view;
+    });
+
+    if (persist) {
+      try {
+        localStorage.setItem(SECTION_VIEW_KEY, view);
+      } catch (_err) {
+        // no-op
+      }
     }
   }
 
-  function loadSectionSizes() {
+  function loadSectionView() {
     try {
-      const raw = localStorage.getItem(SECTION_SIZE_KEY);
-      if (!raw) return { ...SECTION_SIZE_DEFAULTS };
-      const parsed = JSON.parse(raw);
-      return {
-        add: parseSize(parsed.add, SECTION_SIZE_DEFAULTS.add, ...SECTION_SIZE_LIMITS.add),
-        entries: parseSize(parsed.entries, SECTION_SIZE_DEFAULTS.entries, ...SECTION_SIZE_LIMITS.entries),
-        catalogue: parseSize(parsed.catalogue, SECTION_SIZE_DEFAULTS.catalogue, ...SECTION_SIZE_LIMITS.catalogue),
-      };
+      return normalizeSectionView(localStorage.getItem(SECTION_VIEW_KEY));
     } catch (_err) {
-      return { ...SECTION_SIZE_DEFAULTS };
+      return 'add';
     }
   }
 
-  function applySectionSizes(sizes, persist = true) {
-    const elements = getSectionElements();
-    const inputs = getSectionInputs();
-
-    const safe = {
-      add: parseSize(sizes.add, SECTION_SIZE_DEFAULTS.add, ...SECTION_SIZE_LIMITS.add),
-      entries: parseSize(sizes.entries, SECTION_SIZE_DEFAULTS.entries, ...SECTION_SIZE_LIMITS.entries),
-      catalogue: parseSize(sizes.catalogue, SECTION_SIZE_DEFAULTS.catalogue, ...SECTION_SIZE_LIMITS.catalogue),
-    };
-
-    if (elements.add) elements.add.style.height = `${safe.add}px`;
-    if (elements.entries) elements.entries.style.height = `${safe.entries}px`;
-    if (elements.catalogue) elements.catalogue.style.height = `${safe.catalogue}px`;
-
-    if (inputs.add) inputs.add.value = String(safe.add);
-    if (inputs.entries) inputs.entries.value = String(safe.entries);
-    if (inputs.catalogue) inputs.catalogue.value = String(safe.catalogue);
-
-    if (persist) saveSectionSizes(safe);
-  }
-
-  function sizesFromInputs() {
-    const inputs = getSectionInputs();
-    return {
-      add: parseSize(inputs.add ? inputs.add.value : null, SECTION_SIZE_DEFAULTS.add, ...SECTION_SIZE_LIMITS.add),
-      entries: parseSize(inputs.entries ? inputs.entries.value : null, SECTION_SIZE_DEFAULTS.entries, ...SECTION_SIZE_LIMITS.entries),
-      catalogue: parseSize(inputs.catalogue ? inputs.catalogue.value : null, SECTION_SIZE_DEFAULTS.catalogue, ...SECTION_SIZE_LIMITS.catalogue),
-    };
-  }
-
-  function sizesFromPanels() {
-    const elements = getSectionElements();
-    return {
-      add: parseSize(elements.add ? Math.round(elements.add.getBoundingClientRect().height) : null, SECTION_SIZE_DEFAULTS.add, ...SECTION_SIZE_LIMITS.add),
-      entries: parseSize(elements.entries ? Math.round(elements.entries.getBoundingClientRect().height) : null, SECTION_SIZE_DEFAULTS.entries, ...SECTION_SIZE_LIMITS.entries),
-      catalogue: parseSize(elements.catalogue ? Math.round(elements.catalogue.getBoundingClientRect().height) : null, SECTION_SIZE_DEFAULTS.catalogue, ...SECTION_SIZE_LIMITS.catalogue),
-    };
-  }
-
-  function resetSectionSizes() {
-    applySectionSizes({ ...SECTION_SIZE_DEFAULTS }, true);
-  }
-
-  function initSectionSizes() {
-    applySectionSizes(loadSectionSizes(), false);
-
-    const inputs = getSectionInputs();
-    [inputs.add, inputs.entries, inputs.catalogue].forEach((input) => {
-      if (!input) return;
-      input.addEventListener('input', () => {
-        applySectionSizes(sizesFromInputs(), true);
+  function initSectionView() {
+    getSectionViewRadios().forEach((radio) => {
+      radio.addEventListener('change', () => {
+        if (radio.checked) setSectionView(radio.value, true);
       });
     });
-
-    const elements = getSectionElements();
-    [elements.add, elements.entries, elements.catalogue].forEach((el) => {
-      if (!el) return;
-      el.addEventListener('mouseup', () => applySectionSizes(sizesFromPanels(), true));
-      el.addEventListener('touchend', () => applySectionSizes(sizesFromPanels(), true));
-    });
+    setSectionView(loadSectionView(), false);
   }
 
-  initSectionSizes();
+  initSectionView();
 
   function setAllEntryChecks(checked) {
     document.querySelectorAll('.entryCheck').forEach((el) => {

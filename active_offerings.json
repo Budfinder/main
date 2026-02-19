@@ -221,6 +221,23 @@
     "updated_at": "2026-02-11T20:25:27.614060+00:00"
   },
   {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 578,
+    "strain_name": "Amaretto",
+    "strain_name_normalised": "amaretto",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 20.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
+  },
+  {
     "shop_id": 386,
     "shop_key": "cs-voyagers",
     "shop_name": "Voyagers",
@@ -544,6 +561,23 @@
     "updated_at": "2026-02-03T23:15:08.008473+00:00"
   },
   {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 102,
+    "strain_name": "Amnesia Haze",
+    "strain_name_normalised": "amnesia haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
+  },
+  {
     "shop_id": 44,
     "shop_key": "cs-balou",
     "shop_name": "Balou",
@@ -782,6 +816,23 @@
     "updated_at": "2026-02-03T14:20:16.440637+00:00"
   },
   {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 145,
+    "strain_name": "Apple Fritter",
+    "strain_name_normalised": "apple fritter",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "Dutch",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
+  },
+  {
     "shop_id": 105,
     "shop_key": "cs-dampkring",
     "shop_name": "Dampkring",
@@ -865,6 +916,23 @@
     "notes": "Ten Co 5g",
     "last_seen_at_utc": "2026-02-11T20:46:19.523160+00:00",
     "updated_at": "2026-02-11T20:46:19.523160+00:00"
+  },
+  {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 575,
+    "strain_name": "BLUE GELATO 41",
+    "strain_name_normalised": "BLUE GELATO 41",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
   },
   {
     "shop_id": 105,
@@ -984,6 +1052,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-10T23:51:09.218950+00:00",
     "updated_at": "2026-02-10T23:51:09.218950+00:00"
+  },
+  {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 248,
+    "strain_name": "Big Buddha Cheese",
+    "strain_name_normalised": "big buddha cheese",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
   },
   {
     "shop_id": 44,
@@ -3230,6 +3315,23 @@
     "updated_at": "2026-02-04T17:27:22.143310+00:00"
   },
   {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 77,
+    "strain_name": "Gelonade",
+    "strain_name_normalised": "gelonade",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 20.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
+  },
+  {
     "shop_id": 49,
     "shop_key": "cs-basjoe",
     "shop_name": "Basjoe",
@@ -4401,6 +4503,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-09T21:11:31.334479+00:00",
     "updated_at": "2026-02-09T21:11:31.334479+00:00"
+  },
+  {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 5,
+    "strain_name": "Kosher Kush",
+    "strain_name_normalised": "kosher kush",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
   },
   {
     "shop_id": 44,
@@ -5695,6 +5814,23 @@
     "updated_at": "2026-02-10T23:35:56.836500+00:00"
   },
   {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 238,
+    "strain_name": "Oreoz",
+    "strain_name_normalised": "oreoz",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "Dutch",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
+  },
+  {
     "shop_id": 105,
     "shop_key": "cs-dampkring",
     "shop_name": "Dampkring",
@@ -6290,6 +6426,23 @@
     "updated_at": "2026-02-11T19:39:55.192773+00:00"
   },
   {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 581,
+    "strain_name": "Purple Pussy",
+    "strain_name_normalised": "purple pussy",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 20.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
+  },
+  {
     "shop_id": 161,
     "shop_key": "cs-green-place",
     "shop_name": "Green Place",
@@ -6851,6 +7004,23 @@
     "updated_at": "2026-02-04T21:30:42.183535+00:00"
   },
   {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 584,
+    "strain_name": "Sky Walker OG",
+    "strain_name_normalised": "sky walker og",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "Dutch",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
+  },
+  {
     "shop_id": 164,
     "shop_key": "cs-grey-area",
     "shop_name": "Grey Area",
@@ -7070,6 +7240,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-11T19:22:50.482486+00:00",
     "updated_at": "2026-02-11T19:22:50.482486+00:00"
+  },
+  {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 107,
+    "strain_name": "Strawberry Haze",
+    "strain_name_normalised": "strawberry haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
   },
   {
     "shop_id": 111,
@@ -7376,6 +7563,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-10T17:38:31.469404+00:00",
     "updated_at": "2026-02-10T17:38:31.469404+00:00"
+  },
+  {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 39,
+    "strain_name": "Super Lemon Haze",
+    "strain_name_normalised": "super lemon haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
   },
   {
     "shop_id": 131,
@@ -7716,6 +7920,23 @@
     "notes": "Wizard Trees 3.5g",
     "last_seen_at_utc": "2026-02-11T20:46:19.523160+00:00",
     "updated_at": "2026-02-11T20:46:19.523160+00:00"
+  },
+  {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 580,
+    "strain_name": "Tiramisu",
+    "strain_name_normalised": "tiramisu",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 20.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
   },
   {
     "shop_id": 44,
@@ -8160,6 +8381,23 @@
     "updated_at": "2026-02-11T19:22:50.482486+00:00"
   },
   {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 373,
+    "strain_name": "Watermelon Zkittlez",
+    "strain_name_normalised": "watermelon zkittlez",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 20.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
+  },
+  {
     "shop_id": 148,
     "shop_key": "cs-get-down",
     "shop_name": "Get Down To It",
@@ -8413,6 +8651,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-10T22:36:20.680049+00:00",
     "updated_at": "2026-02-10T22:36:20.680049+00:00"
+  },
+  {
+    "shop_id": 42,
+    "shop_key": "cs-balboa-family",
+    "shop_name": "Balboa Family",
+    "shop_city": "Amsterdam",
+    "strain_id": 582,
+    "strain_name": "White Trufflez",
+    "strain_name_normalised": "white trufflez",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 18.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T14:00:07.596226+00:00",
+    "updated_at": "2026-02-19T14:00:07.596226+00:00"
   },
   {
     "shop_id": 74,

@@ -397,7 +397,7 @@
     "name": "Balboa Family",
     "city": "Amsterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-balboa-family.html",
-    "menu_status": "new",
+    "menu_status": "processed",
     "fetched_at_utc": "2026-02-02T23:09:15.528326+00:00",
     "image_url": "https://www.coffeeshopmenus.org/BalboaFamily/Menus/2025/20250911.jpg",
     "menu_sha256": "c3e8d882aa5e88cb674e6281f370345817de3ec7795bacac4a0a3476483fc018",
