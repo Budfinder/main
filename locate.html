@@ -328,6 +328,11 @@
       <option value="cycling">Cycling</option>
     </select><br />
 
+    <div id="csv-switch-wrap" style="display:none; margin-top:8px;">
+      <label for="csv-switch-select">Location CSV:</label>
+      <select id="csv-switch-select" style="width:100%;"></select>
+    </div>
+
     <div id="time-estimate" style="margin-top:8px;">ETA: --</div>
     <div id="distance-info"></div>
     <br />
@@ -418,6 +423,8 @@
     let strainIndexRows = null;      // cached JSON strain index
     let activeOfferingsRows = null;  // cached JSON offerings rows
     let activeStrainNames = [];      // clickable strain list for UI panel
+    let discoveredCsvPaths = [];     // discovered CSV paths in the hosted folder
+    let currentCsvPath = '';         // current CSV path when loaded from URL
 
     function setUploadPanelState(titleText, messageText, allowManualCsv) {
       const panel = document.getElementById('upload-panel');
@@ -1197,6 +1204,66 @@
       return out[0] || null;
     }
 
+    function canonicalCsvPath(pathLike) {
+      const normalised = normaliseDiscoveredCsvPath(pathLike);
+      if (normalised) return ensureLocationsPrefix(normalised);
+      return (pathLike || '').toString().trim();
+    }
+
+    function csvLabelFromPath(pathLike) {
+      const p = canonicalCsvPath(pathLike);
+      if (!p) return '';
+      const parts = p.split('/');
+      return parts[parts.length - 1] || p;
+    }
+
+    function renderCsvSwitchSelect(selectedPathLike) {
+      const wrap = document.getElementById('csv-switch-wrap');
+      const select = document.getElementById('csv-switch-select');
+      if (!wrap || !select) return;
+
+      select.innerHTML = '';
+
+      if (!Array.isArray(discoveredCsvPaths) || discoveredCsvPaths.length <= 1) {
+        wrap.style.display = 'none';
+        return;
+      }
+
+      wrap.style.display = 'block';
+
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.text = 'Select CSV...';
+      placeholder.disabled = true;
+      select.appendChild(placeholder);
+
+      discoveredCsvPaths.forEach(path => {
+        const opt = document.createElement('option');
+        opt.value = path;
+        opt.text = csvLabelFromPath(path);
+        select.appendChild(opt);
+      });
+
+      const selectedPath = canonicalCsvPath(selectedPathLike);
+      if (selectedPath && discoveredCsvPaths.includes(selectedPath)) {
+        select.value = selectedPath;
+      } else if (currentCsvPath && discoveredCsvPaths.includes(currentCsvPath)) {
+        select.value = currentCsvPath;
+      } else {
+        select.value = '';
+      }
+    }
+
+    function setDiscoveredCsvPaths(paths, selectedPathLike) {
+      discoveredCsvPaths = Array.from(new Set(
+        (paths || [])
+          .map(canonicalCsvPath)
+          .filter(p => p && /\.csv$/i.test(p))
+      )).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+      renderCsvSwitchSelect(selectedPathLike);
+    }
+
     function buildCsvPathVariants(pathLike) {
       const raw = (pathLike || '').toString().trim();
       if (!raw) return [];
@@ -1241,7 +1308,7 @@
       return out;
     }
 
-    async function discoverFirstCsvInLocations() {
+    async function discoverCsvPathsInLocations() {
       const jsonCandidates = ['locations/index.json', './locations/index.json', '/locations/index.json'];
       for (const url of jsonCandidates) {
         try {
@@ -1255,8 +1322,10 @@
             .map(normaliseDiscoveredCsvPath)
             .filter(Boolean)
             .map(ensureLocationsPrefix);
-          const first = pickFirstCsvPath(csvPaths);
-          if (first) return first;
+          if (csvPaths.length) {
+            return Array.from(new Set(csvPaths))
+              .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+          }
         } catch (_err) {
           // Try next discovery source.
         }
@@ -1290,14 +1359,16 @@
           const inLocations = csvPaths
             .map(normaliseDiscoveredCsvPath)
             .filter(p => p.toLowerCase().startsWith('locations/'));
-          const first = pickFirstCsvPath(inLocations);
-          if (first) return first;
+          if (inLocations.length) {
+            return Array.from(new Set(inLocations))
+              .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+          }
         } catch (_err) {
           // Try next discovery source.
         }
       }
 
-      return null;
+      return [];
     }
 
     async function parseCsvInput(input, parseOptions) {
@@ -1429,6 +1500,15 @@
     async function loadCsvFromFile(file) {
       const rows = await parseCsvInput(file);
       await applyCsvRows(rows);
+
+      const lowerName = (file && file.name) ? file.name.toLowerCase() : '';
+      const matchedPath = discoveredCsvPaths.find(p => {
+        const lp = p.toLowerCase();
+        return lp === lowerName || lp.endsWith(`/${lowerName}`);
+      }) || '';
+
+      currentCsvPath = matchedPath;
+      renderCsvSwitchSelect(currentCsvPath);
     }
 
     async function loadFirstCsvFromDirectoryHandle(dirHandle) {
@@ -1466,6 +1546,8 @@
         try {
           const rows = await parseCsvInput(candidate, { download: true });
           await applyCsvRows(rows);
+          currentCsvPath = canonicalCsvPath(candidate);
+          renderCsvSwitchSelect(currentCsvPath);
           return;
         } catch (err) {
           const reason = (err && err.message) ? err.message : 'unknown error';
@@ -1486,7 +1568,8 @@
     async function bootstrapInitialCsvLoad() {
       setUploadPanelState('Loading locations CSV', 'Looking for the first CSV in locations/...', false);
 
-      const firstCsv = await discoverFirstCsvInLocations();
+      const csvPaths = await discoverCsvPathsInLocations();
+      const firstCsv = pickFirstCsvPath(csvPaths);
       if (!firstCsv) {
         if (window.location.protocol === 'file:') {
           setUploadPanelState(
@@ -1504,6 +1587,8 @@
         );
         return;
       }
+
+      setDiscoveredCsvPaths(csvPaths, firstCsv);
 
       try {
         await loadCsvFromPath(firstCsv);
@@ -1557,8 +1642,34 @@
     document.getElementById('change-csv-btn').addEventListener('click', () => {
       const menuDropdown = document.getElementById('menu-dropdown');
       if (menuDropdown) menuDropdown.open = false;
+
+      if (discoveredCsvPaths.length > 1) {
+        setControlsVisible(true);
+        const csvSelect = document.getElementById('csv-switch-select');
+        if (csvSelect) csvSelect.focus();
+        return;
+      }
+
       const input = document.getElementById('file-input');
       if (input) input.click();
+    });
+
+    document.getElementById('csv-switch-select').addEventListener('change', async e => {
+      const selectedPath = canonicalCsvPath(e.target.value);
+      if (!selectedPath || selectedPath === currentCsvPath) return;
+
+      setUploadPanelState('Loading locations CSV', `Loading ${csvLabelFromPath(selectedPath)}...`, false);
+      try {
+        await loadCsvFromPath(selectedPath);
+      } catch (err) {
+        const reason = err && err.message ? err.message : 'unknown error';
+        setUploadPanelState(
+          'Could not load selected indexed CSV',
+          `Failed to load ${selectedPath} (${reason}).`,
+          true
+        );
+        renderCsvSwitchSelect(currentCsvPath);
+      }
     });
 
     document.getElementById('file-input').addEventListener('change', async e => {
