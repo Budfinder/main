@@ -243,6 +243,42 @@
       color: #666;
     }
 
+    .popup-strains-box {
+      margin: 8px 0;
+      border: 1px solid #e4e4e4;
+      border-radius: 6px;
+      background: #fafafa;
+      padding: 6px;
+      max-height: 170px;
+      overflow-y: auto;
+    }
+
+    .popup-strains-count {
+      margin: 0 0 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .popup-strains-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12px;
+      line-height: 1.35;
+      color: #222;
+    }
+
+    .popup-strains-list li {
+      margin: 2px 0;
+    }
+
+    .popup-strains-status,
+    .popup-strains-empty {
+      margin: 0;
+      font-size: 12px;
+      color: #555;
+    }
+
     @media (max-width: 767px) {
       #strain-list-panel {
         top: 52px;
@@ -423,6 +459,10 @@
     let strainIndexRows = null;      // cached JSON strain index
     let activeOfferingsRows = null;  // cached JSON offerings rows
     let activeStrainNames = [];      // clickable strain list for UI panel
+    let popupStrainsByShopId = new Map();      // shop_id -> [strain names]
+    let popupStrainsByNameCity = new Map();    // "name|city" -> [strain names]
+    let popupStrainIndexReady = false;
+    let popupStrainIndexPromise = null;
     let discoveredCsvPaths = [];     // discovered CSV paths in the hosted folder
     let currentCsvPath = '';         // current CSV path when loaded from URL
 
@@ -555,6 +595,13 @@
       return (s || '').toString()
         .replace(/&/g, '&amp;')
         .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function escapeHtml(s) {
+      return (s || '').toString()
+        .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
     }
@@ -914,6 +961,145 @@
         if (!byKey.has(key)) byKey.set(key, n);
       });
       return Array.from(byKey.values()).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    }
+
+    function pushStrainIntoIndex(indexMap, key, strainName) {
+      const k = (key || '').toString().trim();
+      const n = (strainName || '').toString().trim();
+      if (!k || !n) return;
+      if (!indexMap.has(k)) indexMap.set(k, []);
+      indexMap.get(k).push(n);
+    }
+
+    function finalisePopupStrainMap(indexMap) {
+      const out = new Map();
+      indexMap.forEach((names, key) => {
+        const deduped = dedupeAndSortStrainNames(names);
+        if (deduped.length) out.set(key, deduped);
+      });
+      return out;
+    }
+
+    async function ensurePopupStrainIndex() {
+      if (popupStrainIndexReady) return true;
+      if (popupStrainIndexPromise) return popupStrainIndexPromise;
+
+      popupStrainIndexPromise = (async () => {
+        const byIdRaw = new Map();
+        const byNameCityRaw = new Map();
+        let sawRows = false;
+
+        try {
+          const rows = await loadStrainIndexRows();
+          if (rows.length) sawRows = true;
+          rows.forEach(r => {
+            const strainName = ((r && (r.strain_name_display || r.strain_name_normalised)) || '').toString().trim();
+            if (!strainName) return;
+            const shops = (r && Array.isArray(r.shops)) ? r.shops : [];
+            shops.forEach(s => {
+              const id = parseInt(s && s.shop_id, 10);
+              if (Number.isFinite(id)) {
+                pushStrainIntoIndex(byIdRaw, String(id), strainName);
+              }
+              const key = normaliseNameCityKey(s && s.shop_name, s && s.shop_city);
+              if (key !== '|') {
+                pushStrainIntoIndex(byNameCityRaw, key, strainName);
+              }
+            });
+          });
+        } catch (_err) {
+          // Optional source; keep going.
+        }
+
+        try {
+          const rows = await loadActiveOfferingsRows();
+          if (rows.length) sawRows = true;
+          rows.forEach(r => {
+            const strainName = ((r && (r.strain_name || r.strain_name_normalised)) || '').toString().trim();
+            if (!strainName) return;
+            const id = parseInt(r && r.shop_id, 10);
+            if (Number.isFinite(id)) {
+              pushStrainIntoIndex(byIdRaw, String(id), strainName);
+            }
+            const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
+            if (key !== '|') {
+              pushStrainIntoIndex(byNameCityRaw, key, strainName);
+            }
+          });
+        } catch (_err) {
+          // Optional source; keep going.
+        }
+
+        popupStrainsByShopId = finalisePopupStrainMap(byIdRaw);
+        popupStrainsByNameCity = finalisePopupStrainMap(byNameCityRaw);
+        popupStrainIndexReady = true;
+
+        return sawRows || popupStrainsByShopId.size > 0 || popupStrainsByNameCity.size > 0;
+      })()
+        .finally(() => {
+          popupStrainIndexPromise = null;
+        });
+
+      return popupStrainIndexPromise;
+    }
+
+    function isCoffeeShopLocation(loc) {
+      if (!loc || typeof loc !== 'object') return false;
+      if (typeof loc.Coffeeshop === 'boolean') return loc.Coffeeshop;
+      const coffeeKey = Object.keys(loc).find(k => normaliseText(k) === 'coffeeshop');
+      return coffeeKey ? !!loc[coffeeKey] : false;
+    }
+
+    function popupStrainContainerId(index) {
+      return `popup-strains-${index}`;
+    }
+
+    function getPopupStrainsForLocation(loc) {
+      if (!loc) return [];
+
+      if (loc.db_shop_id) {
+        const byId = popupStrainsByShopId.get(String(loc.db_shop_id));
+        if (Array.isArray(byId) && byId.length) return byId;
+      }
+
+      const key = normaliseNameCityKey(loc.name, loc.city || '');
+      const byNameCity = popupStrainsByNameCity.get(key);
+      if (Array.isArray(byNameCity) && byNameCity.length) return byNameCity;
+
+      return [];
+    }
+
+    async function refreshPopupStrainsForLocation(index) {
+      const loc = locations[index];
+      if (!loc || !isCoffeeShopLocation(loc)) return;
+
+      const containerId = popupStrainContainerId(index);
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      container.innerHTML = '<p class="popup-strains-status">Loading strains...</p>';
+
+      if (!loc.db_shop_id) {
+        const dbOk = await ensureDbIntegration();
+        if (dbOk) bindDbShopIdToLocation(loc);
+      }
+
+      await ensurePopupStrainIndex();
+
+      const liveContainer = document.getElementById(containerId);
+      if (!liveContainer) return;
+
+      const strains = getPopupStrainsForLocation(loc);
+      if (!strains.length) {
+        liveContainer.innerHTML = '<p class="popup-strains-empty">No active strains found for this shop.</p>';
+        return;
+      }
+
+      const countText = `${strains.length} strain${strains.length === 1 ? '' : 's'} available`;
+      const itemsHtml = strains.map(name => `<li>${escapeHtml(name)}</li>`).join('');
+      liveContainer.innerHTML =
+        `<p class="popup-strains-count">${countText}</p>` +
+        `<ul class="popup-strains-list">${itemsHtml}</ul>`;
     }
 
     async function fetchActiveStrainNames() {
@@ -1707,9 +1893,28 @@
       locations.forEach((loc, i) => {
         // NEW: choose icon, preferring logo if available
         const icon = chooseMarkerIcon(loc);
+        const isCoffeeShop = isCoffeeShopLocation(loc);
 
         // Popup logo supports multiple fallback paths.
         const logoHtml = popupLogoHtml(loc);
+
+        const websitePreviewHtml = isCoffeeShop
+          ? ''
+          : (
+              `<a href="${loc.website}" target="_blank">` +
+                `<img src="https://image.thum.io/get/width/300/${loc.website}" ` +
+                     `alt="Thumbnail of ${loc.name}" ` +
+                     `style="width:100%;height:auto;margin:8px 0;">` +
+              `</a><br>`
+            );
+
+        const popupStrainsHtml = isCoffeeShop
+          ? (
+              `<div class="popup-strains-box" id="${popupStrainContainerId(i)}">` +
+                `<p class="popup-strains-status">Loading strains...</p>` +
+              `</div>`
+            )
+          : '';
 
         // If this CSV shop maps to a DB shop, show quick links.
         const dbMenuLinks = (dbRouteLinksEnabled && loc.db_shop_id)
@@ -1724,11 +1929,8 @@
           .bindPopup(
             `<strong>${loc.name}</strong><br>` +
             logoHtml +
-            `<a href="${loc.website}" target="_blank">` +
-              `<img src="https://image.thum.io/get/width/300/${loc.website}" ` +
-                   `alt="Thumbnail of ${loc.name}" ` +
-                   `style="width:100%;height:auto;margin:8px 0;">` +
-            `</a><br>` +
+            websitePreviewHtml +
+            popupStrainsHtml +
             dbMenuLinks +
             `<a href="${loc.website}" target="_blank">Website</a><br>` +
             `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
@@ -1742,6 +1944,11 @@
           )
           .on('click', function () {
             this.openPopup();
+          })
+          .on('popupopen', () => {
+            if (isCoffeeShop) {
+              refreshPopupStrainsForLocation(i);
+            }
           });
 
         markers[i] = marker;
