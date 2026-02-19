@@ -179,6 +179,12 @@
     "city": "Amsterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-balou.html"
   },
+  "cs-barneys": {
+    "shop_id": 2191,
+    "name": "Barney's",
+    "city": "Amsterdam",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-barneys.html"
+  },
   "cs-barraka": {
     "shop_id": 48,
     "name": "Barraka",
