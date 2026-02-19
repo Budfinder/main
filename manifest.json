@@ -1,0 +1,22 @@
+{
+  "exported_at_utc": "2026-02-19T13:45:33.787934+00:00",
+  "counts": {
+    "shops": 438,
+    "strains": 386,
+    "active_offerings": 537,
+    "menu_entries": 396,
+    "strain_index": 376
+  },
+  "files": [
+    "shops.json",
+    "shop_lookup.json",
+    "strains.json",
+    "active_offerings.json",
+    "menu_entries.json",
+    "strain_index.json"
+  ],
+  "linking": {
+    "shop_key_note": "Use shops.shop_key as the stable CSV link key.",
+    "recommended_csv_column": "shop_key"
+  }
+}

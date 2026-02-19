@@ -28,6 +28,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 204,
         "shop_key": "cs-kadinsky3",
         "shop_name": "Kadinsky 3",
@@ -43,6 +49,30 @@
         "shop_id": 112,
         "shop_key": "cs-dna",
         "shop_name": "DNA",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "AMNESIA 1",
+    "strain_name_display": "AMNESIA 1",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "AMNESIA 2",
+    "strain_name_display": "AMNESIA 2",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       }
     ]
@@ -97,6 +127,18 @@
         "shop_id": 204,
         "shop_key": "cs-kadinsky3",
         "shop_name": "Kadinsky 3",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "DIAMOND G-13 HAZE",
+    "strain_name_display": "DIAMOND G-13 HAZE",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -514,6 +556,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 429,
         "shop_key": "cs-swedasnoopdoggstore",
         "shop_name": "SWED a Snoop Dogg Store",
@@ -541,6 +589,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "amsterdam pound cake",
+    "strain_name_display": "Amsterdam Pound Cake",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -658,6 +718,12 @@
     "strain_name_display": "Berry White",
     "shops": [
       {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 4,
         "shop_key": "cs-katsu",
         "shop_name": "Katsu",
@@ -732,6 +798,18 @@
     ]
   },
   {
+    "strain_name_normalised": "bizcochos",
+    "strain_name_display": "Bizcochos",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "black light",
     "strain_name_display": "Black Light",
     "shops": [
@@ -739,6 +817,12 @@
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -823,6 +907,12 @@
         "shop_id": 204,
         "shop_key": "cs-kadinsky3",
         "shop_name": "Kadinsky 3",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1008,6 +1098,18 @@
     ]
   },
   {
+    "strain_name_normalised": "blueberry kush",
+    "strain_name_display": "Blueberry Kush",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "blueberry zkittlez",
     "strain_name_display": "Blueberry Zkittlez",
     "shops": [
@@ -1081,6 +1183,18 @@
         "shop_id": 429,
         "shop_key": "cs-swedasnoopdoggstore",
         "shop_name": "SWED a Snoop Dogg Store",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "butter cookie",
+    "strain_name_display": "Butter Cookie",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1452,6 +1566,18 @@
     ]
   },
   {
+    "strain_name_normalised": "crunch berries",
+    "strain_name_display": "Crunch Berries",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "cry baby",
     "strain_name_display": "Cry Baby",
     "shops": [
@@ -1674,6 +1800,18 @@
     ]
   },
   {
+    "strain_name_normalised": "electric cherry",
+    "strain_name_display": "Electric Cherry",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "enemy of the state",
     "strain_name_display": "Enemy of the State",
     "shops": [
@@ -1711,6 +1849,12 @@
         "shop_id": 164,
         "shop_key": "cs-grey-area",
         "shop_name": "Grey Area",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1765,6 +1909,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "fruity jack",
+    "strain_name_display": "Fruity Jack",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1825,6 +1981,18 @@
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "gaz og",
+    "strain_name_display": "Gaz OG",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1992,6 +2160,18 @@
     ]
   },
   {
+    "strain_name_normalised": "gorilla cheese",
+    "strain_name_display": "Gorilla Cheese",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "gorilla cookies",
     "strain_name_display": "Gorilla Cookies",
     "shops": [
@@ -2132,6 +2312,12 @@
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -2194,6 +2380,12 @@
     "strain_name_display": "Hawian Haze",
     "shops": [
       {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 204,
         "shop_key": "cs-kadinsky3",
         "shop_name": "Kadinsky 3",
@@ -2226,6 +2418,18 @@
     ]
   },
   {
+    "strain_name_normalised": "headbanger og",
+    "strain_name_display": "Headbanger OG",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "highlighters",
     "strain_name_display": "Highlighters",
     "shops": [
@@ -2250,6 +2454,18 @@
     ]
   },
   {
+    "strain_name_normalised": "ice",
+    "strain_name_display": "Ice",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "ice cream",
     "strain_name_display": "Ice Cream",
     "shops": [
@@ -2269,6 +2485,12 @@
         "shop_id": 12,
         "shop_key": "cs-abraxas",
         "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       },
       {
@@ -2424,6 +2646,18 @@
     ]
   },
   {
+    "strain_name_normalised": "k-hole",
+    "strain_name_display": "K-Hole",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "kabosu",
     "strain_name_display": "Kabosu",
     "shops": [
@@ -2431,6 +2665,18 @@
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "kabosu zozi",
+    "strain_name_display": "Kabosu Zozi",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2479,6 +2725,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "kookiez",
+    "strain_name_display": "Kookiez",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2725,6 +2983,12 @@
         "shop_id": 201,
         "shop_key": "cs-kade",
         "shop_name": "De Kade",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       },
       {
@@ -3356,6 +3620,12 @@
         "shop_key": "cs-katsu",
         "shop_name": "Katsu",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -3451,6 +3721,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "power plant",
+    "strain_name_display": "Power Plant",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3654,6 +3936,18 @@
     ]
   },
   {
+    "strain_name_normalised": "rainbow warrior",
+    "strain_name_display": "Rainbow Warrior",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "raspberry waffles",
     "strain_name_display": "Raspberry Waffles",
     "shops": [
@@ -3690,6 +3984,18 @@
     ]
   },
   {
+    "strain_name_normalised": "rollex og",
+    "strain_name_display": "Rollex OG",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "runtz",
     "strain_name_display": "Runtz",
     "shops": [
@@ -3709,6 +4015,18 @@
         "shop_id": 44,
         "shop_key": "cs-balou",
         "shop_name": "Balou",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "secret weapon",
+    "strain_name_display": "Secret Weapon",
+    "shops": [
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4012,6 +4330,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 204,
         "shop_key": "cs-kadinsky3",
         "shop_name": "Kadinsky 3",
@@ -4100,6 +4424,12 @@
         "shop_key": "cs-grey-area",
         "shop_name": "Grey Area",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -4156,6 +4486,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 370,
         "shop_key": "cs-terps-army-2",
         "shop_name": "Terps Army 2",
@@ -4183,6 +4519,12 @@
         "shop_id": 201,
         "shop_key": "cs-kade",
         "shop_name": "De Kade",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
         "shop_city": "Amsterdam"
       },
       {
@@ -4261,6 +4603,12 @@
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4392,6 +4740,18 @@
     ]
   },
   {
+    "strain_name_normalised": "tropical zangria",
+    "strain_name_display": "Tropical Zangria",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "tropicana",
     "strain_name_display": "Tropicana",
     "shops": [
@@ -4507,6 +4867,18 @@
         "shop_id": 359,
         "shop_key": "cs-stud",
         "shop_name": "Stud",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "verzace",
+    "strain_name_display": "Verzace",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4768,6 +5140,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 202,
+        "shop_key": "cs-kadinsky",
+        "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 359,
         "shop_key": "cs-stud",
         "shop_name": "Stud",
@@ -4873,6 +5251,18 @@
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "z-lish",
+    "strain_name_display": "Z-Lish",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5059,6 +5449,18 @@
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "zprite",
+    "strain_name_display": "Zprite",
+    "shops": [
+      {
+        "shop_id": 264,
+        "shop_key": "cs-old-church-2",
+        "shop_name": "Old Church 2",
         "shop_city": "Amsterdam"
       }
     ]
