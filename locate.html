@@ -364,7 +364,6 @@
       <div class="menu-dropdown-body">
         <button id="toggle-controls" type="button">Show controls</button>
         <button id="toggle-directions" type="button">Show directions</button>
-        <button id="toggle-strain-list" type="button">Show strains</button>
       </div>
     </details>
   </div>
@@ -394,6 +393,20 @@
     <!-- Category filters as tick boxes -->
     <div id="category-filters">
       <!-- Checkboxes injected here by JS -->
+    </div>
+
+    <div style="margin-top:8px;">
+      <button id="toggle-strain-list" type="button">Show strains</button>
+    </div>
+
+    <div style="margin-top:8px;">
+      <label for="strain-filter">Strain filter (database)</label>
+      <input id="strain-filter" type="text" placeholder="e.g. amnesia haze" style="width:100%;">
+      <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
+        <button id="apply-strain-btn" type="button">Apply strain filter</button>
+        <button id="clear-strain-btn" type="button">Clear strain filter</button>
+      </div>
+      <div id="strain-status" style="margin-top:6px; font-size:12px; color:#444;">Strain filter: off</div>
     </div>
 
     <button id="nearest-btn">Nearest</button><br />
