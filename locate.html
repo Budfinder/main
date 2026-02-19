@@ -1149,14 +1149,36 @@
     function normaliseDiscoveredCsvPath(pathLike) {
       const raw = (pathLike || '').toString().trim();
       if (!raw) return '';
-      try {
-        const u = new URL(raw, window.location.href);
-        const p = (u.pathname || '').replace(/^\/+/, '');
-        return /\.csv$/i.test(p) ? p : '';
-      } catch (_err) {
-        const p = raw.replace(/^\/+/, '');
-        return /\.csv$/i.test(p) ? p : '';
+
+      let pathPart = raw;
+      const isAbsoluteUrl = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw);
+      if (isAbsoluteUrl) {
+        try {
+          pathPart = (new URL(raw)).pathname || '';
+        } catch (_err) {
+          pathPart = raw;
+        }
       }
+
+      // Normalize separators and remove query/hash fragments.
+      let p = pathPart
+        .replace(/\\/g, '/')
+        .split('#')[0]
+        .split('?')[0]
+        .trim()
+        .replace(/^\.\/+/, '')
+        .replace(/^\/+/, '');
+
+      if (!p || !/\.csv$/i.test(p)) return '';
+
+      // If the path includes a locations/ segment anywhere, keep only from there.
+      const lower = p.toLowerCase();
+      const idx = lower.lastIndexOf('locations/');
+      if (idx >= 0) {
+        p = p.slice(idx);
+      }
+
+      return p;
     }
 
     function ensureLocationsPrefix(pathLike) {
