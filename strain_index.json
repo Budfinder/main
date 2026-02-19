@@ -1,5 +1,17 @@
 [
   {
+    "strain_name_normalised": "24K",
+    "strain_name_display": "24K",
+    "shops": [
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "420 HAZE",
     "strain_name_display": "420 HAZE",
     "shops": [
@@ -39,6 +51,18 @@
     "strain_name_normalised": "AK-47",
     "strain_name_display": "AK-47",
     "shops": [
+      {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 49,
         "shop_key": "cs-basjoe",
@@ -250,6 +274,18 @@
     "strain_name_display": "G13 HAZE",
     "shops": [
       {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 277,
         "shop_key": "cs-paradox",
         "shop_name": "Paradox",
@@ -279,6 +315,12 @@
     "strain_name_normalised": "GELATO 41",
     "strain_name_display": "GELATO 41",
     "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
@@ -352,6 +394,12 @@
     "strain_name_display": "RS-11",
     "shops": [
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 359,
         "shop_key": "cs-stud",
         "shop_name": "Stud",
@@ -363,6 +411,12 @@
     "strain_name_normalised": "S5 HAZE",
     "strain_name_display": "S5 HAZE",
     "shops": [
+      {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 359,
         "shop_key": "cs-stud",
@@ -598,6 +652,30 @@
         "shop_city": "Alkmaar"
       },
       {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 41,
         "shop_key": "cs-bagheera",
         "shop_name": "Bagheera",
@@ -781,6 +859,18 @@
         "shop_id": 44,
         "shop_key": "cs-balou",
         "shop_name": "Balou",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "banana cake",
+    "strain_name_display": "Banana Cake",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1084,6 +1174,18 @@
     "strain_name_display": "Blue Cheese",
     "shops": [
       {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
         "shop_name": "Barney's",
@@ -1099,6 +1201,30 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "blue dream",
+    "strain_name_display": "Blue Dream",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "blue gelato",
+    "strain_name_display": "Blue Gelato",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1330,6 +1456,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
@@ -1393,6 +1525,18 @@
         "shop_id": 202,
         "shop_key": "cs-kadinsky",
         "shop_name": "Kadinsky",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "cake crushers",
+    "strain_name_display": "Cake Crushers",
+    "shops": [
+      {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1662,6 +1806,18 @@
     ]
   },
   {
+    "strain_name_normalised": "cherry cosmo",
+    "strain_name_display": "Cherry Cosmo",
+    "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "cherry gar see ya",
     "strain_name_display": "Cherry Gar See Ya",
     "shops": [
@@ -1689,6 +1845,12 @@
     "strain_name_normalised": "cherry poppers",
     "strain_name_display": "Cherry Poppers",
     "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 175,
         "shop_key": "cs-hashtag",
@@ -1980,6 +2142,18 @@
     ]
   },
   {
+    "strain_name_normalised": "donkey butter",
+    "strain_name_display": "Donkey Butter",
+    "shops": [
+      {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "dosidos",
     "strain_name_display": "Dosidos",
     "shops": [
@@ -2152,6 +2326,12 @@
     "strain_name_display": "Exodus Cheese",
     "shops": [
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 164,
         "shop_key": "cs-grey-area",
         "shop_name": "Grey Area",
@@ -2314,6 +2494,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
@@ -2329,6 +2515,18 @@
         "shop_id": 363,
         "shop_key": "cs-supermarkt",
         "shop_name": "de Supermarkt",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "gelato candy",
+    "strain_name_display": "Gelato Candy",
+    "shops": [
+      {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2434,9 +2632,27 @@
     "strain_name_display": "Girl Scout Cookies",
     "shops": [
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 112,
         "shop_key": "cs-dna",
         "shop_name": "DNA",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "godfather",
+    "strain_name_display": "Godfather",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2449,6 +2665,18 @@
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "goofiez",
+    "strain_name_display": "Goofiez",
+    "shops": [
+      {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2494,6 +2722,12 @@
     "strain_name_display": "Gorilla Glue",
     "shops": [
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
@@ -2509,6 +2743,18 @@
         "shop_id": 19,
         "shop_key": "cs-1e-hulp",
         "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "grand daddy purple",
+    "strain_name_display": "Grand Daddy Purple",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2674,6 +2920,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 359,
         "shop_key": "cs-stud",
         "shop_name": "Stud",
@@ -2707,6 +2959,18 @@
         "shop_id": 175,
         "shop_key": "cs-hashtag",
         "shop_name": "Hashtag",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "haze",
+    "strain_name_display": "Haze",
+    "shops": [
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2824,6 +3088,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 202,
         "shop_key": "cs-kadinsky",
         "shop_name": "Kadinsky",
@@ -2851,6 +3121,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "insane og",
+    "strain_name_display": "Insane OG",
+    "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2920,6 +3202,12 @@
     "strain_name_display": "Jealousy",
     "shops": [
       {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 164,
         "shop_key": "cs-grey-area",
         "shop_name": "Grey Area",
@@ -2959,6 +3247,18 @@
         "shop_id": 182,
         "shop_key": "cs-hit2",
         "shop_name": "The Hit",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "jungle haze",
+    "strain_name_display": "Jungle Haze",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3079,6 +3379,18 @@
         "shop_id": 264,
         "shop_key": "cs-old-church-2",
         "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "kosher",
+    "strain_name_display": "Kosher",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3228,6 +3540,18 @@
     ]
   },
   {
+    "strain_name_normalised": "lemon bars",
+    "strain_name_display": "Lemon Bars",
+    "shops": [
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "lemon bean",
     "strain_name_display": "Lemon Bean",
     "shops": [
@@ -3286,6 +3610,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 44,
         "shop_key": "cs-balou",
         "shop_name": "Balou",
@@ -3340,9 +3670,21 @@
         "shop_city": "Alkmaar"
       },
       {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 12,
         "shop_key": "cs-abraxas",
         "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
         "shop_city": "Amsterdam"
       },
       {
@@ -3406,6 +3748,12 @@
     "strain_name_display": "LFG",
     "shops": [
       {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
         "shop_name": "Barney's",
@@ -3417,6 +3765,12 @@
     "strain_name_normalised": "liberty haze",
     "strain_name_display": "Liberty Haze",
     "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
@@ -3664,6 +4018,12 @@
     "strain_name_display": "Mochi",
     "shops": [
       {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
@@ -3679,6 +4039,12 @@
         "shop_id": 19,
         "shop_key": "cs-1e-hulp",
         "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       },
       {
@@ -3838,6 +4204,12 @@
     "strain_name_display": "OG Kush",
     "shops": [
       {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 201,
         "shop_key": "cs-kade",
         "shop_name": "De Kade",
@@ -3958,6 +4330,12 @@
     "strain_name_display": "Oreoz",
     "shops": [
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 42,
         "shop_key": "cs-balboa-family",
         "shop_name": "Balboa Family",
@@ -4059,6 +4437,12 @@
     "strain_name_normalised": "papaya frosting",
     "strain_name_display": "Papaya Frosting",
     "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
@@ -4260,6 +4644,18 @@
     ]
   },
   {
+    "strain_name_normalised": "pp white widow",
+    "strain_name_display": "PP White Widow",
+    "shops": [
+      {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "purple",
     "strain_name_display": "Purple",
     "shops": [
@@ -4396,6 +4792,12 @@
     "strain_name_display": "Quantum Kush",
     "shops": [
       {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
         "shop_name": "Barney's",
@@ -4419,6 +4821,12 @@
     "strain_name_normalised": "rainbow runtz",
     "strain_name_display": "Rainbow Runtz",
     "shops": [
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 44,
         "shop_key": "cs-balou",
@@ -4494,9 +4902,27 @@
     ]
   },
   {
+    "strain_name_normalised": "root bear",
+    "strain_name_display": "Root Bear",
+    "shops": [
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "runtz",
     "strain_name_display": "Runtz",
     "shops": [
+      {
+        "shop_id": 25,
+        "shop_key": "cs-96",
+        "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 4,
         "shop_key": "cs-katsu",
@@ -4690,6 +5116,12 @@
     "strain_name_display": "Sky Walker OG",
     "shops": [
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 42,
         "shop_key": "cs-balboa-family",
         "shop_name": "Balboa Family",
@@ -4797,6 +5229,12 @@
     "strain_name_normalised": "sour strawberry",
     "strain_name_display": "Sour Strawberry",
     "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
@@ -5098,6 +5536,12 @@
     "strain_name_display": "Super Silver Haze",
     "shops": [
       {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 44,
         "shop_key": "cs-balou",
         "shop_name": "Balou",
@@ -5148,6 +5592,18 @@
     ]
   },
   {
+    "strain_name_normalised": "super sonic",
+    "strain_name_display": "Super Sonic",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "sweets",
     "strain_name_display": "Sweets",
     "shops": [
@@ -5155,6 +5611,18 @@
         "shop_id": 164,
         "shop_key": "cs-grey-area",
         "shop_name": "Grey Area",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "tangerine",
+    "strain_name_display": "TANGERINE",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5482,6 +5950,18 @@
     "strain_name_display": "Uncle Snoop",
     "shops": [
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
         "shop_name": "Barney's",
@@ -5610,6 +6090,18 @@
     ]
   },
   {
+    "strain_name_normalised": "watermelon",
+    "strain_name_display": "Watermelon",
+    "shops": [
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "watermelon zkittlez",
     "strain_name_display": "Watermelon Zkittlez",
     "shops": [
@@ -5647,6 +6139,18 @@
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "wedding cake",
+    "strain_name_display": "Wedding Cake",
+    "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5827,6 +6331,18 @@
         "shop_id": 23,
         "shop_key": "cs-7thheaven",
         "shop_name": "7th Heaven",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 38,
+        "shop_key": "cs-atlas-ams",
+        "shop_name": "Atlas",
         "shop_city": "Amsterdam"
       },
       {
@@ -6046,6 +6562,12 @@
     "strain_name_display": "Zheetos",
     "shops": [
       {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
@@ -6057,6 +6579,12 @@
     "strain_name_normalised": "zillions",
     "strain_name_display": "Zillions",
     "shops": [
+      {
+        "shop_id": 32,
+        "shop_key": "cs-amnesia",
+        "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 2191,
         "shop_key": "cs-barneys",
@@ -6121,6 +6649,12 @@
         "shop_id": 12,
         "shop_key": "cs-abraxas",
         "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 29,
+        "shop_key": "cs-aktama2",
+        "shop_name": "Aktama 2",
         "shop_city": "Amsterdam"
       },
       {
