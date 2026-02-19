@@ -1660,16 +1660,22 @@
       const destinationSelect = document.getElementById('destination-select');
       if (destinationSelect) {
         destinationSelect.onchange = () => {
+          const destIndex = getSelectedDestinationIndex();
+          if (destIndex === null) {
+            clearRouteUi();
+            updateDistanceInfo();
+            return;
+          }
+
           if (lastPosition) {
             findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
 
-            const destIndex = destinationSelect.value;
             const destCoords = locations[destIndex].coords;
             map.panTo(destCoords);
             markers[destIndex].openPopup();
             markers[destIndex].bringToFront();
-            updateDistanceInfo();
           }
+          updateDistanceInfo();
         };
       }
 
@@ -1691,14 +1697,19 @@
             // Only update if moved a reasonable distance
             if (!lastPosition || haversineDistance(lastPosition, np) > 10) {
               lastPosition = np;
-              findRoute(p);
 
-              // On first route, focus initial destination marker
-              const initialIndex = document.getElementById('destination-select').value;
-              const initialCoords = locations[initialIndex].coords;
-              map.panTo(initialCoords);
-              markers[initialIndex].openPopup();
-              markers[initialIndex].bringToFront();
+              const initialIndex = getSelectedDestinationIndex();
+              if (initialIndex !== null) {
+                findRoute(p);
+
+                // On first route, focus initial destination marker
+                const initialCoords = locations[initialIndex].coords;
+                map.panTo(initialCoords);
+                markers[initialIndex].openPopup();
+                markers[initialIndex].bringToFront();
+              } else {
+                clearRouteUi();
+              }
               updateDestinationDropdown();
               updateDistanceInfo();
             }
@@ -1741,9 +1752,40 @@
      * Draw a route from user position to selected destination,
      * and populate ETA + text directions.
      */
+    function getSelectedDestinationIndex() {
+      const sel = document.getElementById('destination-select');
+      if (!sel) return null;
+      const i = parseInt(sel.value, 10);
+      if (isNaN(i) || i < 0 || i >= locations.length) {
+        return null;
+      }
+      return i;
+    }
+
+    function clearRouteUi() {
+      if (routingControl && map) {
+        try {
+          map.removeControl(routingControl);
+        } catch (_err) {
+          // Ignore if already removed.
+        }
+      }
+      routingControl = null;
+
+      const eta = document.getElementById('time-estimate');
+      if (eta) eta.textContent = 'ETA: --';
+
+      const ins = document.getElementById('instructions');
+      if (ins) ins.innerHTML = '';
+    }
+
     function findRoute(position) {
       const userCoords = [position.coords.latitude, position.coords.longitude];
-      const di = document.getElementById('destination-select').value;
+      const di = getSelectedDestinationIndex();
+      if (di === null) {
+        clearRouteUi();
+        return;
+      }
       const destCoords = locations[di].coords;
 
       if (routingControl) map.removeControl(routingControl);
@@ -2008,6 +2050,7 @@
      */
     function updateDestinationDropdown() {
       const destSelect = document.getElementById('destination-select');
+      const previousSelection = getSelectedDestinationIndex();
       destSelect.innerHTML = '';
 
       const items = locations
@@ -2031,12 +2074,28 @@
         return a.name.localeCompare(b.name);
       });
 
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.text = items.length ? 'Select a destination...' : 'No destinations for current filters';
+      placeholder.disabled = true;
+      placeholder.selected = true;
+      destSelect.appendChild(placeholder);
+
       items.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.index;
         opt.text = item.name + (item.isFav ? ' ★' : '');
         destSelect.appendChild(opt);
       });
+
+      const canRestoreSelection = previousSelection !== null &&
+        items.some(item => item.index === previousSelection);
+      if (canRestoreSelection) {
+        destSelect.value = String(previousSelection);
+      } else {
+        destSelect.value = '';
+        clearRouteUi();
+      }
 
       updateDistanceInfo();
     }
@@ -2045,11 +2104,10 @@
      * Update distance label for currently selected destination.
      */
     function updateDistanceInfo() {
-      const sel = document.getElementById('destination-select');
-      const i = parseInt(sel.value);
+      const i = getSelectedDestinationIndex();
       const distanceDiv = document.getElementById('distance-info');
 
-      if (lastPosition && !isNaN(i)) {
+      if (lastPosition && i !== null) {
         const distText = (haversineDistance(lastPosition, locations[i].coords) / 1000).toFixed(2) + ' km';
         distanceDiv.textContent = 'Distance: ' + distText;
       } else if (distanceDiv) {
