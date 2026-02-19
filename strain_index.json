@@ -222,6 +222,18 @@
     ]
   },
   {
+    "strain_name_normalised": "LC 11",
+    "strain_name_display": "LC 11",
+    "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "ORIGINAL G13",
     "strain_name_display": "ORIGINAL G13",
     "shops": [
@@ -568,12 +580,6 @@
     "strain_name_display": "Apples and Bananas",
     "shops": [
       {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 201,
         "shop_key": "cs-kade",
         "shop_name": "De Kade",
@@ -631,6 +637,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "banana runtz",
+    "strain_name_display": "Banana Runtz",
+    "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1140,6 +1158,18 @@
     ]
   },
   {
+    "strain_name_normalised": "candy fumez",
+    "strain_name_display": "Candy Fumez",
+    "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "candy land",
     "strain_name_display": "Candy Land",
     "shops": [
@@ -1608,6 +1638,18 @@
     ]
   },
   {
+    "strain_name_normalised": "durban berry",
+    "strain_name_display": "Durban Berry",
+    "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "el azul",
     "strain_name_display": "El Azul",
     "shops": [
@@ -1818,18 +1860,6 @@
     ]
   },
   {
-    "strain_name_normalised": "gelato runtz",
-    "strain_name_display": "Gelato Runtz",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "gelato sundae",
     "strain_name_display": "Gelato Sundae",
     "shops": [
@@ -1945,6 +1975,18 @@
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "gorilla blue",
+    "strain_name_display": "Gorilla Blue",
+    "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2121,6 +2163,12 @@
     "strain_name_normalised": "gumbo",
     "strain_name_display": "Gumbo",
     "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 359,
         "shop_key": "cs-stud",
@@ -2320,12 +2368,6 @@
     "strain_name_display": "Jealousy",
     "shops": [
       {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 164,
         "shop_key": "cs-grey-area",
         "shop_name": "Grey Area",
@@ -2347,18 +2389,6 @@
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "jetlag",
-    "strain_name_display": "Jetlag",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2554,9 +2584,27 @@
     "strain_name_display": "Kush Mintz",
     "shops": [
       {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 386,
         "shop_key": "cs-voyagers",
         "shop_name": "Voyagers",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "la bomba",
+    "strain_name_display": "La Bomba",
+    "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2647,18 +2695,6 @@
         "shop_id": 386,
         "shop_key": "cs-voyagers",
         "shop_name": "Voyagers",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "lemon cherry tartz",
-    "strain_name_display": "Lemon Cherry Tartz",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2815,18 +2851,6 @@
         "shop_id": 277,
         "shop_key": "cs-paradox",
         "shop_name": "Paradox",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "mac berry",
-    "strain_name_display": "Mac Berry",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3160,6 +3184,12 @@
     "strain_name_display": "Orange Magic",
     "shops": [
       {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
@@ -3259,6 +3289,18 @@
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "pancake",
+    "strain_name_display": "Pancake",
+    "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3648,18 +3690,6 @@
     ]
   },
   {
-    "strain_name_normalised": "rolex og",
-    "strain_name_display": "Rolex OG",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "runtz",
     "strain_name_display": "Runtz",
     "shops": [
@@ -4014,6 +4044,18 @@
     ]
   },
   {
+    "strain_name_normalised": "strawberry kush",
+    "strain_name_display": "Strawberry Kush",
+    "shops": [
+      {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "sugar black rose",
     "strain_name_display": "Sugar Black Rose",
     "shops": [
@@ -4069,30 +4111,6 @@
         "shop_id": 12,
         "shop_key": "cs-abraxas",
         "shop_name": "Abraxas",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "sunset cookies",
-    "strain_name_display": "Sunset Cookies",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "sunset runtz",
-    "strain_name_display": "Sunset Runtz",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4374,18 +4392,6 @@
     ]
   },
   {
-    "strain_name_normalised": "tropical z",
-    "strain_name_display": "Tropical Z",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "tropicana",
     "strain_name_display": "Tropicana",
     "shops": [
@@ -4576,6 +4582,12 @@
     "strain_name_display": "White Cherry Gelato",
     "shops": [
       {
+        "shop_id": 19,
+        "shop_key": "cs-1e-hulp",
+        "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 182,
         "shop_key": "cs-hit2",
         "shop_name": "The Hit",
@@ -4724,12 +4736,6 @@
         "shop_key": "cs-hightime-alk",
         "shop_name": "High-Time",
         "shop_city": "Alkmaar"
-      },
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
-        "shop_city": "Amsterdam"
       },
       {
         "shop_id": 49,
@@ -5029,18 +5035,6 @@
         "shop_id": 201,
         "shop_key": "cs-kade",
         "shop_name": "De Kade",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "zombiekush",
-    "strain_name_display": "ZombieKush",
-    "shops": [
-      {
-        "shop_id": 19,
-        "shop_key": "cs-1e-hulp",
-        "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
       }
     ]
