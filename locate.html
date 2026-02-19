@@ -116,10 +116,10 @@
       color: #444;
     }
 
-    #upload-panel input[type="file"] {
-      display: block;
-      width: 100%;
-      font-size: 14px;
+    #upload-panel button {
+      display: none;
+      margin-top: 10px;
+      padding: 6px 10px;
     }
 
     #ui-toggles {
@@ -128,16 +128,51 @@
       right: 10px;
       z-index: 1004;
       display: none;           /* shown after CSV load */
-      background: white;
-      padding: 6px;
-      border-radius: 4px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
       font-family: sans-serif;
     }
 
-    #ui-toggles button {
-      margin: 2px 0;
-      width: 120px;
+    #menu-dropdown {
+      position: relative;
+    }
+
+    #menu-dropdown > summary {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+      background: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #d6d6d6;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+    }
+
+    #menu-dropdown > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    #menu-dropdown[open] > summary {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .menu-dropdown-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 0;
+      padding: 8px;
+      min-width: 170px;
+      background: white;
+      border: 1px solid #d6d6d6;
+      border-top: none;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+    }
+
+    .menu-dropdown-body button {
+      width: 100%;
+      text-align: left;
     }
 
     #strain-list-panel {
@@ -255,23 +290,30 @@
 </head>
 
 <body>
-  <!-- Initial panel to load the CSV -->
+  <!-- Initial panel while locating/loading CSV -->
   <div id="upload-panel">
-    <h3>Load locations CSV</h3>
-    <p class="upload-hint">Choose the CSV file to start map navigation and filters.</p>
-    <input type="file" id="file-input" accept=".csv" />
+    <h3 id="upload-title">Loading locations CSV</h3>
+    <p id="upload-message" class="upload-hint">Looking for the first CSV in locations/...</p>
+    <button id="manual-csv-btn" type="button">Choose CSV manually</button>
   </div>
 
   <!-- Map and directions containers -->
   <div id="map"></div>
   <div id="instructions"></div>
 
-  <!-- Small UI toggle buttons (controls + directions) -->
+  <!-- Compact top-right menu -->
   <div id="ui-toggles">
-    <button id="toggle-controls">Hide controls</button><br />
-    <button id="toggle-directions">Show directions</button><br />
-    <button id="toggle-strain-list">Show strains</button>
+    <details id="menu-dropdown">
+      <summary>Menu</summary>
+      <div class="menu-dropdown-body">
+        <button id="toggle-controls" type="button">Show controls</button>
+        <button id="toggle-directions" type="button">Show directions</button>
+        <button id="toggle-strain-list" type="button">Show strains</button>
+        <button id="change-csv-btn" type="button">Change CSV</button>
+      </div>
+    </details>
   </div>
+  <input type="file" id="file-input" accept=".csv" style="display:none;" />
 
   <!-- Main controls panel -->
   <div class="controls">
@@ -327,10 +369,13 @@
     // Global state
     // =========================================================
 
-    let map, routingControl, lastPosition, csvUrl = null;
+    let map = null;
+    let routingControl = null;
+    let lastPosition = null;
+    let geolocationWatchId = null;
     let locations = [];            // parsed locations from CSV
     let markers = [];              // Leaflet markers
-    let controlsVisible = true;    // controls panel visibility
+    let controlsVisible = false;   // controls panel visibility
     let directionsVisible = false; // directions panel visibility
     let strainListVisible = false; // strain list panel visibility
 
@@ -372,6 +417,88 @@
     let strainIndexRows = null;      // cached JSON strain index
     let activeOfferingsRows = null;  // cached JSON offerings rows
     let activeStrainNames = [];      // clickable strain list for UI panel
+
+    function setUploadPanelState(titleText, messageText, allowManualCsv) {
+      const panel = document.getElementById('upload-panel');
+      const title = document.getElementById('upload-title');
+      const message = document.getElementById('upload-message');
+      const manualBtn = document.getElementById('manual-csv-btn');
+      if (title) title.textContent = titleText || '';
+      if (message) message.textContent = messageText || '';
+      if (manualBtn) manualBtn.style.display = allowManualCsv ? 'inline-block' : 'none';
+      if (panel) panel.style.display = titleText || messageText || allowManualCsv ? 'block' : 'none';
+    }
+
+    function resetMapState() {
+      if (geolocationWatchId !== null && navigator.geolocation) {
+        try {
+          navigator.geolocation.clearWatch(geolocationWatchId);
+        } catch (_err) {
+          // Ignore if watch id is stale.
+        }
+        geolocationWatchId = null;
+      }
+
+      if (map) {
+        try {
+          if (routingControl) {
+            map.removeControl(routingControl);
+          }
+        } catch (_err) {
+          // Ignore if routing control was already removed.
+        }
+        map.remove();
+        map = null;
+      }
+      routingControl = null;
+      markers = [];
+      lastPosition = null;
+
+      const mapDiv = document.getElementById('map');
+      const instructionsDiv = document.getElementById('instructions');
+      if (mapDiv) mapDiv.innerHTML = '';
+      if (instructionsDiv) instructionsDiv.innerHTML = '';
+    }
+
+    function setControlsVisible(show) {
+      controlsVisible = !!show;
+      const controlsDiv = document.querySelector('.controls');
+      const btn = document.getElementById('toggle-controls');
+      if (controlsDiv) controlsDiv.style.display = controlsVisible ? 'block' : 'none';
+      if (btn) btn.textContent = controlsVisible ? 'Hide controls' : 'Show controls';
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    }
+
+    function setDirectionsVisible(show) {
+      directionsVisible = !!show;
+      const directionsDiv = document.getElementById('instructions');
+      const mapDiv = document.getElementById('map');
+      const btn = document.getElementById('toggle-directions');
+
+      if (directionsDiv) directionsDiv.style.display = directionsVisible ? 'block' : 'none';
+      if (btn) btn.textContent = directionsVisible ? 'Hide directions' : 'Show directions';
+
+      if (mapDiv) {
+        if (directionsVisible) {
+          if (window.innerWidth >= 768) {
+            mapDiv.style.right = '25%';
+            mapDiv.style.bottom = '0';
+          } else {
+            mapDiv.style.bottom = '33%';
+            mapDiv.style.right = '0';
+          }
+        } else {
+          mapDiv.style.right = '0';
+          mapDiv.style.bottom = '0';
+        }
+      }
+
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    }
 
     function normaliseText(s) {
       return (s || '').toString().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -1013,101 +1140,282 @@
     // CSV loading
     // =========================================================
 
-    document.getElementById('file-input').addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return;
+    function normaliseDiscoveredCsvPath(pathLike) {
+      const raw = (pathLike || '').toString().trim();
+      if (!raw) return '';
+      try {
+        const u = new URL(raw, window.location.href);
+        const p = (u.pathname || '').replace(/^\/+/, '');
+        return /\.csv$/i.test(p) ? p : '';
+      } catch (_err) {
+        const p = raw.replace(/^\/+/, '');
+        return /\.csv$/i.test(p) ? p : '';
+      }
+    }
 
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: async results => {
-          // Map each CSV row into a location object.
-          // NOTE:
-          //  - "logo" is NEW. It's optional: leave blank if you don't have it.
-          //  - Any additional Y/N columns become boolean flags (categories).
-          locations = results.data.map(r => {
-            const obj = {
-              name: r.name,
-              city: r.city || '',
-              coords: [parseFloat(r.lat), parseFloat(r.lng)],
-              website: r.website,
-              logo: r.logo,         // NEW: expected e.g. "shop.png" placed in images/logos/
-              visited: false,
-              rating: 0,
-              db_shop_id: null
-            };
+    function ensureLocationsPrefix(pathLike) {
+      const p = (pathLike || '').toString().replace(/^\/+/, '');
+      if (!p) return '';
+      return p.toLowerCase().startsWith('locations/') ? p : `locations/${p}`;
+    }
 
-            // Parse visited flag (Y/N)
-            if (typeof r.visited === 'string') {
-              obj.visited = r.visited.trim().toLowerCase() === 'y';
+    function pickFirstCsvPath(paths) {
+      const out = Array.from(new Set(
+        (paths || [])
+          .map(p => (p || '').toString().trim())
+          .filter(p => p && /\.csv$/i.test(p))
+      ));
+      out.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      return out[0] || null;
+    }
+
+    async function discoverFirstCsvInLocations() {
+      const jsonCandidates = ['locations/index.json', './locations/index.json', '/locations/index.json'];
+      for (const url of jsonCandidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          const files = Array.isArray(data)
+            ? data
+            : (data && Array.isArray(data.files) ? data.files : []);
+          const csvPaths = files
+            .map(normaliseDiscoveredCsvPath)
+            .filter(Boolean)
+            .map(ensureLocationsPrefix);
+          const first = pickFirstCsvPath(csvPaths);
+          if (first) return first;
+        } catch (_err) {
+          // Try next discovery source.
+        }
+      }
+
+      const dirCandidates = ['locations/', './locations/', '/locations/'];
+      for (const url of dirCandidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const html = await res.text();
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          const base = new URL(url, window.location.href);
+          const csvPaths = [];
+
+          doc.querySelectorAll('a[href]').forEach(a => {
+            const href = (a.getAttribute('href') || '').trim();
+            if (!href) return;
+            let resolved;
+            try {
+              resolved = new URL(href, base);
+            } catch (_err) {
+              return;
             }
-
-            // Parse rating as integer 1–5 (anything invalid -> 0 = no rating)
-            if (r.rating !== undefined && r.rating !== null && r.rating !== '') {
-              const pr = parseInt(r.rating, 10);
-              if (!isNaN(pr)) {
-                obj.rating = Math.max(1, Math.min(5, pr));
-              }
-            }
-
-            // Parse other boolean Y/N fields as category flags
-            // IMPORTANT: we ignore special fields including "logo"
-            Object.entries(r).forEach(([k, v]) => {
-              if (['name','lat','lng','website','visited','rating','logo'].includes(k)) return;
-              if (typeof v === 'string' && v.trim() !== '') {
-                obj[k] = v.toLowerCase() === 'y';
-              }
-            });
-
-            return obj;
+            if (resolved.origin !== window.location.origin) return;
+            const p = (resolved.pathname || '').replace(/^\/+/, '');
+            if (!/\.csv$/i.test(p)) return;
+            csvPaths.push(p);
           });
 
-          if (!locations.length) {
-            alert('No valid rows found in CSV.');
-            return;
-          }
-
-          // Link CSV shops to DB shop ids (if backend is reachable).
-          const dbOk = await ensureDbIntegration();
-          if (dbOk) {
-            locations.forEach(bindDbShopIdToLocation);
-          }
-
-          // Determine which keys are boolean flags (Y/N) and not special fields
-          // We deliberately exclude "logo" from categories.
-          categoryOptions = Object.keys(locations[0]).filter(
-            key =>
-              !['name','coords','website','visited','rating','logo'].includes(key) &&
-              typeof locations[0][key] === 'boolean'
-          );
-
-          // Add synthetic categories
-          categoryOptions.unshift('favourites');
-          categoryOptions.unshift('all');
-
-          // Default to showing all locations
-          selectedCategories = ['all'];
-
-          initCategoryIcons();
-          populateCategorySelect();
-
-          // Hide upload, show map + controls
-          document.getElementById('upload-panel').style.display = 'none';
-          document.getElementById('map').style.display = 'block';
-          document.querySelector('.controls').style.display = 'block';
-          document.getElementById('ui-toggles').style.display = 'block';
-
-          // Start with directions hidden and map using full area
-          document.getElementById('instructions').style.display = 'none';
-          const mapDiv = document.getElementById('map');
-          mapDiv.style.right = '0';
-          mapDiv.style.bottom = '0';
-          document.getElementById('toggle-directions').textContent = 'Show directions';
-
-          csvUrl = URL.createObjectURL(file);
-          initApp();
+          const inLocations = csvPaths
+            .map(normaliseDiscoveredCsvPath)
+            .filter(p => p.toLowerCase().startsWith('locations/'));
+          const first = pickFirstCsvPath(inLocations);
+          if (first) return first;
+        } catch (_err) {
+          // Try next discovery source.
         }
+      }
+
+      return null;
+    }
+
+    async function parseCsvInput(input, parseOptions) {
+      return new Promise((resolve, reject) => {
+        Papa.parse(input, {
+          header: true,
+          skipEmptyLines: true,
+          ...(parseOptions || {}),
+          complete: async results => {
+            const hasData = results && Array.isArray(results.data) && results.data.length > 0;
+            if (!hasData) {
+              reject(new Error('No valid rows found in CSV.'));
+              return;
+            }
+            resolve(results.data);
+          },
+          error: err => {
+            reject(err || new Error('CSV parsing failed.'));
+          }
+        });
       });
+    }
+
+    async function applyCsvRows(rows) {
+      // Map each CSV row into a location object.
+      // NOTE:
+      //  - "logo" is optional.
+      //  - Any additional Y/N columns become boolean flags (categories).
+      locations = rows.map(r => {
+        const obj = {
+          name: r.name,
+          city: r.city || '',
+          coords: [parseFloat(r.lat), parseFloat(r.lng)],
+          website: r.website,
+          logo: r.logo,
+          visited: false,
+          rating: 0,
+          db_shop_id: null
+        };
+
+        // Parse visited flag (Y/N)
+        if (typeof r.visited === 'string') {
+          obj.visited = r.visited.trim().toLowerCase() === 'y';
+        }
+
+        // Parse rating as integer 1-5 (anything invalid -> 0 = no rating)
+        if (r.rating !== undefined && r.rating !== null && r.rating !== '') {
+          const pr = parseInt(r.rating, 10);
+          if (!isNaN(pr)) {
+            obj.rating = Math.max(1, Math.min(5, pr));
+          }
+        }
+
+        // Parse other boolean Y/N fields as category flags.
+        Object.entries(r).forEach(([k, v]) => {
+          if (['name','lat','lng','website','visited','rating','logo'].includes(k)) return;
+          if (typeof v === 'string' && v.trim() !== '') {
+            obj[k] = v.toLowerCase() === 'y';
+          }
+        });
+
+        return obj;
+      });
+
+      if (!locations.length) {
+        throw new Error('No valid rows found in CSV.');
+      }
+
+      resetMapState();
+
+      // Reset per-CSV UI/filter state.
+      strainFilterText = '';
+      strainAllowedShopIds = null;
+      strainAllowedNameCityKeys = null;
+      setStrainListVisible(false);
+      const strainInput = document.getElementById('strain-filter');
+      const strainStatus = document.getElementById('strain-status');
+      const strainSearch = document.getElementById('strain-list-search');
+      const strainList = document.getElementById('strain-list');
+      const strainListStatus = document.getElementById('strain-list-status');
+      if (strainInput) strainInput.value = '';
+      if (strainStatus) strainStatus.textContent = 'Strain filter: off';
+      if (strainSearch) strainSearch.value = '';
+      if (strainList) strainList.innerHTML = '';
+      if (strainListStatus) strainListStatus.textContent = 'Load CSV first.';
+      const eta = document.getElementById('time-estimate');
+      const distance = document.getElementById('distance-info');
+      if (eta) eta.textContent = 'ETA: --';
+      if (distance) distance.textContent = '';
+
+      // Link CSV shops to DB shop ids (if backend is reachable).
+      const dbOk = await ensureDbIntegration();
+      if (dbOk) {
+        locations.forEach(bindDbShopIdToLocation);
+      }
+
+      // Determine which keys are boolean flags (Y/N) and not special fields.
+      categoryOptions = Object.keys(locations[0]).filter(
+        key =>
+          !['name','coords','website','visited','rating','logo'].includes(key) &&
+          typeof locations[0][key] === 'boolean'
+      );
+
+      // Add synthetic categories.
+      categoryOptions.unshift('favourites');
+      categoryOptions.unshift('all');
+
+      // Default to showing all locations.
+      selectedCategories = ['all'];
+
+      initCategoryIcons();
+      populateCategorySelect();
+
+      document.getElementById('map').style.display = 'block';
+      document.getElementById('ui-toggles').style.display = 'block';
+      setUploadPanelState('', '', false);
+
+      // Start with all panels hidden.
+      setControlsVisible(false);
+      setDirectionsVisible(false);
+      setStrainListVisible(false);
+
+      const menuDropdown = document.getElementById('menu-dropdown');
+      if (menuDropdown) menuDropdown.open = false;
+
+      initApp();
+    }
+
+    async function loadCsvFromFile(file) {
+      const rows = await parseCsvInput(file);
+      await applyCsvRows(rows);
+    }
+
+    async function loadCsvFromPath(path) {
+      const csvPath = (path || '').toString().trim();
+      if (!csvPath) throw new Error('CSV path is empty.');
+      const rows = await parseCsvInput(csvPath, { download: true });
+      await applyCsvRows(rows);
+    }
+
+    async function bootstrapInitialCsvLoad() {
+      setUploadPanelState('Loading locations CSV', 'Looking for the first CSV in locations/...', false);
+
+      const firstCsv = await discoverFirstCsvInLocations();
+      if (!firstCsv) {
+        setUploadPanelState(
+          'No CSV found in locations/',
+          'Add a .csv file to locations/ or choose one manually.',
+          true
+        );
+        return;
+      }
+
+      try {
+        await loadCsvFromPath(firstCsv);
+      } catch (err) {
+        const reason = err && err.message ? err.message : 'unknown error';
+        setUploadPanelState(
+          'Could not load CSV from locations/',
+          `Failed to load ${firstCsv} (${reason}). Choose one manually.`,
+          true
+        );
+      }
+    }
+
+    document.getElementById('manual-csv-btn').addEventListener('click', () => {
+      const input = document.getElementById('file-input');
+      if (input) input.click();
+    });
+
+    document.getElementById('change-csv-btn').addEventListener('click', () => {
+      const menuDropdown = document.getElementById('menu-dropdown');
+      if (menuDropdown) menuDropdown.open = false;
+      const input = document.getElementById('file-input');
+      if (input) input.click();
+    });
+
+    document.getElementById('file-input').addEventListener('change', async e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      setUploadPanelState('Loading selected CSV', `Loading ${file.name}...`, false);
+      try {
+        await loadCsvFromFile(file);
+      } catch (err) {
+        const reason = err && err.message ? err.message : 'unknown error';
+        setUploadPanelState('Could not load selected CSV', `Error: ${reason}`, true);
+      } finally {
+        e.target.value = '';
+      }
     });
 
     // =========================================================
@@ -1180,30 +1488,45 @@
       updateDistanceInfo();
       updateMarkers();
 
-      // Recalculate route if mode changes
-      document.getElementById('mode').addEventListener('change', () => {
-        if (lastPosition) {
-          findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
-        }
-      });
+      // Recalculate route if mode changes.
+      const modeSelect = document.getElementById('mode');
+      if (modeSelect) {
+        modeSelect.onchange = () => {
+          if (lastPosition) {
+            findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
+          }
+        };
+      }
 
-      // Change destination from dropdown
-      document.getElementById('destination-select').addEventListener('change', () => {
-        if (lastPosition) {
-          findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
+      // Change destination from dropdown.
+      const destinationSelect = document.getElementById('destination-select');
+      if (destinationSelect) {
+        destinationSelect.onchange = () => {
+          if (lastPosition) {
+            findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
 
-          const destIndex = document.getElementById('destination-select').value;
-          const destCoords = locations[destIndex].coords;
-          map.panTo(destCoords);
-          markers[destIndex].openPopup();
-          markers[destIndex].bringToFront();
-          updateDistanceInfo();
-        }
-      });
+            const destIndex = destinationSelect.value;
+            const destCoords = locations[destIndex].coords;
+            map.panTo(destCoords);
+            markers[destIndex].openPopup();
+            markers[destIndex].bringToFront();
+            updateDistanceInfo();
+          }
+        };
+      }
 
       // Watch user location via Geolocation API
       if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(
+        if (geolocationWatchId !== null) {
+          try {
+            navigator.geolocation.clearWatch(geolocationWatchId);
+          } catch (_err) {
+            // Ignore if watch id is stale.
+          }
+          geolocationWatchId = null;
+        }
+
+        geolocationWatchId = navigator.geolocation.watchPosition(
           p => {
             const np = [p.coords.latitude, p.coords.longitude];
 
@@ -1571,8 +1894,9 @@
       if (lastPosition && !isNaN(i)) {
         const distText = (haversineDistance(lastPosition, locations[i].coords) / 1000).toFixed(2) + ' km';
         distanceDiv.textContent = 'Distance: ' + distText;
+      } else if (distanceDiv) {
+        distanceDiv.textContent = '';
       }
-      // else we leave the existing text alone
     }
 
     /**
@@ -1689,52 +2013,15 @@
     // UI toggles (controls + directions)
     // =========================================================
 
-    // Show/hide controls panel
     document.getElementById('toggle-controls').addEventListener('click', () => {
-      controlsVisible = !controlsVisible;
-      const controlsDiv = document.querySelector('.controls');
-      controlsDiv.style.display = controlsVisible ? 'block' : 'none';
-      document.getElementById('toggle-controls').textContent =
-        controlsVisible ? 'Hide controls' : 'Show controls';
-
-      if (map) {
-        setTimeout(() => map.invalidateSize(), 200);
-      }
+      setControlsVisible(!controlsVisible);
     });
 
-    // Show/hide directions panel and resize map accordingly
     document.getElementById('toggle-directions').addEventListener('click', () => {
-      directionsVisible = !directionsVisible;
-      const directionsDiv = document.getElementById('instructions');
-      const mapDiv = document.getElementById('map');
-
-      if (directionsVisible) {
-        // Show directions panel
-        directionsDiv.style.display = 'block';
-        document.getElementById('toggle-directions').textContent = 'Hide directions';
-
-        // Restore split layout depending on viewport size
-        if (window.innerWidth >= 768) {
-          // Desktop: map 75% left, directions 25% right
-          mapDiv.style.right = '25%';
-          mapDiv.style.bottom = '0';
-        } else {
-          // Mobile: map top 2/3, directions bottom 1/3
-          mapDiv.style.bottom = '33%';
-          mapDiv.style.right = '0';
-        }
-      } else {
-        // Hide directions panel and let map fill the space
-        directionsDiv.style.display = 'none';
-        document.getElementById('toggle-directions').textContent = 'Show directions';
-        mapDiv.style.right = '0';
-        mapDiv.style.bottom = '0';
-      }
-
-      if (map) {
-        setTimeout(() => map.invalidateSize(), 200);
-      }
+      setDirectionsVisible(!directionsVisible);
     });
+
+    bootstrapInitialCsvLoad();
 
     // Optional: probe DB routes early so status is visible before CSV upload.
     ensureDbIntegration();
