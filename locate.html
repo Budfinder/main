@@ -346,7 +346,6 @@
         <button id="toggle-controls" type="button">Show controls</button>
         <button id="toggle-directions" type="button">Show directions</button>
         <button id="toggle-strain-list" type="button">Show strains</button>
-        <button id="change-csv-btn" type="button">Change CSV</button>
       </div>
     </details>
   </div>
@@ -376,16 +375,6 @@
     <!-- Category filters as tick boxes -->
     <div id="category-filters">
       <!-- Checkboxes injected here by JS -->
-    </div>
-
-    <div style="margin-top:8px;">
-      <label for="strain-filter">Strain filter (database)</label>
-      <input id="strain-filter" type="text" placeholder="e.g. amnesia haze" style="width:100%;">
-      <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;">
-        <button id="apply-strain-btn" type="button">Apply strain filter</button>
-        <button id="clear-strain-btn" type="button">Clear strain filter</button>
-      </div>
-      <div id="strain-status" style="margin-top:6px; font-size:12px; color:#444;">Strain filter: off</div>
     </div>
 
     <button id="nearest-btn">Nearest</button><br />
@@ -1054,6 +1043,20 @@
       return `popup-strains-${index}`;
     }
 
+    function popupWebsitePreviewHtml(loc) {
+      const website = (loc && loc.website) ? (loc.website || '').toString().trim() : '';
+      if (!website) return '';
+      const websiteAttr = escapeHtmlAttr(website);
+      const nameAttr = escapeHtmlAttr((loc && loc.name) ? loc.name : 'shop');
+      return (
+        `<a href="${websiteAttr}" target="_blank">` +
+          `<img src="https://image.thum.io/get/width/300/${websiteAttr}" ` +
+               `alt="Thumbnail of ${nameAttr}" ` +
+               `style="width:100%;height:auto;margin:8px 0;">` +
+        `</a><br>`
+      );
+    }
+
     function getPopupStrainsForLocation(loc) {
       if (!loc) return [];
 
@@ -1091,7 +1094,10 @@
 
       const strains = getPopupStrainsForLocation(loc);
       if (!strains.length) {
-        liveContainer.innerHTML = '<p class="popup-strains-empty">No active strains found for this shop.</p>';
+        const previewHtml = popupWebsitePreviewHtml(loc);
+        liveContainer.innerHTML =
+          '<p class="popup-strains-empty">No database strain data found for this shop.</p>' +
+          (previewHtml || '');
         return;
       }
 
@@ -1262,17 +1268,16 @@
       loc.db_shop_id = shopId || null;
     }
 
-    async function applyStrainFilter() {
+    async function applyStrainFilter(queryText) {
       const input = document.getElementById('strain-filter');
       const status = document.getElementById('strain-status');
-      if (!input || !status) return;
-
-      const q = (input.value || '').trim();
+      const q = (typeof queryText === 'string' ? queryText : (input ? input.value : '') || '').trim();
+      if (input) input.value = q;
       if (!q) {
         strainFilterText = '';
         strainAllowedShopIds = null;
         strainAllowedNameCityKeys = null;
-        status.textContent = 'Strain filter: off';
+        if (status) status.textContent = 'Strain filter: off';
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
@@ -1311,13 +1316,13 @@
           const byKey = strainAllowedNameCityKeys && strainAllowedNameCityKeys.has(key);
           return byId || byKey;
         }).length;
-        status.textContent = `Strain filter: "${q}" (${matchedCount} shops)`;
+        if (status) status.textContent = `Strain filter: "${q}" (${matchedCount} shops)`;
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
         updateStrainListSelection();
       } catch (err) {
-        status.textContent = 'Strain filter unavailable: missing JSON index files';
+        if (status) status.textContent = 'Strain filter unavailable: missing JSON index files';
       }
     }
 
@@ -1825,20 +1830,23 @@
       }
     });
 
-    document.getElementById('change-csv-btn').addEventListener('click', () => {
-      const menuDropdown = document.getElementById('menu-dropdown');
-      if (menuDropdown) menuDropdown.open = false;
+    const changeCsvBtn = document.getElementById('change-csv-btn');
+    if (changeCsvBtn) {
+      changeCsvBtn.addEventListener('click', () => {
+        const menuDropdown = document.getElementById('menu-dropdown');
+        if (menuDropdown) menuDropdown.open = false;
 
-      if (discoveredCsvPaths.length > 1) {
-        setControlsVisible(true);
-        const csvSelect = document.getElementById('csv-switch-select');
-        if (csvSelect) csvSelect.focus();
-        return;
-      }
+        if (discoveredCsvPaths.length > 1) {
+          setControlsVisible(true);
+          const csvSelect = document.getElementById('csv-switch-select');
+          if (csvSelect) csvSelect.focus();
+          return;
+        }
 
-      const input = document.getElementById('file-input');
-      if (input) input.click();
-    });
+        const input = document.getElementById('file-input');
+        if (input) input.click();
+      });
+    }
 
     document.getElementById('csv-switch-select').addEventListener('change', async e => {
       const selectedPath = canonicalCsvPath(e.target.value);
@@ -1900,13 +1908,7 @@
 
         const websitePreviewHtml = isCoffeeShop
           ? ''
-          : (
-              `<a href="${loc.website}" target="_blank">` +
-                `<img src="https://image.thum.io/get/width/300/${loc.website}" ` +
-                     `alt="Thumbnail of ${loc.name}" ` +
-                     `style="width:100%;height:auto;margin:8px 0;">` +
-              `</a><br>`
-            );
+          : popupWebsitePreviewHtml(loc);
 
         const popupStrainsHtml = isCoffeeShop
           ? (
@@ -2323,20 +2325,29 @@
       updateMarkers();
     });
 
-    document.getElementById('apply-strain-btn').addEventListener('click', async () => {
-      await applyStrainFilter();
-    });
-
-    document.getElementById('clear-strain-btn').addEventListener('click', () => {
-      clearStrainFilter();
-    });
-
-    document.getElementById('strain-filter').addEventListener('keydown', async e => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
+    const applyStrainBtn = document.getElementById('apply-strain-btn');
+    if (applyStrainBtn) {
+      applyStrainBtn.addEventListener('click', async () => {
         await applyStrainFilter();
-      }
-    });
+      });
+    }
+
+    const clearStrainBtn = document.getElementById('clear-strain-btn');
+    if (clearStrainBtn) {
+      clearStrainBtn.addEventListener('click', () => {
+        clearStrainFilter();
+      });
+    }
+
+    const strainFilterInput = document.getElementById('strain-filter');
+    if (strainFilterInput) {
+      strainFilterInput.addEventListener('keydown', async e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          await applyStrainFilter();
+        }
+      });
+    }
 
     document.getElementById('toggle-strain-list').addEventListener('click', () => {
       setStrainListVisible(!strainListVisible);
@@ -2356,7 +2367,7 @@
       const strain = target.getAttribute('data-strain') || '';
       const input = document.getElementById('strain-filter');
       if (input) input.value = strain;
-      await applyStrainFilter();
+      await applyStrainFilter(strain);
     });
 
     // =========================================================
