@@ -1,13 +1,12 @@
-name,lat,lng,website,Coffeeshop,Transport,Bar,Food,Attraction,Shopping
-Coffeehop 208,52.08885,5.12149,https://www.coffeeshopmenus.org/cs-208.html,y,n,n,n,n,n
-Andersom,52.0905,5.12051,https://www.coffeeshopmenus.org/cs-andersom.html,y,n,n,n,n,n
-Gallery Colorado,52.10643,5.08248,https://www.coffeeshopmenus.org/cs-colorado.html,y,n,n,n,n,n
-Culture Boat,52.09694,5.12688,https://www.coffeeshopmenus.org/cs-culture-boat.html,y,n,n,n,n,n
-Freak,52.09538,5.12134,https://www.coffeeshopmenus.org/cs-freak.html,y,n,n,n,n,n
-t Grasje,52.09553,5.12936,https://www.coffeeshopmenus.org/cs-grasje.html,y,n,n,n,n,n
-Griffioen,52.05718,5.10461,https://www.coffeeshopmenus.org/cs-griffioen.html,y,n,n,n,n,n
-HiLo,52.08371,5.10973,https://www.coffeeshopmenus.org/cs-hilo.html,y,n,n,n,n,n
-Pleasure,52.09511,5.12272,https://www.coffeeshopmenus.org/cs-pleasure.html,y,n,n,n,n,n
-VIP Shop,52.09735,5.1051,https://www.coffeeshopmenus.org/cs-vip.html,y,n,n,n,n,n
-Wietstok,52.09511,5.12273,https://www.coffeeshopmenus.org/cs-wietstock.html,y,n,n,n,n,n
-Utrecht Centraal,52.09145,5.11016,https://www.ns.nl/en/station-information/ut/utrecht-centraal,n,y,n,n,n,n
+name,lat,lng,website,logo,visited,rating,Coffeeshop,Transport,Bar,Food,Attraction,Shopping
+Coffeehop 208,52.08885,5.12149,https://www.coffeeshopmenus.org/cs-208.html,208.png,,,y,n,n,n,n,n
+Andersom,52.0905,5.12051,https://www.coffeeshopmenus.org/cs-andersom.html,andersom.png,,,y,n,n,n,n,n
+Gallery Colorado,52.10643,5.08248,https://www.coffeeshopmenus.org/cs-colorado.html,gallery_colorado.png,,,y,n,n,n,n,n
+Culture Boat,52.09694,5.12688,https://www.coffeeshopmenus.org/cs-culture-boat.html,culture_boat.png,,,y,n,n,n,n,n
+Freak,52.09538,5.12134,https://www.coffeeshopmenus.org/cs-freak.html,freak.png,,,y,n,n,n,n,n
+t Grasje,52.09553,5.12936,https://www.coffeeshopmenus.org/cs-grasje.html,t_grasje.png,,,y,n,n,n,n,n
+Griffioen,52.05718,5.10461,https://www.coffeeshopmenus.org/cs-griffioen.html,griffioen.png,,,y,n,n,n,n,n
+HiLo,52.08371,5.10973,https://www.coffeeshopmenus.org/cs-hilo.html,hilo.png,,,y,n,n,n,n,n
+Pleasure,52.09511,5.12272,https://www.coffeeshopmenus.org/cs-pleasure.html,pleasure.png,,,y,n,n,n,n,n
+VIP Shop,52.09735,5.1051,https://www.coffeeshopmenus.org/cs-vip.html,v_i_p_shop.png,,,y,n,n,n,n,n
+Wietstok,52.09511,5.12273,https://www.coffeeshopmenus.org/cs-wietstock.html,wietstok.png,,,y,n,n,n,n,n
