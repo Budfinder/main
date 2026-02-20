@@ -136,48 +136,13 @@
       font-family: sans-serif;
     }
 
-    #menu-dropdown {
-      position: relative;
-    }
-
-    #menu-dropdown > summary {
-      list-style: none;
-      cursor: pointer;
-      user-select: none;
+    #ui-toggles button {
       background: white;
       padding: 6px 10px;
       border-radius: 4px;
       border: 1px solid #d6d6d6;
       box-shadow: 0 1px 5px rgba(0,0,0,0.3);
-    }
-
-    #menu-dropdown > summary::-webkit-details-marker {
-      display: none;
-    }
-
-    #menu-dropdown[open] > summary {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    .menu-dropdown-body {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin: 0;
-      padding: 8px;
-      min-width: 170px;
-      background: white;
-      border: 1px solid #d6d6d6;
-      border-top: none;
-      border-bottom-left-radius: 4px;
-      border-bottom-right-radius: 4px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.3);
-    }
-
-    .menu-dropdown-body button {
-      width: 100%;
-      text-align: left;
+      cursor: pointer;
     }
 
     #strain-list-panel {
@@ -410,15 +375,9 @@
   <div id="map"></div>
   <div id="instructions"></div>
 
-  <!-- Compact top-right menu -->
+  <!-- Top-level controls button -->
   <div id="ui-toggles">
-    <details id="menu-dropdown">
-      <summary>Menu</summary>
-      <div class="menu-dropdown-body">
-        <button id="toggle-controls" type="button">Show controls</button>
-        <button id="toggle-directions" type="button">Show directions</button>
-      </div>
-    </details>
+    <button id="toggle-controls" type="button">Show controls</button>
   </div>
   <input type="file" id="file-input" accept=".csv" style="display:none;" />
 
@@ -433,6 +392,10 @@
       <option value="driving">Driving</option>
       <option value="cycling">Cycling</option>
     </select><br />
+
+    <div style="margin-top:8px;">
+      <button id="toggle-directions" type="button">Show directions</button>
+    </div>
 
     <div id="csv-switch-wrap" style="display:none; margin-top:8px;">
       <label for="csv-switch-select">Location CSV:</label>
@@ -1878,9 +1841,6 @@
       setDirectionsVisible(false);
       setStrainListVisible(false);
 
-      const menuDropdown = document.getElementById('menu-dropdown');
-      if (menuDropdown) menuDropdown.open = false;
-
       initApp();
     }
 
@@ -2025,24 +1985,6 @@
         setUploadPanelState('Could not load CSV folder', `Error: ${reason}`, true);
       }
     });
-
-    const changeCsvBtn = document.getElementById('change-csv-btn');
-    if (changeCsvBtn) {
-      changeCsvBtn.addEventListener('click', () => {
-        const menuDropdown = document.getElementById('menu-dropdown');
-        if (menuDropdown) menuDropdown.open = false;
-
-        if (discoveredCsvPaths.length > 1) {
-          setControlsVisible(true);
-          const csvSelect = document.getElementById('csv-switch-select');
-          if (csvSelect) csvSelect.focus();
-          return;
-        }
-
-        const input = document.getElementById('file-input');
-        if (input) input.click();
-      });
-    }
 
     document.getElementById('csv-switch-select').addEventListener('change', async e => {
       const selectedPath = canonicalCsvPath(e.target.value);
