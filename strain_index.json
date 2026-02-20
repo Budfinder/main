@@ -168,6 +168,18 @@
     ]
   },
   {
+    "strain_name_normalised": "AREA 51",
+    "strain_name_display": "AREA 51",
+    "shops": [
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "BLACK ZUYSHI 424",
     "strain_name_display": "BLACK ZUYSHI 424",
     "shops": [
@@ -288,6 +300,18 @@
     ]
   },
   {
+    "strain_name_normalised": "G13 AMNESIA",
+    "strain_name_display": "G13 AMNESIA",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "G13 HAZE",
     "strain_name_display": "G13 HAZE",
     "shops": [
@@ -307,6 +331,30 @@
         "shop_id": 40,
         "shop_key": "cs-babylon",
         "shop_name": "Babylon",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
         "shop_city": "Amsterdam"
       },
       {
@@ -376,6 +424,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
@@ -420,6 +474,18 @@
     ]
   },
   {
+    "strain_name_normalised": "MAC 1",
+    "strain_name_display": "MAC 1",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "ORIGINAL G13",
     "strain_name_display": "ORIGINAL G13",
     "shops": [
@@ -427,6 +493,18 @@
         "shop_id": 19,
         "shop_key": "cs-1e-hulp",
         "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "PH 89",
+    "strain_name_display": "PH 89",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
         "shop_city": "Amsterdam"
       }
     ]
@@ -457,6 +535,18 @@
         "shop_id": 25,
         "shop_key": "cs-96",
         "shop_name": "96",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
         "shop_city": "Amsterdam"
       },
       {
@@ -658,6 +748,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 112,
         "shop_key": "cs-dna",
         "shop_name": "DNA",
@@ -796,6 +892,60 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 80,
+        "shop_key": "cs-bushdocter",
+        "shop_name": "Bushdocter",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 92,
+        "shop_key": "cs-city-hall",
+        "shop_name": "City Hall",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
@@ -871,6 +1021,30 @@
         "shop_id": 264,
         "shop_key": "cs-old-church-2",
         "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "animal face",
+    "strain_name_display": "Animal Face",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "animal face #10",
+    "strain_name_display": "Animal Face #10",
+    "shops": [
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
         "shop_city": "Amsterdam"
       }
     ]
@@ -966,6 +1140,30 @@
     ]
   },
   {
+    "strain_name_normalised": "bacio de limon",
+    "strain_name_display": "Bacio de Limon",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "bacio gelato",
+    "strain_name_display": "Bacio Gelato",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "balou special haze",
     "strain_name_display": "Balou Special Haze",
     "shops": [
@@ -1026,6 +1224,18 @@
     ]
   },
   {
+    "strain_name_normalised": "banana og",
+    "strain_name_display": "Banana OG",
+    "shops": [
+      {
+        "shop_id": 92,
+        "shop_key": "cs-city-hall",
+        "shop_name": "City Hall",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "banana runtz",
     "strain_name_display": "Banana Runtz",
     "shops": [
@@ -1081,6 +1291,12 @@
         "shop_id": 44,
         "shop_key": "cs-balou",
         "shop_name": "Balou",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 80,
+        "shop_key": "cs-bushdocter",
+        "shop_name": "Bushdocter",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1212,6 +1428,18 @@
     ]
   },
   {
+    "strain_name_normalised": "black runtz",
+    "strain_name_display": "Black Runtz",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "black sugar rose",
     "strain_name_display": "Black Sugar Rose",
     "shops": [
@@ -1272,6 +1500,18 @@
     ]
   },
   {
+    "strain_name_normalised": "blanco cookies",
+    "strain_name_display": "Blanco Cookies",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "blizzard cherry",
     "strain_name_display": "Blizzard Cherry",
     "shops": [
@@ -1279,6 +1519,18 @@
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "blow pop",
+    "strain_name_display": "Blow Pop",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1324,6 +1576,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 429,
         "shop_key": "cs-swedasnoopdoggstore",
         "shop_name": "SWED a Snoop Dogg Store",
@@ -1363,6 +1621,18 @@
         "shop_id": 73,
         "shop_key": "cs-bronx",
         "shop_name": "Bronx",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 80,
+        "shop_key": "cs-bushdocter",
+        "shop_name": "Bushdocter",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1446,6 +1716,18 @@
     ]
   },
   {
+    "strain_name_normalised": "blue monster",
+    "strain_name_display": "Blue Monster",
+    "shops": [
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "blue muffin",
     "strain_name_display": "Blue Muffin",
     "shops": [
@@ -1453,6 +1735,18 @@
         "shop_id": 40,
         "shop_key": "cs-babylon",
         "shop_name": "Babylon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "blue sherbert",
+    "strain_name_display": "Blue Sherbert",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1590,6 +1884,18 @@
     ]
   },
   {
+    "strain_name_normalised": "blueberry pie",
+    "strain_name_display": "Blueberry Pie",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "blueberry zkittlez",
     "strain_name_display": "Blueberry Zkittlez",
     "shops": [
@@ -1597,6 +1903,18 @@
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "bubble runtz",
+    "strain_name_display": "Bubble Runtz",
+    "shops": [
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1627,6 +1945,12 @@
         "shop_id": 40,
         "shop_key": "cs-babylon",
         "shop_name": "Babylon",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
         "shop_city": "Amsterdam"
       },
       {
@@ -1662,6 +1986,18 @@
     ]
   },
   {
+    "strain_name_normalised": "buddha cheese",
+    "strain_name_display": "Buddha Cheese",
+    "shops": [
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "buiten wiet",
     "strain_name_display": "Buiten Wiet",
     "shops": [
@@ -1670,6 +2006,18 @@
         "shop_key": "cs-anytime",
         "shop_name": "Any Time",
         "shop_city": "Alkmaar"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "bullwackie speical",
+    "strain_name_display": "Bullwackie Speical",
+    "shops": [
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -1842,6 +2190,18 @@
     ]
   },
   {
+    "strain_name_normalised": "candy rain",
+    "strain_name_display": "Candy Rain",
+    "shops": [
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "candy runtz",
     "strain_name_display": "Candy Runtz",
     "shops": [
@@ -1866,6 +2226,18 @@
     ]
   },
   {
+    "strain_name_normalised": "carmona crazy haze",
+    "strain_name_display": "Carmona Crazy Haze",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "carrot cake",
     "strain_name_display": "Carrot Cake",
     "shops": [
@@ -1878,9 +2250,51 @@
     ]
   },
   {
+    "strain_name_normalised": "cement shoes",
+    "strain_name_display": "Cement Shoes",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "central lady",
+    "strain_name_display": "Central Lady",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "central lemon haze",
+    "strain_name_display": "Central Lemon Haze",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "cheese",
     "strain_name_display": "Cheese",
     "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 111,
         "shop_key": "cs-d-l",
@@ -1969,6 +2383,18 @@
         "shop_id": 59,
         "shop_key": "cs-bluebird",
         "shop_name": "Bluebird",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "cherry bomb",
+    "strain_name_display": "Cherry Bomb",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2088,6 +2514,30 @@
     ]
   },
   {
+    "strain_name_normalised": "choco diesel",
+    "strain_name_display": "Choco Diesel",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "chocolope",
+    "strain_name_display": "Chocolope",
+    "shops": [
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "churro",
     "strain_name_display": "Churro",
     "shops": [
@@ -2112,6 +2562,18 @@
     ]
   },
   {
+    "strain_name_normalised": "cookie kush",
+    "strain_name_display": "Cookie kush",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "cookies",
     "strain_name_display": "Cookies",
     "shops": [
@@ -2125,6 +2587,18 @@
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "cookies & cream",
+    "strain_name_display": "Cookies & Cream",
+    "shops": [
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2157,6 +2631,12 @@
     "strain_name_normalised": "cream",
     "strain_name_display": "Cream",
     "shops": [
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 161,
         "shop_key": "cs-green-place",
@@ -2263,6 +2743,18 @@
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "daily grape",
+    "strain_name_display": "Daily Grape",
+    "shops": [
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2514,6 +3006,24 @@
     ]
   },
   {
+    "strain_name_normalised": "el chapo",
+    "strain_name_display": "El Chapo",
+    "shops": [
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "el trumpo",
     "strain_name_display": "El Trumpo",
     "shops": [
@@ -2640,6 +3150,30 @@
     ]
   },
   {
+    "strain_name_normalised": "fracio",
+    "strain_name_display": "Fracio",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "frosted kush",
+    "strain_name_display": "Frosted Kush",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "frozen grapes",
     "strain_name_display": "Frozen Grapes",
     "shops": [
@@ -2694,6 +3228,18 @@
     ]
   },
   {
+    "strain_name_normalised": "fruity punch",
+    "strain_name_display": "Fruity Punch",
+    "shops": [
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "fugazi",
     "strain_name_display": "Fugazi",
     "shops": [
@@ -2710,6 +3256,12 @@
     "strain_name_display": "GAK",
     "shops": [
       {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 359,
         "shop_key": "cs-stud",
         "shop_name": "Stud",
@@ -2725,6 +3277,18 @@
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "gas nana us",
+    "strain_name_display": "Gas Nana US",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2797,6 +3361,36 @@
         "shop_id": 38,
         "shop_key": "cs-atlas-ams",
         "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
         "shop_city": "Amsterdam"
       },
       {
@@ -2878,6 +3472,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
@@ -2905,6 +3505,18 @@
         "shop_id": 4,
         "shop_key": "cs-katsu",
         "shop_name": "Katsu",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "giltter bomb",
+    "strain_name_display": "Giltter Bomb",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2950,6 +3562,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 112,
         "shop_key": "cs-dna",
         "shop_name": "DNA",
@@ -2977,6 +3595,18 @@
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "golden twist",
+    "strain_name_display": "Golden Twist",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3037,6 +3667,24 @@
         "shop_id": 29,
         "shop_key": "cs-aktama2",
         "shop_name": "Aktama 2",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
         "shop_city": "Amsterdam"
       },
       {
@@ -3104,6 +3752,24 @@
         "shop_key": "cs-bagheera",
         "shop_name": "Bagheera",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 80,
+        "shop_key": "cs-bushdocter",
+        "shop_name": "Bushdocter",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "grape krush",
+    "strain_name_display": "Grape Krush",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -3121,6 +3787,18 @@
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "grapefruit haze",
+    "strain_name_display": "Grapefruit Haze",
+    "shops": [
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3294,6 +3972,60 @@
     ]
   },
   {
+    "strain_name_normalised": "gummy bears",
+    "strain_name_display": "Gummy Bears",
+    "shops": [
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "hawaii skunk",
+    "strain_name_display": "Hawaii Skunk",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "hawian cookies",
+    "strain_name_display": "Hawian Cookies",
+    "shops": [
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "hawian haze",
     "strain_name_display": "Hawian Haze",
     "shops": [
@@ -3396,6 +4128,18 @@
     ]
   },
   {
+    "strain_name_normalised": "hollands hoop",
+    "strain_name_display": "Hollands Hoop",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "holy kosher",
     "strain_name_display": "Holy Kosher",
     "shops": [
@@ -3481,6 +4225,18 @@
         "shop_id": 39,
         "shop_key": "cs-baba",
         "shop_name": "Baba",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
         "shop_city": "Amsterdam"
       },
       {
@@ -3637,6 +4393,18 @@
         "shop_id": 182,
         "shop_key": "cs-hit2",
         "shop_name": "The Hit",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "juicy fruit og",
+    "strain_name_display": "Juicy Fruit OG",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3868,6 +4636,18 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 80,
+        "shop_key": "cs-bushdocter",
+        "shop_name": "Bushdocter",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
@@ -4003,6 +4783,18 @@
         "shop_id": 429,
         "shop_key": "cs-swedasnoopdoggstore",
         "shop_name": "SWED a Snoop Dogg Store",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "leamon haze",
+    "strain_name_display": "Leamon Haze",
+    "shops": [
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4171,6 +4963,30 @@
         "shop_id": 73,
         "shop_key": "cs-bronx",
         "shop_name": "Bronx",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
         "shop_city": "Amsterdam"
       },
       {
@@ -4386,9 +5202,33 @@
     ]
   },
   {
+    "strain_name_normalised": "mango",
+    "strain_name_display": "Mango",
+    "shops": [
+      {
+        "shop_id": 80,
+        "shop_key": "cs-bushdocter",
+        "shop_name": "Bushdocter",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "mango haze",
     "strain_name_display": "Mango Haze",
     "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 92,
+        "shop_key": "cs-city-hall",
+        "shop_name": "City Hall",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 111,
         "shop_key": "cs-d-l",
@@ -4420,6 +5260,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
@@ -4435,6 +5281,12 @@
         "shop_id": 23,
         "shop_key": "cs-7thheaven",
         "shop_name": "7th Heaven",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
         "shop_city": "Amsterdam"
       },
       {
@@ -4485,6 +5337,12 @@
     "strain_name_normalised": "mimosa",
     "strain_name_display": "Mimosa",
     "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 213,
         "shop_key": "cs-kroon",
@@ -4540,6 +5398,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
@@ -4555,6 +5419,30 @@
         "shop_id": 40,
         "shop_key": "cs-babylon",
         "shop_name": "Babylon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "monchi",
+    "strain_name_display": "Monchi",
+    "shops": [
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "moon balls",
+    "strain_name_display": "Moon Balls",
+    "shops": [
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4579,6 +5467,30 @@
         "shop_id": 55,
         "shop_key": "cs-black-star",
         "shop_name": "Blackstar",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 92,
+        "shop_key": "cs-city-hall",
+        "shop_name": "City Hall",
         "shop_city": "Amsterdam"
       },
       {
@@ -4616,6 +5528,18 @@
         "shop_key": "cs-anytime",
         "shop_name": "Any Time",
         "shop_city": "Alkmaar"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "mystical berry",
+    "strain_name_display": "Mystical Berry",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -4816,6 +5740,18 @@
     "strain_name_display": "Orange Bud",
     "shops": [
       {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 201,
         "shop_key": "cs-kade",
         "shop_name": "De Kade",
@@ -4906,6 +5842,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
@@ -4927,6 +5869,18 @@
         "shop_id": 51,
         "shop_key": "cs-best-friends-oost",
         "shop_name": "Best Friends Oost",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "original uk cheese",
+    "strain_name_display": "Original UK Cheese",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5028,6 +5982,18 @@
     ]
   },
   {
+    "strain_name_normalised": "peach nishi",
+    "strain_name_display": "Peach Nishi",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "peaches",
     "strain_name_display": "Peaches",
     "shops": [
@@ -5035,6 +6001,30 @@
         "shop_id": 175,
         "shop_key": "cs-hashtag",
         "shop_name": "Hashtag",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "peanut butter b",
+    "strain_name_display": "Peanut Butter B",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "peanut butter rockstar",
+    "strain_name_display": "Peanut Butter Rockstar",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5083,6 +6073,24 @@
         "shop_id": 2191,
         "shop_key": "cs-barneys",
         "shop_name": "Barney's",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
         "shop_city": "Amsterdam"
       },
       {
@@ -5178,6 +6186,30 @@
     ]
   },
   {
+    "strain_name_normalised": "platnum og",
+    "strain_name_display": "Platnum OG",
+    "shops": [
+      {
+        "shop_id": 80,
+        "shop_key": "cs-bushdocter",
+        "shop_name": "Bushdocter",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "popcorn sativa",
+    "strain_name_display": "Popcorn Sativa",
+    "shops": [
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "potion",
     "strain_name_display": "Potion",
     "shops": [
@@ -5257,6 +6289,18 @@
         "shop_id": 363,
         "shop_key": "cs-supermarkt",
         "shop_name": "de Supermarkt",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "purple berry",
+    "strain_name_display": "Purple Berry",
+    "shops": [
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5349,6 +6393,12 @@
     "strain_name_normalised": "purple punch",
     "strain_name_display": "Purple Punch",
     "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 386,
         "shop_key": "cs-voyagers",
@@ -5460,6 +6510,24 @@
     ]
   },
   {
+    "strain_name_normalised": "rainbow sherbert",
+    "strain_name_display": "Rainbow Sherbert",
+    "shops": [
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "rainbow warrior",
     "strain_name_display": "Rainbow Warrior",
     "shops": [
@@ -5527,6 +6595,18 @@
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "rolex og",
+    "strain_name_display": "Rolex OG",
+    "shops": [
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5746,6 +6826,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
@@ -5773,6 +6859,30 @@
         "shop_id": 363,
         "shop_key": "cs-supermarkt",
         "shop_name": "de Supermarkt",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "skilatti",
+    "strain_name_display": "Skilatti",
+    "shops": [
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "skittlez mintz",
+    "strain_name_display": "Skittlez Mintz",
+    "shops": [
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5876,6 +6986,18 @@
         "shop_key": "cs-brug",
         "shop_name": "De Brug",
         "shop_city": "Alkmaar"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "sour apple haze",
+    "strain_name_display": "Sour Apple Haze",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -6034,6 +7156,18 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 111,
         "shop_key": "cs-d-l",
         "shop_name": "D&L",
@@ -6097,6 +7231,18 @@
         "shop_id": 19,
         "shop_key": "cs-1e-hulp",
         "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "strawberry lemonade",
+    "strain_name_display": "Strawberry Lemonade",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
         "shop_city": "Amsterdam"
       }
     ]
@@ -6168,6 +7314,18 @@
     ]
   },
   {
+    "strain_name_normalised": "sunrocks",
+    "strain_name_display": "SunRocks",
+    "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "sunset sherbert",
     "strain_name_display": "Sunset Sherbert",
     "shops": [
@@ -6178,9 +7336,27 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 386,
         "shop_key": "cs-voyagers",
         "shop_name": "Voyagers",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "super bio",
+    "strain_name_display": "Super Bio",
+    "shops": [
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
         "shop_city": "Amsterdam"
       }
     ]
@@ -6248,6 +7424,12 @@
         "shop_key": "cs-basjoe",
         "shop_name": "Basjoe",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -6283,6 +7465,36 @@
         "shop_id": 68,
         "shop_key": "cs-boerejongens-west",
         "shop_name": "Boerejongens West",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
         "shop_city": "Amsterdam"
       },
       {
@@ -6354,6 +7566,18 @@
     ]
   },
   {
+    "strain_name_normalised": "supreme og",
+    "strain_name_display": "Supreme OG",
+    "shops": [
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "sweet retreat",
     "strain_name_display": "Sweet Retreat",
     "shops": [
@@ -6397,6 +7621,18 @@
         "shop_id": 182,
         "shop_key": "cs-hit2",
         "shop_name": "The Hit",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "tangie",
+    "strain_name_display": "Tangie",
+    "shops": [
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
         "shop_city": "Amsterdam"
       }
     ]
@@ -6463,6 +7699,18 @@
         "shop_id": 55,
         "shop_key": "cs-black-star",
         "shop_name": "Blackstar",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "the methode",
+    "strain_name_display": "The Methode",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
         "shop_city": "Amsterdam"
       }
     ]
@@ -6722,6 +7970,12 @@
         "shop_key": "cs-abraxas",
         "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -6928,6 +8182,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
@@ -6984,6 +8244,18 @@
     ]
   },
   {
+    "strain_name_normalised": "white boy zlushie",
+    "strain_name_display": "White Boy Zlushie",
+    "shops": [
+      {
+        "shop_id": 92,
+        "shop_key": "cs-city-hall",
+        "shop_name": "City Hall",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "white cherry gelato",
     "strain_name_display": "White Cherry Gelato",
     "shops": [
@@ -7016,6 +8288,12 @@
         "shop_key": "cs-boerejongens-slot",
         "shop_name": "Boerejongens Sloterdijk",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -7040,6 +8318,12 @@
         "shop_key": "cs-hightime-alk",
         "shop_name": "High-Time",
         "shop_city": "Alkmaar"
+      },
+      {
+        "shop_id": 14,
+        "shop_key": "cs-central",
+        "shop_name": "Central",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -7059,6 +8343,12 @@
     "strain_name_normalised": "white runtz",
     "strain_name_display": "White Runtz",
     "shops": [
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 182,
         "shop_key": "cs-hit2",
@@ -7095,6 +8385,18 @@
     "strain_name_normalised": "white truffle",
     "strain_name_display": "White Truffle",
     "shops": [
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 213,
         "shop_key": "cs-kroon",
@@ -7189,6 +8491,60 @@
         "shop_id": 73,
         "shop_key": "cs-bronx",
         "shop_name": "Bronx",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 76,
+        "shop_key": "cs-bulldog-energy",
+        "shop_name": "Bulldog Energy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 77,
+        "shop_key": "cs-bulldog-palace",
+        "shop_name": "Bulldog Palace",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 13,
+        "shop_key": "cs-bulldog-rockshop",
+        "shop_name": "Bulldog Rockshop",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 79,
+        "shop_key": "cs-bullwackie",
+        "shop_name": "Bullwackie",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 82,
+        "shop_key": "cs-carmona",
+        "shop_name": "Carmona",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 87,
+        "shop_key": "cs-chapiteau",
+        "shop_name": "Chapiteau",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 89,
+        "shop_key": "cs-cheech-chongs-2",
+        "shop_name": "Cheech & Chong's 2",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 92,
+        "shop_key": "cs-city-hall",
+        "shop_name": "City Hall",
         "shop_city": "Amsterdam"
       },
       {
@@ -7474,6 +8830,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 80,
+        "shop_key": "cs-bushdocter",
+        "shop_name": "Bushdocter",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
@@ -7651,6 +9013,18 @@
         "shop_id": 264,
         "shop_key": "cs-old-church-2",
         "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "zushi",
+    "strain_name_display": "Zushi",
+    "shops": [
+      {
+        "shop_id": 85,
+        "shop_key": "cs-catch-33",
+        "shop_name": "Catch 33",
         "shop_city": "Amsterdam"
       }
     ]
