@@ -319,6 +319,19 @@
       color: #555;
     }
 
+    .price-label-tooltip {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid #cfd7df;
+      border-radius: 999px;
+      color: #1f2b36;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1;
+      padding: 4px 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.22);
+      white-space: nowrap;
+    }
+
     @media (max-width: 767px) {
       #strain-list-panel {
         max-height: 200px;
@@ -493,6 +506,8 @@
     let strainFilterText = '';
     let strainAllowedShopIds = null; // Set<number> | null
     let strainAllowedNameCityKeys = null; // Set<string> | null
+    let strainPriceByShopId = null; // Map<number, string> | null
+    let strainPriceByNameCity = null; // Map<string, string> | null
     let strainIndexRows = null;      // cached JSON strain index
     let activeOfferingsRows = null;  // cached JSON offerings rows
     let activeStrainNames = [];      // clickable strain list for UI panel
@@ -988,6 +1003,91 @@
       throw new Error('No active offerings JSON available');
     }
 
+    function formatPriceAmount(value) {
+      if (!Number.isFinite(value)) return '';
+      const rounded = Math.round(value * 100) / 100;
+      return Number.isInteger(rounded) ? String(rounded) : String(rounded).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    function buildPriceLabel(entries) {
+      if (!Array.isArray(entries) || !entries.length) return '';
+      const valid = entries.filter(e => Number.isFinite(e && e.amount));
+      if (!valid.length) return '';
+
+      const unit = ((valid[0].unit || 'g') + '').trim() || 'g';
+      const currency = ((valid[0].currency || '€') + '').trim() || '€';
+      const amounts = valid.map(e => e.amount).sort((a, b) => a - b);
+      const min = amounts[0];
+      const max = amounts[amounts.length - 1];
+
+      if (Math.abs(max - min) < 0.0001) {
+        return `${currency}${formatPriceAmount(min)}/${unit}`;
+      }
+      return `${currency}${formatPriceAmount(min)}-${formatPriceAmount(max)}/${unit}`;
+    }
+
+    function collectMatchedActiveOfferingRows(qNorm, rows) {
+      if (!qNorm) return [];
+      const exact = [];
+      const partial = [];
+      (rows || []).forEach(r => {
+        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
+        if (!n) return;
+        if (n === qNorm) {
+          exact.push(r);
+        } else if (n.includes(qNorm)) {
+          partial.push(r);
+        }
+      });
+      return exact.length ? exact : partial;
+    }
+
+    async function fetchStrainPriceMapsFromJson(q) {
+      const qNorm = normaliseText(q);
+      if (!qNorm) {
+        return { byShopId: new Map(), byNameCity: new Map() };
+      }
+
+      const rows = await loadActiveOfferingsRows();
+      const matchedRows = collectMatchedActiveOfferingRows(qNorm, rows);
+      const byShopRaw = new Map();
+      const byNameCityRaw = new Map();
+
+      matchedRows.forEach(r => {
+        const amount = parseFloat(r && r.price_amount);
+        if (!Number.isFinite(amount)) return;
+        const currency = ((r && r.price_currency) || '€').toString().trim() || '€';
+        const unit = ((r && r.price_unit) || 'g').toString().trim() || 'g';
+        const priceEntry = { amount, currency, unit };
+
+        const shopId = parseInt(r && r.shop_id, 10);
+        if (Number.isFinite(shopId)) {
+          if (!byShopRaw.has(shopId)) byShopRaw.set(shopId, []);
+          byShopRaw.get(shopId).push(priceEntry);
+        }
+
+        const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
+        if (key !== '|') {
+          if (!byNameCityRaw.has(key)) byNameCityRaw.set(key, []);
+          byNameCityRaw.get(key).push(priceEntry);
+        }
+      });
+
+      const byShopId = new Map();
+      byShopRaw.forEach((entries, shopId) => {
+        const label = buildPriceLabel(entries);
+        if (label) byShopId.set(shopId, label);
+      });
+
+      const byNameCity = new Map();
+      byNameCityRaw.forEach((entries, key) => {
+        const label = buildPriceLabel(entries);
+        if (label) byNameCity.set(key, label);
+      });
+
+      return { byShopId, byNameCity };
+    }
+
     async function fetchStrainShopIdsFromJson(q) {
       const qNorm = normaliseText(q);
       if (!qNorm) return { ids: new Set(), nameCityKeys: new Set(), source: 'none' };
@@ -1436,6 +1536,8 @@
         strainFilterText = '';
         strainAllowedShopIds = null;
         strainAllowedNameCityKeys = null;
+        strainPriceByShopId = null;
+        strainPriceByNameCity = null;
         if (status) status.textContent = 'Strain filter: off';
         updateDestinationDropdown();
         updateDistanceInfo();
@@ -1469,6 +1571,16 @@
         strainFilterText = q;
         strainAllowedShopIds = result.ids;
         strainAllowedNameCityKeys = result.nameCityKeys.size ? result.nameCityKeys : null;
+
+        try {
+          const pricing = await fetchStrainPriceMapsFromJson(q);
+          strainPriceByShopId = pricing.byShopId;
+          strainPriceByNameCity = pricing.byNameCity;
+        } catch (_err) {
+          strainPriceByShopId = null;
+          strainPriceByNameCity = null;
+        }
+
         const matchedCount = locations.filter((loc, idx) => {
           const key = normaliseNameCityKey(loc.name, loc.city || '');
           const byId = loc.db_shop_id && strainAllowedShopIds.has(loc.db_shop_id);
@@ -1481,6 +1593,8 @@
         updateMarkers();
         updateStrainListSelection();
       } catch (err) {
+        strainPriceByShopId = null;
+        strainPriceByNameCity = null;
         if (status) status.textContent = 'Strain filter unavailable: missing JSON index files';
       }
     }
@@ -1492,6 +1606,8 @@
       strainFilterText = '';
       strainAllowedShopIds = null;
       strainAllowedNameCityKeys = null;
+      strainPriceByShopId = null;
+      strainPriceByNameCity = null;
       if (status) status.textContent = 'Strain filter: off';
       updateDestinationDropdown();
       updateDistanceInfo();
@@ -1799,6 +1915,8 @@
       const strainSearch = document.getElementById('strain-list-search');
       const strainList = document.getElementById('strain-list');
       const strainListStatus = document.getElementById('strain-list-status');
+      strainPriceByShopId = null;
+      strainPriceByNameCity = null;
       if (strainInput) strainInput.value = '';
       if (strainStatus) strainStatus.textContent = 'Strain filter: off';
       if (strainSearch) strainSearch.value = '';
@@ -2592,6 +2710,54 @@
       }
     }
 
+    function getMarkerPriceLabel(loc) {
+      if (!strainFilterText) return '';
+      if (!strainPriceByShopId && !strainPriceByNameCity) return '';
+
+      if (loc && loc.db_shop_id && strainPriceByShopId && strainPriceByShopId.has(loc.db_shop_id)) {
+        return strainPriceByShopId.get(loc.db_shop_id) || '';
+      }
+
+      if (loc && strainPriceByNameCity) {
+        const key = normaliseNameCityKey(loc.name, loc.city || '');
+        if (strainPriceByNameCity.has(key)) {
+          return strainPriceByNameCity.get(key) || '';
+        }
+      }
+
+      return '';
+    }
+
+    function syncMarkerPriceTooltip(index, visible) {
+      const marker = markers[index];
+      const loc = locations[index];
+      if (!marker || !loc) return;
+
+      const label = visible ? getMarkerPriceLabel(loc) : '';
+      const current = marker._priceLabelText || '';
+
+      if (label) {
+        const needsBind = !marker.getTooltip() || current !== label;
+        if (needsBind) {
+          if (marker.getTooltip()) marker.unbindTooltip();
+          marker.bindTooltip(label, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -20],
+            className: 'price-label-tooltip',
+            opacity: 1
+          });
+          marker._priceLabelText = label;
+        }
+        if (map && map.hasLayer(marker)) {
+          marker.openTooltip();
+        }
+      } else {
+        if (marker.getTooltip()) marker.unbindTooltip();
+        marker._priceLabelText = '';
+      }
+    }
+
     /**
      * Show or hide markers based on category filters.
      */
@@ -2603,6 +2769,7 @@
         } else {
           if (map.hasLayer(markers[i])) map.removeLayer(markers[i]);
         }
+        syncMarkerPriceTooltip(i, visible);
       });
     }
 
