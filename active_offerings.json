@@ -1020,6 +1020,23 @@
     "updated_at": "2026-02-09T18:33:16.311551+00:00"
   },
   {
+    "shop_id": 395,
+    "shop_key": "cs-wietstock",
+    "shop_name": "Wietstok",
+    "shop_city": "Utrecht",
+    "strain_id": 40,
+    "strain_name": "Amnesia",
+    "strain_name_normalised": "amnesia",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:58:36.017979+00:00",
+    "updated_at": "2026-02-20T23:58:36.017979+00:00"
+  },
+  {
     "shop_id": 37,
     "shop_key": "cs-anytime",
     "shop_name": "Any Time",
@@ -1528,6 +1545,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T15:37:09.063384+00:00",
     "updated_at": "2026-02-19T15:37:09.063384+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 102,
+    "strain_name": "Amnesia Haze",
+    "strain_name_normalised": "amnesia haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 4,
@@ -2958,6 +2992,23 @@
     "updated_at": "2026-02-19T22:21:49.355514+00:00"
   },
   {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1327,
+    "strain_name": "Blue Coma",
+    "strain_name_normalised": "blue coma",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
+  },
+  {
     "shop_id": 59,
     "shop_key": "cs-bluebird",
     "shop_name": "Bluebird",
@@ -3245,6 +3296,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T20:20:57.450482+00:00",
     "updated_at": "2026-02-20T20:20:57.450482+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1131,
+    "strain_name": "Blue Nerds",
+    "strain_name_normalised": "blue nerds",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 22.0,
+    "price_unit": "g",
+    "notes": "Enigma Farms",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 126,
@@ -4486,6 +4554,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T21:04:42.549759+00:00",
     "updated_at": "2026-02-20T21:04:42.549759+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 23,
+    "strain_name": "Cheese",
+    "strain_name_normalised": "cheese",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 175,
@@ -6356,6 +6441,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T20:20:57.450482+00:00",
     "updated_at": "2026-02-20T20:20:57.450482+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1338,
+    "strain_name": "Face Melterz",
+    "strain_name_normalised": "face melterz",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 24.0,
+    "price_unit": "g",
+    "notes": "Heavy Loads",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 208,
@@ -9877,6 +9979,23 @@
     "updated_at": "2026-02-19T22:15:31.314370+00:00"
   },
   {
+    "shop_id": 20,
+    "shop_key": "cs-208",
+    "shop_name": "208",
+    "shop_city": "Utrecht",
+    "strain_id": 1347,
+    "strain_name": "Ketaina",
+    "strain_name_normalised": "ketaina",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 5.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-21T00:00:59.758756+00:00",
+    "updated_at": "2026-02-21T00:00:59.758756+00:00"
+  },
+  {
     "shop_id": 74,
     "shop_key": "cs-brug",
     "shop_name": "De Brug",
@@ -9909,6 +10028,23 @@
     "notes": "Premium Cali",
     "last_seen_at_utc": "2026-02-20T23:27:48.583683+00:00",
     "updated_at": "2026-02-20T23:27:48.583683+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1329,
+    "strain_name": "Kings Juice",
+    "strain_name_normalised": "kings juice",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 213,
@@ -10370,6 +10506,23 @@
     "updated_at": "2026-02-19T15:32:53.662877+00:00"
   },
   {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 407,
+    "strain_name": "Kush Mintz",
+    "strain_name_normalised": "kush mintz",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "Fumi Exotics",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
+  },
+  {
     "shop_id": 386,
     "shop_key": "cs-voyagers",
     "shop_name": "Voyagers",
@@ -10812,6 +10965,23 @@
     "updated_at": "2026-02-19T15:37:35.674720+00:00"
   },
   {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1330,
+    "strain_name": "Lemon Eclipse",
+    "strain_name_normalised": "lemon eclipse",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
+  },
+  {
     "shop_id": 74,
     "shop_key": "cs-brug",
     "shop_name": "De Brug",
@@ -11184,6 +11354,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T23:31:28.946110+00:00",
     "updated_at": "2026-02-20T23:31:28.946110+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1341,
+    "strain_name": "Lemon Poppers",
+    "strain_name_normalised": "lemon poppers",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 34.0,
+    "price_unit": "g",
+    "notes": "Super Dope",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 55,
@@ -11764,6 +11951,23 @@
     "updated_at": "2026-02-19T15:37:35.674720+00:00"
   },
   {
+    "shop_id": 20,
+    "shop_key": "cs-208",
+    "shop_name": "208",
+    "shop_city": "Utrecht",
+    "strain_id": 1348,
+    "strain_name": "Maroc Super",
+    "strain_name_normalised": "maroc super",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "1.8g",
+    "last_seen_at_utc": "2026-02-21T00:00:59.758756+00:00",
+    "updated_at": "2026-02-21T00:00:59.758756+00:00"
+  },
+  {
     "shop_id": 23,
     "shop_key": "cs-7thheaven",
     "shop_name": "7th Heaven",
@@ -11830,6 +12034,23 @@
     "notes": "3.5g The TenCo",
     "last_seen_at_utc": "2026-02-20T23:16:29.442387+00:00",
     "updated_at": "2026-02-20T23:16:29.442387+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1335,
+    "strain_name": "Melonade",
+    "strain_name_normalised": "melonade",
+    "base_type": "sativa",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "Midwest Best",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 363,
@@ -13226,6 +13447,23 @@
     "updated_at": "2026-02-20T20:16:33.012554+00:00"
   },
   {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 238,
+    "strain_name": "Oreoz",
+    "strain_name_normalised": "oreoz",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
+  },
+  {
     "shop_id": 213,
     "shop_key": "cs-kroon",
     "shop_name": "de Kroon",
@@ -14159,6 +14397,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T23:31:28.946110+00:00",
     "updated_at": "2026-02-20T23:31:28.946110+00:00"
+  },
+  {
+    "shop_id": 395,
+    "shop_key": "cs-wietstock",
+    "shop_name": "Wietstok",
+    "shop_city": "Utrecht",
+    "strain_id": 549,
+    "strain_name": "Power Plant",
+    "strain_name_normalised": "power plant",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 8.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:58:36.017979+00:00",
+    "updated_at": "2026-02-20T23:58:36.017979+00:00"
   },
   {
     "shop_id": 51,
@@ -15247,6 +15502,23 @@
     "notes": "0.9g",
     "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
     "updated_at": "2026-02-19T22:18:41.363056+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1337,
+    "strain_name": "SHERBANGER 22",
+    "strain_name_normalised": "SHERBANGER 22",
+    "base_type": "sativa",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 22.0,
+    "price_unit": "g",
+    "notes": "Doja",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 231,
@@ -17034,6 +17306,23 @@
     "updated_at": "2026-02-20T10:42:27.284741+00:00"
   },
   {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1334,
+    "strain_name": "Super Boof",
+    "strain_name_normalised": "super boof",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "Blockhead",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
+  },
+  {
     "shop_id": 44,
     "shop_key": "cs-balou",
     "shop_name": "Balou",
@@ -17202,6 +17491,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T18:48:54.762241+00:00",
     "updated_at": "2026-02-20T18:48:54.762241+00:00"
+  },
+  {
+    "shop_id": 20,
+    "shop_key": "cs-208",
+    "shop_name": "208",
+    "shop_city": "Utrecht",
+    "strain_id": 1349,
+    "strain_name": "Super Polm",
+    "strain_name_normalised": "super polm",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-21T00:00:59.758756+00:00",
+    "updated_at": "2026-02-21T00:00:59.758756+00:00"
   },
   {
     "shop_id": 49,
@@ -17491,6 +17797,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T22:38:52.005739+00:00",
     "updated_at": "2026-02-20T22:38:52.005739+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 147,
+    "strain_name": "Super Silver Haze",
+    "strain_name_normalised": "super silver haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 202,
@@ -19278,6 +19601,23 @@
     "updated_at": "2026-02-20T20:06:48.526980+00:00"
   },
   {
+    "shop_id": 395,
+    "shop_key": "cs-wietstock",
+    "shop_name": "Wietstok",
+    "shop_city": "Utrecht",
+    "strain_id": 1346,
+    "strain_name": "White Grape",
+    "strain_name_normalised": "white grape",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:58:36.017979+00:00",
+    "updated_at": "2026-02-20T23:58:36.017979+00:00"
+  },
+  {
     "shop_id": 179,
     "shop_key": "cs-hightime-alk",
     "shop_name": "High-Time",
@@ -20060,6 +20400,23 @@
     "updated_at": "2026-02-19T16:47:37.317419+00:00"
   },
   {
+    "shop_id": 395,
+    "shop_key": "cs-wietstock",
+    "shop_name": "Wietstok",
+    "shop_city": "Utrecht",
+    "strain_id": 69,
+    "strain_name": "White Widow",
+    "strain_name_normalised": "white widow",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 9.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:58:36.017979+00:00",
+    "updated_at": "2026-02-20T23:58:36.017979+00:00"
+  },
+  {
     "shop_id": 12,
     "shop_key": "cs-abraxas",
     "shop_name": "Abraxas",
@@ -20349,6 +20706,23 @@
     "updated_at": "2026-02-20T23:27:48.583683+00:00"
   },
   {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1340,
+    "strain_name": "Zang Banger",
+    "strain_name_normalised": "zang banger",
+    "base_type": "sativa",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 26.0,
+    "price_unit": "g",
+    "notes": "Wizard Trees",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
+  },
+  {
     "shop_id": 52,
     "shop_key": "cs-bij",
     "shop_name": "Bij",
@@ -20517,6 +20891,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T18:37:19.672998+00:00",
     "updated_at": "2026-02-19T18:37:19.672998+00:00"
+  },
+  {
+    "shop_id": 395,
+    "shop_key": "cs-wietstock",
+    "shop_name": "Wietstok",
+    "shop_city": "Utrecht",
+    "strain_id": 1345,
+    "strain_name": "Zilver Haze",
+    "strain_name_normalised": "zilver haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:58:36.017979+00:00",
+    "updated_at": "2026-02-20T23:58:36.017979+00:00"
   },
   {
     "shop_id": 23,
@@ -20791,6 +21182,23 @@
     "updated_at": "2026-02-19T15:37:09.063384+00:00"
   },
   {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 4,
+    "strain_name": "Zoap",
+    "strain_name_normalised": "zoap",
+    "base_type": "sativa",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 24.0,
+    "price_unit": "g",
+    "notes": "Deo Farms",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
+  },
+  {
     "shop_id": 370,
     "shop_key": "cs-terps-army-2",
     "shop_name": "Terps Army 2",
@@ -21027,6 +21435,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:16:07.384852+00:00",
     "updated_at": "2026-02-19T22:16:07.384852+00:00"
+  },
+  {
+    "shop_id": 155,
+    "shop_key": "cs-greenhouse-centrum",
+    "shop_name": "Greenhouse Centrum",
+    "shop_city": "Amsterdam",
+    "strain_id": 1331,
+    "strain_name": "Ztrawberry",
+    "strain_name_normalised": "ztrawberry",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
+    "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
     "shop_id": 85,

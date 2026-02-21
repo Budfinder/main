@@ -678,6 +678,18 @@
     ]
   },
   {
+    "strain_name_normalised": "SHERBANGER 22",
+    "strain_name_display": "SHERBANGER 22",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "SUPER SILVER G13",
     "strain_name_display": "SUPER SILVER G13",
     "shops": [
@@ -992,6 +1004,12 @@
         "shop_key": "cs-wedren",
         "shop_name": "De Wedren",
         "shop_city": "Nijmegen"
+      },
+      {
+        "shop_id": 395,
+        "shop_key": "cs-wietstock",
+        "shop_name": "Wietstok",
+        "shop_city": "Utrecht"
       }
     ]
   },
@@ -1177,6 +1195,12 @@
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       },
       {
@@ -1950,6 +1974,18 @@
     ]
   },
   {
+    "strain_name_normalised": "blue coma",
+    "strain_name_display": "Blue Coma",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "blue cookies",
     "strain_name_display": "Blue Cookies",
     "shops": [
@@ -2107,6 +2143,12 @@
         "shop_id": 125,
         "shop_key": "cs-easy-times",
         "shop_name": "Easy Times",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       }
     ]
@@ -2845,6 +2887,12 @@
         "shop_id": 133,
         "shop_key": "cs-flower-power",
         "shop_name": "Flower Power",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       },
       {
@@ -3896,6 +3944,18 @@
         "shop_key": "cs-brug",
         "shop_name": "De Brug",
         "shop_city": "Alkmaar"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "face melterz",
+    "strain_name_display": "Face Melterz",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -5616,6 +5676,18 @@
     ]
   },
   {
+    "strain_name_normalised": "ketaina",
+    "strain_name_display": "Ketaina",
+    "shops": [
+      {
+        "shop_id": 20,
+        "shop_key": "cs-208",
+        "shop_name": "208",
+        "shop_city": "Utrecht"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "khalifa mints",
     "strain_name_display": "Khalifa Mints",
     "shops": [
@@ -5635,6 +5707,18 @@
         "shop_id": 182,
         "shop_key": "cs-hit2",
         "shop_name": "The Hit",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "kings juice",
+    "strain_name_display": "Kings Juice",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5851,6 +5935,12 @@
         "shop_id": 19,
         "shop_key": "cs-1e-hulp",
         "shop_name": "1e Hulp",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       },
       {
@@ -6090,6 +6180,18 @@
     ]
   },
   {
+    "strain_name_normalised": "lemon eclipse",
+    "strain_name_display": "Lemon Eclipse",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "lemon haze",
     "strain_name_display": "Lemon Haze",
     "shops": [
@@ -6230,6 +6332,18 @@
         "shop_key": "cs-culture-boat",
         "shop_name": "Culture Boat",
         "shop_city": "Utrecht"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "lemon poppers",
+    "strain_name_display": "Lemon Poppers",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -6570,6 +6684,18 @@
     ]
   },
   {
+    "strain_name_normalised": "maroc super",
+    "strain_name_display": "Maroc Super",
+    "shops": [
+      {
+        "shop_id": 20,
+        "shop_key": "cs-208",
+        "shop_name": "208",
+        "shop_city": "Utrecht"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "melon nishi",
     "strain_name_display": "Melon Nishi",
     "shops": [
@@ -6595,6 +6721,18 @@
         "shop_id": 162,
         "shop_key": "cs-green-place-2",
         "shop_name": "Green Place 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "melonade",
+    "strain_name_display": "Melonade",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       }
     ]
@@ -7348,6 +7486,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
@@ -7855,6 +7999,12 @@
         "shop_id": 18,
         "shop_key": "cs-culture-boat",
         "shop_name": "Culture Boat",
+        "shop_city": "Utrecht"
+      },
+      {
+        "shop_id": 395,
+        "shop_key": "cs-wietstock",
+        "shop_name": "Wietstok",
         "shop_city": "Utrecht"
       }
     ]
@@ -9426,6 +9576,18 @@
     ]
   },
   {
+    "strain_name_normalised": "super boof",
+    "strain_name_display": "Super Boof",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "super candy millo",
     "strain_name_display": "Super Candy Millo",
     "shops": [
@@ -9506,6 +9668,18 @@
         "shop_key": "cs-oost",
         "shop_name": "Coffeeshop Oost",
         "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "super polm",
+    "strain_name_display": "Super Polm",
+    "shops": [
+      {
+        "shop_id": 20,
+        "shop_key": "cs-208",
+        "shop_name": "208",
+        "shop_city": "Utrecht"
       }
     ]
   },
@@ -9631,6 +9805,12 @@
         "shop_id": 139,
         "shop_key": "cs-free-i",
         "shop_name": "Free I",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       },
       {
@@ -10644,6 +10824,18 @@
     ]
   },
   {
+    "strain_name_normalised": "white grape",
+    "strain_name_display": "White Grape",
+    "shops": [
+      {
+        "shop_id": 395,
+        "shop_key": "cs-wietstock",
+        "shop_name": "Wietstok",
+        "shop_city": "Utrecht"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "white haze",
     "strain_name_display": "White Haze",
     "shops": [
@@ -10964,6 +11156,12 @@
         "shop_key": "cs-supermarkt",
         "shop_name": "de Supermarkt",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 395,
+        "shop_key": "cs-wietstock",
+        "shop_name": "Wietstok",
+        "shop_city": "Utrecht"
       }
     ]
   },
@@ -11136,6 +11334,18 @@
     ]
   },
   {
+    "strain_name_normalised": "zang banger",
+    "strain_name_display": "Zang Banger",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "zangria",
     "strain_name_display": "Zangria",
     "shops": [
@@ -11228,6 +11438,18 @@
         "shop_key": "cs-barneys",
         "shop_name": "Barney's",
         "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "zilver haze",
+    "strain_name_display": "Zilver Haze",
+    "shops": [
+      {
+        "shop_id": 395,
+        "shop_key": "cs-wietstock",
+        "shop_name": "Wietstok",
+        "shop_city": "Utrecht"
       }
     ]
   },
@@ -11347,6 +11569,12 @@
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       },
       {
@@ -11491,6 +11719,18 @@
         "shop_id": 264,
         "shop_key": "cs-old-church-2",
         "shop_name": "Old Church 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "ztrawberry",
+    "strain_name_display": "Ztrawberry",
+    "shops": [
+      {
+        "shop_id": 155,
+        "shop_key": "cs-greenhouse-centrum",
+        "shop_name": "Greenhouse Centrum",
         "shop_city": "Amsterdam"
       }
     ]
