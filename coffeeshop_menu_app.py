@@ -28,8 +28,8 @@ disappears everywhere once merged/renamed.
 
 - Finish a menu to reconcile the long-term `shop_offerings` catalogue
   (set active, auto-discontinue missing, and mark menu processed)
-- Manually discontinue/resume offerings with an optional “until” text, and
-  optionally lock the status to prevent auto-changes
+- Manually set offering status (active/inactive) and keep inactive rows at the
+  bottom of the list
 
 Run
 ---
@@ -1304,6 +1304,7 @@ def set_offering_status(
     reason: str = "",
     until_utc: str = "",
     lock: bool = True,
+    commit: bool = True,
 ) -> None:
     """Manually set offering status and optional lock."""
     now = utc_now_iso()
@@ -1341,7 +1342,8 @@ def set_offering_status(
             (reason or "manual", now, until_utc or "", lock_int, now, shop_id, strain_id),
         )
 
-    conn.commit()
+    if commit:
+        conn.commit()
 
 
 # -----------------------------------------------------------------------------
@@ -1742,8 +1744,7 @@ PAGE_TMPL = """
           <div class="small"><b>View</b></div>
           <div class="viewSwitchGroup" role="radiogroup" aria-label="Section view">
             <label class="radioOption"><input type="radio" name="shop_section_view" value="add" checked><span>Add entry</span></label>
-            <label class="radioOption"><input type="radio" name="shop_section_view" value="entries"><span>Current entries</span></label>
-            <label class="radioOption"><input type="radio" name="shop_section_view" value="catalogue"><span>Offerings catalogue</span></label>
+            <label class="radioOption"><input type="radio" name="shop_section_view" value="catalogue"><span>Offerings status</span></label>
           </div>
         </div>
 
@@ -1797,114 +1798,109 @@ PAGE_TMPL = """
               </div>
             </form>
           </div>
-        </div>
-
-        <div id="sectionEntries" class="viewSection" style="margin-top:14px;">
-          <div style="display:flex; align-items:baseline; justify-content: space-between; gap:10px; flex-wrap:wrap;">
-            <div style="font-weight:800;">Current menu entries</div>
-            <div class="small">Load active offerings, then keep/remove/edit what changed.</div>
-          </div>
-          <div class="btnrow" style="margin-top:8px;">
-            <button class="ghost" type="button" onclick="setAllEntryChecks(true);">Select all</button>
-            <button class="ghost" type="button" onclick="setAllEntryChecks(false);">Clear selection</button>
-            <button class="ghost" type="button" onclick="keepSelectedEntries();">Keep selected only</button>
-            <button class="danger" type="button" onclick="removeSelectedEntries();">Remove selected</button>
-          </div>
-          <form id="bulkKeepForm" method="post" action="{{ url_for('keep_selected_entries', shop_id=shop_id) }}" style="display:none;"></form>
-          <form id="bulkRemoveForm" method="post" action="{{ url_for('delete_selected_entries', shop_id=shop_id) }}" style="display:none;"></form>
-          <div id="entriesWrap" class="tableWrap entries" style="margin-top:10px;">
-            <table>
-              <thead>
-                <tr>
-                  <th>Pick</th><th>Strain</th><th>Type</th><th>Price</th><th>Notes</th><th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for it in menu_entries %}
+          <div style="margin-top:14px;">
+            <div style="display:flex; align-items:baseline; justify-content: space-between; gap:10px; flex-wrap:wrap;">
+              <div style="font-weight:800;">Current menu entries</div>
+              <div class="small">Load active offerings, then keep/remove/edit what changed.</div>
+            </div>
+            <div class="btnrow" style="margin-top:8px;">
+              <button class="ghost" type="button" onclick="setAllEntryChecks(true);">Select all</button>
+              <button class="ghost" type="button" onclick="setAllEntryChecks(false);">Clear selection</button>
+              <button class="ghost" type="button" onclick="keepSelectedEntries();">Keep selected only</button>
+              <button class="danger" type="button" onclick="removeSelectedEntries();">Remove selected</button>
+            </div>
+            <form id="bulkKeepForm" method="post" action="{{ url_for('keep_selected_entries', shop_id=shop_id) }}" style="display:none;"></form>
+            <form id="bulkRemoveForm" method="post" action="{{ url_for('delete_selected_entries', shop_id=shop_id) }}" style="display:none;"></form>
+            <div id="entriesWrap" class="tableWrap entries" style="margin-top:10px;">
+              <table>
+                <thead>
                   <tr>
-                    <td><input type="checkbox" class="entryCheck" value="{{ it['entry_id'] }}" aria-label="select {{ it['strain_name'] }}"></td>
-                    <td>{{ it['strain_name'] }}</td>
-                    <td>{{ it['base_type'] }}{% if it['is_cali'] %} (cali){% endif %}</td>
-                    <td>{{ it['price_currency'] }}{{ '%.2f'|format(it['price_amount']) }}/{{ it['price_unit'] }}</td>
-                    <td>{{ it['notes'] }}</td>
-                    <td>
-                      <div class="btnrow">
-                        <a class="pill" href="{{ url_for('edit_entry_get', shop_id=shop_id, entry_id=it['entry_id']) }}">Edit</a>
-                        <form method="post"
-                              action="{{ url_for('delete_entry_route', shop_id=shop_id, entry_id=it['entry_id']) }}"
-                              onsubmit="return confirm('Remove this strain from current menu entries?');"
-                              style="display:inline;">
-                          <button class="danger" type="submit">Remove</button>
-                        </form>
-                      </div>
-                    </td>
+                    <th>Pick</th><th>Strain</th><th>Type</th><th>Price</th><th>Notes</th><th>Action</th>
                   </tr>
-                {% endfor %}
-                {% if not menu_entries %}
-                  <tr><td colspan="6" class="small">No entries yet.</td></tr>
-                {% endif %}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {% for it in menu_entries %}
+                    <tr>
+                      <td><input type="checkbox" class="entryCheck" value="{{ it['entry_id'] }}" aria-label="select {{ it['strain_name'] }}"></td>
+                      <td>{{ it['strain_name'] }}</td>
+                      <td>{{ it['base_type'] }}{% if it['is_cali'] %} (cali){% endif %}</td>
+                      <td>{{ it['price_currency'] }}{{ '%.2f'|format(it['price_amount']) }}/{{ it['price_unit'] }}</td>
+                      <td>{{ it['notes'] }}</td>
+                      <td>
+                        <div class="btnrow">
+                          <a class="pill" href="{{ url_for('edit_entry_get', shop_id=shop_id, entry_id=it['entry_id']) }}">Edit</a>
+                          <form method="post"
+                                action="{{ url_for('delete_entry_route', shop_id=shop_id, entry_id=it['entry_id']) }}"
+                                onsubmit="return confirm('Remove this strain from current menu entries?');"
+                                style="display:inline;">
+                            <button class="danger" type="submit">Remove</button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  {% if not menu_entries %}
+                    <tr><td colspan="6" class="small">No entries yet.</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
         <div id="sectionCatalogue" class="viewSection" style="margin-top:16px;">
           <div style="display:flex; align-items:baseline; justify-content: space-between; gap:10px; flex-wrap:wrap;">
-            <div style="font-weight:800;">Offerings catalogue</div>
-            <div class="small">Active / discontinued · manual lock</div>
+            <div style="font-weight:800;">Offerings status list</div>
+            <div class="small">Active stays on top. Inactive is moved to the bottom.</div>
           </div>
 
-          <div id="catalogueWrap" class="tableWrap catalogue" style="margin-top:10px;">
-            <table>
-              <thead>
-                <tr>
-                  <th>Strain</th><th>Status</th><th>Last seen</th><th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for off in offerings %}
+          <form method="post" action="{{ url_for('update_offering_statuses', shop_id=shop_id) }}">
+            <div id="catalogueWrap" class="tableWrap catalogue" style="margin-top:10px;">
+              <table>
+                <thead>
                   <tr>
-                    <td>{{ off['strain_name'] }}</td>
-                    <td>
-                      {% if off['status'] == 'active' %}
-                        <span class="pill good">active</span>
-                      {% else %}
-                        <span class="pill bad">discontinued</span>
-                      {% endif %}
-                      {% if off['manual_status_lock'] %}
-                        <span class="pill" style="margin-left:6px;">locked</span>
-                      {% endif %}
-                      {% if off['status'] == 'discontinued' and off['discontinued_until_utc'] %}
-                        <div class="small" style="margin-top:4px;">until {{ off['discontinued_until_utc'] }}</div>
-                      {% endif %}
-                    </td>
-                    <td class="small">{{ off['last_seen_at_utc'] }}</td>
-                    <td>
-                      {% if off['status'] == 'active' %}
-                        <form method="post" action="{{ url_for('discontinue_offering', shop_id=shop_id, strain_id=off['strain_id']) }}"
-                              style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                          <input name="reason" placeholder="reason" style="max-width:140px;">
-                          <input name="until_utc" placeholder="until (optional)" style="max-width:160px;">
-                          <button class="danger" type="submit">Discontinue</button>
-                        </form>
-                      {% else %}
-                        <form method="post" action="{{ url_for('resume_offering', shop_id=shop_id, strain_id=off['strain_id']) }}">
-                          <button class="ghost" type="submit">Resume</button>
-                        </form>
-                      {% endif %}
-                    </td>
+                    <th>Strain</th><th>Status</th><th>Last seen</th>
                   </tr>
-                {% endfor %}
-                {% if not offerings %}
-                  <tr><td colspan="4" class="small">No offerings yet (finish a menu to create them).</td></tr>
-                {% endif %}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="small" style="margin-top:8px;">
-            Tip: “until” is stored as free text (e.g. <code>2026-03-01</code> or <code>next week</code>).
-          </div>
+                </thead>
+                <tbody>
+                  {% for off in offerings %}
+                    <tr>
+                      <td>{{ off['strain_name'] }}</td>
+                      <td>
+                        <div class="radioGroup">
+                          <label class="radioOption">
+                            <input type="radio" name="status_{{ off['strain_id'] }}" value="active"
+                                   {% if off['status'] == 'active' %}checked{% endif %}>
+                            <span>Active</span>
+                          </label>
+                          <label class="radioOption">
+                            <input type="radio" name="status_{{ off['strain_id'] }}" value="discontinued"
+                                   {% if off['status'] != 'active' %}checked{% endif %}>
+                            <span>Inactive</span>
+                          </label>
+                        </div>
+                        {% if off['manual_status_lock'] %}
+                          <span class="pill" style="margin-top:6px;">manual lock</span>
+                        {% endif %}
+                        {% if off['status'] == 'discontinued' and off['discontinued_until_utc'] %}
+                          <div class="small" style="margin-top:4px;">until {{ off['discontinued_until_utc'] }}</div>
+                        {% endif %}
+                      </td>
+                      <td class="small">{{ off['last_seen_at_utc'] }}</td>
+                    </tr>
+                  {% endfor %}
+                  {% if not offerings %}
+                    <tr><td colspan="3" class="small">No offerings yet (finish a menu to create them).</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+            {% if offerings %}
+              <div class="btnrow" style="margin-top:10px;">
+                <button class="primary" type="submit">Save status changes</button>
+              </div>
+            {% endif %}
+          </form>
         </div>
 
       </div>
@@ -1930,7 +1926,7 @@ PAGE_TMPL = """
   }
 
   const SECTION_VIEW_KEY = 'shop_view_visible_section_v1';
-  const SECTION_VIEW_VALUES = ['add', 'entries', 'catalogue'];
+  const SECTION_VIEW_VALUES = ['add', 'catalogue'];
 
   function normalizeSectionView(value) {
     return SECTION_VIEW_VALUES.indexOf(value) >= 0 ? value : 'add';
@@ -1939,7 +1935,6 @@ PAGE_TMPL = """
   function getSectionViewBlocks() {
     return {
       add: document.getElementById('sectionAdd'),
-      entries: document.getElementById('sectionEntries'),
       catalogue: document.getElementById('sectionCatalogue'),
     };
   }
@@ -1951,7 +1946,7 @@ PAGE_TMPL = """
   function setSectionView(value, persist = true) {
     const view = normalizeSectionView(value);
     const blocks = getSectionViewBlocks();
-    ['add', 'entries', 'catalogue'].forEach((name) => {
+    ['add', 'catalogue'].forEach((name) => {
       const el = blocks[name];
       if (!el) return;
       el.classList.toggle('is-hidden', name !== view);
@@ -3673,6 +3668,61 @@ def create_app(
             msg = f"Kept all {summary['after']} selected entries (nothing removed)."
         else:
             msg = f"Kept {summary['after']} selected entries. Removed {summary['removed']}."
+        return redirect(url_for("shop_view", shop_id=shop_id, msg=msg))
+
+    @app.post("/shop/<int:shop_id>/offerings/status")
+    def update_offering_statuses(shop_id: int) -> Response:
+        """Bulk-update offering statuses from the status list radio controls."""
+        c = conn()
+        rows = c.execute(
+            """
+            SELECT strain_id, status
+            FROM shop_offerings
+            WHERE shop_id = ?;
+            """,
+            (shop_id,),
+        ).fetchall()
+        if not rows:
+            c.close()
+            return redirect(url_for("shop_view", shop_id=shop_id, msg="No offerings found to update."))
+
+        changed = 0
+        for r in rows:
+            strain_id = int(r["strain_id"])
+            current_status = str(r["status"] or "").strip().lower()
+            raw = (request.form.get(f"status_{strain_id}") or "").strip().lower()
+
+            if raw in ("inactive", "discontinued"):
+                target_status = "discontinued"
+            elif raw == "active":
+                target_status = "active"
+            else:
+                target_status = current_status
+
+            if target_status == current_status:
+                continue
+
+            if target_status == "active":
+                set_offering_status(c, shop_id, strain_id, status="active", lock=False, commit=False)
+            else:
+                set_offering_status(
+                    c,
+                    shop_id,
+                    strain_id,
+                    status="discontinued",
+                    reason="manual",
+                    until_utc="",
+                    lock=True,
+                    commit=False,
+                )
+            changed += 1
+
+        if changed > 0:
+            c.commit()
+            msg = f"Updated {changed} offering status{'es' if changed != 1 else ''}."
+        else:
+            msg = "No status changes."
+        c.close()
         return redirect(url_for("shop_view", shop_id=shop_id, msg=msg))
 
     @app.post("/shop/<int:shop_id>/offering/<int:strain_id>/discontinue")

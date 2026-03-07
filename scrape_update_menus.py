@@ -16,7 +16,14 @@ What happens when a menu changes
 --------------------------------
 - The menu record for that shop is updated (image_url/local_path/sha256/bytes/fetched_at).
 - Its status is set to 'new' (so the data-entry app queues it up).
-- Any existing "current menu entries" for that shop are cleared so you start fresh.
+- Existing "current menu entries" are only cleared when a known previous menu hash
+  is replaced by a different hash.
+
+Error handling
+--------------
+- If scraping fails for a shop that already has a known menu row, we preserve that
+  row's existing hash/image metadata and keep its queue status unchanged.
+- This prevents transient fetch failures from causing false "new menu" resets later.
 
 Inputs
 ------
@@ -230,13 +237,59 @@ def upsert_shop(conn: sqlite3.Connection, name: str, city: str, shop_url: str, s
 def get_existing_menu_sha(conn: sqlite3.Connection, shop_id: int) -> Optional[str]:
     """Return stored sha256 for current menu (if any)."""
     row = conn.execute("SELECT sha256 FROM menus WHERE shop_id = ?;", (shop_id,)).fetchone()
-    return str(row["sha256"]) if row else None
+    if not row:
+        return None
+    return str(row["sha256"] or "")
 
 
 def clear_menu_entries(conn: sqlite3.Connection, shop_id: int) -> None:
     """When a new menu arrives, wipe any previous current entries for that shop."""
     conn.execute("DELETE FROM menu_entries WHERE shop_id = ?;", (shop_id,))
     conn.commit()
+
+
+def mark_menu_error(conn: sqlite3.Connection, shop_id: int, source_page_url: str, error_msg: str) -> None:
+    """Record a scrape error without clobbering previously known menu metadata."""
+    existing = conn.execute(
+        """
+        SELECT status
+        FROM menus
+        WHERE shop_id = ?;
+        """,
+        (shop_id,),
+    ).fetchone()
+
+    if existing:
+        # Preserve queue state (new/processed) so transient scraper issues do not
+        # force unnecessary reprocessing later.
+        now = utc_now_iso()
+        preserved_status = str(existing["status"] or "processed")
+        conn.execute(
+            """
+            UPDATE menus
+            SET fetched_at_utc = ?,
+                source_page_url = ?,
+                status = ?,
+                error = ?
+            WHERE shop_id = ?;
+            """,
+            (now, source_page_url, preserved_status, (error_msg or "").strip(), shop_id),
+        )
+        conn.commit()
+        return
+
+    # First-ever fetch failure for this shop: create an explicit error row.
+    upsert_menu(
+        conn,
+        shop_id=shop_id,
+        source_page_url=source_page_url,
+        image_url="",
+        local_path="",
+        sha256="",
+        num_bytes=0,
+        status="error",
+        error=error_msg,
+    )
 
 
 def upsert_menu(
@@ -584,17 +637,7 @@ def main() -> int:
             urls = extract_menu_image_urls(shop_url, html)
             menu_url = choose_latest_menu_url(urls)
             if not menu_url:
-                upsert_menu(
-                    conn,
-                    shop_id=shop_id,
-                    source_page_url=shop_url,
-                    image_url="",
-                    local_path="",
-                    sha256="",
-                    num_bytes=0,
-                    status="error",
-                    error="No menu image URL found on page.",
-                )
+                mark_menu_error(conn, shop_id, source_page_url=shop_url, error_msg="No menu image URL found on page.")
                 errors += 1
                 print("  [WARN] No menu image URL found.")
                 time.sleep(SLEEP_BETWEEN_SHOPS_SEC)
@@ -603,6 +646,7 @@ def main() -> int:
             data = download_image_bytes(menu_url)
             sha = sha256_bytes(data)
             prev_sha = get_existing_menu_sha(conn, shop_id)
+            had_known_previous_sha = bool(prev_sha)
 
             if prev_sha == sha:
                 # Menu unchanged; keep status as-is (do not re-trigger)
@@ -628,8 +672,10 @@ def main() -> int:
                 error="",
             )
 
-            # Clear previous menu entries so you start fresh for this shop
-            clear_menu_entries(conn, shop_id)
+            # Only clear if we have a confirmed previous hash -> changed hash transition.
+            # If previous hash was missing (e.g., historic error rows), keep entries.
+            if had_known_previous_sha:
+                clear_menu_entries(conn, shop_id)
 
             new_count += 1
             print(f"  [NEW] {menu_url}")
@@ -637,17 +683,7 @@ def main() -> int:
 
         except Exception as e:
             errors += 1
-            upsert_menu(
-                conn,
-                shop_id=shop_id,
-                source_page_url=shop_url,
-                image_url="",
-                local_path="",
-                sha256="",
-                num_bytes=0,
-                status="error",
-                error=str(e),
-            )
+            mark_menu_error(conn, shop_id, source_page_url=shop_url, error_msg=str(e))
             print(f"  [ERROR] {e}")
 
         time.sleep(SLEEP_BETWEEN_SHOPS_SEC)

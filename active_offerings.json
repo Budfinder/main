@@ -234,8 +234,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 139,
@@ -729,6 +729,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-02T22:56:03.066566+00:00",
     "updated_at": "2026-03-02T22:56:03.066566+00:00"
+  },
+  {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 1763,
+    "strain_name": "AMG Haze",
+    "strain_name_normalised": "amg haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 33,
@@ -1526,8 +1543,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 266,
@@ -2631,8 +2648,8 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 111,
@@ -3277,8 +3294,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 419,
@@ -3396,8 +3413,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "1.2g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 364,
@@ -4042,8 +4059,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "0.8g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 114,
@@ -4061,6 +4078,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T14:55:45.444841+00:00",
     "updated_at": "2026-03-07T14:55:45.444841+00:00"
+  },
+  {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 1686,
+    "strain_name": "Applescotti",
+    "strain_name_normalised": "applescotti",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 371,
@@ -4471,6 +4505,23 @@
     "updated_at": "2026-03-07T11:28:31.384823+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 2861,
+    "strain_name": "Banana Glue",
+    "strain_name_normalised": "banana glue",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 112,
     "shop_key": "cs-dna",
     "shop_name": "DNA",
@@ -4503,6 +4554,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T23:31:28.946110+00:00",
     "updated_at": "2026-02-20T23:31:28.946110+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 1321,
+    "strain_name": "Banana Kush",
+    "strain_name_normalised": "banana kush",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 213,
@@ -4705,8 +4773,8 @@
     "price_amount": 12.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 202,
@@ -4926,8 +4994,8 @@
     "price_amount": 12.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 277,
@@ -5011,8 +5079,8 @@
     "price_amount": 10.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 413,
@@ -5302,6 +5370,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-01T09:15:28.030854+00:00",
     "updated_at": "2026-03-01T09:15:28.030854+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 2882,
+    "strain_name": "Black Cherry Dream",
+    "strain_name_normalised": "black cherry dream",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 182,
@@ -5610,21 +5695,21 @@
     "updated_at": "2026-03-07T11:05:02.684817+00:00"
   },
   {
-    "shop_id": 359,
-    "shop_key": "cs-stud",
-    "shop_name": "Stud",
+    "shop_id": 103,
+    "shop_key": "cs-crush",
+    "shop_name": "Crush",
     "shop_city": "Amsterdam",
-    "strain_id": 323,
-    "strain_name": "Black Sugar Rose",
-    "strain_name_normalised": "black sugar rose",
+    "strain_id": 2843,
+    "strain_name": "Black Water",
+    "strain_name_normalised": "black water",
     "base_type": "hybrid",
     "is_cali": 1,
     "price_currency": "€",
-    "price_amount": 16.0,
+    "price_amount": 25.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 4,
@@ -5712,6 +5797,23 @@
     "updated_at": "2026-03-01T10:23:06.949522+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 1671,
+    "strain_name": "Blackberry",
+    "strain_name_normalised": "blackberry",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 70,
     "shop_key": "cs-border",
     "shop_name": "The Border",
@@ -5763,21 +5865,21 @@
     "updated_at": "2026-02-20T18:48:54.762241+00:00"
   },
   {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
     "shop_city": "Amsterdam",
-    "strain_id": 1002,
-    "strain_name": "Blanco Cookies",
-    "strain_name_normalised": "blanco cookies",
+    "strain_id": 2871,
+    "strain_name": "Blanco",
+    "strain_name_normalised": "blanco",
     "base_type": "hybrid",
-    "is_cali": 0,
+    "is_cali": 1,
     "price_currency": "€",
-    "price_amount": 10.5,
+    "price_amount": 14.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 187,
@@ -5880,23 +5982,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T15:26:10.724426+00:00",
     "updated_at": "2026-03-07T15:26:10.724426+00:00"
-  },
-  {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 997,
-    "strain_name": "Blow Pop",
-    "strain_name_normalised": "blow pop",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
   },
   {
     "shop_id": 98,
@@ -6186,23 +6271,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T18:37:19.672998+00:00",
     "updated_at": "2026-02-19T18:37:19.672998+00:00"
-  },
-  {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 80,
-    "strain_name": "Blue Cheese",
-    "strain_name_normalised": "blue cheese",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
   },
   {
     "shop_id": 295,
@@ -6694,8 +6762,8 @@
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 266,
@@ -6919,6 +6987,23 @@
     "updated_at": "2026-02-20T23:16:29.442387+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 507,
+    "strain_name": "Blue Magic",
+    "strain_name_normalised": "blue magic",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 24.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 76,
     "shop_key": "cs-bulldog-energy",
     "shop_name": "Bulldog Energy",
@@ -6934,6 +7019,23 @@
     "notes": "1.1g",
     "last_seen_at_utc": "2026-02-20T09:43:34.696278+00:00",
     "updated_at": "2026-02-20T09:43:34.696278+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 871,
+    "strain_name": "Blue Monster",
+    "strain_name_normalised": "blue monster",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 40,
@@ -7021,6 +7123,23 @@
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 1705,
+    "strain_name": "Blue Peaches",
+    "strain_name_normalised": "blue peaches",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 126,
     "shop_key": "cs-easytimes2",
     "shop_name": "Easy Times 2",
@@ -7036,23 +7155,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T20:27:16.686097+00:00",
     "updated_at": "2026-02-20T20:27:16.686097+00:00"
-  },
-  {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 2082,
-    "strain_name": "Blue Sherbert",
-    "strain_name_normalised": "blue sherbert",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:27:11.893531+00:00",
-    "updated_at": "2026-03-07T12:27:11.893531+00:00"
   },
   {
     "shop_id": 257,
@@ -7102,8 +7204,8 @@
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 41,
@@ -7552,17 +7654,17 @@
     "shop_key": "cs-chapiteau",
     "shop_name": "Chapiteau",
     "shop_city": "Amsterdam",
-    "strain_id": 993,
-    "strain_name": "Blueberry Pie",
-    "strain_name_normalised": "blueberry pie",
+    "strain_id": 2826,
+    "strain_name": "Blueberry Pancake",
+    "strain_name_normalised": "blueberry pancake",
     "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 10.5,
+    "price_amount": 8.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 161,
@@ -7597,6 +7699,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T23:16:29.442387+00:00",
     "updated_at": "2026-02-20T23:16:29.442387+00:00"
+  },
+  {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 1844,
+    "strain_name": "Bolo Runtz",
+    "strain_name_normalised": "bolo runtz",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 257,
@@ -7680,8 +7799,8 @@
     "price_amount": 16.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 260,
@@ -8765,11 +8884,11 @@
     "base_type": "hybrid",
     "is_cali": 1,
     "price_currency": "€",
-    "price_amount": 25.0,
+    "price_amount": 20.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 275,
@@ -8993,23 +9112,6 @@
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
   },
   {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 524,
-    "strain_name": "Candy Fumez",
-    "strain_name_normalised": "candy fumez",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
-  },
-  {
     "shop_id": 133,
     "shop_key": "cs-flower-power",
     "shop_name": "Flower Power",
@@ -9178,6 +9280,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T09:54:13.143494+00:00",
     "updated_at": "2026-02-20T09:54:13.143494+00:00"
+  },
+  {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 897,
+    "strain_name": "Candy Rain",
+    "strain_name_normalised": "candy rain",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 321,
@@ -9635,8 +9754,8 @@
     "price_amount": 13.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 369,
@@ -10234,6 +10353,23 @@
     "updated_at": "2026-02-28T22:10:00.445205+00:00"
   },
   {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 2833,
+    "strain_name": "Cheese Candy",
+    "strain_name_normalised": "cheese candy",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
+  },
+  {
     "shop_id": 123,
     "shop_key": "cs-eastwood",
     "shop_name": "Eastwood",
@@ -10323,7 +10459,7 @@
     "shop_key": "cs-stud",
     "shop_name": "Stud",
     "shop_city": "Amsterdam",
-    "strain_id": 324,
+    "strain_id": 2867,
     "strain_name": "Chello",
     "strain_name_normalised": "chello",
     "base_type": "hybrid",
@@ -10332,8 +10468,8 @@
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 59,
@@ -10489,6 +10625,23 @@
     "updated_at": "2026-03-07T12:20:27.442930+00:00"
   },
   {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 2839,
+    "strain_name": "Cherry Boof",
+    "strain_name_normalised": "cherry boof",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
+  },
+  {
     "shop_id": 112,
     "shop_key": "cs-dna",
     "shop_name": "DNA",
@@ -10591,6 +10744,40 @@
     "updated_at": "2026-02-20T20:16:33.012554+00:00"
   },
   {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
+    "strain_id": 1034,
+    "strain_name": "Cherry Gelato",
+    "strain_name_normalised": "cherry gelato",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 1034,
+    "strain_name": "Cherry Gelato",
+    "strain_name_normalised": "cherry gelato",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
+  },
+  {
     "shop_id": 40,
     "shop_key": "cs-babylon",
     "shop_name": "Babylon",
@@ -10691,23 +10878,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T11:14:52.975739+00:00",
     "updated_at": "2026-03-07T11:14:52.975739+00:00"
-  },
-  {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 1707,
-    "strain_name": "Cherry Pie",
-    "strain_name_normalised": "cherry pie",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
   },
   {
     "shop_id": 369,
@@ -11050,40 +11220,6 @@
     "updated_at": "2026-03-07T15:30:06.664783+00:00"
   },
   {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 1003,
-    "strain_name": "Choco Diesel",
-    "strain_name_normalised": "choco diesel",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
-  },
-  {
-    "shop_id": 103,
-    "shop_key": "cs-crush",
-    "shop_name": "Crush",
-    "shop_city": "Amsterdam",
-    "strain_id": 1003,
-    "strain_name": "Choco Diesel",
-    "strain_name_normalised": "choco diesel",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
-  },
-  {
     "shop_id": 98,
     "shop_key": "cs-corner",
     "shop_name": "The Corner",
@@ -11250,8 +11386,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 139,
@@ -11352,8 +11488,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 23,
@@ -11422,6 +11558,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T09:54:13.143494+00:00",
     "updated_at": "2026-02-20T09:54:13.143494+00:00"
+  },
+  {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 909,
+    "strain_name": "Cookies & Cream",
+    "strain_name_normalised": "cookies & cream",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 9.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 311,
@@ -11747,6 +11900,23 @@
     "updated_at": "2026-02-19T18:51:58.514308+00:00"
   },
   {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 535,
+    "strain_name": "Crunch Berries",
+    "strain_name_normalised": "crunch berries",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
+  },
+  {
     "shop_id": 264,
     "shop_key": "cs-old-church-2",
     "shop_name": "Old Church 2",
@@ -11966,6 +12136,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T15:35:45.643089+00:00",
     "updated_at": "2026-02-19T15:35:45.643089+00:00"
+  },
+  {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 2860,
+    "strain_name": "DDV3",
+    "strain_name_normalised": "DDV3",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 264,
@@ -12376,23 +12563,6 @@
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
   },
   {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 1695,
-    "strain_name": "Do Amercia",
-    "strain_name_normalised": "do amercia",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 25.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
-  },
-  {
     "shop_id": 164,
     "shop_key": "cs-grey-area",
     "shop_name": "Grey Area",
@@ -12476,23 +12646,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T21:03:18.290363+00:00",
     "updated_at": "2026-02-20T21:03:18.290363+00:00"
-  },
-  {
-    "shop_id": 103,
-    "shop_key": "cs-crush",
-    "shop_name": "Crush",
-    "shop_city": "Amsterdam",
-    "strain_id": 1095,
-    "strain_name": "Donuts Crush",
-    "strain_name_normalised": "donuts crush",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 25.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
   },
   {
     "shop_id": 256,
@@ -12629,6 +12782,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T15:15:15.074485+00:00",
     "updated_at": "2026-03-07T15:15:15.074485+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 154,
+    "strain_name": "Dosidos",
+    "strain_name_normalised": "dosidos",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 66,
@@ -12831,8 +13001,8 @@
     "price_amount": 14.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 138,
@@ -12867,6 +13037,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-02T22:38:36.512223+00:00",
     "updated_at": "2026-03-02T22:38:36.512223+00:00"
+  },
+  {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
+    "strain_id": 2869,
+    "strain_name": "Ducksauce",
+    "strain_name_normalised": "ducksauce",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 296,
@@ -13209,23 +13396,6 @@
     "updated_at": "2026-02-20T09:54:13.143494+00:00"
   },
   {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 901,
-    "strain_name": "El Chapo",
-    "strain_name_normalised": "el chapo",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
-  },
-  {
     "shop_id": 288,
     "shop_key": "cs-plugstore",
     "shop_name": "The Plug Store",
@@ -13562,8 +13732,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "1g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 70,
@@ -13698,8 +13868,8 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 29,
@@ -14756,380 +14926,6 @@
     "updated_at": "2026-02-20T20:27:16.686097+00:00"
   },
   {
-    "shop_id": 25,
-    "shop_key": "cs-96",
-    "shop_name": "96",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T21:55:29.933332+00:00",
-    "updated_at": "2026-02-19T21:55:29.933332+00:00"
-  },
-  {
-    "shop_id": 29,
-    "shop_key": "cs-aktama2",
-    "shop_name": "Aktama 2",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:00:22.398906+00:00",
-    "updated_at": "2026-02-19T22:00:22.398906+00:00"
-  },
-  {
-    "shop_id": 40,
-    "shop_key": "cs-babylon",
-    "shop_name": "Babylon",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:49:03.849457+00:00",
-    "updated_at": "2026-02-19T22:49:03.849457+00:00"
-  },
-  {
-    "shop_id": 76,
-    "shop_key": "cs-bulldog-energy",
-    "shop_name": "Bulldog Energy",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "0.9g",
-    "last_seen_at_utc": "2026-02-20T09:43:34.696278+00:00",
-    "updated_at": "2026-02-20T09:43:34.696278+00:00"
-  },
-  {
-    "shop_id": 77,
-    "shop_key": "cs-bulldog-palace",
-    "shop_name": "Bulldog Palace",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T09:48:15.360394+00:00",
-    "updated_at": "2026-02-20T09:48:15.360394+00:00"
-  },
-  {
-    "shop_id": 13,
-    "shop_key": "cs-bulldog-rockshop",
-    "shop_name": "Bulldog Rockshop",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T09:54:13.143494+00:00",
-    "updated_at": "2026-02-20T09:54:13.143494+00:00"
-  },
-  {
-    "shop_id": 82,
-    "shop_key": "cs-carmona",
-    "shop_name": "Carmona",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:21:05.291744+00:00",
-    "updated_at": "2026-02-20T11:21:05.291744+00:00"
-  },
-  {
-    "shop_id": 123,
-    "shop_key": "cs-eastwood",
-    "shop_name": "Eastwood",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:16:33.012554+00:00",
-    "updated_at": "2026-02-20T20:16:33.012554+00:00"
-  },
-  {
-    "shop_id": 140,
-    "shop_key": "cs-funnypeople2",
-    "shop_name": "Funny People 2",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T22:45:05.807062+00:00",
-    "updated_at": "2026-02-20T22:45:05.807062+00:00"
-  },
-  {
-    "shop_id": 221,
-    "shop_key": "cs-loft",
-    "shop_name": "Loft",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T22:23:33.621184+00:00",
-    "updated_at": "2026-03-01T22:23:33.621184+00:00"
-  },
-  {
-    "shop_id": 272,
-    "shop_key": "cs-pacific",
-    "shop_name": "Pacific",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T10:20:31.194788+00:00",
-    "updated_at": "2026-03-07T10:20:31.194788+00:00"
-  },
-  {
-    "shop_id": 277,
-    "shop_key": "cs-paradox",
-    "shop_name": "Paradox",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:16:41.440975+00:00",
-    "updated_at": "2026-02-19T22:16:41.440975+00:00"
-  },
-  {
-    "shop_id": 296,
-    "shop_key": "cs-prix-d-ami",
-    "shop_name": "Prix d'Ami",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T10:35:27.791402+00:00",
-    "updated_at": "2026-03-07T10:35:27.791402+00:00"
-  },
-  {
-    "shop_id": 313,
-    "shop_key": "cs-republiek",
-    "shop_name": "Republiek",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T11:12:45.390423+00:00",
-    "updated_at": "2026-03-07T11:12:45.390423+00:00"
-  },
-  {
-    "shop_id": 324,
-    "shop_key": "cs-roxy",
-    "shop_name": "Roxy",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:10:46.947855+00:00",
-    "updated_at": "2026-03-07T12:10:46.947855+00:00"
-  },
-  {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
-  },
-  {
-    "shop_id": 419,
-    "shop_key": "cs-smoke-palace",
-    "shop_name": "Smoke Palace",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T10:50:30.771633+00:00",
-    "updated_at": "2026-03-07T10:50:30.771633+00:00"
-  },
-  {
-    "shop_id": 344,
-    "shop_key": "cs-smokerdam",
-    "shop_name": "Smokerdam",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:52:48.640686+00:00",
-    "updated_at": "2026-03-07T12:52:48.640686+00:00"
-  },
-  {
-    "shop_id": 359,
-    "shop_key": "cs-stud",
-    "shop_name": "Stud",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "0.9g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
-  },
-  {
-    "shop_id": 98,
-    "shop_key": "cs-corner",
-    "shop_name": "The Corner",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T15:12:18.374111+00:00",
-    "updated_at": "2026-03-07T15:12:18.374111+00:00"
-  },
-  {
-    "shop_id": 374,
-    "shop_key": "cs-trefpunt-ams",
-    "shop_name": "Trefpunt",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T15:32:08.025088+00:00",
-    "updated_at": "2026-03-07T15:32:08.025088+00:00"
-  },
-  {
-    "shop_id": 180,
-    "shop_key": "cs-hilo",
-    "shop_name": "HiLo",
-    "shop_city": "Utrecht",
-    "strain_id": 320,
-    "strain_name": "G13 HAZE",
-    "strain_name_normalised": "G13 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:39:35.282060+00:00",
-    "updated_at": "2026-03-07T18:39:35.282060+00:00"
-  },
-  {
     "shop_id": 43,
     "shop_key": "cs-ballonnetje",
     "shop_name": "Het Ballonnetje",
@@ -15145,6 +14941,363 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
     "updated_at": "2026-03-01T01:09:41.242341+00:00"
+  },
+  {
+    "shop_id": 25,
+    "shop_key": "cs-96",
+    "shop_name": "96",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T21:55:29.933332+00:00",
+    "updated_at": "2026-02-19T21:55:29.933332+00:00"
+  },
+  {
+    "shop_id": 29,
+    "shop_key": "cs-aktama2",
+    "shop_name": "Aktama 2",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T22:00:22.398906+00:00",
+    "updated_at": "2026-02-19T22:00:22.398906+00:00"
+  },
+  {
+    "shop_id": 40,
+    "shop_key": "cs-babylon",
+    "shop_name": "Babylon",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T22:49:03.849457+00:00",
+    "updated_at": "2026-02-19T22:49:03.849457+00:00"
+  },
+  {
+    "shop_id": 76,
+    "shop_key": "cs-bulldog-energy",
+    "shop_name": "Bulldog Energy",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "0.9g",
+    "last_seen_at_utc": "2026-02-20T09:43:34.696278+00:00",
+    "updated_at": "2026-02-20T09:43:34.696278+00:00"
+  },
+  {
+    "shop_id": 77,
+    "shop_key": "cs-bulldog-palace",
+    "shop_name": "Bulldog Palace",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T09:48:15.360394+00:00",
+    "updated_at": "2026-02-20T09:48:15.360394+00:00"
+  },
+  {
+    "shop_id": 13,
+    "shop_key": "cs-bulldog-rockshop",
+    "shop_name": "Bulldog Rockshop",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T09:54:13.143494+00:00",
+    "updated_at": "2026-02-20T09:54:13.143494+00:00"
+  },
+  {
+    "shop_id": 82,
+    "shop_key": "cs-carmona",
+    "shop_name": "Carmona",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T11:21:05.291744+00:00",
+    "updated_at": "2026-02-20T11:21:05.291744+00:00"
+  },
+  {
+    "shop_id": 123,
+    "shop_key": "cs-eastwood",
+    "shop_name": "Eastwood",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T20:16:33.012554+00:00",
+    "updated_at": "2026-02-20T20:16:33.012554+00:00"
+  },
+  {
+    "shop_id": 140,
+    "shop_key": "cs-funnypeople2",
+    "shop_name": "Funny People 2",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-20T22:45:05.807062+00:00",
+    "updated_at": "2026-02-20T22:45:05.807062+00:00"
+  },
+  {
+    "shop_id": 221,
+    "shop_key": "cs-loft",
+    "shop_name": "Loft",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-01T22:23:33.621184+00:00",
+    "updated_at": "2026-03-01T22:23:33.621184+00:00"
+  },
+  {
+    "shop_id": 272,
+    "shop_key": "cs-pacific",
+    "shop_name": "Pacific",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T10:20:31.194788+00:00",
+    "updated_at": "2026-03-07T10:20:31.194788+00:00"
+  },
+  {
+    "shop_id": 277,
+    "shop_key": "cs-paradox",
+    "shop_name": "Paradox",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T22:16:41.440975+00:00",
+    "updated_at": "2026-02-19T22:16:41.440975+00:00"
+  },
+  {
+    "shop_id": 296,
+    "shop_key": "cs-prix-d-ami",
+    "shop_name": "Prix d'Ami",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T10:35:27.791402+00:00",
+    "updated_at": "2026-03-07T10:35:27.791402+00:00"
+  },
+  {
+    "shop_id": 313,
+    "shop_key": "cs-republiek",
+    "shop_name": "Republiek",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T11:12:45.390423+00:00",
+    "updated_at": "2026-03-07T11:12:45.390423+00:00"
+  },
+  {
+    "shop_id": 324,
+    "shop_key": "cs-roxy",
+    "shop_name": "Roxy",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T12:10:46.947855+00:00",
+    "updated_at": "2026-03-07T12:10:46.947855+00:00"
+  },
+  {
+    "shop_id": 419,
+    "shop_key": "cs-smoke-palace",
+    "shop_name": "Smoke Palace",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T10:50:30.771633+00:00",
+    "updated_at": "2026-03-07T10:50:30.771633+00:00"
+  },
+  {
+    "shop_id": 344,
+    "shop_key": "cs-smokerdam",
+    "shop_name": "Smokerdam",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T12:52:48.640686+00:00",
+    "updated_at": "2026-03-07T12:52:48.640686+00:00"
+  },
+  {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "0.9g",
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+  },
+  {
+    "shop_id": 98,
+    "shop_key": "cs-corner",
+    "shop_name": "The Corner",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T15:12:18.374111+00:00",
+    "updated_at": "2026-03-07T15:12:18.374111+00:00"
+  },
+  {
+    "shop_id": 374,
+    "shop_key": "cs-trefpunt-ams",
+    "shop_name": "Trefpunt",
+    "shop_city": "Amsterdam",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T15:32:08.025088+00:00",
+    "updated_at": "2026-03-07T15:32:08.025088+00:00"
+  },
+  {
+    "shop_id": 180,
+    "shop_key": "cs-hilo",
+    "shop_name": "HiLo",
+    "shop_city": "Utrecht",
+    "strain_id": 320,
+    "strain_name": "G15 HAZE",
+    "strain_name_normalised": "G15 HAZE",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T18:39:35.282060+00:00",
+    "updated_at": "2026-03-07T18:39:35.282060+00:00"
   },
   {
     "shop_id": 85,
@@ -15177,8 +15330,8 @@
     "price_amount": 14.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 40,
@@ -15230,6 +15383,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T13:31:26.640008+00:00",
     "updated_at": "2026-03-07T13:31:26.640008+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 2891,
+    "strain_name": "GELATO 33 USA",
+    "strain_name_normalised": "GELATO 33 USA",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 16.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 32,
@@ -15332,6 +15502,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T11:21:05.291744+00:00",
     "updated_at": "2026-02-20T11:21:05.291744+00:00"
+  },
+  {
+    "shop_id": 103,
+    "shop_key": "cs-crush",
+    "shop_name": "Crush",
+    "shop_city": "Amsterdam",
+    "strain_id": 300,
+    "strain_name": "GELATO 41",
+    "strain_name_normalised": "GELATO 41",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 148,
@@ -15572,6 +15759,23 @@
     "updated_at": "2026-02-28T19:52:13.878570+00:00"
   },
   {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 215,
+    "strain_name": "Gary Payton",
+    "strain_name_normalised": "gary payton",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
+  },
+  {
     "shop_id": 105,
     "shop_key": "cs-dampkring",
     "shop_name": "Dampkring",
@@ -15704,8 +15908,8 @@
     "price_amount": 13.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 14,
@@ -16014,23 +16218,6 @@
     "updated_at": "2026-02-20T10:42:27.284741+00:00"
   },
   {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 117,
-    "strain_name": "Gelato",
-    "strain_name_normalised": "gelato",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 9.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
-  },
-  {
     "shop_id": 111,
     "shop_key": "cs-d-l",
     "shop_name": "D&L",
@@ -16282,8 +16469,8 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 379,
@@ -16316,8 +16503,8 @@
     "price_amount": 10.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 55,
@@ -16830,6 +17017,23 @@
     "updated_at": "2026-02-19T14:57:52.484348+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 19,
+    "strain_name": "Giraffe Pussy",
+    "strain_name_normalised": "giraffe pussy",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 21.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 131,
     "shop_key": "cs-family-first",
     "shop_name": "Family First",
@@ -16979,8 +17183,8 @@
     "price_amount": 14.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 112,
@@ -17168,6 +17372,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T12:54:55.178174+00:00",
     "updated_at": "2026-03-07T12:54:55.178174+00:00"
+  },
+  {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
+    "strain_id": 324,
+    "strain_name": "Gizmo",
+    "strain_name_normalised": "gizmo",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 16.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 257,
@@ -17421,8 +17642,8 @@
     "price_amount": 13.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 244,
@@ -17814,23 +18035,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
     "updated_at": "2026-03-07T13:00:49.061526+00:00"
-  },
-  {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 989,
-    "strain_name": "Grape Krush",
-    "strain_name_normalised": "grape krush",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 8.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
   },
   {
     "shop_id": 52,
@@ -18288,8 +18492,8 @@
     "price_amount": 14.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 391,
@@ -18428,23 +18632,6 @@
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
   },
   {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 326,
-    "strain_name": "Gumbo",
-    "strain_name_normalised": "gumbo",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
-  },
-  {
     "shop_id": 359,
     "shop_key": "cs-stud",
     "shop_name": "Stud",
@@ -18458,8 +18645,8 @@
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 182,
@@ -18849,8 +19036,8 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 270,
@@ -19172,8 +19359,8 @@
     "price_amount": 6.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 165,
@@ -19550,23 +19737,6 @@
     "updated_at": "2026-02-20T10:42:27.284741+00:00"
   },
   {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 7,
-    "strain_name": "Ice Cream Cake",
-    "strain_name_normalised": "ice cream cake",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
-  },
-  {
     "shop_id": 238,
     "shop_key": "cs-media",
     "shop_name": "Club Media",
@@ -19937,8 +20107,8 @@
     "price_amount": 8.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 221,
@@ -19956,23 +20126,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-01T22:23:33.621184+00:00",
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
-  },
-  {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 1690,
-    "strain_name": "Imposter",
-    "strain_name_normalised": "imposter",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 30.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
   },
   {
     "shop_id": 415,
@@ -20090,8 +20243,8 @@
     "price_amount": 9.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 37,
@@ -22950,23 +23103,6 @@
     "updated_at": "2026-03-07T12:13:49.392591+00:00"
   },
   {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 209,
-    "strain_name": "Lemon Cherry Gelato",
-    "strain_name_normalised": "lemon cherry gelato",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
-  },
-  {
     "shop_id": 11,
     "shop_key": "cs-spirit",
     "shop_name": "Spirit",
@@ -23067,6 +23203,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:10:51.596641+00:00",
     "updated_at": "2026-02-19T22:10:51.596641+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 209,
+    "strain_name": "Lemon Cherry Gelato",
+    "strain_name_normalised": "lemon cherry gelato",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 386,
@@ -23320,8 +23473,8 @@
     "price_amount": 12.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 201,
@@ -23745,8 +23898,8 @@
     "price_amount": 11.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 419,
@@ -23781,6 +23934,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T12:54:55.178174+00:00",
     "updated_at": "2026-03-07T12:54:55.178174+00:00"
+  },
+  {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
+    "strain_id": 13,
+    "strain_name": "Lemon Haze",
+    "strain_name_normalised": "lemon haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "0.9g",
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 364,
@@ -24157,6 +24327,23 @@
     "updated_at": "2026-03-01T10:08:01.599040+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 2848,
+    "strain_name": "Lemon Z",
+    "strain_name_normalised": "lemon z",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 23.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 172,
     "shop_key": "cs-happy-feelings",
     "shop_name": "Happy Feelings",
@@ -24378,6 +24565,23 @@
     "updated_at": "2026-03-07T10:35:27.791402+00:00"
   },
   {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 2883,
+    "strain_name": "Lucky Charms",
+    "strain_name_normalised": "lucky charms",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
+  },
+  {
     "shop_id": 161,
     "shop_key": "cs-green-place",
     "shop_name": "Green Place",
@@ -24478,6 +24682,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T23:31:28.946110+00:00",
     "updated_at": "2026-02-20T23:31:28.946110+00:00"
+  },
+  {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 352,
+    "strain_name": "MAC",
+    "strain_name_normalised": "mac",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 9.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 4,
@@ -24599,23 +24820,6 @@
     "updated_at": "2026-03-07T15:26:10.724426+00:00"
   },
   {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 1000,
-    "strain_name": "MAC 1",
-    "strain_name_normalised": "MAC 1",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
-  },
-  {
     "shop_id": 196,
     "shop_key": "cs-johnny",
     "shop_name": "Johnny",
@@ -24680,25 +24884,8 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
-  },
-  {
-    "shop_id": 103,
-    "shop_key": "cs-crush",
-    "shop_name": "Crush",
-    "shop_city": "Amsterdam",
-    "strain_id": 1092,
-    "strain_name": "MAC Berry Glue",
-    "strain_name_normalised": "mac berry glue",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 25.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 318,
@@ -24716,6 +24903,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T11:18:10.681351+00:00",
     "updated_at": "2026-03-07T11:18:10.681351+00:00"
+  },
+  {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 2828,
+    "strain_name": "MAC Donut",
+    "strain_name_normalised": "mac donut",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 270,
@@ -24969,8 +25173,8 @@
     "price_amount": 13.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 111,
@@ -25262,6 +25466,23 @@
     "updated_at": "2026-03-07T11:12:45.390423+00:00"
   },
   {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 2879,
+    "strain_name": "Marshmallow OG",
+    "strain_name_normalised": "marshmallow og",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
+  },
+  {
     "shop_id": 260,
     "shop_key": "cs-nice-place",
     "shop_name": "Nice Place",
@@ -25394,8 +25615,8 @@
     "price_amount": 30.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 43,
@@ -25575,14 +25796,14 @@
     "strain_id": 2817,
     "strain_name": "Miami Punch",
     "strain_name_normalised": "miami punch",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 12.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 379,
@@ -25651,6 +25872,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T11:21:05.291744+00:00",
     "updated_at": "2026-02-20T11:21:05.291744+00:00"
+  },
+  {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 296,
+    "strain_name": "Mimosa",
+    "strain_name_normalised": "mimosa",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 138,
@@ -25802,8 +26040,8 @@
     "price_amount": 12.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 69,
@@ -27081,6 +27319,23 @@
     "updated_at": "2026-03-07T09:44:26.763775+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 2859,
+    "strain_name": "Nightshade",
+    "strain_name_normalised": "nightshade",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 231,
     "shop_key": "cs-marssa",
     "shop_name": "El Marssa",
@@ -27334,6 +27589,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T18:56:02.241857+00:00",
     "updated_at": "2026-02-20T18:56:02.241857+00:00"
+  },
+  {
+    "shop_id": 103,
+    "shop_key": "cs-crush",
+    "shop_name": "Crush",
+    "shop_city": "Amsterdam",
+    "strain_id": 155,
+    "strain_name": "OG Kush",
+    "strain_name_normalised": "og kush",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 201,
@@ -28502,11 +28774,11 @@
     "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 15.0,
+    "price_amount": 12.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 51,
@@ -28981,8 +29253,25 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 2888,
+    "strain_name": "Paradise OG #2",
+    "strain_name_normalised": "paradise og #2",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 94,
@@ -29835,23 +30124,6 @@
     "updated_at": "2026-02-19T23:18:32.153011+00:00"
   },
   {
-    "shop_id": 103,
-    "shop_key": "cs-crush",
-    "shop_name": "Crush",
-    "shop_city": "Amsterdam",
-    "strain_id": 187,
-    "strain_name": "Pink Runtz",
-    "strain_name_normalised": "pink runtz",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
-  },
-  {
     "shop_id": 125,
     "shop_key": "cs-easy-times",
     "shop_name": "Easy Times",
@@ -29984,8 +30256,8 @@
     "price_amount": 30.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 221,
@@ -30018,8 +30290,8 @@
     "price_amount": 12.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 44,
@@ -30494,8 +30766,8 @@
     "price_amount": 10.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 395,
@@ -30651,23 +30923,6 @@
     "updated_at": "2026-03-07T09:41:38.772261+00:00"
   },
   {
-    "shop_id": 103,
-    "shop_key": "cs-crush",
-    "shop_name": "Crush",
-    "shop_city": "Amsterdam",
-    "strain_id": 1093,
-    "strain_name": "Purple Blueberry Punch",
-    "strain_name_normalised": "purple blueberry punch",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 25.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
-  },
-  {
     "shop_id": 421,
     "shop_key": "cs-softland",
     "shop_name": "Softland",
@@ -30719,6 +30974,23 @@
     "updated_at": "2026-03-01T09:15:28.030854+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 2862,
+    "strain_name": "Purple Cookies",
+    "strain_name_normalised": "purple cookies",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 221,
     "shop_key": "cs-loft",
     "shop_name": "Loft",
@@ -30749,8 +31021,8 @@
     "price_amount": 30.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 370,
@@ -30887,6 +31159,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T11:16:43.181547+00:00",
     "updated_at": "2026-03-07T11:16:43.181547+00:00"
+  },
+  {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 610,
+    "strain_name": "Purple Haze",
+    "strain_name_normalised": "purple haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 349,
@@ -31599,8 +31888,25 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "0.9g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+  },
+  {
+    "shop_id": 382,
+    "shop_key": "cs-vip",
+    "shop_name": "V.I.P. Shop",
+    "shop_city": "Utrecht",
+    "strain_id": 321,
+    "strain_name": "RS-11",
+    "strain_name_normalised": "RS-11",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 199,
@@ -31650,8 +31956,8 @@
     "price_amount": 12.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 239,
@@ -32840,8 +33146,8 @@
     "price_amount": 8.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 244,
@@ -32891,8 +33197,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "0.9g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 290,
@@ -33201,23 +33507,6 @@
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
   },
   {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 1710,
-    "strain_name": "Secret Sauce",
-    "strain_name_normalised": "secret sauce",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
-  },
-  {
     "shop_id": 202,
     "shop_key": "cs-kadinsky",
     "shop_name": "Kadinsky",
@@ -33422,6 +33711,23 @@
     "updated_at": "2026-03-07T12:10:46.947855+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 592,
+    "strain_name": "Sherbanger",
+    "strain_name_normalised": "sherbanger",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 290,
     "shop_key": "cs-plug-west",
     "shop_name": "The Plug West",
@@ -33488,23 +33794,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-01T22:23:33.621184+00:00",
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
-  },
-  {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 797,
-    "strain_name": "Sherbert",
-    "strain_name_normalised": "sherbert",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
   },
   {
     "shop_id": 43,
@@ -33786,14 +34075,14 @@
     "strain_id": 314,
     "strain_name": "Silver",
     "strain_name_normalised": "silver",
-    "base_type": "hybrid",
+    "base_type": "sativa",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "1.2g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 164,
@@ -33898,6 +34187,23 @@
     "updated_at": "2026-02-20T11:25:47.517759+00:00"
   },
   {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 65,
+    "strain_name": "Silver Haze",
+    "strain_name_normalised": "silver haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
+  },
+  {
     "shop_id": 103,
     "shop_key": "cs-crush",
     "shop_name": "Crush",
@@ -33911,8 +34217,8 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
   },
   {
     "shop_id": 111,
@@ -34557,8 +34863,8 @@
     "price_amount": 9.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 100,
@@ -35207,6 +35513,23 @@
     "updated_at": "2026-03-07T10:59:50.646083+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 1199,
+    "strain_name": "Sour Diesel",
+    "strain_name_normalised": "sour diesel",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 25.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 426,
     "shop_key": "cs-stones-corner",
     "shop_name": "Stones Corner",
@@ -35545,23 +35868,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:17:21.909351+00:00",
     "updated_at": "2026-02-19T22:17:21.909351+00:00"
-  },
-  {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 136,
-    "strain_name": "Spicy Ramen",
-    "strain_name_normalised": "spicy ramen",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 25.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
   },
   {
     "shop_id": 11,
@@ -37536,23 +37842,6 @@
     "updated_at": "2026-02-19T15:34:35.564057+00:00"
   },
   {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 616,
-    "strain_name": "Super Runtz",
-    "strain_name_normalised": "super runtz",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
-  },
-  {
     "shop_id": 239,
     "shop_key": "cs-mediterrane",
     "shop_name": "Mediterrane (Drewissharing)",
@@ -37704,23 +37993,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T11:30:21.802433+00:00",
     "updated_at": "2026-02-20T11:30:21.802433+00:00"
-  },
-  {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 147,
-    "strain_name": "Super Silver Haze",
-    "strain_name_normalised": "super silver haze",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
   },
   {
     "shop_id": 89,
@@ -38331,8 +38603,8 @@
     "price_amount": 11.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 419,
@@ -38399,8 +38671,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "1g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 98,
@@ -38947,6 +39219,23 @@
     "updated_at": "2026-03-07T15:19:40.091666+00:00"
   },
   {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 193,
+    "strain_name": "Tangerine Dream",
+    "strain_name_normalised": "tangerine dream",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
+  },
+  {
     "shop_id": 139,
     "shop_key": "cs-free-i",
     "shop_name": "Free I",
@@ -39030,23 +39319,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T12:27:38.538912+00:00",
     "updated_at": "2026-03-07T12:27:38.538912+00:00"
-  },
-  {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 1008,
-    "strain_name": "Tangie",
-    "strain_name_normalised": "tangie",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
   },
   {
     "shop_id": 175,
@@ -39967,159 +40239,6 @@
     "updated_at": "2026-02-20T01:31:56.610180+00:00"
   },
   {
-    "shop_id": 23,
-    "shop_key": "cs-7thheaven",
-    "shop_name": "7th Heaven",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T18:51:58.514308+00:00",
-    "updated_at": "2026-02-19T18:51:58.514308+00:00"
-  },
-  {
-    "shop_id": 103,
-    "shop_key": "cs-crush",
-    "shop_name": "Crush",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
-  },
-  {
-    "shop_id": 148,
-    "shop_key": "cs-get-down",
-    "shop_name": "Get Down To It",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:37:35.674720+00:00",
-    "updated_at": "2026-02-19T15:37:35.674720+00:00"
-  },
-  {
-    "shop_id": 157,
-    "shop_key": "cs-greenhouse-effect-1",
-    "shop_name": "Greenhouse Effect",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 30.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-25T22:25:33.772025+00:00",
-    "updated_at": "2026-02-25T22:25:33.772025+00:00"
-  },
-  {
-    "shop_id": 307,
-    "shop_key": "cs-relax-ams",
-    "shop_name": "Relax",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T11:05:02.684817+00:00",
-    "updated_at": "2026-03-07T11:05:02.684817+00:00"
-  },
-  {
-    "shop_id": 311,
-    "shop_key": "cs-relaxzuid",
-    "shop_name": "Relax Zuid",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T11:08:16.131583+00:00",
-    "updated_at": "2026-03-07T11:08:16.131583+00:00"
-  },
-  {
-    "shop_id": 98,
-    "shop_key": "cs-corner",
-    "shop_name": "The Corner",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T15:12:18.374111+00:00",
-    "updated_at": "2026-03-07T15:12:18.374111+00:00"
-  },
-  {
-    "shop_id": 374,
-    "shop_key": "cs-trefpunt-ams",
-    "shop_name": "Trefpunt",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T15:32:08.025088+00:00",
-    "updated_at": "2026-03-07T15:32:08.025088+00:00"
-  },
-  {
-    "shop_id": 213,
-    "shop_key": "cs-kroon",
-    "shop_name": "de Kroon",
-    "shop_city": "Amsterdam",
-    "strain_id": 280,
-    "strain_name": "Tropical Cherry",
-    "strain_name_normalised": "tropical cherry",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 30.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:21:49.355514+00:00",
-    "updated_at": "2026-02-19T22:21:49.355514+00:00"
-  },
-  {
     "shop_id": 429,
     "shop_key": "cs-swedasnoopdoggstore",
     "shop_name": "SWED a Snoop Dogg Store",
@@ -40290,6 +40409,23 @@
     "updated_at": "2026-03-07T12:52:48.640686+00:00"
   },
   {
+    "shop_id": 23,
+    "shop_key": "cs-7thheaven",
+    "shop_name": "7th Heaven",
+    "shop_city": "Amsterdam",
+    "strain_id": 218,
+    "strain_name": "Tropicana Cherry",
+    "strain_name_normalised": "tropicana cherry",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T18:51:58.514308+00:00",
+    "updated_at": "2026-02-19T18:51:58.514308+00:00"
+  },
+  {
     "shop_id": 44,
     "shop_key": "cs-balou",
     "shop_name": "Balou",
@@ -40358,6 +40494,23 @@
     "updated_at": "2026-02-20T18:44:32.957554+00:00"
   },
   {
+    "shop_id": 103,
+    "shop_key": "cs-crush",
+    "shop_name": "Crush",
+    "shop_city": "Amsterdam",
+    "strain_id": 218,
+    "strain_name": "Tropicana Cherry",
+    "strain_name_normalised": "tropicana cherry",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
+    "updated_at": "2026-03-07T19:55:26.246568+00:00"
+  },
+  {
     "shop_id": 105,
     "shop_key": "cs-dampkring",
     "shop_name": "Dampkring",
@@ -40373,6 +40526,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T15:35:45.643089+00:00",
     "updated_at": "2026-02-19T15:35:45.643089+00:00"
+  },
+  {
+    "shop_id": 148,
+    "shop_key": "cs-get-down",
+    "shop_name": "Get Down To It",
+    "shop_city": "Amsterdam",
+    "strain_id": 218,
+    "strain_name": "Tropicana Cherry",
+    "strain_name_normalised": "tropicana cherry",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-02-19T15:37:35.674720+00:00",
+    "updated_at": "2026-02-19T15:37:35.674720+00:00"
   },
   {
     "shop_id": 157,
@@ -40494,6 +40664,40 @@
     "updated_at": "2026-03-07T10:38:12.247950+00:00"
   },
   {
+    "shop_id": 307,
+    "shop_key": "cs-relax-ams",
+    "shop_name": "Relax",
+    "shop_city": "Amsterdam",
+    "strain_id": 218,
+    "strain_name": "Tropicana Cherry",
+    "strain_name_normalised": "tropicana cherry",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T11:05:02.684817+00:00",
+    "updated_at": "2026-03-07T11:05:02.684817+00:00"
+  },
+  {
+    "shop_id": 311,
+    "shop_key": "cs-relaxzuid",
+    "shop_name": "Relax Zuid",
+    "shop_city": "Amsterdam",
+    "strain_id": 218,
+    "strain_name": "Tropicana Cherry",
+    "strain_name_normalised": "tropicana cherry",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T11:08:16.131583+00:00",
+    "updated_at": "2026-03-07T11:08:16.131583+00:00"
+  },
+  {
     "shop_id": 337,
     "shop_key": "cs-siberie",
     "shop_name": "Siberie",
@@ -40507,8 +40711,8 @@
     "price_amount": 13.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 349,
@@ -40543,6 +40747,40 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T14:55:45.444841+00:00",
     "updated_at": "2026-03-07T14:55:45.444841+00:00"
+  },
+  {
+    "shop_id": 98,
+    "shop_key": "cs-corner",
+    "shop_name": "The Corner",
+    "shop_city": "Amsterdam",
+    "strain_id": 218,
+    "strain_name": "Tropicana Cherry",
+    "strain_name_normalised": "tropicana cherry",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T15:12:18.374111+00:00",
+    "updated_at": "2026-03-07T15:12:18.374111+00:00"
+  },
+  {
+    "shop_id": 374,
+    "shop_key": "cs-trefpunt-ams",
+    "shop_name": "Trefpunt",
+    "shop_city": "Amsterdam",
+    "strain_id": 218,
+    "strain_name": "Tropicana Cherry",
+    "strain_name_normalised": "tropicana cherry",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T15:32:08.025088+00:00",
+    "updated_at": "2026-03-07T15:32:08.025088+00:00"
   },
   {
     "shop_id": 213,
@@ -40970,23 +41208,6 @@
     "updated_at": "2026-03-07T12:34:20.542501+00:00"
   },
   {
-    "shop_id": 359,
-    "shop_key": "cs-stud",
-    "shop_name": "Stud",
-    "shop_city": "Amsterdam",
-    "strain_id": 325,
-    "strain_name": "Versace Red",
-    "strain_name_normalised": "versace red",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
-  },
-  {
     "shop_id": 23,
     "shop_key": "cs-7thheaven",
     "shop_name": "7th Heaven",
@@ -41036,6 +41257,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:16:07.384852+00:00",
     "updated_at": "2026-02-19T22:16:07.384852+00:00"
+  },
+  {
+    "shop_id": 87,
+    "shop_key": "cs-chapiteau",
+    "shop_name": "Chapiteau",
+    "shop_city": "Amsterdam",
+    "strain_id": 2831,
+    "strain_name": "Vice City",
+    "strain_name_normalised": "vice city",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 9.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 295,
@@ -41888,23 +42126,6 @@
     "updated_at": "2026-02-19T15:33:21.694056+00:00"
   },
   {
-    "shop_id": 103,
-    "shop_key": "cs-crush",
-    "shop_name": "Crush",
-    "shop_city": "Amsterdam",
-    "strain_id": 370,
-    "strain_name": "White Fire OG",
-    "strain_name_normalised": "white fire og",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T20:06:48.526980+00:00",
-    "updated_at": "2026-02-20T20:06:48.526980+00:00"
-  },
-  {
     "shop_id": 395,
     "shop_key": "cs-wietstock",
     "shop_name": "Wietstok",
@@ -42241,8 +42462,8 @@
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 204,
@@ -42481,23 +42702,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T09:54:13.143494+00:00",
     "updated_at": "2026-02-20T09:54:13.143494+00:00"
-  },
-  {
-    "shop_id": 87,
-    "shop_key": "cs-chapiteau",
-    "shop_name": "Chapiteau",
-    "shop_city": "Amsterdam",
-    "strain_id": 289,
-    "strain_name": "White Truffle",
-    "strain_name_normalised": "white truffle",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
   },
   {
     "shop_id": 157,
@@ -42955,8 +43159,8 @@
     "price_amount": 9.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-20T11:38:10.093878+00:00",
-    "updated_at": "2026-02-20T11:38:10.093878+00:00"
+    "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
+    "updated_at": "2026-03-07T19:39:32.103569+00:00"
   },
   {
     "shop_id": 89,
@@ -43669,8 +43873,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 419,
@@ -43816,14 +44020,14 @@
     "strain_id": 69,
     "strain_name": "White Widow",
     "strain_name_normalised": "white widow",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "1.3g",
-    "last_seen_at_utc": "2026-02-19T22:18:41.363056+00:00",
-    "updated_at": "2026-02-19T22:18:41.363056+00:00"
+    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
+    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 364,
@@ -44727,6 +44931,23 @@
     "updated_at": "2026-03-07T12:30:48.972414+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 803,
+    "strain_name": "Zangria",
+    "strain_name_normalised": "zangria",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 376,
     "shop_key": "cs-tweede-kamer",
     "shop_name": "Tweede Kamer",
@@ -44978,8 +45199,8 @@
     "price_amount": 12.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 182,
@@ -45318,8 +45539,8 @@
     "price_amount": 16.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 239,
@@ -45645,23 +45866,6 @@
     "updated_at": "2026-03-07T12:10:46.947855+00:00"
   },
   {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 4,
-    "strain_name": "Zoap",
-    "strain_name_normalised": "zoap",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
-  },
-  {
     "shop_id": 369,
     "shop_key": "cs-terps-army",
     "shop_name": "Terps Army",
@@ -45760,8 +45964,8 @@
     "price_amount": 12.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T18:43:26.688443+00:00",
-    "updated_at": "2026-03-07T18:43:26.688443+00:00"
+    "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
+    "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
     "shop_id": 105,
@@ -45917,6 +46121,23 @@
     "updated_at": "2026-02-20T23:16:29.442387+00:00"
   },
   {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 2845,
+    "strain_name": "Zoozlez",
+    "strain_name_normalised": "zoozlez",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 25.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
+  },
+  {
     "shop_id": 293,
     "shop_key": "cs-popeye",
     "shop_name": "Popeye",
@@ -45947,8 +46168,8 @@
     "price_amount": 14.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 321,
@@ -46287,8 +46508,8 @@
     "price_amount": 23.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T12:48:04.663388+00:00",
-    "updated_at": "2026-03-07T12:48:04.663388+00:00"
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 370,
