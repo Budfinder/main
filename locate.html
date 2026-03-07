@@ -93,6 +93,32 @@
       box-sizing: border-box;
     }
 
+    #distance-filter-wrap {
+      margin-top: 8px;
+    }
+
+    #distance-filter-wrap label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: #1f2b36;
+    }
+
+    #distance-slider-value {
+      font-weight: 700;
+    }
+
+    #distance-slider {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #distance-filter-status {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #444;
+    }
+
     #upload-panel {
       position: absolute;
       top: 50%;
@@ -306,6 +332,30 @@
       cursor: pointer;
     }
 
+    .popup-strain-meta {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      line-height: 1.25;
+      color: #4d5c6a;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .popup-strain-price {
+      font-weight: 700;
+      color: #1f2b36;
+    }
+
+    .popup-strain-notes {
+      color: #556474;
+    }
+
+    .popup-strain-meta-sep {
+      color: #9aa5af;
+      margin: 0 4px;
+    }
+
     .popup-strain-btn.active {
       background: #e8f2ff;
       border-color: #7aa7e8;
@@ -348,7 +398,21 @@
        Leaflet applies the icon image to <img> tags, but we can
        still use a className for easy CSS polishing.
     */
+    .shop-marker-icon {
+      background: transparent;
+      border: 0;
+    }
+
+    .shop-marker-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      overflow: visible;
+    }
+
     .shop-logo-icon {
+      width: 44px;
+      height: 44px;
       border-radius: 8px;
       background: white;
       padding: 2px;
@@ -364,13 +428,35 @@
     .shop-logo-icon img {
       max-width: 100% !important;
       max-height: 100% !important;
-      width: auto !important;
-      height: auto !important;
+      width: 100% !important;
+      height: 100% !important;
       object-fit: contain !important;
       object-position: center center !important;
       display: block;
       border-radius: 0;
       background: white;
+    }
+
+    .marker-price-badge {
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, 2px);
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid #cfd7df;
+      border-radius: 999px;
+      color: #1f2b36;
+      font-weight: 700;
+      font-size: 11px;
+      line-height: 1;
+      padding: 3px 7px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.22);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .marker-price-badge.hidden {
+      display: none;
     }
   </style>
 </head>
@@ -417,6 +503,11 @@
 
     <div id="time-estimate" style="margin-top:8px;">ETA: --</div>
     <div id="distance-info"></div>
+    <div id="distance-filter-wrap">
+      <label for="distance-slider">Max distance: <span id="distance-slider-value">Any</span></label>
+      <input id="distance-slider" type="range" min="0" max="100" step="1" value="0" />
+      <div id="distance-filter-status">Showing all distances.</div>
+    </div>
     <br />
 
     <!-- Category filters as tick boxes -->
@@ -467,6 +558,7 @@
     // Multi-select categories: 'all', 'favourites', and CSV Y/N flags
     let selectedCategories = ['all'];
     let categoryOptions = [];
+    let distanceLimitKm = 0; // 0 = no distance filtering
 
     // Colour/icon setup for category-based markers (fallback when no logo)
     const _markerColors = ['red','blue','green','orange','yellow','violet','grey','black'];
@@ -481,7 +573,7 @@
     const LOGO_BASE_PATHS = ['logos/', 'images/logos/', '/logos/', '/images/logos/'];
     const FALLBACK_MARKER_ICON_URL =
       'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png';
-    const LOGO_MARKER_SIZE = 32;
+    const LOGO_MARKER_SIZE = 44;
     const POPUP_LOGO_SIZE = 56;
 
     // DB integration state
@@ -503,6 +595,8 @@
     let activeStrainNames = [];      // clickable strain list for UI panel
     let popupStrainsByShopId = new Map();      // shop_id -> [strain names]
     let popupStrainsByNameCity = new Map();    // "name|city" -> [strain names]
+    let popupStrainDetailsByShopId = new Map();   // shop_id -> Map(strain_key -> {priceText, notesText})
+    let popupStrainDetailsByNameCity = new Map(); // "name|city" -> Map(strain_key -> {priceText, notesText})
     let popupStrainIndexReady = false;
     let popupStrainIndexPromise = null;
     let strainMetaByKey = new Map(); // normalised strain name -> visual metadata
@@ -791,21 +885,28 @@
      * CSV column: logo
      * Example value: boerejongens.png
      */
-    function createLogoIcon(logoFilename) {
+    function createLogoIcon(logoFilename, priceLabel = '') {
       const candidates = logoCandidates(logoFilename);
       if (!candidates.length) return null;
       const joined = candidates.map(escapeHtmlAttr).join('|');
       const first = escapeHtmlAttr(candidates[0]);
+      const labelText = (priceLabel || '').toString().trim();
+      const safeLabel = escapeHtml(labelText);
+      const badgeClass = safeLabel ? 'marker-price-badge' : 'marker-price-badge hidden';
 
       return L.divIcon({
         html:
-          `<img src="${first}" alt="shop logo" ` +
-          `data-candidates="${joined}" data-idx="0" onerror="markerLogoFallback(this)" ` +
-          `style="max-width:100% !important;max-height:100% !important;width:auto !important;height:auto !important;object-fit:contain !important;object-position:center center !important;display:block;margin:auto;">`,
+          `<div class="shop-marker-wrap">` +
+            `<div class="shop-logo-icon">` +
+              `<img src="${first}" alt="shop logo" ` +
+              `data-candidates="${joined}" data-idx="0" onerror="markerLogoFallback(this)">` +
+            `</div>` +
+            `<span class="${badgeClass}">${safeLabel}</span>` +
+          `</div>`,
         iconSize: [LOGO_MARKER_SIZE, LOGO_MARKER_SIZE],
         iconAnchor: [Math.round(LOGO_MARKER_SIZE / 2), LOGO_MARKER_SIZE],
         popupAnchor: [0, -LOGO_MARKER_SIZE],
-        className: 'shop-logo-icon'
+        className: 'shop-marker-icon'
       });
     }
 
@@ -815,9 +916,9 @@
      *  2) Else fall back to category pin icon
      *  3) Else default icon
      */
-    function chooseMarkerIcon(loc) {
+    function chooseMarkerIcon(loc, priceLabel = '') {
       // 1) Prefer logo icon if available
-      const logoIcon = createLogoIcon(loc.logo);
+      const logoIcon = createLogoIcon(loc.logo, priceLabel);
       if (logoIcon) return logoIcon;
 
       // 2) Fall back to first matching category pin
@@ -1163,6 +1264,55 @@
       return out;
     }
 
+    function formatOfferingPriceLabel(row) {
+      const amount = parseFloat(row && row.price_amount);
+      if (!Number.isFinite(amount)) return '';
+      const currency = ((row && row.price_currency) || '€').toString().trim() || '€';
+      const unit = ((row && row.price_unit) || 'g').toString().trim() || 'g';
+      const amountText = Number.isInteger(amount)
+        ? String(amount)
+        : amount.toFixed(2).replace(/\.?0+$/, '');
+      return `${currency}${amountText}/${unit}`;
+    }
+
+    function ensurePopupStrainDetailEntry(rawMap, locationKey, strainKey) {
+      if (!rawMap.has(locationKey)) rawMap.set(locationKey, new Map());
+      const byStrain = rawMap.get(locationKey);
+      if (!byStrain.has(strainKey)) {
+        byStrain.set(strainKey, { prices: new Set(), notes: new Set() });
+      }
+      return byStrain.get(strainKey);
+    }
+
+    function pushPopupStrainDetail(rawMap, locationKey, strainName, row) {
+      const locKey = (locationKey || '').toString().trim();
+      const strainKey = normaliseText((strainName || '').toString().trim());
+      if (!locKey || !strainKey) return;
+
+      const entry = ensurePopupStrainDetailEntry(rawMap, locKey, strainKey);
+      const priceLabel = formatOfferingPriceLabel(row);
+      if (priceLabel) entry.prices.add(priceLabel);
+
+      const noteRaw = ((row && (row.notes ?? row.note)) || '').toString().replace(/\s+/g, ' ').trim();
+      if (noteRaw) entry.notes.add(noteRaw);
+    }
+
+    function finalisePopupStrainDetailMap(rawMap) {
+      const out = new Map();
+      rawMap.forEach((byStrainRaw, locationKey) => {
+        const byStrain = new Map();
+        byStrainRaw.forEach((raw, strainKey) => {
+          const priceText = Array.from(raw.prices || [])
+            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }))
+            .join(', ');
+          const notesText = Array.from(raw.notes || []).join(' | ');
+          byStrain.set(strainKey, { priceText, notesText });
+        });
+        if (byStrain.size) out.set(locationKey, byStrain);
+      });
+      return out;
+    }
+
     async function ensurePopupStrainIndex() {
       if (popupStrainIndexReady) return true;
       if (popupStrainIndexPromise) return popupStrainIndexPromise;
@@ -1170,6 +1320,8 @@
       popupStrainIndexPromise = (async () => {
         const byIdRaw = new Map();
         const byNameCityRaw = new Map();
+        const detailsByIdRaw = new Map();
+        const detailsByNameCityRaw = new Map();
         let sawRows = false;
 
         try {
@@ -1205,10 +1357,12 @@
             const id = parseInt(r && r.shop_id, 10);
             if (Number.isFinite(id)) {
               pushStrainIntoIndex(byIdRaw, String(id), strainName);
+              pushPopupStrainDetail(detailsByIdRaw, String(id), strainName, r);
             }
             const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
             if (key !== '|') {
               pushStrainIntoIndex(byNameCityRaw, key, strainName);
+              pushPopupStrainDetail(detailsByNameCityRaw, key, strainName, r);
             }
           });
         } catch (_err) {
@@ -1217,6 +1371,8 @@
 
         popupStrainsByShopId = finalisePopupStrainMap(byIdRaw);
         popupStrainsByNameCity = finalisePopupStrainMap(byNameCityRaw);
+        popupStrainDetailsByShopId = finalisePopupStrainDetailMap(detailsByIdRaw);
+        popupStrainDetailsByNameCity = finalisePopupStrainDetailMap(detailsByNameCityRaw);
         popupStrainIndexReady = true;
 
         return sawRows || popupStrainsByShopId.size > 0 || popupStrainsByNameCity.size > 0;
@@ -1268,6 +1424,26 @@
       return [];
     }
 
+    function getPopupStrainDetail(loc, strainName) {
+      const strainKey = normaliseText((strainName || '').toString());
+      if (!loc || !strainKey) return { priceText: '', notesText: '' };
+
+      if (loc.db_shop_id) {
+        const byId = popupStrainDetailsByShopId.get(String(loc.db_shop_id));
+        if (byId && byId.has(strainKey)) {
+          return byId.get(strainKey);
+        }
+      }
+
+      const locationKey = normaliseNameCityKey(loc.name, loc.city || '');
+      const byNameCity = popupStrainDetailsByNameCity.get(locationKey);
+      if (byNameCity && byNameCity.has(strainKey)) {
+        return byNameCity.get(strainKey);
+      }
+
+      return { priceText: '', notesText: '' };
+    }
+
     async function refreshPopupStrainsForLocation(index) {
       const loc = locations[index];
       if (!loc || !isCoffeeShopLocation(loc)) return;
@@ -1310,6 +1486,17 @@
         const key = normaliseText(n);
         const isActive = activeKey !== '' && key === activeKey;
         const meta = getStrainVisualMeta(n);
+        const detail = getPopupStrainDetail(loc, n);
+        const metaParts = [];
+        if (detail && detail.priceText) {
+          metaParts.push(`<span class="popup-strain-price">${escapeHtml(detail.priceText)}</span>`);
+        }
+        if (detail && detail.notesText) {
+          metaParts.push(`<span class="popup-strain-notes">Notes: ${escapeHtml(detail.notesText)}</span>`);
+        }
+        const metaHtml = metaParts.length
+          ? `<span class="popup-strain-meta">${metaParts.join('<span class="popup-strain-meta-sep">•</span>')}</span>`
+          : '';
         const typeClass = meta.baseType !== 'unknown' ? ` type-${meta.baseType}` : '';
         const caliClass = meta.isCali ? ' is-cali' : '';
         const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
@@ -1320,6 +1507,7 @@
                 `<span>${escapeHtml(n)}</span>` +
                 `${caliBadge}` +
               `</span>` +
+              `${metaHtml}` +
             `</button>` +
           `</li>`
         );
@@ -1906,8 +2094,12 @@
       if (strainListStatus) strainListStatus.textContent = 'Load CSV first.';
       const eta = document.getElementById('time-estimate');
       const distance = document.getElementById('distance-info');
+      const distanceSlider = document.getElementById('distance-slider');
+      distanceLimitKm = 0;
+      if (distanceSlider) distanceSlider.value = '0';
       if (eta) eta.textContent = 'ETA: --';
       if (distance) distance.textContent = '';
+      updateDistanceFilterUi();
 
       // Link CSV shops to DB shop ids (if backend is reachable).
       const dbOk = await ensureDbIntegration();
@@ -2137,8 +2329,9 @@
 
       // Create a marker for each location
       locations.forEach((loc, i) => {
-        // NEW: choose icon, preferring logo if available
-        const icon = chooseMarkerIcon(loc);
+        const initialPriceLabel = getMarkerPriceLabel(loc);
+        const icon = chooseMarkerIcon(loc, initialPriceLabel);
+        const usesLogoIcon = logoCandidates(loc.logo).length > 0;
         const isCoffeeShop = isCoffeeShopLocation(loc);
 
         // Popup logo supports multiple fallback paths.
@@ -2190,6 +2383,9 @@
               refreshPopupStrainsForLocation(i);
             }
           });
+
+        marker._usesLogoIcon = usesLogoIcon;
+        marker._priceLabelText = initialPriceLabel || '';
 
         markers[i] = marker;
       });
@@ -2268,8 +2464,10 @@
               } else {
                 clearRouteUi();
               }
+              updateDistanceFilterUi();
               updateDestinationDropdown();
               updateDistanceInfo();
+              updateMarkers();
             }
           },
           err => alert(err.message),
@@ -2505,6 +2703,10 @@
         return false;
       }
 
+      if (!passesDistanceFilter(loc)) {
+        return false;
+      }
+
       // Optional DB strain filter: include only DB-mapped shops in the allowed set.
       if (strainAllowedShopIds !== null || strainAllowedNameCityKeys !== null) {
         if (loc.db_shop_id && strainAllowedShopIds && strainAllowedShopIds.has(loc.db_shop_id)) {
@@ -2591,6 +2793,19 @@
       await applyStrainFilter(strain);
     });
 
+    const distanceSlider = document.getElementById('distance-slider');
+    if (distanceSlider) {
+      distanceSlider.addEventListener('input', e => {
+        const next = parseInt(e.target.value, 10);
+        distanceLimitKm = Number.isFinite(next) ? Math.max(0, next) : 0;
+        updateDistanceFilterUi();
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+      });
+    }
+    updateDistanceFilterUi();
+
     // =========================================================
     // Destination dropdown + markers
     // =========================================================
@@ -2634,7 +2849,9 @@
       items.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.index;
-        opt.text = item.name + (item.isFav ? ' ★' : '');
+        opt.text = item.name +
+          (item.isFav ? ' ★' : '') +
+          (item.distText ? ` (${item.distText})` : '');
         destSelect.appendChild(opt);
       });
 
@@ -2665,6 +2882,35 @@
       }
     }
 
+    function updateDistanceFilterUi() {
+      const valueEl = document.getElementById('distance-slider-value');
+      const statusEl = document.getElementById('distance-filter-status');
+      const limitKm = Number.isFinite(distanceLimitKm) ? Math.max(0, distanceLimitKm) : 0;
+
+      if (valueEl) {
+        valueEl.textContent = limitKm > 0 ? `${limitKm} km` : 'Any';
+      }
+
+      if (!statusEl) return;
+      if (limitKm <= 0) {
+        statusEl.textContent = 'Showing all distances.';
+        return;
+      }
+      if (!lastPosition) {
+        statusEl.textContent = `Filter set to ${limitKm} km (waiting for location).`;
+        return;
+      }
+      statusEl.textContent = `Showing locations within ${limitKm} km.`;
+    }
+
+    function passesDistanceFilter(loc) {
+      const limitKm = Number.isFinite(distanceLimitKm) ? Math.max(0, distanceLimitKm) : 0;
+      if (limitKm <= 0) return true;
+      if (!lastPosition || !loc || !Array.isArray(loc.coords)) return true;
+      const km = haversineDistance(lastPosition, loc.coords) / 1000;
+      return km <= limitKm;
+    }
+
     function getMarkerPriceLabel(loc) {
       if (!strainFilterText) return '';
       if (!strainPriceByShopId && !strainPriceByNameCity) return '';
@@ -2683,13 +2929,22 @@
       return '';
     }
 
-    function syncMarkerPriceTooltip(index, visible) {
+    function syncMarkerPriceDisplay(index, visible) {
       const marker = markers[index];
       const loc = locations[index];
       if (!marker || !loc) return;
 
       const label = visible ? getMarkerPriceLabel(loc) : '';
       const current = marker._priceLabelText || '';
+
+      if (marker._usesLogoIcon) {
+        if (current !== label) {
+          marker.setIcon(chooseMarkerIcon(loc, label));
+          marker._priceLabelText = label;
+        }
+        if (marker.getTooltip()) marker.unbindTooltip();
+        return;
+      }
 
       if (label) {
         const needsBind = !marker.getTooltip() || current !== label;
@@ -2724,7 +2979,7 @@
         } else {
           if (map.hasLayer(markers[i])) map.removeLayer(markers[i]);
         }
-        syncMarkerPriceTooltip(i, visible);
+        syncMarkerPriceDisplay(i, visible);
       });
     }
 
