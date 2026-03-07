@@ -93,32 +93,6 @@
       box-sizing: border-box;
     }
 
-    #distance-filter-wrap {
-      margin-top: 8px;
-    }
-
-    #distance-filter-wrap label {
-      display: block;
-      margin-bottom: 4px;
-      font-size: 12px;
-      color: #1f2b36;
-    }
-
-    #distance-slider-value {
-      font-weight: 700;
-    }
-
-    #distance-slider {
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    #distance-filter-status {
-      margin-top: 4px;
-      font-size: 12px;
-      color: #444;
-    }
-
     #upload-panel {
       position: absolute;
       top: 50%;
@@ -503,11 +477,6 @@
 
     <div id="time-estimate" style="margin-top:8px;">ETA: --</div>
     <div id="distance-info"></div>
-    <div id="distance-filter-wrap">
-      <label for="distance-slider">Max distance: <span id="distance-slider-value">Any</span></label>
-      <input id="distance-slider" type="range" min="0" max="100" step="1" value="0" />
-      <div id="distance-filter-status">Showing all distances.</div>
-    </div>
     <br />
 
     <!-- Category filters as tick boxes -->
@@ -558,7 +527,6 @@
     // Multi-select categories: 'all', 'favourites', and CSV Y/N flags
     let selectedCategories = ['all'];
     let categoryOptions = [];
-    let distanceLimitKm = 0; // 0 = no distance filtering
 
     // Colour/icon setup for category-based markers (fallback when no logo)
     const _markerColors = ['red','blue','green','orange','yellow','violet','grey','black'];
@@ -2094,12 +2062,8 @@
       if (strainListStatus) strainListStatus.textContent = 'Load CSV first.';
       const eta = document.getElementById('time-estimate');
       const distance = document.getElementById('distance-info');
-      const distanceSlider = document.getElementById('distance-slider');
-      distanceLimitKm = 0;
-      if (distanceSlider) distanceSlider.value = '0';
       if (eta) eta.textContent = 'ETA: --';
       if (distance) distance.textContent = '';
-      updateDistanceFilterUi();
 
       // Link CSV shops to DB shop ids (if backend is reachable).
       const dbOk = await ensureDbIntegration();
@@ -2464,7 +2428,6 @@
               } else {
                 clearRouteUi();
               }
-              updateDistanceFilterUi();
               updateDestinationDropdown();
               updateDistanceInfo();
               updateMarkers();
@@ -2703,10 +2666,6 @@
         return false;
       }
 
-      if (!passesDistanceFilter(loc)) {
-        return false;
-      }
-
       // Optional DB strain filter: include only DB-mapped shops in the allowed set.
       if (strainAllowedShopIds !== null || strainAllowedNameCityKeys !== null) {
         if (loc.db_shop_id && strainAllowedShopIds && strainAllowedShopIds.has(loc.db_shop_id)) {
@@ -2791,20 +2750,8 @@
       if (!strain) return;
 
       await applyStrainFilter(strain);
+      if (map) map.closePopup();
     });
-
-    const distanceSlider = document.getElementById('distance-slider');
-    if (distanceSlider) {
-      distanceSlider.addEventListener('input', e => {
-        const next = parseInt(e.target.value, 10);
-        distanceLimitKm = Number.isFinite(next) ? Math.max(0, next) : 0;
-        updateDistanceFilterUi();
-        updateDestinationDropdown();
-        updateDistanceInfo();
-        updateMarkers();
-      });
-    }
-    updateDistanceFilterUi();
 
     // =========================================================
     // Destination dropdown + markers
@@ -2880,35 +2827,6 @@
       } else if (distanceDiv) {
         distanceDiv.textContent = '';
       }
-    }
-
-    function updateDistanceFilterUi() {
-      const valueEl = document.getElementById('distance-slider-value');
-      const statusEl = document.getElementById('distance-filter-status');
-      const limitKm = Number.isFinite(distanceLimitKm) ? Math.max(0, distanceLimitKm) : 0;
-
-      if (valueEl) {
-        valueEl.textContent = limitKm > 0 ? `${limitKm} km` : 'Any';
-      }
-
-      if (!statusEl) return;
-      if (limitKm <= 0) {
-        statusEl.textContent = 'Showing all distances.';
-        return;
-      }
-      if (!lastPosition) {
-        statusEl.textContent = `Filter set to ${limitKm} km (waiting for location).`;
-        return;
-      }
-      statusEl.textContent = `Showing locations within ${limitKm} km.`;
-    }
-
-    function passesDistanceFilter(loc) {
-      const limitKm = Number.isFinite(distanceLimitKm) ? Math.max(0, distanceLimitKm) : 0;
-      if (limitKm <= 0) return true;
-      if (!lastPosition || !loc || !Array.isArray(loc.coords)) return true;
-      const km = haversineDistance(lastPosition, loc.coords) / 1000;
-      return km <= limitKm;
     }
 
     function getMarkerPriceLabel(loc) {
