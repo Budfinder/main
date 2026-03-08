@@ -432,6 +432,58 @@
     .marker-price-badge.hidden {
       display: none;
     }
+
+    .me-marker-icon {
+      background: transparent;
+      border: 0;
+    }
+
+    .me-marker-wrap {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+    }
+
+    .me-marker-ping {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(43, 140, 255, 0.28);
+      transform: translate(-50%, -50%) scale(0.8);
+      animation: meMarkerPing 1.8s ease-out infinite;
+    }
+
+    .me-marker-dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: #2b8cff;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes meMarkerPing {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.85;
+      }
+      70% {
+        transform: translate(-50%, -50%) scale(2.1);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2.1);
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
@@ -518,6 +570,7 @@
     let geolocationWatchId = null;
     let locations = [];            // parsed locations from CSV
     let markers = [];              // Leaflet markers
+    let meLocationMarker = null;   // current user location marker
     let controlsVisible = false;   // controls panel visibility
     let directionsVisible = false; // directions panel visibility
     let strainListVisible = true; // strain list panel visibility
@@ -544,6 +597,7 @@
       'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png';
     const LOGO_MARKER_SIZE = 44;
     const POPUP_LOGO_SIZE = 56;
+    const ME_MARKER_SIZE = 18;
 
     // DB integration state
     let dbIntegrationReady = false;
@@ -612,6 +666,7 @@
       routingControl = null;
       markers = [];
       lastPosition = null;
+      meLocationMarker = null;
 
       const mapDiv = document.getElementById('map');
       const instructionsDiv = document.getElementById('instructions');
@@ -900,6 +955,38 @@
         }
       }
       return icon;
+    }
+
+    function createMeMarkerIcon() {
+      return L.divIcon({
+        html:
+          `<div class="me-marker-wrap" aria-label="Your location">` +
+            `<span class="me-marker-ping"></span>` +
+            `<span class="me-marker-dot"></span>` +
+          `</div>`,
+        iconSize: [ME_MARKER_SIZE, ME_MARKER_SIZE],
+        iconAnchor: [Math.round(ME_MARKER_SIZE / 2), Math.round(ME_MARKER_SIZE / 2)],
+        className: 'me-marker-icon'
+      });
+    }
+
+    function updateMeLocationMarker(coords) {
+      if (!map || !Array.isArray(coords) || coords.length !== 2) return;
+
+      if (!meLocationMarker) {
+        meLocationMarker = L.marker(coords, {
+          icon: createMeMarkerIcon(),
+          interactive: false,
+          keyboard: false,
+          zIndexOffset: 3000
+        }).addTo(map);
+        return;
+      }
+
+      meLocationMarker.setLatLng(coords);
+      if (!map.hasLayer(meLocationMarker)) {
+        meLocationMarker.addTo(map);
+      }
     }
 
     function popupLogoHtml(loc) {
@@ -2412,6 +2499,7 @@
         geolocationWatchId = navigator.geolocation.watchPosition(
           p => {
             const np = [p.coords.latitude, p.coords.longitude];
+            updateMeLocationMarker(np);
 
             // Only update if moved a reasonable distance
             if (!lastPosition || haversineDistance(lastPosition, np) > 10) {
