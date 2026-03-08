@@ -498,6 +498,7 @@
       <div id="strain-status" style="margin-top:6px; font-size:12px; color:#444;">Strain filter: off</div>
     </div>
 
+    <button id="center-on-me-btn" type="button">Center on me</button><br />
     <button id="nearest-btn">Nearest</button><br />
     <div id="db-status" style="display:none; margin-top:6px; font-size:12px; color:#444;"></div>
   </div>
@@ -2957,6 +2958,14 @@
     // =========================================================
     // Nearest button
     // =========================================================
+
+    document.getElementById('center-on-me-btn').addEventListener('click', () => {
+      if (!map) return;
+      if (!lastPosition) {
+        return alert('Current position not available yet.');
+      }
+      map.panTo(lastPosition);
+    });
 
     document.getElementById('nearest-btn').addEventListener('click', () => {
       if (!lastPosition) {
