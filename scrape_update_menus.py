@@ -146,7 +146,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             shop_id INTEGER NOT NULL,
             strain_id INTEGER NOT NULL,
 
-            base_type TEXT NOT NULL,        -- sativa/indica/hybrid/hash
+            base_type TEXT NOT NULL,        -- sativa/indica/hybrid/hash/kush
             is_cali INTEGER NOT NULL DEFAULT 0,
 
             price_currency TEXT NOT NULL,   -- €, £, $

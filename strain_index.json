@@ -400,21 +400,15 @@
     "strain_name_display": "BLACK ZUSHI 424",
     "shops": [
       {
-        "shop_id": 162,
-        "shop_key": "cs-green-place-2",
-        "shop_name": "Green Place 2",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "BLACK ZUYSHI 424",
-    "strain_name_display": "BLACK ZUYSHI 424",
-    "shops": [
-      {
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 162,
+        "shop_key": "cs-green-place-2",
+        "shop_name": "Green Place 2",
         "shop_city": "Amsterdam"
       }
     ]
@@ -553,18 +547,6 @@
         "shop_id": 204,
         "shop_key": "cs-kadinsky3",
         "shop_name": "Kadinsky 3",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "G-UNIT 12 WEEKS",
-    "strain_name_display": "G-UNIT 12 WEEKS",
-    "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1344,24 +1326,6 @@
     ]
   },
   {
-    "strain_name_normalised": "amazing",
-    "strain_name_display": "Amazing",
-    "shops": [
-      {
-        "shop_id": 196,
-        "shop_key": "cs-johnny",
-        "shop_name": "Johnny",
-        "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 386,
-        "shop_key": "cs-voyagers",
-        "shop_name": "Voyagers",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "amazing haze",
     "strain_name_display": "Amazing Haze",
     "shops": [
@@ -1369,6 +1333,12 @@
         "shop_id": 266,
         "shop_key": "cs-oost",
         "shop_name": "Coffeeshop Oost",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 196,
+        "shop_key": "cs-johnny",
+        "shop_name": "Johnny",
         "shop_city": "Amsterdam"
       },
       {
@@ -1381,6 +1351,12 @@
         "shop_id": 324,
         "shop_key": "cs-roxy",
         "shop_name": "Roxy",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 386,
+        "shop_key": "cs-voyagers",
+        "shop_name": "Voyagers",
         "shop_city": "Amsterdam"
       }
     ]
@@ -1428,8 +1404,8 @@
     ]
   },
   {
-    "strain_name_normalised": "amg",
-    "strain_name_display": "AMG",
+    "strain_name_normalised": "amg haze",
+    "strain_name_display": "AMG Haze",
     "shops": [
       {
         "shop_id": 266,
@@ -1450,6 +1426,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 244,
+        "shop_key": "cs-millennium",
+        "shop_name": "Millennium",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 321,
         "shop_key": "cs-roots",
         "shop_name": "Roots",
@@ -1459,6 +1441,12 @@
         "shop_id": 325,
         "shop_key": "cs-ruthless",
         "shop_name": "Ruthless",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 337,
+        "shop_key": "cs-siberie",
+        "shop_name": "Siberie",
         "shop_city": "Amsterdam"
       },
       {
@@ -1495,24 +1483,6 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "amg haze",
-    "strain_name_display": "AMG Haze",
-    "shops": [
-      {
-        "shop_id": 244,
-        "shop_key": "cs-millennium",
-        "shop_name": "Millennium",
-        "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 337,
-        "shop_key": "cs-siberie",
-        "shop_name": "Siberie",
         "shop_city": "Amsterdam"
       },
       {
@@ -2392,6 +2362,12 @@
     "strain_name_display": "Amsterdam Pound Cake",
     "shops": [
       {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 264,
         "shop_key": "cs-old-church-2",
         "shop_name": "Old Church 2",
@@ -3180,18 +3156,6 @@
     ]
   },
   {
-    "strain_name_normalised": "biscotti bio",
-    "strain_name_display": "Biscotti Bio",
-    "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "biscotti x",
     "strain_name_display": "Biscotti X",
     "shops": [
@@ -3222,21 +3186,15 @@
     ]
   },
   {
-    "strain_name_normalised": "black cavar",
-    "strain_name_display": "Black Cavar",
+    "strain_name_normalised": "black caviar",
+    "strain_name_display": "Black Caviar",
     "shops": [
       {
         "shop_id": 172,
         "shop_key": "cs-happy-feelings",
         "shop_name": "Happy Feelings",
         "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "black caviar",
-    "strain_name_display": "Black Caviar",
-    "shops": [
+      },
       {
         "shop_id": 187,
         "shop_key": "cs-hunters-mercator",
@@ -3691,18 +3649,6 @@
         "shop_id": 69,
         "shop_key": "cs-bommel",
         "shop_name": "de Bommel",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "blue berry haze",
-    "strain_name_display": "Blue Berry Haze",
-    "shops": [
-      {
-        "shop_id": 262,
-        "shop_key": "cs-noord",
-        "shop_name": "Noord",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4417,6 +4363,12 @@
         "shop_id": 112,
         "shop_key": "cs-dna",
         "shop_name": "DNA",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 262,
+        "shop_key": "cs-noord",
+        "shop_name": "Noord",
         "shop_city": "Amsterdam"
       },
       {
@@ -5263,18 +5215,6 @@
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "candy mac",
-    "strain_name_display": "Candy Mac",
-    "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
       }
     ]
@@ -6745,6 +6685,18 @@
         "shop_id": 363,
         "shop_key": "cs-supermarkt",
         "shop_name": "de Supermarkt",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "crockett's dawg",
+    "strain_name_display": "Crockett's Dawg",
+    "shops": [
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
       }
     ]
@@ -8238,6 +8190,18 @@
     ]
   },
   {
+    "strain_name_normalised": "g-unit",
+    "strain_name_display": "G-Unit",
+    "shops": [
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "g13 mr. nice",
     "strain_name_display": "G13 Mr. Nice",
     "shops": [
@@ -8943,12 +8907,6 @@
     "strain_name_normalised": "giraffe pussy",
     "strain_name_display": "Giraffe Pussy",
     "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
-        "shop_city": "Amsterdam"
-      },
       {
         "shop_id": 337,
         "shop_key": "cs-siberie",
@@ -11816,6 +11774,12 @@
         "shop_key": "cs-1e-hulp",
         "shop_name": "1e Hulp",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -13542,18 +13506,6 @@
     ]
   },
   {
-    "strain_name_normalised": "mint candy",
-    "strain_name_display": "Mint Candy",
-    "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "miracle alien cookie",
     "strain_name_display": "Miracle Alien Cookie",
     "shops": [
@@ -13693,6 +13645,18 @@
         "shop_id": 40,
         "shop_key": "cs-babylon",
         "shop_name": "Babylon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "mokum velvet",
+    "strain_name_display": "Mokum Velvet",
+    "shops": [
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
       }
     ]
@@ -17334,6 +17298,18 @@
     ]
   },
   {
+    "strain_name_normalised": "sekai ichi",
+    "strain_name_display": "Sekai Ichi",
+    "shops": [
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "sensation",
     "strain_name_display": "SenSation",
     "shops": [
@@ -17532,18 +17508,6 @@
     ]
   },
   {
-    "strain_name_normalised": "shikoku",
-    "strain_name_display": "Shikoku",
-    "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "shining silver haze",
     "strain_name_display": "Shining Silver Haze",
     "shops": [
@@ -17551,6 +17515,18 @@
         "shop_id": 182,
         "shop_key": "cs-hit2",
         "shop_name": "The Hit",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "shiranui",
+    "strain_name_display": "Shiranui",
+    "shops": [
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
       }
     ]
@@ -19201,18 +19177,6 @@
         "shop_id": 39,
         "shop_key": "cs-baba",
         "shop_name": "Baba",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "sunny haze bio",
-    "strain_name_display": "Sunny Haze Bio",
-    "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
       }
     ]
@@ -22680,18 +22644,6 @@
     ]
   },
   {
-    "strain_name_normalised": "wizard fuel pheno",
-    "strain_name_display": "Wizard Fuel Pheno",
-    "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "wizard punch",
     "strain_name_display": "Wizard Punch",
     "shops": [
@@ -22786,6 +22738,12 @@
     "strain_name_display": "Yellow Zushi",
     "shops": [
       {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 161,
         "shop_key": "cs-green-place",
         "shop_name": "Green Place",
@@ -22825,6 +22783,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "yubari gold",
+    "strain_name_display": "Yubari Gold",
+    "shops": [
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
       }
     ]
@@ -23175,12 +23145,6 @@
     "strain_name_normalised": "zkittles",
     "strain_name_display": "Zkittles",
     "shops": [
-      {
-        "shop_id": 12,
-        "shop_key": "cs-abraxas",
-        "shop_name": "Abraxas",
-        "shop_city": "Amsterdam"
-      },
       {
         "shop_id": 80,
         "shop_key": "cs-bushdocter",
@@ -23550,6 +23514,18 @@
     ]
   },
   {
+    "strain_name_normalised": "zoro",
+    "strain_name_display": "Zoro",
+    "shops": [
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "zour candy",
     "strain_name_display": "Zour Candy",
     "shops": [
@@ -23593,6 +23569,18 @@
         "shop_id": 39,
         "shop_key": "cs-baba",
         "shop_name": "Baba",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "zowahh bio",
+    "strain_name_display": "Zowahh Bio",
+    "shops": [
+      {
+        "shop_id": 12,
+        "shop_key": "cs-abraxas",
+        "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
       }
     ]

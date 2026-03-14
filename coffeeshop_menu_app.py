@@ -40,8 +40,8 @@ Run
 Hotkeys
 -------
 While NOT typing in a field:
-- 1 / 2 / 3 / 4 : set type (sativa / indica / hybrid / hash)
-- 5             : toggle Cali
+- 1 / 2 / 3 / 4 / 5 : set type (sativa / indica / hybrid / hash / kush)
+- 6                 : toggle Cali
 - Enter         : save current entry (submits the form)
 - N / P         : next / previous *new* menu in the queue
 - /             : focus strain input
@@ -76,7 +76,7 @@ from flask import Flask, Response, jsonify, redirect, render_template_string, re
 # Configuration
 # -----------------------------------------------------------------------------
 
-VALID_BASE_TYPES = ["sativa", "indica", "hybrid", "hash"]
+VALID_BASE_TYPES = ["sativa", "indica", "hybrid", "hash", "kush"]
 
 DEFAULT_CURRENCY = "€"
 DEFAULT_UNIT = "g"  # Unit fixed to grams
@@ -1586,6 +1586,7 @@ th { color: var(--muted); font-weight: 700; position: sticky; top: 0; background
 }
 .toast.good { border-color: rgba(104,211,145,.45); }
 .toast.bad  { border-color: rgba(252,129,129,.45); }
+.toast.warn { border-color: rgba(246,173,85,.45); }
 
 .menuGrid {
   display: grid;
@@ -1660,7 +1661,8 @@ PAGE_TMPL = """
       <span class="kbd">2</span> I
       <span class="kbd">3</span> H
       <span class="kbd">4</span> Hash
-      <span class="kbd">5</span> Cali
+      <span class="kbd">5</span> Kush
+      <span class="kbd">6</span> Cali
       <span class="kbd">Enter</span> Save
       <span class="kbd">N</span>/<span class="kbd">P</span> Next/Prev
       <span class="kbd">/</span> Focus
@@ -1767,6 +1769,7 @@ PAGE_TMPL = """
                     <label class="radioOption"><input type="radio" name="base_type" value="indica" required><span>Indica</span></label>
                     <label class="radioOption"><input type="radio" name="base_type" value="hybrid" required><span>Hybrid</span></label>
                     <label class="radioOption"><input type="radio" name="base_type" value="hash" required><span>Hash</span></label>
+                    <label class="radioOption"><input type="radio" name="base_type" value="kush" required><span>Kush</span></label>
                     <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
                     <label class="radioOption"><input type="checkbox" name="is_cali" value="1"><span>Cali</span></label>
                   </div>
@@ -2059,7 +2062,8 @@ PAGE_TMPL = """
     if (e.key === '2') { setBaseType('indica'); if (priceAmount) priceAmount.focus(); }
     if (e.key === '3') { setBaseType('hybrid'); if (priceAmount) priceAmount.focus(); }
     if (e.key === '4') { setBaseType('hash'); if (priceAmount) priceAmount.focus(); }
-    if (e.key === '5') { if (caliBox) caliBox.checked = !caliBox.checked; }
+    if (e.key === '5') { setBaseType('kush'); if (priceAmount) priceAmount.focus(); }
+    if (e.key === '6') { if (caliBox) caliBox.checked = !caliBox.checked; }
 
     const k = e.key.toLowerCase();
     if (k === 'n') { navTo("{{ url_for('next_shop', shop_id=shop_id) }}"); }
@@ -2157,6 +2161,7 @@ EDIT_TMPL = """
                 <label class="radioOption"><input type="radio" name="base_type" value="indica" {% if entry['base_type']=='indica' %}checked{% endif %} required><span>Indica</span></label>
                 <label class="radioOption"><input type="radio" name="base_type" value="hybrid" {% if entry['base_type']=='hybrid' %}checked{% endif %} required><span>Hybrid</span></label>
                 <label class="radioOption"><input type="radio" name="base_type" value="hash" {% if entry['base_type']=='hash' %}checked{% endif %} required><span>Hash</span></label>
+                <label class="radioOption"><input type="radio" name="base_type" value="kush" {% if entry['base_type']=='kush' %}checked{% endif %} required><span>Kush</span></label>
                 <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
                 <label class="radioOption"><input type="checkbox" name="is_cali" value="1" {% if entry['is_cali'] %}checked{% endif %}><span>Cali</span></label>
               </div>
@@ -2293,6 +2298,7 @@ MAIN_TMPL = """
       <a class="pill" href="{{ url_for('start') }}">Go to first new</a>
       <a class="pill" href="{{ url_for('queue') }}">Menu queue</a>
       <a class="pill" href="{{ url_for('browse') }}">Browse DB</a>
+      <a class="pill" href="{{ url_for('strain_consolidate') }}">Consolidate strains</a>
     </div>
   </div>
 
@@ -2365,6 +2371,7 @@ MAIN_TMPL = """
         <div class="cardBody">
           <div class="btnrow">
             <a class="pill" href="{{ url_for('browse') }}">Open browser</a>
+            <a class="pill" href="{{ url_for('strain_consolidate') }}">Consolidate strains</a>
           </div>
           <div class="small" style="margin-top:10px;">DB path: <code>{{ db_path }}</code></div>
         </div>
@@ -2438,6 +2445,7 @@ CHECK_TMPL = """
       <a class="pill" href="{{ url_for('main_menu') }}">Main menu</a>
       <a class="pill" href="{{ url_for('queue') }}">Menu queue</a>
       <a class="pill" href="{{ url_for('start') }}">Go to first new</a>
+      <a class="pill" href="{{ url_for('strain_consolidate') }}">Consolidate strains</a>
     </div>
   </div>
 
@@ -2609,6 +2617,7 @@ STRAIN_LOOKUP_TMPL = """
       <a class="pill" href="{{ url_for('main_menu') }}">Main menu</a>
       <a class="pill" href="{{ url_for('browse') }}">Browse DB</a>
       <a class="pill" href="{{ url_for('queue') }}">Menu queue</a>
+      <a class="pill" href="{{ url_for('strain_consolidate') }}">Consolidate strains</a>
     </div>
   </div>
 
@@ -2679,6 +2688,155 @@ STRAIN_LOOKUP_TMPL = """
 </html>
 """
 
+STRAIN_CONSOLIDATE_TMPL = """
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Consolidate Strains</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>{{ css }}</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        Consolidate strains
+        <div class="small">Merge typos and variants into a canonical strain name</div>
+      </div>
+    </div>
+    <div class="btnrow">
+      <a class="pill" href="{{ url_for('main_menu') }}">Main menu</a>
+      <a class="pill" href="{{ url_for('browse') }}">Browse DB</a>
+      <a class="pill" href="{{ url_for('strain_lookup') }}">Shops by strain</a>
+    </div>
+  </div>
+
+  {% if message %}
+    <div id="toast" class="toast {{ message_kind }}">{{ message }}</div>
+  {% endif %}
+
+  <div style="padding:14px; overflow:auto;">
+    <div class="card" style="max-width: 1200px; margin: 0 auto;">
+      <div class="cardHeader">
+        <form method="get" action="{{ url_for('strain_consolidate') }}" class="btnrow" style="width:100%;">
+          <div style="min-width:280px; flex:1;">
+            <label for="q">Find variants</label>
+            <input id="q" name="q" value="{{ q }}" placeholder="e.g. amnesia, haze, runtz" autofocus>
+          </div>
+          <div style="min-width:120px;">
+            <label for="limit">Limit</label>
+            <input id="limit" name="limit" value="{{ limit }}" inputmode="numeric">
+          </div>
+          <div style="align-self:flex-end;">
+            <button class="primary" type="submit">Search</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="cardBody">
+        <div class="small">
+          {% if q %}
+            Showing {{ rows|length }} of {{ total_matches }} matching strain(s).
+          {% else %}
+            Showing {{ rows|length }} of {{ total_matches }} total strain(s).
+          {% endif %}
+          Select variant rows, set the canonical name, then merge.
+        </div>
+      </div>
+
+      <form method="post" action="{{ url_for('strain_consolidate_post') }}">
+        <input type="hidden" name="q" value="{{ q }}">
+        <input type="hidden" name="limit" value="{{ limit }}">
+
+        <div class="cardBody" style="border-top:1px solid var(--border);">
+          <div class="btnrow">
+            <div style="min-width:280px; flex:1;">
+              <label for="canonical_name">Canonical name</label>
+              <input id="canonical_name" name="canonical_name" value="{{ canonical_seed }}" placeholder="e.g. Amnesia Haze" required>
+            </div>
+            <div style="align-self:flex-end;" class="btnrow">
+              <button id="select-all-strains" type="button" class="ghost">Select all shown</button>
+              <button id="clear-all-strains" type="button" class="ghost">Clear selection</button>
+              <button class="primary" type="submit">Merge selected strains</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tableWrap browse">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:46px;">pick</th>
+                <th>id</th>
+                <th>display</th>
+                <th>normalised</th>
+                <th>menu refs</th>
+                <th>active refs</th>
+                <th>offering refs</th>
+                <th>created</th>
+                <th>quick action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in rows %}
+                <tr>
+                  <td><input type="checkbox" name="strain_ids" value="{{ r['id'] }}"></td>
+                  <td>{{ r['id'] }}</td>
+                  <td>{{ r['name_display'] }}</td>
+                  <td>{{ r['name_normalised'] }}</td>
+                  <td>{{ r['menu_refs'] }}</td>
+                  <td>{{ r['active_refs'] }}</td>
+                  <td>{{ r['offering_refs'] }}</td>
+                  <td>{{ r['created_at'] }}</td>
+                  <td>
+                    <button type="button" class="ghost fill-canonical-btn" data-name="{{ r['name_display'] }}">Use as canonical</button>
+                  </td>
+                </tr>
+              {% endfor %}
+              {% if not rows %}
+                <tr><td colspan="9" class="small">No strains found for this search.</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    if (toast) setTimeout(() => { toast.style.display = 'none'; }, 4500);
+
+    const checkboxes = () => Array.from(document.querySelectorAll('input[name="strain_ids"]'));
+    const selectAllBtn = document.getElementById('select-all-strains');
+    const clearAllBtn = document.getElementById('clear-all-strains');
+    const canonicalInput = document.getElementById('canonical_name');
+
+    if (selectAllBtn) {
+      selectAllBtn.addEventListener('click', () => {
+        checkboxes().forEach(cb => { cb.checked = true; });
+      });
+    }
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener('click', () => {
+        checkboxes().forEach(cb => { cb.checked = false; });
+      });
+    }
+
+    document.querySelectorAll('.fill-canonical-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!canonicalInput) return;
+        canonicalInput.value = btn.getAttribute('data-name') || '';
+        canonicalInput.focus();
+      });
+    });
+  </script>
+</body>
+</html>
+"""
+
 SHOP_DIGITISED_TMPL = """
 <!doctype html>
 <html lang="en">
@@ -2701,6 +2859,7 @@ SHOP_DIGITISED_TMPL = """
       <a class="pill" href="{{ url_for('main_menu') }}">Main menu</a>
       <a class="pill" href="{{ url_for('browse') }}">Browse DB</a>
       <a class="pill" href="{{ url_for('shop_view', shop_id=shop_id) }}">Open data entry</a>
+      <a class="pill" href="{{ url_for('strain_consolidate') }}">Consolidate strains</a>
     </div>
   </div>
 
@@ -2986,6 +3145,55 @@ def create_app(
             "unit": DEFAULT_UNIT,
         }
 
+    def list_strains_for_consolidation(
+        c: sqlite3.Connection,
+        q: str,
+        limit: int,
+    ) -> Tuple[List[sqlite3.Row], int]:
+        """Return strain rows + total matches for consolidation UI."""
+        q = (q or "").strip().lower()
+        params: List[object] = []
+        where = ""
+        if q:
+            where = "WHERE LOWER(st.name_display) LIKE ? OR st.name_normalised LIKE ?"
+            like = f"%{q}%"
+            params.extend([like, like])
+
+        count_sql = f"SELECT COUNT(*) AS n FROM strains st {where};"
+        total_row = c.execute(count_sql, params).fetchone()
+        total_matches = int(total_row["n"] if total_row else 0)
+
+        rows = c.execute(
+            f"""
+            SELECT st.id,
+                   st.name_display,
+                   st.name_normalised,
+                   st.created_at,
+                   COALESCE(me.menu_refs, 0) AS menu_refs,
+                   COALESCE(so.active_refs, 0) AS active_refs,
+                   COALESCE(so.total_refs, 0) AS offering_refs
+            FROM strains st
+            LEFT JOIN (
+                SELECT strain_id, COUNT(*) AS menu_refs
+                FROM menu_entries
+                GROUP BY strain_id
+            ) me ON me.strain_id = st.id
+            LEFT JOIN (
+                SELECT strain_id,
+                       SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_refs,
+                       COUNT(*) AS total_refs
+                FROM shop_offerings
+                GROUP BY strain_id
+            ) so ON so.strain_id = st.id
+            {where}
+            ORDER BY st.name_display
+            LIMIT ?;
+            """,
+            [*params, limit],
+        ).fetchall()
+
+        return rows, total_matches
+
     browse_specs = {
         "shops": {
             "label": "Shops",
@@ -3238,6 +3446,135 @@ def create_app(
         counts = get_menu_counts(c, only_visible=True)
         c.close()
         return Response(render_template_string(QUEUE_TMPL, css=BASE_CSS, rows=rows, counts=counts))
+
+    @app.get("/strains/consolidate")
+    def strain_consolidate() -> Response:
+        """UI for consolidating duplicate/incorrect strain names."""
+        q = (request.args.get("q") or "").strip()
+        msg = (request.args.get("msg") or "").strip()
+        message_kind = (request.args.get("kind") or "good").strip().lower()
+        if message_kind not in {"good", "bad", "warn"}:
+            message_kind = "good"
+
+        limit_raw = (request.args.get("limit") or "200").strip()
+        try:
+            limit = int(limit_raw)
+        except ValueError:
+            limit = 200
+        limit = max(20, min(limit, 1000))
+
+        c = conn()
+        rows, total_matches = list_strains_for_consolidation(c, q=q, limit=limit)
+        c.close()
+
+        canonical_seed = q
+        return Response(
+            render_template_string(
+                STRAIN_CONSOLIDATE_TMPL,
+                css=BASE_CSS,
+                q=q,
+                limit=limit,
+                rows=rows,
+                total_matches=total_matches,
+                canonical_seed=canonical_seed,
+                message=msg,
+                message_kind=message_kind,
+            )
+        )
+
+    @app.post("/strains/consolidate")
+    def strain_consolidate_post() -> Response:
+        """Merge selected strains into one canonical name."""
+        q = (request.form.get("q") or "").strip()
+        canonical_name = (request.form.get("canonical_name") or "").strip()
+        selected_ids = normalise_entry_ids(request.form.getlist("strain_ids"))
+
+        limit_raw = (request.form.get("limit") or "200").strip()
+        try:
+            limit = int(limit_raw)
+        except ValueError:
+            limit = 200
+        limit = max(20, min(limit, 1000))
+
+        canonical_norm, canonical_disp = normalise_strain_name(canonical_name)
+        if not canonical_norm:
+            return redirect(
+                url_for(
+                    "strain_consolidate",
+                    q=q,
+                    limit=limit,
+                    msg="Canonical name cannot be blank.",
+                    kind="bad",
+                )
+            )
+
+        if not selected_ids:
+            return redirect(
+                url_for(
+                    "strain_consolidate",
+                    q=q or canonical_disp,
+                    limit=limit,
+                    msg="Select at least one strain row to consolidate.",
+                    kind="bad",
+                )
+            )
+
+        c = conn()
+        placeholders = ", ".join(["?"] * len(selected_ids))
+        existing_rows = c.execute(
+            f"SELECT id FROM strains WHERE id IN ({placeholders});",
+            selected_ids,
+        ).fetchall()
+        existing_ids = sorted({int(r["id"]) for r in existing_rows})
+        missing_ids = sorted(set(selected_ids) - set(existing_ids))
+
+        if not existing_ids:
+            c.close()
+            return redirect(
+                url_for(
+                    "strain_consolidate",
+                    q=q or canonical_disp,
+                    limit=limit,
+                    msg="Selected strains were not found (they may have already been merged).",
+                    kind="bad",
+                )
+            )
+
+        applied = 0
+        failures: List[str] = []
+
+        for strain_id in existing_ids:
+            ok, _resulting_id, detail = rename_or_merge_strain_id(c, strain_id, canonical_disp)
+            if ok:
+                applied += 1
+            else:
+                failures.append(f"#{strain_id}: {detail}")
+        c.close()
+
+        if failures and applied == 0:
+            msg = f"No changes applied. First error: {failures[0]}"
+            kind = "bad"
+        elif failures:
+            msg = f"Applied {applied} change(s), but {len(failures)} failed. First error: {failures[0]}"
+            kind = "warn"
+        else:
+            msg = f"Consolidated {applied} strain row(s) into '{canonical_disp}'."
+            kind = "good"
+
+        if missing_ids:
+            msg += f" Skipped missing IDs: {', '.join(str(i) for i in missing_ids)}."
+            if kind == "good":
+                kind = "warn"
+
+        return redirect(
+            url_for(
+                "strain_consolidate",
+                q=q or canonical_disp,
+                limit=limit,
+                msg=msg,
+                kind=kind,
+            )
+        )
 
     @app.get("/browse")
     def browse() -> Response:

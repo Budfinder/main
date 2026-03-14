@@ -229,6 +229,20 @@
       color: #1f5c2a;
     }
 
+    .strain-item.type-hash,
+    .popup-strain-btn.type-hash {
+      background: #f7efe3;
+      border-color: #c8a97f;
+      color: #5a3d21;
+    }
+
+    .strain-item.type-kush,
+    .popup-strain-btn.type-kush {
+      background: #e7f6df;
+      border-color: #8abf6b;
+      color: #245320;
+    }
+
     .strain-item.is-cali,
     .popup-strain-btn.is-cali {
       border-width: 2px;
@@ -724,7 +738,7 @@
 
     function normaliseStrainBaseType(value) {
       const t = normaliseText(value || '');
-      if (t === 'sativa' || t === 'indica' || t === 'hybrid') return t;
+      if (t === 'sativa' || t === 'indica' || t === 'hybrid' || t === 'hash' || t === 'kush') return t;
       return '';
     }
 
@@ -733,7 +747,7 @@
       if (!strainMetaByKey.has(key)) {
         strainMetaByKey.set(key, {
           name: (displayName || '').toString().trim(),
-          typeCounts: { sativa: 0, indica: 0, hybrid: 0 },
+          typeCounts: { sativa: 0, indica: 0, hybrid: 0, hash: 0, kush: 0 },
           isCali: false
         });
       }
@@ -762,10 +776,16 @@
 
     function deriveStrainBaseType(meta) {
       if (!meta || !meta.typeCounts) return 'unknown';
-      const types = ['sativa', 'indica', 'hybrid'].filter(t => (meta.typeCounts[t] || 0) > 0);
+      const order = ['sativa', 'indica', 'hybrid', 'hash', 'kush'];
+      const types = order.filter(t => (meta.typeCounts[t] || 0) > 0);
+      if (!types.length) return 'unknown';
       if (types.length === 1) return types[0];
-      if (types.length > 1) return 'hybrid';
-      return 'unknown';
+      types.sort((a, b) => {
+        const diff = (meta.typeCounts[b] || 0) - (meta.typeCounts[a] || 0);
+        if (diff !== 0) return diff;
+        return order.indexOf(a) - order.indexOf(b);
+      });
+      return types[0] || 'unknown';
     }
 
     function getStrainVisualMeta(name) {

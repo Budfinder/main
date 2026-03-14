@@ -1,11 +1,11 @@
 {
-  "exported_at_utc": "2026-03-07T20:10:41.598123+00:00",
+  "exported_at_utc": "2026-03-14T00:52:41.796299+00:00",
   "counts": {
     "shops": 439,
-    "strains": 1265,
-    "active_offerings": 2738,
-    "menu_entries": 2702,
-    "strain_index": 1224
+    "strains": 1268,
+    "active_offerings": 2740,
+    "menu_entries": 2641,
+    "strain_index": 1220
   },
   "files": [
     "shops.json",

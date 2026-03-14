@@ -60,12 +60,6 @@
     "created_at": "2026-03-07T11:25:43.136217+00:00"
   },
   {
-    "strain_id": 295,
-    "name_display": "AMG",
-    "name_normalised": "amg",
-    "created_at": "2026-02-10T22:31:50.025011+00:00"
-  },
-  {
     "strain_id": 1763,
     "name_display": "AMG Haze",
     "name_normalised": "amg haze",
@@ -166,12 +160,6 @@
     "name_display": "Amaretto Sour",
     "name_normalised": "amaretto sour",
     "created_at": "2026-03-07T18:32:57.412707+00:00"
-  },
-  {
-    "strain_id": 400,
-    "name_display": "Amazing",
-    "name_normalised": "amazing",
-    "created_at": "2026-02-11T19:36:42.116172+00:00"
   },
   {
     "strain_id": 1059,
@@ -304,12 +292,6 @@
     "name_display": "BLACK ZUSHI 424",
     "name_normalised": "BLACK ZUSHI 424",
     "created_at": "2026-02-20T22:54:05.795843+00:00"
-  },
-  {
-    "strain_id": 489,
-    "name_display": "BLACK ZUYSHI 424",
-    "name_normalised": "BLACK ZUYSHI 424",
-    "created_at": "2026-02-11T20:36:05.452541+00:00"
   },
   {
     "strain_id": 575,
@@ -558,12 +540,6 @@
     "created_at": "2026-02-19T13:09:47.026559+00:00"
   },
   {
-    "strain_id": 1456,
-    "name_display": "Black Cavar",
-    "name_normalised": "black cavar",
-    "created_at": "2026-02-28T22:40:48.421585+00:00"
-  },
-  {
     "strain_id": 1549,
     "name_display": "Black Caviar",
     "name_normalised": "black caviar",
@@ -742,12 +718,6 @@
     "name_display": "Blue Berry Gelato Kush",
     "name_normalised": "blue berry gelato kush",
     "created_at": "2026-03-07T18:24:04.602915+00:00"
-  },
-  {
-    "strain_id": 1869,
-    "name_display": "Blue Berry Haze",
-    "name_normalised": "blue berry haze",
-    "created_at": "2026-03-07T10:18:16.914926+00:00"
   },
   {
     "strain_id": 1994,
@@ -1818,6 +1788,12 @@
     "created_at": "2026-02-19T16:45:03.280904+00:00"
   },
   {
+    "strain_id": 2895,
+    "name_display": "Crockett's Dawg",
+    "name_normalised": "crockett's dawg",
+    "created_at": "2026-03-14T00:47:50.654811+00:00"
+  },
+  {
     "strain_id": 535,
     "name_display": "Crunch Berries",
     "name_normalised": "crunch berries",
@@ -2428,6 +2404,12 @@
     "name_display": "G-UNIT 12 WEEKS",
     "name_normalised": "G-UNIT 12 WEEKS",
     "created_at": "2026-02-02T23:24:55.563471+00:00"
+  },
+  {
+    "strain_id": 2896,
+    "name_display": "G-Unit",
+    "name_normalised": "g-unit",
+    "created_at": "2026-03-14T00:48:50.228465+00:00"
   },
   {
     "strain_id": 638,
@@ -4314,6 +4296,12 @@
     "created_at": "2026-02-19T22:48:17.434085+00:00"
   },
   {
+    "strain_id": 2894,
+    "name_display": "Mokum Velvet",
+    "name_normalised": "mokum velvet",
+    "created_at": "2026-03-14T00:47:12.736273+00:00"
+  },
+  {
     "strain_id": 1482,
     "name_display": "Monaco",
     "name_normalised": "monaco",
@@ -5694,6 +5682,12 @@
     "created_at": "2026-02-19T13:42:51.341323+00:00"
   },
   {
+    "strain_id": 2901,
+    "name_display": "Sekai Ichi",
+    "name_normalised": "sekai ichi",
+    "created_at": "2026-03-14T00:50:45.802746+00:00"
+  },
+  {
     "strain_id": 2660,
     "name_display": "SenSation",
     "name_normalised": "sensation",
@@ -5770,6 +5764,12 @@
     "name_display": "Shining Silver Haze",
     "name_normalised": "shining silver haze",
     "created_at": "2026-02-20T23:24:18.641156+00:00"
+  },
+  {
+    "strain_id": 2898,
+    "name_display": "Shiranui",
+    "name_normalised": "shiranui",
+    "created_at": "2026-03-14T00:49:48.129141+00:00"
   },
   {
     "strain_id": 2732,
@@ -7284,6 +7284,12 @@
     "created_at": "2026-02-10T22:26:02.340992+00:00"
   },
   {
+    "strain_id": 2900,
+    "name_display": "Yubari Gold",
+    "name_normalised": "yubari gold",
+    "created_at": "2026-03-14T00:50:26.066382+00:00"
+  },
+  {
     "strain_id": 1836,
     "name_display": "Yuzu Lati",
     "name_normalised": "yuzu lati",
@@ -7512,6 +7518,12 @@
     "created_at": "2026-03-07T19:44:54.930114+00:00"
   },
   {
+    "strain_id": 2899,
+    "name_display": "Zoro",
+    "name_normalised": "zoro",
+    "created_at": "2026-03-14T00:50:03.654990+00:00"
+  },
+  {
     "strain_id": 1894,
     "name_display": "Zour Candy",
     "name_normalised": "zour candy",
@@ -7534,6 +7546,12 @@
     "name_display": "Zowahh",
     "name_normalised": "zowahh",
     "created_at": "2026-02-19T22:23:39.988722+00:00"
+  },
+  {
+    "strain_id": 2897,
+    "name_display": "Zowahh Bio",
+    "name_normalised": "zowahh bio",
+    "created_at": "2026-03-14T00:49:06.040079+00:00"
   },
   {
     "strain_id": 479,
