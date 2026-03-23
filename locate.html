@@ -448,6 +448,21 @@
       font-weight: 700;
     }
 
+    .popup-actions {
+      margin: 8px 0 6px;
+    }
+
+    .popup-nav-btn {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid #d4dee8;
+      border-radius: 6px;
+      background: #eef3f8;
+      color: #24405b;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
     .popup-strains-status,
     .popup-strains-empty {
       margin: 0;
@@ -2719,6 +2734,9 @@
             dbMenuLinks +
             `<a href="${loc.website}" target="_blank">Website</a><br>` +
             `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
+            `<div class="popup-actions">` +
+              `<button type="button" class="popup-nav-btn" data-index="${i}">Navigate here</button>` +
+            `</div>` +
             `<button class="fav-btn" data-index="${i}">` +
               `${favorites.includes(i) ? 'Remove from Favorites' : 'Add to Favorites'}` +
             `</button>` +
@@ -2886,6 +2904,48 @@
 
       const ins = document.getElementById('instructions');
       if (ins) ins.innerHTML = '';
+    }
+
+    function getRoutingMode() {
+      const modeSelect = document.getElementById('mode');
+      return modeSelect ? (modeSelect.value || 'driving') : 'driving';
+    }
+
+    function getExternalNavigationTravelMode() {
+      const mode = getRoutingMode();
+      if (mode === 'walking') return 'walking';
+      if (mode === 'cycling') return 'bicycling';
+      return 'driving';
+    }
+
+    function getExternalNavigationUrl(loc) {
+      if (!loc || !Array.isArray(loc.coords) || loc.coords.length < 2) return '';
+      const params = new URLSearchParams();
+      params.set('api', '1');
+      params.set('destination', `${loc.coords[0]},${loc.coords[1]}`);
+      params.set('travelmode', getExternalNavigationTravelMode());
+      if (Array.isArray(lastPosition) && lastPosition.length >= 2) {
+        params.set('origin', `${lastPosition[0]},${lastPosition[1]}`);
+      }
+      return `https://www.google.com/maps/dir/?${params.toString()}`;
+    }
+
+    function openExternalNavigation(index) {
+      if (!Number.isInteger(index) || index < 0 || index >= locations.length) return;
+      const loc = locations[index];
+      const url = getExternalNavigationUrl(loc);
+      if (!url) return;
+
+      const navWindow = window.open(url, '_blank', 'noopener');
+
+      const destinationSelect = document.getElementById('destination-select');
+      if (destinationSelect) {
+        destinationSelect.value = String(index);
+        destinationSelect.dispatchEvent(new Event('change'));
+      }
+      if (!navWindow) {
+        window.location.assign(url);
+      }
     }
 
     function findRoute(position) {
@@ -3353,6 +3413,14 @@
           ? 'Remove from Favorites'
           : 'Add to Favorites';
       }
+    });
+
+    document.body.addEventListener('click', e => {
+      const btn = e.target.closest('.popup-nav-btn');
+      if (!btn) return;
+      const i = parseInt(btn.getAttribute('data-index'), 10);
+      if (isNaN(i)) return;
+      openExternalNavigation(i);
     });
 
     // Handle visited checkbox changes
