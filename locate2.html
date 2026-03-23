@@ -1064,14 +1064,15 @@
       }
 
       #selection-card {
-        top: 88px;
+        top: auto;
+        bottom: calc(env(safe-area-inset-bottom) + 58px);
         left: 12px;
         right: 12px;
         width: auto;
         min-width: 0;
         padding: 10px 12px;
-        max-height: 108px;
-        overflow: hidden;
+        max-height: none;
+        overflow: visible;
       }
 
       .selection-eyebrow {
@@ -1092,7 +1093,7 @@
         line-height: 1.35;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
         overflow: hidden;
       }
 
@@ -1108,11 +1109,32 @@
       }
 
       .selection-actions {
-        display: none;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .selection-actions button,
+      .selection-actions a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 0 8px;
+        font-size: 11px;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       #map {
-        top: 144px;
+        top: 96px;
+      }
+
+      body.mobile-selection-visible #map {
+        bottom: 166px;
       }
 
       .controls {
@@ -1218,6 +1240,7 @@
       body.mobile-controls-open #map,
       body.mobile-directions-open #map {
         top: 12px;
+        bottom: 14px;
       }
 
       body.mobile-controls-open .controls-backdrop {
@@ -3565,8 +3588,7 @@
 
       // Fit map view to show all markers
       if (markers.length > 0) {
-        const group = L.featureGroup(markers);
-        map.fitBounds(group.getBounds(), { padding: [20, 20] });
+        fitMapToVisibleMarkers();
       }
 
       updateDestinationDropdown();
@@ -3597,13 +3619,10 @@
 
           if (lastPosition) {
             findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
-
-            const destCoords = locations[destIndex].coords;
-            map.panTo(destCoords);
-            markers[destIndex].openPopup();
-            markers[destIndex].bringToFront();
-            minimiseControlsForMapFocus();
+          } else {
+            clearRouteUi();
           }
+          focusDestinationOnMap(destIndex);
           updateDistanceInfo();
         };
       }
@@ -3631,12 +3650,7 @@
               const initialIndex = getSelectedDestinationIndex();
               if (initialIndex !== null) {
                 findRoute(p);
-
-                // On first route, focus initial destination marker
-                const initialCoords = locations[initialIndex].coords;
-                map.panTo(initialCoords);
-                markers[initialIndex].openPopup();
-                markers[initialIndex].bringToFront();
+                focusDestinationOnMap(initialIndex, { animate: false });
               } else {
                 clearRouteUi();
               }
@@ -3691,6 +3705,159 @@
         return null;
       }
       return i;
+    }
+
+    function getMapViewportInsets() {
+      const isMobile = isCompactMobileLayout();
+      const baseInset = isMobile ? 14 : 24;
+      let top = baseInset;
+      let right = baseInset;
+      let bottom = baseInset;
+      let left = baseInset;
+      const mapDiv = document.getElementById('map');
+      if (!mapDiv) {
+        return {
+          paddingTopLeft: [left, top],
+          paddingBottomRight: [right, bottom]
+        };
+      }
+
+      const mapRect = mapDiv.getBoundingClientRect();
+      if (!mapRect.width || !mapRect.height) {
+        return {
+          paddingTopLeft: [left, top],
+          paddingBottomRight: [right, bottom]
+        };
+      }
+
+      function applyOverlayInset(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const style = window.getComputedStyle(el);
+        if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '1') === 0) {
+          return;
+        }
+
+        const rect = el.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+
+        const overlapLeft = Math.max(mapRect.left, rect.left);
+        const overlapRight = Math.min(mapRect.right, rect.right);
+        const overlapTop = Math.max(mapRect.top, rect.top);
+        const overlapBottom = Math.min(mapRect.bottom, rect.bottom);
+        if (overlapRight <= overlapLeft || overlapBottom <= overlapTop) return;
+
+        const overlapWidth = overlapRight - overlapLeft;
+        const mapMidX = mapRect.left + (mapRect.width / 2);
+        const mapMidY = mapRect.top + (mapRect.height / 2);
+        const rectMidX = rect.left + (rect.width / 2);
+        const rectMidY = rect.top + (rect.height / 2);
+
+        if (rectMidY <= mapMidY) {
+          top = Math.max(top, Math.round(overlapBottom - mapRect.top + baseInset));
+        } else {
+          bottom = Math.max(bottom, Math.round(mapRect.bottom - overlapTop + baseInset));
+        }
+
+        if (overlapWidth < mapRect.width * 0.72) {
+          if (rectMidX <= mapMidX) {
+            left = Math.max(left, Math.round(overlapRight - mapRect.left + baseInset));
+          } else {
+            right = Math.max(right, Math.round(mapRect.right - overlapLeft + baseInset));
+          }
+        }
+      }
+
+      applyOverlayInset('hero-banner');
+      applyOverlayInset('selection-card');
+
+      if (isMobile && controlsVisible && !controlsCollapsed) {
+        const controlsDiv = document.querySelector('.controls');
+        if (controlsDiv && controlsDiv.id !== 'selection-card') {
+          const style = window.getComputedStyle(controlsDiv);
+          if (style.display !== 'none') {
+            const rect = controlsDiv.getBoundingClientRect();
+            if (rect.width && rect.height) {
+              const overlapLeft = Math.max(mapRect.left, rect.left);
+              const overlapRight = Math.min(mapRect.right, rect.right);
+              const overlapTop = Math.max(mapRect.top, rect.top);
+              const overlapBottom = Math.min(mapRect.bottom, rect.bottom);
+              if (overlapRight > overlapLeft && overlapBottom > overlapTop) {
+                bottom = Math.max(bottom, Math.round(mapRect.bottom - overlapTop + baseInset));
+              }
+            }
+          }
+        }
+      }
+
+      return {
+        paddingTopLeft: [left, top],
+        paddingBottomRight: [right, bottom]
+      };
+    }
+
+    function getViewportAdjustedCenter(coords, zoom) {
+      if (!map) return L.latLng(coords[0], coords[1]);
+      const latLng = Array.isArray(coords) ? L.latLng(coords[0], coords[1]) : L.latLng(coords);
+      const insets = getMapViewportInsets();
+      const offset = L.point(
+        (insets.paddingBottomRight[0] - insets.paddingTopLeft[0]) / 2,
+        (insets.paddingBottomRight[1] - insets.paddingTopLeft[1]) / 2
+      );
+      return map.unproject(map.project(latLng, zoom).subtract(offset), zoom);
+    }
+
+    function focusMapOnCoords(coords, options = {}) {
+      if (!map) return;
+      const minZoom = Number.isFinite(options.minZoom) ? options.minZoom : (isCompactMobileLayout() ? 15 : 16);
+      const currentZoom = Number.isFinite(map.getZoom()) ? map.getZoom() : minZoom;
+      const targetZoom = Number.isFinite(options.zoom) ? options.zoom : Math.max(currentZoom, minZoom);
+      const adjustedCenter = getViewportAdjustedCenter(coords, targetZoom);
+      const popupIndex = Number.isInteger(options.popupIndex) ? options.popupIndex : null;
+
+      if (popupIndex !== null) {
+        map.once('moveend', () => {
+          if (!markers[popupIndex]) return;
+          markers[popupIndex].openPopup();
+          markers[popupIndex].bringToFront();
+        });
+      }
+
+      map.flyTo(adjustedCenter, targetZoom, {
+        animate: options.animate !== false,
+        duration: options.duration || 0.45
+      });
+    }
+
+    function focusDestinationOnMap(index, options = {}) {
+      const safeIndex = Number.isInteger(index) ? index : parseInt(index, 10);
+      if (isNaN(safeIndex) || safeIndex < 0 || safeIndex >= locations.length) return;
+      if (options.minimise !== false) {
+        minimiseControlsForMapFocus();
+      }
+      focusMapOnCoords(locations[safeIndex].coords, {
+        popupIndex: options.openPopup === false ? null : safeIndex,
+        minZoom: options.minZoom,
+        zoom: options.zoom,
+        animate: options.animate,
+        duration: options.duration
+      });
+    }
+
+    function fitMapToVisibleMarkers() {
+      if (!map || !markers.length) return;
+      const visibleMarkers = markers.filter((marker, index) => marker && passesCategoryFilter(locations[index], index));
+      const markerSet = visibleMarkers.length ? visibleMarkers : markers.filter(Boolean);
+      if (!markerSet.length) return;
+      const group = L.featureGroup(markerSet);
+      const bounds = group.getBounds();
+      if (!bounds.isValid()) return;
+      const insets = getMapViewportInsets();
+      map.fitBounds(bounds, {
+        paddingTopLeft: insets.paddingTopLeft,
+        paddingBottomRight: insets.paddingBottomRight,
+        maxZoom: isCompactMobileLayout() ? 15 : 16
+      });
     }
 
     function selectDestinationIndex(index) {
@@ -3950,6 +4117,13 @@
       const hideForDesktopDirections = directionsVisible && window.innerWidth >= 768;
       const hideForMobileEmptyState = isCompactMobileLayout() && (selectedIndex === null || !locations[selectedIndex]);
       card.style.display = (hideForDesktopDirections || hideForMobileEmptyState) ? 'none' : 'block';
+      document.body.classList.toggle(
+        'mobile-selection-visible',
+        isCompactMobileLayout() &&
+          card.style.display !== 'none' &&
+          !document.body.classList.contains('mobile-controls-open') &&
+          !document.body.classList.contains('mobile-directions-open')
+      );
 
       if (selectedIndex === null || !locations[selectedIndex]) {
         card.classList.add('is-empty');
@@ -4382,7 +4556,11 @@
       if (!lastPosition) {
         return alert('Current position not available yet.');
       }
-      map.panTo(lastPosition);
+      focusMapOnCoords(lastPosition, {
+        minZoom: isCompactMobileLayout() ? 14 : 15,
+        animate: true,
+        duration: 0.4
+      });
       minimiseControlsForMapFocus();
     });
 
@@ -4477,11 +4655,11 @@
     document.getElementById('selection-center-btn').addEventListener('click', () => {
       const selectedIndex = getSelectedDestinationIndex();
       if (selectedIndex === null || !map) return;
-      const destCoords = locations[selectedIndex].coords;
-      map.panTo(destCoords);
-      markers[selectedIndex].openPopup();
-      markers[selectedIndex].bringToFront();
-      minimiseControlsForMapFocus();
+      focusDestinationOnMap(selectedIndex, {
+        minZoom: isCompactMobileLayout() ? 15 : 16,
+        animate: true,
+        duration: 0.45
+      });
     });
 
     document.getElementById('mobile-hide-controls').addEventListener('click', e => {
