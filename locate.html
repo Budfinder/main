@@ -542,13 +542,8 @@
       }
 
       #ui-toggles {
-        top: auto;
-        right: 10px;
-        bottom: max(10px, env(safe-area-inset-bottom));
-      }
-
-      body.mobile-controls-peek #ui-toggles {
         top: calc(env(safe-area-inset-top) + 10px);
+        right: 10px;
         bottom: auto;
       }
 
@@ -922,7 +917,6 @@
       }
 
       document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
-      document.body.classList.toggle('mobile-controls-peek', showMobilePeek);
       if (backdrop) {
         backdrop.style.display = showMobileOverlay ? 'block' : 'none';
       }
