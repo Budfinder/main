@@ -1064,25 +1064,47 @@
       }
 
       #selection-card {
-        top: 92px;
+        top: 88px;
         left: 12px;
         right: 12px;
         width: auto;
         min-width: 0;
-        padding: 12px 14px;
+        padding: 10px 12px;
+        max-height: 108px;
+        overflow: hidden;
+      }
+
+      .selection-eyebrow {
+        display: none;
       }
 
       #selection-card h2 {
-        font-size: 18px;
+        font-size: 16px;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       #selected-destination-meta {
-        margin-top: 6px;
-        font-size: 13px;
+        margin-top: 4px;
+        font-size: 12px;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
       }
 
       .selection-chip-row {
-        margin-top: 8px;
+        margin-top: 6px;
+        gap: 6px;
+      }
+
+      .selection-chip {
+        min-height: 24px;
+        padding: 0 8px;
+        font-size: 11px;
       }
 
       .selection-actions {
@@ -1090,7 +1112,7 @@
       }
 
       #map {
-        top: 164px;
+        top: 144px;
       }
 
       .controls {
@@ -3684,12 +3706,7 @@
     }
 
     function locateDestinationIndex(index) {
-      if (!selectDestinationIndex(index)) return;
-      if (!lastPosition) {
-        alert('Current position not available yet.');
-        return;
-      }
-      setDirectionsVisible(true);
+      selectDestinationIndex(index);
     }
 
     function renderDirectionsPanel(routeInstructions, emptyMessage = '') {
@@ -3951,17 +3968,18 @@
       }
 
       const loc = locations[selectedIndex];
+      const isMobile = isCompactMobileLayout();
       card.classList.remove('is-empty');
       nameEl.textContent = loc.name || 'Selected stop';
 
       const metaParts = [];
-      if (loc.city) metaParts.push(loc.city);
+      if (!isMobile && loc.city) metaParts.push(loc.city);
       if (lastPosition) {
         const distText = (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km away';
         metaParts.push(distText);
       }
-      if (favorites.includes(selectedIndex)) metaParts.push('Favourite');
-      if (loc.visited) metaParts.push('Visited');
+      if (!isMobile && favorites.includes(selectedIndex)) metaParts.push('Favourite');
+      if (!isMobile && loc.visited) metaParts.push('Visited');
       metaEl.textContent = metaParts.length ? metaParts.join(' · ') : 'Ready when you are';
 
       cityEl.textContent = loc.city || 'Unknown city';
