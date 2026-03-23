@@ -723,9 +723,7 @@
     }
 
     #strain-list-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      display: block;
       width: 100%;
       max-width: 100%;
       max-height: min(320px, 38vh);
@@ -738,7 +736,6 @@
       font-family: inherit;
       box-sizing: border-box;
       min-width: 0;
-      min-height: 0;
       overflow: hidden;
     }
 
@@ -747,32 +744,25 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 0;
-      flex: 0 0 auto;
-      min-width: 0;
+      margin-bottom: 6px;
     }
 
     #strain-list-search {
       width: 100%;
       box-sizing: border-box;
-      margin-bottom: 0;
-      flex: 0 0 auto;
-      min-width: 0;
+      margin-bottom: 6px;
     }
 
     #strain-list-status {
-      margin-bottom: 0;
+      margin-bottom: 6px;
       font-size: 12px;
       color: #444;
-      flex: 0 0 auto;
-      min-width: 0;
       overflow-wrap: anywhere;
     }
 
     #strain-list {
-      flex: 1 1 auto;
       min-height: 160px;
-      max-height: none;
+      max-height: min(200px, calc(38vh - 96px));
       overflow-y: auto;
       border: 1px solid rgba(92, 107, 97, 0.12);
       border-radius: 12px;
@@ -781,6 +771,7 @@
       min-width: 0;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
+      touch-action: pan-y;
     }
 
     .strain-item {
@@ -1127,7 +1118,7 @@
 
       .selection-actions {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 6px;
         margin-top: 8px;
       }
@@ -1137,13 +1128,18 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 34px;
+        min-height: 38px;
         padding: 0 8px;
         font-size: 11px;
         text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        line-height: 1.15;
+        white-space: normal;
+        word-break: break-word;
+        min-width: 0;
+      }
+
+      .selection-actions .selection-link {
+        grid-column: 1 / -1;
       }
 
       #map {
@@ -1151,7 +1147,7 @@
       }
 
       body.mobile-selection-visible #map {
-        bottom: 166px;
+        bottom: calc(env(safe-area-inset-bottom) + 208px);
       }
 
       .controls {
@@ -1238,6 +1234,7 @@
       }
 
       #strain-list {
+        max-height: min(180px, calc(34dvh - 92px));
         min-height: 148px;
       }
 
@@ -1603,6 +1600,7 @@
     let dbByPath = new Map();       // "/cs-shop.html" -> shop_id
     let dbByNameCity = new Map();   // "name|city" -> shop_id
     let dbByUniqueName = new Map(); // "name" -> shop_id when unique
+    let dbShopMetaById = new Map(); // shop_id -> { name, city, shop_url }
 
     // Strain filter state (DB-backed)
     let strainFilterText = '';
@@ -2862,6 +2860,7 @@
 
       dbByPath = new Map();
       dbByNameCity = new Map();
+      dbShopMetaById = new Map();
       const nameCounts = new Map();
 
       rows.forEach(r => {
@@ -2869,6 +2868,13 @@
         if (p) dbByPath.set(p, r.shop_id);
         const nc = normaliseNameCityKey(r.name, r.city);
         if (nc !== '|') dbByNameCity.set(nc, r.shop_id);
+        if (r && r.shop_id) {
+          dbShopMetaById.set(r.shop_id, {
+            name: (r.name || '').toString().trim(),
+            city: (r.city || '').toString().trim(),
+            shop_url: (r.shop_url || '').toString().trim()
+          });
+        }
         const nk = normaliseText(r.name);
         nameCounts.set(nk, (nameCounts.get(nk) || 0) + 1);
       });
@@ -2914,6 +2920,12 @@
       }
 
       loc.db_shop_id = shopId || null;
+      if (!loc.city && loc.db_shop_id && dbShopMetaById.has(loc.db_shop_id)) {
+        const shopMeta = dbShopMetaById.get(loc.db_shop_id);
+        if (shopMeta && shopMeta.city) {
+          loc.city = shopMeta.city;
+        }
+      }
     }
 
     async function applyStrainFilter(queryText) {
@@ -3066,6 +3078,35 @@
       if (!p) return '';
       const parts = p.split('/');
       return parts[parts.length - 1] || p;
+    }
+
+    function inferCityFromCsvPath(pathLike) {
+      const label = csvLabelFromPath(pathLike).replace(/\.csv$/i, '');
+      if (!label) return '';
+
+      const cleaned = label
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\b(?:locations?|location)\b/ig, ' ')
+        .replace(/(?:locations?|location|loc)$/i, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!cleaned) return '';
+      return cleaned
+        .split(' ')
+        .filter(Boolean)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .join(' ');
+    }
+
+    function inferCityForLocationRow(row, csvPathLike) {
+      const candidates = ['city', 'town', 'area', 'municipality', 'district', 'shop_city', 'address_city'];
+      for (const key of candidates) {
+        const value = ((row && row[key]) || '').toString().trim();
+        if (value) return value;
+      }
+      return inferCityFromCsvPath(csvPathLike);
     }
 
     function renderCsvSwitchSelect(selectedPathLike) {
@@ -3243,7 +3284,8 @@
       });
     }
 
-    async function applyCsvRows(rows) {
+    async function applyCsvRows(rows, options = {}) {
+      const csvPathLike = (options && options.csvPathLike) || currentCsvPath || '';
       // Map each CSV row into a location object.
       // NOTE:
       //  - "logo" is optional.
@@ -3251,7 +3293,7 @@
       locations = rows.map(r => {
         const obj = {
           name: r.name,
-          city: r.city || '',
+          city: inferCityForLocationRow(r, csvPathLike),
           coords: [parseFloat(r.lat), parseFloat(r.lng)],
           website: r.website,
           logo: r.logo,
@@ -3348,7 +3390,7 @@
 
     async function loadCsvFromFile(file) {
       const rows = await parseCsvInput(file);
-      await applyCsvRows(rows);
+      await applyCsvRows(rows, { csvPathLike: (file && file.name) || '' });
 
       const lowerName = (file && file.name) ? file.name.toLowerCase() : '';
       const matchedPath = discoveredCsvPaths.find(p => {
@@ -3395,7 +3437,7 @@
       for (const candidate of variants) {
         try {
           const rows = await parseCsvInput(candidate, { download: true });
-          await applyCsvRows(rows);
+          await applyCsvRows(rows, { csvPathLike: candidate });
           currentCsvPath = canonicalCsvPath(candidate);
           renderCsvSwitchSelect(currentCsvPath);
           updateControlsSummary();
@@ -3603,14 +3645,16 @@
         markers[i] = marker;
       });
 
-      // Fit map view to show all markers
-      if (markers.length > 0) {
-        fitMapToVisibleMarkers();
-      }
-
       updateDestinationDropdown();
       updateDistanceInfo();
       updateMarkers();
+      updateControlsSummary();
+
+      // Fit map view after the responsive overlays have settled,
+      // so hidden mobile cards do not distort the initial viewport.
+      if (markers.length > 0) {
+        requestAnimationFrame(() => fitMapToVisibleMarkers());
+      }
 
       // Recalculate route if mode changes.
       const modeSelect = document.getElementById('mode');
@@ -4173,7 +4217,7 @@
       if (!isMobile && loc.visited) metaParts.push('Visited');
       metaEl.textContent = metaParts.length ? metaParts.join(' · ') : 'Ready when you are';
 
-      cityEl.textContent = loc.city || 'Unknown city';
+      cityEl.textContent = loc.city || inferCityFromCsvPath(currentCsvPath) || 'Selected area';
       const etaValue = (document.getElementById('time-estimate') && document.getElementById('time-estimate').textContent) || '--';
       etaEl.textContent = `ETA ${etaValue}`;
       directionsBtn.disabled = !lastPosition;
