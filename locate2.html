@@ -705,6 +705,7 @@
       z-index: 1004;
       display: none;           /* shown after CSV load */
       font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      transition: bottom 220ms ease, right 220ms ease, opacity 180ms ease, transform 220ms ease;
     }
 
     #ui-toggles button {
@@ -1757,6 +1758,32 @@
         return 'Atlas';
       }
       return controlsVisible ? 'Hide atlas' : 'Show atlas';
+    }
+
+    function syncDesktopTogglePosition() {
+      const uiToggles = document.getElementById('ui-toggles');
+      const selectionCard = document.getElementById('selection-card');
+      if (!uiToggles) return;
+
+      if (isCompactMobileLayout() || controlsVisible || !selectionCard) {
+        uiToggles.style.bottom = '';
+        return;
+      }
+
+      const style = window.getComputedStyle(selectionCard);
+      if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '1') === 0) {
+        uiToggles.style.bottom = '';
+        return;
+      }
+
+      const rect = selectionCard.getBoundingClientRect();
+      if (!rect.width || !rect.height) {
+        uiToggles.style.bottom = '';
+        return;
+      }
+
+      const viewportBottom = Math.max(24, Math.round(window.innerHeight - rect.bottom));
+      uiToggles.style.bottom = `${viewportBottom + Math.round(rect.height) + 16}px`;
     }
 
     function syncControlsChrome() {
@@ -3650,10 +3677,18 @@
       updateMarkers();
       updateControlsSummary();
 
-      // Fit map view after the responsive overlays have settled,
-      // so hidden mobile cards do not distort the initial viewport.
+      // Let the desktop layout settle before the first fit so we use the
+      // final map width instead of the transitional "panel just hid" state.
       if (markers.length > 0) {
-        requestAnimationFrame(() => fitMapToVisibleMarkers());
+        const initialFitDelay = isCompactMobileLayout() ? 60 : 260;
+        window.setTimeout(() => {
+          if (!map) return;
+          map.invalidateSize();
+          requestAnimationFrame(() => {
+            if (!map) return;
+            fitMapToVisibleMarkers();
+          });
+        }, initialFitDelay);
       }
 
       // Recalculate route if mode changes.
@@ -3768,6 +3803,14 @@
       return i;
     }
 
+    function getMeasuredMapRect() {
+      const mapDiv = document.getElementById('map');
+      if (!mapDiv) return null;
+      const rect = mapDiv.getBoundingClientRect();
+      if (!rect.width || !rect.height) return null;
+      return rect;
+    }
+
     function getMapViewportInsets() {
       const isMobile = isCompactMobileLayout();
       const baseInset = isMobile ? 14 : 24;
@@ -3775,16 +3818,8 @@
       let right = baseInset;
       let bottom = baseInset;
       let left = baseInset;
-      const mapDiv = document.getElementById('map');
-      if (!mapDiv) {
-        return {
-          paddingTopLeft: [left, top],
-          paddingBottomRight: [right, bottom]
-        };
-      }
-
-      const mapRect = mapDiv.getBoundingClientRect();
-      if (!mapRect.width || !mapRect.height) {
+      const mapRect = getMeasuredMapRect();
+      if (!mapRect) {
         return {
           paddingTopLeft: [left, top],
           paddingBottomRight: [right, bottom]
@@ -3857,6 +3892,57 @@
       };
     }
 
+    function clampInsetPair(startInset, endInset, totalSpace, minVisibleSpace) {
+      const safeTotalSpace = Math.max(0, totalSpace);
+      const safeVisibleSpace = Math.min(Math.max(0, minVisibleSpace), safeTotalSpace);
+      const maxInsetTotal = Math.max(0, safeTotalSpace - safeVisibleSpace);
+      const currentTotal = Math.max(0, startInset) + Math.max(0, endInset);
+
+      if (currentTotal <= maxInsetTotal || currentTotal === 0) {
+        return [Math.max(0, startInset), Math.max(0, endInset)];
+      }
+
+      const overflow = currentTotal - maxInsetTotal;
+      const startShare = startInset / currentTotal;
+      const endShare = endInset / currentTotal;
+      let nextStart = Math.max(0, Math.round(startInset - (overflow * startShare)));
+      let nextEnd = Math.max(0, Math.round(endInset - (overflow * endShare)));
+      const adjustedTotal = nextStart + nextEnd;
+
+      if (adjustedTotal > maxInsetTotal) {
+        const remainder = adjustedTotal - maxInsetTotal;
+        if (nextStart >= nextEnd) {
+          nextStart = Math.max(0, nextStart - remainder);
+        } else {
+          nextEnd = Math.max(0, nextEnd - remainder);
+        }
+      }
+
+      return [nextStart, nextEnd];
+    }
+
+    function clampViewportInsets(insets, mapRect, options = {}) {
+      if (!mapRect) return insets;
+
+      let left = Math.max(0, Math.round((insets && insets.paddingTopLeft && insets.paddingTopLeft[0]) || 0));
+      let top = Math.max(0, Math.round((insets && insets.paddingTopLeft && insets.paddingTopLeft[1]) || 0));
+      let right = Math.max(0, Math.round((insets && insets.paddingBottomRight && insets.paddingBottomRight[0]) || 0));
+      let bottom = Math.max(0, Math.round((insets && insets.paddingBottomRight && insets.paddingBottomRight[1]) || 0));
+
+      const minVisibleWidthRatio = Number.isFinite(options.minVisibleWidthRatio) ? options.minVisibleWidthRatio : 0.56;
+      const minVisibleHeightRatio = Number.isFinite(options.minVisibleHeightRatio) ? options.minVisibleHeightRatio : 0.54;
+      const minVisibleWidth = Math.round(mapRect.width * minVisibleWidthRatio);
+      const minVisibleHeight = Math.round(mapRect.height * minVisibleHeightRatio);
+
+      [left, right] = clampInsetPair(left, right, mapRect.width, minVisibleWidth);
+      [top, bottom] = clampInsetPair(top, bottom, mapRect.height, minVisibleHeight);
+
+      return {
+        paddingTopLeft: [left, top],
+        paddingBottomRight: [right, bottom]
+      };
+    }
+
     function getViewportAdjustedCenter(coords, zoom) {
       if (!map) return L.latLng(coords[0], coords[1]);
       const latLng = Array.isArray(coords) ? L.latLng(coords[0], coords[1]) : L.latLng(coords);
@@ -3913,7 +3999,14 @@
       const group = L.featureGroup(markerSet);
       const bounds = group.getBounds();
       if (!bounds.isValid()) return;
-      const insets = getMapViewportInsets();
+      const rawInsets = getMapViewportInsets();
+      const mapRect = getMeasuredMapRect();
+      const insets = isCompactMobileLayout()
+        ? rawInsets
+        : clampViewportInsets(rawInsets, mapRect, {
+            minVisibleWidthRatio: 0.56,
+            minVisibleHeightRatio: 0.54
+          });
       map.fitBounds(bounds, {
         paddingTopLeft: insets.paddingTopLeft,
         paddingBottomRight: insets.paddingBottomRight,
@@ -4199,6 +4292,7 @@
         centerBtn.disabled = true;
         websiteLink.hidden = true;
         websiteLink.removeAttribute('href');
+        syncDesktopTogglePosition();
         return;
       }
 
@@ -4231,6 +4325,8 @@
         websiteLink.hidden = true;
         websiteLink.removeAttribute('href');
       }
+
+      syncDesktopTogglePosition();
     }
 
     function updateControlsSummary() {
