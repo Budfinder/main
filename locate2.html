@@ -250,8 +250,9 @@
     .hero-banner-head {
       display: flex;
       align-items: flex-start;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: 12px;
+      cursor: pointer;
     }
 
     .hero-banner-content {
@@ -276,23 +277,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-
-    .hero-banner-toggle {
-      display: none;
-      flex: 0 0 auto;
-      align-items: center;
-      justify-content: center;
-      min-height: 32px;
-      padding: 0 12px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.66);
-      color: var(--ink);
-      font: inherit;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
     }
 
     #hero-banner h1 {
@@ -386,6 +370,20 @@
     body.desktop-controls-hidden #hero-banner {
       left: 24px;
       width: min(520px, calc(100vw - 408px));
+    }
+
+    body.hero-banner-collapsed #hero-banner {
+      width: fit-content;
+      max-width: min(320px, calc(100vw - 48px));
+      padding: 12px 14px;
+    }
+
+    body.hero-banner-collapsed .hero-banner-head {
+      align-items: center;
+    }
+
+    body.hero-banner-collapsed .hero-banner-content {
+      display: none;
     }
 
     .selection-eyebrow {
@@ -1127,13 +1125,6 @@
         padding: 12px 14px;
       }
 
-      .hero-banner-toggle {
-        display: inline-flex;
-        min-height: 30px;
-        padding: 0 10px;
-        font-size: 11px;
-      }
-
       #hero-banner h1 {
         margin: 8px 0 0;
         font-size: 24px;
@@ -1153,17 +1144,11 @@
         font-size: 11px;
       }
 
-      body.mobile-hero-collapsed #hero-banner {
+      body.hero-banner-collapsed #hero-banner {
+        right: auto;
         padding: 10px 12px;
         cursor: pointer;
-      }
-
-      body.mobile-hero-collapsed .hero-banner-head {
-        align-items: center;
-      }
-
-      body.mobile-hero-collapsed .hero-banner-content {
-        display: none;
+        max-width: calc(100vw - 24px);
       }
 
       #selection-card {
@@ -1241,7 +1226,7 @@
         top: 96px;
       }
 
-      body.mobile-hero-collapsed #map {
+      body.hero-banner-collapsed #map {
         top: 70px;
       }
 
@@ -1497,9 +1482,8 @@
   <div id="controls-backdrop" class="controls-backdrop"></div>
 
   <section id="hero-banner" class="overlay-card">
-    <div class="hero-banner-head">
+    <div id="hero-banner-head" class="hero-banner-head" role="button" tabindex="0" aria-controls="hero-banner-content" aria-expanded="true" aria-label="Toggle atlas banner">
       <span class="hero-kicker" id="hero-kicker">Personal atlas</span>
-      <button id="hero-banner-toggle" class="hero-banner-toggle" type="button" aria-controls="hero-banner-content" aria-expanded="false">Expand</button>
     </div>
     <div id="hero-banner-content" class="hero-banner-content">
       <h1>Bud Finder Atlas</h1>
@@ -1671,7 +1655,7 @@
     let controlsVisible = false;   // controls panel visibility
     let controlsCollapsed = false; // collapsed atlas state across layouts
     let directionsVisible = false; // directions panel visibility
-    let mobileHeroCollapsed = window.innerWidth < 768; // compact hero state for mobile
+    let heroBannerCollapsed = window.innerWidth < 768; // compact hero banner state
     let strainListVisible = true; // strain list panel visibility
 
     // Favourite indices stored in localStorage
@@ -1865,20 +1849,18 @@
     }
 
     function syncHeroBannerState() {
-      const heroToggle = document.getElementById('hero-banner-toggle');
-      if (!heroToggle) return;
+      const heroHead = document.getElementById('hero-banner-head');
+      if (!heroHead) return;
 
-      const collapsed = isCompactMobileLayout() ? !!mobileHeroCollapsed : false;
-      document.body.classList.toggle('mobile-hero-collapsed', collapsed);
-      heroToggle.hidden = !isCompactMobileLayout();
-      heroToggle.textContent = collapsed ? 'Expand' : 'Collapse';
-      heroToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      const collapsed = !!heroBannerCollapsed;
+      document.body.classList.toggle('hero-banner-collapsed', collapsed);
+      heroHead.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
     }
 
-    function setMobileHeroCollapsed(collapsed, options = {}) {
-      const nextCollapsed = isCompactMobileLayout() ? !!collapsed : false;
-      const changed = mobileHeroCollapsed !== nextCollapsed;
-      mobileHeroCollapsed = nextCollapsed;
+    function setHeroBannerCollapsed(collapsed, options = {}) {
+      const nextCollapsed = !!collapsed;
+      const changed = heroBannerCollapsed !== nextCollapsed;
+      heroBannerCollapsed = nextCollapsed;
       syncHeroBannerState();
       if ((changed || options.force) && map) {
         setTimeout(() => map.invalidateSize(), 160);
@@ -1960,8 +1942,8 @@
       if (controlsVisible && isCompactMobileLayout()) {
         setControlsCollapsed(true);
       }
-      if (isCompactMobileLayout() && !mobileHeroCollapsed) {
-        setMobileHeroCollapsed(true);
+      if (isCompactMobileLayout() && !heroBannerCollapsed) {
+        setHeroBannerCollapsed(true);
       }
     }
 
@@ -4966,15 +4948,15 @@
       setControlsCollapsed(!controlsCollapsed);
     });
 
-    document.getElementById('hero-banner-toggle').addEventListener('click', e => {
+    document.getElementById('hero-banner-head').addEventListener('click', e => {
       e.stopPropagation();
-      setMobileHeroCollapsed(!mobileHeroCollapsed);
+      setHeroBannerCollapsed(!heroBannerCollapsed);
     });
 
-    document.getElementById('hero-banner').addEventListener('click', e => {
-      if (!isCompactMobileLayout() || !mobileHeroCollapsed) return;
-      if (e.target.closest('button')) return;
-      setMobileHeroCollapsed(false);
+    document.getElementById('hero-banner-head').addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      setHeroBannerCollapsed(!heroBannerCollapsed);
     });
 
     document.getElementById('controls-header').addEventListener('click', e => {
