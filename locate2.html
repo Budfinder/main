@@ -977,6 +977,26 @@
       line-height: 1.5;
     }
 
+    .popup-locate-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin: 8px 0 6px;
+      min-height: 40px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(32, 91, 66, 0.16);
+    }
+
     .leaflet-routing-container {
       display: none !important;
     }
@@ -3464,6 +3484,7 @@
             websitePreviewHtml +
             popupStrainsHtml +
             dbMenuLinks +
+            `<button type="button" class="popup-locate-btn" data-index="${i}">Locate here</button>` +
             `<a href="${loc.website}" target="_blank">Website</a><br>` +
             `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
             `<button class="fav-btn" data-index="${i}">` +
@@ -3617,6 +3638,27 @@
         return null;
       }
       return i;
+    }
+
+    function selectDestinationIndex(index) {
+      const destinationSelect = document.getElementById('destination-select');
+      const safeIndex = Number.isInteger(index) ? index : parseInt(index, 10);
+      if (!destinationSelect || !Number.isInteger(safeIndex) || safeIndex < 0 || safeIndex >= locations.length) {
+        return false;
+      }
+
+      destinationSelect.value = String(safeIndex);
+      destinationSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    }
+
+    function locateDestinationIndex(index) {
+      if (!selectDestinationIndex(index)) return;
+      if (!lastPosition) {
+        alert('Current position not available yet.');
+        return;
+      }
+      setDirectionsVisible(true);
     }
 
     function clearRouteUi() {
@@ -4186,6 +4228,14 @@
 
     // Handle favourite (Add / Remove) button clicks in popups
     document.body.addEventListener('click', e => {
+      const locateBtn = e.target.closest('.popup-locate-btn');
+      if (locateBtn) {
+        const i = parseInt(locateBtn.getAttribute('data-index'), 10);
+        if (isNaN(i) || !locations[i]) return;
+        locateDestinationIndex(i);
+        return;
+      }
+
       if (e.target.classList.contains('fav-btn')) {
         const i = parseInt(e.target.getAttribute('data-index'));
         const idx = favorites.indexOf(i);
