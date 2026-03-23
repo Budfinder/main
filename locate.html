@@ -2906,46 +2906,16 @@
       if (ins) ins.innerHTML = '';
     }
 
-    function getRoutingMode() {
-      const modeSelect = document.getElementById('mode');
-      return modeSelect ? (modeSelect.value || 'driving') : 'driving';
-    }
-
-    function getExternalNavigationTravelMode() {
-      const mode = getRoutingMode();
-      if (mode === 'walking') return 'walking';
-      if (mode === 'cycling') return 'bicycling';
-      return 'driving';
-    }
-
-    function getExternalNavigationUrl(loc) {
-      if (!loc || !Array.isArray(loc.coords) || loc.coords.length < 2) return '';
-      const params = new URLSearchParams();
-      params.set('api', '1');
-      params.set('destination', `${loc.coords[0]},${loc.coords[1]}`);
-      params.set('travelmode', getExternalNavigationTravelMode());
-      if (Array.isArray(lastPosition) && lastPosition.length >= 2) {
-        params.set('origin', `${lastPosition[0]},${lastPosition[1]}`);
-      }
-      return `https://www.google.com/maps/dir/?${params.toString()}`;
-    }
-
-    function openExternalNavigation(index) {
+    function startInternalNavigation(index) {
       if (!Number.isInteger(index) || index < 0 || index >= locations.length) return;
-      const loc = locations[index];
-      const url = getExternalNavigationUrl(loc);
-      if (!url) return;
-
-      const navWindow = window.open(url, '_blank', 'noopener');
-
       const destinationSelect = document.getElementById('destination-select');
-      if (destinationSelect) {
-        destinationSelect.value = String(index);
-        destinationSelect.dispatchEvent(new Event('change'));
+      if (!destinationSelect) return;
+
+      destinationSelect.value = String(index);
+      if (!directionsVisible) {
+        setDirectionsVisible(true);
       }
-      if (!navWindow) {
-        window.location.assign(url);
-      }
+      destinationSelect.dispatchEvent(new Event('change'));
     }
 
     function findRoute(position) {
@@ -3420,7 +3390,7 @@
       if (!btn) return;
       const i = parseInt(btn.getAttribute('data-index'), 10);
       if (isNaN(i)) return;
-      openExternalNavigation(i);
+      startInternalNavigation(i);
     });
 
     // Handle visited checkbox changes
