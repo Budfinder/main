@@ -233,8 +233,20 @@
       padding: 18px 20px;
     }
 
+    .hero-banner-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hero-banner-content {
+      min-width: 0;
+    }
+
     .hero-kicker {
       display: inline-flex;
+      flex: 1 1 auto;
       align-items: center;
       gap: 8px;
       padding: 6px 10px;
@@ -245,6 +257,28 @@
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hero-banner-toggle {
+      display: none;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.66);
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     #hero-banner h1 {
@@ -1053,6 +1087,13 @@
         padding: 12px 14px;
       }
 
+      .hero-banner-toggle {
+        display: inline-flex;
+        min-height: 30px;
+        padding: 0 10px;
+        font-size: 11px;
+      }
+
       #hero-banner h1 {
         margin: 8px 0 0;
         font-size: 24px;
@@ -1070,6 +1111,19 @@
       .hero-meta-pill {
         min-height: 28px;
         font-size: 11px;
+      }
+
+      body.mobile-hero-collapsed #hero-banner {
+        padding: 10px 12px;
+        cursor: pointer;
+      }
+
+      body.mobile-hero-collapsed .hero-banner-head {
+        align-items: center;
+      }
+
+      body.mobile-hero-collapsed .hero-banner-content {
+        display: none;
       }
 
       #selection-card {
@@ -1145,6 +1199,10 @@
 
       #map {
         top: 96px;
+      }
+
+      body.mobile-hero-collapsed #map {
+        top: 70px;
       }
 
       body.mobile-selection-visible #map {
@@ -1399,28 +1457,33 @@
   <div id="controls-backdrop" class="controls-backdrop"></div>
 
   <section id="hero-banner" class="overlay-card">
-    <span class="hero-kicker" id="hero-kicker">Personal atlas</span>
-    <h1>Bud Finder Atlas</h1>
-    <p class="hero-copy">
-      A more intentional version of the finder: route-first, mobile-friendly, and ready to feel like your own map.
-    </p>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <span class="hero-stat-value" id="hero-visible-count">0</span>
-        <span class="hero-stat-label">Visible spots</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-value" id="hero-favourites-count">0</span>
-        <span class="hero-stat-label">Favourites</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-value" id="hero-mode-value">Walk</span>
-        <span class="hero-stat-label">Travel mode</span>
-      </div>
+    <div class="hero-banner-head">
+      <span class="hero-kicker" id="hero-kicker">Personal atlas</span>
+      <button id="hero-banner-toggle" class="hero-banner-toggle" type="button" aria-controls="hero-banner-content" aria-expanded="false">Expand</button>
     </div>
-    <div class="hero-meta-row">
-      <span class="hero-meta-pill" id="hero-filter-state">Strain filter off</span>
-      <span class="hero-meta-pill" id="hero-csv-name">No CSV loaded</span>
+    <div id="hero-banner-content" class="hero-banner-content">
+      <h1>Bud Finder Atlas</h1>
+      <p class="hero-copy">
+        A more intentional version of the finder: route-first, mobile-friendly, and ready to feel like your own map.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="hero-visible-count">0</span>
+          <span class="hero-stat-label">Visible spots</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="hero-favourites-count">0</span>
+          <span class="hero-stat-label">Favourites</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="hero-mode-value">Walk</span>
+          <span class="hero-stat-label">Travel mode</span>
+        </div>
+      </div>
+      <div class="hero-meta-row">
+        <span class="hero-meta-pill" id="hero-filter-state">Strain filter off</span>
+        <span class="hero-meta-pill" id="hero-csv-name">No CSV loaded</span>
+      </div>
     </div>
   </section>
 
@@ -1568,6 +1631,7 @@
     let controlsVisible = false;   // controls panel visibility
     let controlsCollapsed = false; // peek state for compact mobile layout
     let directionsVisible = false; // directions panel visibility
+    let mobileHeroCollapsed = window.innerWidth < 768; // compact hero state for mobile
     let strainListVisible = true; // strain list panel visibility
 
     // Favourite indices stored in localStorage
@@ -1760,12 +1824,33 @@
       return controlsVisible ? 'Hide atlas' : 'Show atlas';
     }
 
+    function syncHeroBannerState() {
+      const heroToggle = document.getElementById('hero-banner-toggle');
+      if (!heroToggle) return;
+
+      const collapsed = isCompactMobileLayout() ? !!mobileHeroCollapsed : false;
+      document.body.classList.toggle('mobile-hero-collapsed', collapsed);
+      heroToggle.hidden = !isCompactMobileLayout();
+      heroToggle.textContent = collapsed ? 'Expand' : 'Collapse';
+      heroToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    }
+
+    function setMobileHeroCollapsed(collapsed, options = {}) {
+      const nextCollapsed = isCompactMobileLayout() ? !!collapsed : false;
+      const changed = mobileHeroCollapsed !== nextCollapsed;
+      mobileHeroCollapsed = nextCollapsed;
+      syncHeroBannerState();
+      if ((changed || options.force) && map) {
+        setTimeout(() => map.invalidateSize(), 160);
+      }
+    }
+
     function syncDesktopTogglePosition() {
       const uiToggles = document.getElementById('ui-toggles');
       const selectionCard = document.getElementById('selection-card');
       if (!uiToggles) return;
 
-      if (isCompactMobileLayout() || controlsVisible || !selectionCard) {
+      if (isCompactMobileLayout() || !selectionCard) {
         uiToggles.style.bottom = '';
         return;
       }
@@ -1801,6 +1886,7 @@
         controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed && isMobile);
       }
 
+      syncHeroBannerState();
       document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
       document.body.classList.toggle('mobile-directions-open', showMobileDirections);
       document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
@@ -1824,6 +1910,9 @@
     function minimiseControlsForMapFocus() {
       if (controlsVisible && isCompactMobileLayout()) {
         setControlsCollapsed(true);
+      }
+      if (isCompactMobileLayout() && !mobileHeroCollapsed) {
+        setMobileHeroCollapsed(true);
       }
     }
 
@@ -4824,6 +4913,17 @@
       setControlsVisible(false);
     });
 
+    document.getElementById('hero-banner-toggle').addEventListener('click', e => {
+      e.stopPropagation();
+      setMobileHeroCollapsed(!mobileHeroCollapsed);
+    });
+
+    document.getElementById('hero-banner').addEventListener('click', e => {
+      if (!isCompactMobileLayout() || !mobileHeroCollapsed) return;
+      if (e.target.closest('button')) return;
+      setMobileHeroCollapsed(false);
+    });
+
     document.getElementById('controls-header').addEventListener('click', e => {
       if (e.target.closest('button')) return;
       if (isCompactMobileLayout() && controlsVisible) {
@@ -4873,6 +4973,7 @@
 
     loadPersonalisation();
     applyPersonalisation();
+    syncHeroBannerState();
     updateControlsSummary();
     bootstrapInitialCsvLoad();
 
