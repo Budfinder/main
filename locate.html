@@ -75,6 +75,37 @@
       box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
     }
 
+    .directions-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .directions-panel-head h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .directions-hide-btn {
+      flex: 0 0 auto;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid #d4dee8;
+      border-radius: 999px;
+      background: #eef3f8;
+      color: #24405b;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .directions-empty {
+      margin: 0;
+      color: #556474;
+      font-size: 13px;
+    }
+
     .controls {
       position: absolute;
       display: none;           /* hidden until CSV is loaded */
@@ -296,6 +327,7 @@
       border-radius: 4px;
       padding: 6px 8px;
       font-size: 13px;
+      box-sizing: border-box;
       cursor: pointer;
     }
 
@@ -353,6 +385,13 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      min-width: 0;
+    }
+
+    .strain-item-main > span:first-child {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
 
     .strain-cali-badge {
@@ -998,6 +1037,9 @@
 
       if (directionsDiv) directionsDiv.style.display = directionsVisible ? 'block' : 'none';
       if (btn) btn.textContent = directionsVisible ? 'Hide directions' : 'Show directions';
+      if (directionsVisible && directionsDiv && directionsDiv.innerHTML.trim() === '') {
+        renderDirectionsPanel(null, 'Choose a destination to see directions.');
+      }
 
       if (mapDiv) {
         if (directionsVisible) {
@@ -2903,7 +2945,53 @@
       if (eta) eta.textContent = 'ETA: --';
 
       const ins = document.getElementById('instructions');
-      if (ins) ins.innerHTML = '';
+      if (ins) {
+        if (directionsVisible) {
+          renderDirectionsPanel(null, 'Choose a destination to see directions.');
+        } else {
+          ins.innerHTML = '';
+        }
+      }
+    }
+
+    function renderDirectionsPanel(routeInstructions, emptyMessage = '') {
+      const ins = document.getElementById('instructions');
+      if (!ins) return;
+
+      ins.innerHTML = '';
+
+      const header = document.createElement('div');
+      header.className = 'directions-panel-head';
+
+      const title = document.createElement('h4');
+      title.textContent = 'Directions';
+      header.appendChild(title);
+
+      const hideBtn = document.createElement('button');
+      hideBtn.type = 'button';
+      hideBtn.className = 'directions-hide-btn';
+      hideBtn.textContent = 'Hide directions';
+      header.appendChild(hideBtn);
+
+      ins.appendChild(header);
+
+      if (Array.isArray(routeInstructions) && routeInstructions.length) {
+        const ol = document.createElement('ol');
+        routeInstructions.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item.text;
+          ol.appendChild(li);
+        });
+        ins.appendChild(ol);
+        return;
+      }
+
+      if (emptyMessage) {
+        const msg = document.createElement('p');
+        msg.className = 'directions-empty';
+        msg.textContent = emptyMessage;
+        ins.appendChild(msg);
+      }
     }
 
     function startInternalNavigation(index) {
@@ -2968,15 +3056,7 @@
 
         document.getElementById('time-estimate').textContent = 'ETA: ' + eta;
 
-        const ins = document.getElementById('instructions');
-        ins.innerHTML = '<h4>Directions</h4>';
-        const ol = document.createElement('ol');
-        e.routes[0].instructions.forEach(i => {
-          const li = document.createElement('li');
-          li.textContent = i.text;
-          ol.appendChild(li);
-        });
-        ins.appendChild(ol);
+        renderDirectionsPanel(e.routes[0].instructions);
 
         updateDistanceInfo();
       });
@@ -3498,6 +3578,11 @@
 
     document.getElementById('toggle-directions').addEventListener('click', () => {
       setDirectionsVisible(!directionsVisible);
+    });
+
+    document.getElementById('instructions').addEventListener('click', e => {
+      if (!e.target.closest('.directions-hide-btn')) return;
+      setDirectionsVisible(false);
     });
 
     document.getElementById('mobile-peek-controls').addEventListener('click', e => {
