@@ -123,7 +123,7 @@
     }
 
     /* Mobile layout */
-    @media (max-width: 767px) {
+    @media (max-width: 767px), (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
       #map {
         display: none;
         position: absolute;
@@ -1110,7 +1110,7 @@
       display: none !important;
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: 767px), (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
       .controls select,
       .controls input[type="text"],
       .controls input[type="search"] {
@@ -1838,7 +1838,10 @@
     }
 
     function isCompactMobileLayout() {
-      return window.innerWidth < 768;
+      return window.innerWidth < 768 ||
+        (window.matchMedia('(orientation: landscape)').matches &&
+         window.matchMedia('(pointer: coarse)').matches &&
+         window.innerHeight <= 560);
     }
 
     function getControlsToggleLabel() {
