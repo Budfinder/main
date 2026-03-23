@@ -430,18 +430,6 @@
       background: #d7dce2;
     }
 
-    .controls-close {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      border: 1px solid transparent;
-      color: #fff9f0;
-      font-weight: 700;
-      box-shadow: 0 12px 24px rgba(32, 91, 66, 0.18);
-      cursor: pointer;
-    }
-
     .controls-header-main {
       min-width: 0;
       flex: 1 1 auto;
@@ -1074,6 +1062,11 @@
       .controls-header {
         align-items: flex-start;
         padding: 14px 14px 12px;
+        cursor: pointer;
+      }
+
+      .controls-header-main {
+        cursor: pointer;
       }
 
       .controls-content {
@@ -1087,12 +1080,6 @@
       .field-grid,
       .panel-metric {
         grid-template-columns: 1fr;
-      }
-
-      .controls-close {
-        width: auto;
-        min-height: 34px;
-        padding: 0 12px;
       }
 
       .controls-hide {
@@ -1111,6 +1098,7 @@
         align-items: center;
         padding: 12px 14px;
         border-bottom: 0;
+        cursor: pointer;
       }
 
       .controls.is-collapsed .controls-header-main {
@@ -1303,7 +1291,7 @@
   <div id="controls-backdrop" class="controls-backdrop"></div>
 
   <section id="hero-banner" class="overlay-card">
-    <span class="hero-kicker" id="hero-kicker">Explorer's atlas</span>
+    <span class="hero-kicker" id="hero-kicker">Personal atlas</span>
     <h1>Bud Finder Atlas</h1>
     <p class="hero-copy">
       A more intentional version of the finder: route-first, mobile-friendly, and ready to feel like your own map.
@@ -1344,8 +1332,8 @@
   </section>
 
   <!-- Top-level controls button -->
-  <div id="ui-toggles">
-    <button id="toggle-controls" type="button">Show controls</button>
+  <div id="ui-toggles" data-ready="false">
+    <button id="toggle-controls" type="button">Atlas</button>
   </div>
   <input type="file" id="file-input" accept=".csv" style="display:none;" />
 
@@ -1358,7 +1346,6 @@
         <span class="controls-summary" id="controls-summary">Choose a destination</span>
       </div>
       <div class="controls-header-actions">
-        <button id="mobile-peek-controls" class="controls-close" type="button">Peek</button>
         <button id="mobile-hide-controls" class="controls-hide" type="button">Hide</button>
       </div>
     </div>
@@ -1577,9 +1564,10 @@
       try {
         const stored = JSON.parse(localStorage.getItem(PERSONALISATION_STORAGE_KEY) || '{}');
         if (stored && typeof stored === 'object') {
-          const displayName = (stored.displayName || '').toString().trim();
+          const hasDisplayName = Object.prototype.hasOwnProperty.call(stored, 'displayName');
+          const displayName = (stored.displayName || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
           const accent = (stored.accent || '').toString().trim();
-          if (displayName) personalisation.displayName = displayName.slice(0, 24);
+          if (hasDisplayName) personalisation.displayName = displayName;
           if (accentThemes[accent]) personalisation.accent = accent;
         }
       } catch (_err) {
@@ -1593,7 +1581,8 @@
 
     function applyPersonalisation() {
       const theme = accentThemes[personalisation.accent] || accentThemes.moss;
-      const safeName = (personalisation.displayName || 'Explorer').trim() || 'Explorer';
+      const rawName = (personalisation.displayName || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
+      const safeName = rawName || 'Explorer';
       const root = document.documentElement;
       root.style.setProperty('--accent', theme.accent);
       root.style.setProperty('--accent-strong', theme.accentStrong);
@@ -1603,10 +1592,10 @@
       const kicker = document.getElementById('hero-kicker');
       const nameInput = document.getElementById('display-name-input');
       const accentSelect = document.getElementById('accent-select');
-      if (kicker) kicker.textContent = `${safeName}'s atlas`;
-      if (nameInput && nameInput.value !== safeName) nameInput.value = safeName;
+      if (kicker) kicker.textContent = rawName ? `${safeName}'s atlas` : 'Personal atlas';
+      if (nameInput && nameInput.value !== rawName) nameInput.value = rawName;
       if (accentSelect && accentSelect.value !== personalisation.accent) accentSelect.value = personalisation.accent;
-      document.title = `${safeName}'s Bud Finder Atlas`;
+      document.title = rawName ? `${safeName}'s Bud Finder Atlas` : 'Bud Finder Atlas';
     }
 
     function resetPersonalisation() {
@@ -1656,44 +1645,43 @@
     }
 
     function getControlsToggleLabel() {
-      if (!controlsVisible) {
-        return isCompactMobileLayout() ? 'Menu' : 'Show controls';
+      if (isCompactMobileLayout()) {
+        return 'Atlas';
       }
-      if (!isCompactMobileLayout()) {
-        return 'Hide controls';
-      }
-      return controlsCollapsed ? 'Open menu' : 'Peek menu';
+      return controlsVisible ? 'Hide atlas' : 'Show atlas';
     }
 
     function syncControlsChrome() {
       const btn = document.getElementById('toggle-controls');
+      const uiToggles = document.getElementById('ui-toggles');
       const backdrop = document.getElementById('controls-backdrop');
       const controlsDiv = document.querySelector('.controls');
-      const peekBtn = document.getElementById('mobile-peek-controls');
       const hideBtn = document.getElementById('mobile-hide-controls');
+      const isMobile = isCompactMobileLayout();
       const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
       const showMobileDirections = directionsVisible && isCompactMobileLayout();
       const hideDesktopGap = !controlsVisible && !isCompactMobileLayout();
 
       if (controlsDiv) {
-        controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed && isCompactMobileLayout());
+        controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed && isMobile);
       }
 
       document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
       document.body.classList.toggle('mobile-directions-open', showMobileDirections);
       document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
+      if (uiToggles) {
+        const togglesReady = uiToggles.dataset.ready === 'true';
+        uiToggles.style.display = togglesReady && (!isMobile || !controlsVisible) ? 'block' : 'none';
+      }
       if (backdrop) {
         backdrop.style.display = showMobileOverlay ? 'block' : 'none';
       }
       if (btn) {
         btn.textContent = getControlsToggleLabel();
       }
-      if (peekBtn) {
-        peekBtn.textContent = controlsCollapsed ? 'Open' : 'Peek';
-        peekBtn.setAttribute('aria-expanded', String(controlsVisible && !controlsCollapsed));
-      }
       if (hideBtn) {
-        hideBtn.style.display = isCompactMobileLayout() && controlsVisible ? 'inline-flex' : 'none';
+        hideBtn.textContent = 'Close';
+        hideBtn.style.display = isMobile && controlsVisible ? 'inline-flex' : 'none';
       }
       updateControlsSummary();
     }
@@ -3233,6 +3221,7 @@
       populateCategorySelect();
 
       document.getElementById('map').style.display = 'block';
+      document.getElementById('ui-toggles').dataset.ready = 'true';
       document.getElementById('ui-toggles').style.display = 'block';
       setUploadPanelState('', '', false);
 
@@ -3882,12 +3871,14 @@
 
     function updateControlsSummary() {
       const summaryEl = document.getElementById('controls-summary');
+      let summaryText = '';
       updateHeroStats();
       updateSelectionCard();
       if (!summaryEl) return;
 
       if (!locations.length) {
-        summaryEl.textContent = 'Loading locations...';
+        summaryText = 'Loading locations...';
+        summaryEl.textContent = summaryText;
         return;
       }
 
@@ -3896,25 +3887,26 @@
         const loc = locations[selectedIndex];
         if (lastPosition) {
           const distText = (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km';
-          summaryEl.textContent = `${loc.name} · ${distText}`;
+          summaryText = `${loc.name} · ${distText}`;
         } else {
-          summaryEl.textContent = loc.name;
+          summaryText = loc.name;
         }
-        return;
+      } else {
+        const visibleCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
+        if (strainFilterText) {
+          summaryText = `${visibleCount} matches for ${strainFilterText}`;
+        } else if ((selectedCategories || []).includes('all')) {
+          summaryText = `${visibleCount} places visible`;
+        } else {
+          summaryText = `${visibleCount} filtered places`;
+        }
       }
 
-      const visibleCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
-      if (strainFilterText) {
-        summaryEl.textContent = `${visibleCount} matches for ${strainFilterText}`;
-        return;
+      if (isCompactMobileLayout() && controlsVisible && controlsCollapsed) {
+        summaryText = summaryText ? `Tap to open · ${summaryText}` : 'Tap to open';
       }
 
-      if ((selectedCategories || []).includes('all')) {
-        summaryEl.textContent = `${visibleCount} places visible`;
-        return;
-      }
-
-      summaryEl.textContent = `${visibleCount} filtered places`;
+      summaryEl.textContent = summaryText;
     }
 
     /**
@@ -4350,19 +4342,6 @@
       minimiseControlsForMapFocus();
     });
 
-    document.getElementById('mobile-peek-controls').addEventListener('click', e => {
-      e.stopPropagation();
-      if (!isCompactMobileLayout()) {
-        setControlsVisible(false);
-        return;
-      }
-      if (controlsCollapsed) {
-        setControlsCollapsed(false);
-      } else {
-        setControlsCollapsed(true);
-      }
-    });
-
     document.getElementById('mobile-hide-controls').addEventListener('click', e => {
       e.stopPropagation();
       setControlsVisible(false);
@@ -4370,14 +4349,14 @@
 
     document.getElementById('controls-header').addEventListener('click', e => {
       if (e.target.closest('button')) return;
-      if (isCompactMobileLayout() && controlsVisible && controlsCollapsed) {
-        setControlsCollapsed(false);
+      if (isCompactMobileLayout() && controlsVisible) {
+        setControlsCollapsed(!controlsCollapsed);
       }
     });
 
     document.getElementById('display-name-input').addEventListener('input', e => {
       const nextName = (e.target.value || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
-      personalisation.displayName = nextName || 'Explorer';
+      personalisation.displayName = nextName;
       savePersonalisation();
       applyPersonalisation();
       updateControlsSummary();
