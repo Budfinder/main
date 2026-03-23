@@ -104,6 +104,16 @@
       color: #1f2b36;
     }
 
+    .controls-summary {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      color: #5b6b79;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .controls-handle {
       width: 42px;
       height: 4px;
@@ -119,6 +129,29 @@
       background: #eef3f8;
       border: 1px solid #d4dee8;
       color: #24405b;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .controls-header-main {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .controls-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .controls-hide {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid #dde4eb;
+      color: #526273;
       font-weight: 600;
       cursor: pointer;
     }
@@ -478,6 +511,36 @@
         padding: 0 12px;
       }
 
+      .controls-hide {
+        width: auto;
+        min-height: 34px;
+        padding: 0 10px;
+      }
+
+      .controls.is-collapsed {
+        max-height: none;
+        overflow: visible;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      }
+
+      .controls.is-collapsed .controls-header {
+        align-items: center;
+        padding: 8px 12px;
+        border-bottom: 0;
+      }
+
+      .controls.is-collapsed .controls-header-main {
+        cursor: pointer;
+      }
+
+      .controls.is-collapsed .controls-handle {
+        margin-bottom: 6px;
+      }
+
+      .controls.is-collapsed .controls-content {
+        display: none;
+      }
+
       #ui-toggles {
         top: auto;
         right: 10px;
@@ -646,12 +709,16 @@
 
   <!-- Main controls panel -->
   <div class="controls">
-    <div class="controls-header">
-      <div>
+    <div class="controls-header" id="controls-header">
+      <div class="controls-header-main">
         <div class="controls-handle" aria-hidden="true"></div>
         <span class="controls-title">Map controls</span>
+        <span class="controls-summary" id="controls-summary">Choose a destination</span>
       </div>
-      <button id="mobile-close-controls" class="controls-close" type="button">Done</button>
+      <div class="controls-header-actions">
+        <button id="mobile-peek-controls" class="controls-close" type="button">Peek</button>
+        <button id="mobile-hide-controls" class="controls-hide" type="button">Hide</button>
+      </div>
     </div>
     <div class="controls-content">
       <label for="destination-select">Destination:</label>
@@ -719,6 +786,7 @@
     let markers = [];              // Leaflet markers
     let meLocationMarker = null;   // current user location marker
     let controlsVisible = false;   // controls panel visibility
+    let controlsCollapsed = false; // peek state for compact mobile layout
     let directionsVisible = false; // directions panel visibility
     let strainListVisible = true; // strain list panel visibility
 
@@ -826,16 +894,26 @@
     }
 
     function getControlsToggleLabel() {
-      if (controlsVisible) {
-        return isCompactMobileLayout() ? 'Hide menu' : 'Hide controls';
+      if (!controlsVisible) {
+        return isCompactMobileLayout() ? 'Menu' : 'Show controls';
       }
-      return isCompactMobileLayout() ? 'Menu' : 'Show controls';
+      if (!isCompactMobileLayout()) {
+        return 'Hide controls';
+      }
+      return controlsCollapsed ? 'Open menu' : 'Peek menu';
     }
 
     function syncControlsChrome() {
       const btn = document.getElementById('toggle-controls');
       const backdrop = document.getElementById('controls-backdrop');
-      const showMobileOverlay = controlsVisible && isCompactMobileLayout();
+      const controlsDiv = document.querySelector('.controls');
+      const peekBtn = document.getElementById('mobile-peek-controls');
+      const hideBtn = document.getElementById('mobile-hide-controls');
+      const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
+
+      if (controlsDiv) {
+        controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed && isCompactMobileLayout());
+      }
 
       document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
       if (backdrop) {
@@ -844,17 +922,42 @@
       if (btn) {
         btn.textContent = getControlsToggleLabel();
       }
+      if (peekBtn) {
+        peekBtn.textContent = controlsCollapsed ? 'Open' : 'Peek';
+        peekBtn.setAttribute('aria-expanded', String(controlsVisible && !controlsCollapsed));
+      }
+      if (hideBtn) {
+        hideBtn.style.display = isCompactMobileLayout() && controlsVisible ? 'inline-flex' : 'none';
+      }
+      updateControlsSummary();
     }
 
-    function closeControlsForMapFocus() {
+    function minimiseControlsForMapFocus() {
       if (controlsVisible && isCompactMobileLayout()) {
-        setControlsVisible(false);
+        setControlsCollapsed(true);
       }
     }
 
-    function setControlsVisible(show) {
+    function setControlsCollapsed(collapsed) {
+      if (!controlsVisible || !isCompactMobileLayout()) {
+        controlsCollapsed = false;
+      } else {
+        controlsCollapsed = !!collapsed;
+      }
+      syncControlsChrome();
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    }
+
+    function setControlsVisible(show, options = {}) {
       controlsVisible = !!show;
       const controlsDiv = document.querySelector('.controls');
+      if (!controlsVisible || !isCompactMobileLayout()) {
+        controlsCollapsed = false;
+      } else {
+        controlsCollapsed = !!options.collapsed;
+      }
       if (controlsDiv) controlsDiv.style.display = controlsVisible ? 'block' : 'none';
       syncControlsChrome();
       if (map) {
@@ -2561,7 +2664,7 @@
       map = L.map('map').setView([0, 0], 2);
 
       map.on('click', () => {
-        closeControlsForMapFocus();
+        minimiseControlsForMapFocus();
       });
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -2670,7 +2773,7 @@
             map.panTo(destCoords);
             markers[destIndex].openPopup();
             markers[destIndex].bringToFront();
-            closeControlsForMapFocus();
+            minimiseControlsForMapFocus();
           }
           updateDistanceInfo();
         };
@@ -2912,6 +3015,41 @@
       btn.textContent = 'Nearest ' + label;
     }
 
+    function updateControlsSummary() {
+      const summaryEl = document.getElementById('controls-summary');
+      if (!summaryEl) return;
+
+      if (!locations.length) {
+        summaryEl.textContent = 'Loading locations...';
+        return;
+      }
+
+      const selectedIndex = getSelectedDestinationIndex();
+      if (selectedIndex !== null && locations[selectedIndex]) {
+        const loc = locations[selectedIndex];
+        if (lastPosition) {
+          const distText = (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km';
+          summaryEl.textContent = `${loc.name} · ${distText}`;
+        } else {
+          summaryEl.textContent = loc.name;
+        }
+        return;
+      }
+
+      const visibleCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
+      if (strainFilterText) {
+        summaryEl.textContent = `${visibleCount} matches for ${strainFilterText}`;
+        return;
+      }
+
+      if ((selectedCategories || []).includes('all')) {
+        summaryEl.textContent = `${visibleCount} places visible`;
+        return;
+      }
+
+      summaryEl.textContent = `${visibleCount} filtered places`;
+    }
+
     /**
      * Check whether a location passes the currently selected category filters.
      */
@@ -3091,6 +3229,7 @@
         clearRouteUi();
       }
 
+      updateControlsSummary();
       updateDistanceInfo();
     }
 
@@ -3107,6 +3246,7 @@
       } else if (distanceDiv) {
         distanceDiv.textContent = '';
       }
+      updateControlsSummary();
     }
 
     function getMarkerPriceLabel(loc) {
@@ -3244,7 +3384,7 @@
         return alert('Current position not available yet.');
       }
       map.panTo(lastPosition);
-      closeControlsForMapFocus();
+      minimiseControlsForMapFocus();
     });
 
     document.getElementById('nearest-btn').addEventListener('click', () => {
@@ -3291,10 +3431,23 @@
     // =========================================================
 
     document.getElementById('toggle-controls').addEventListener('click', () => {
-      const nextVisible = !controlsVisible;
-      if (nextVisible && directionsVisible && isCompactMobileLayout()) {
-        setDirectionsVisible(false);
+      if (isCompactMobileLayout()) {
+        if (!controlsVisible) {
+          if (directionsVisible) {
+            setDirectionsVisible(false);
+          }
+          setControlsVisible(true, { collapsed: false });
+          return;
+        }
+        if (controlsCollapsed) {
+          setControlsCollapsed(false);
+          return;
+        }
+        setControlsCollapsed(true);
+        return;
       }
+
+      const nextVisible = !controlsVisible;
       setControlsVisible(nextVisible);
     });
 
@@ -3302,15 +3455,35 @@
       setDirectionsVisible(!directionsVisible);
     });
 
-    document.getElementById('mobile-close-controls').addEventListener('click', () => {
+    document.getElementById('mobile-peek-controls').addEventListener('click', e => {
+      e.stopPropagation();
+      if (!isCompactMobileLayout()) {
+        setControlsVisible(false);
+        return;
+      }
+      if (controlsCollapsed) {
+        setControlsCollapsed(false);
+      } else {
+        setControlsCollapsed(true);
+      }
+    });
+
+    document.getElementById('mobile-hide-controls').addEventListener('click', e => {
+      e.stopPropagation();
       setControlsVisible(false);
     });
 
-    document.getElementById('controls-backdrop').addEventListener('click', () => {
-      setControlsVisible(false);
+    document.getElementById('controls-header').addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      if (isCompactMobileLayout() && controlsVisible && controlsCollapsed) {
+        setControlsCollapsed(false);
+      }
     });
 
     window.addEventListener('resize', () => {
+      if (!isCompactMobileLayout() && controlsCollapsed) {
+        controlsCollapsed = false;
+      }
       syncControlsChrome();
       if (map) {
         setTimeout(() => map.invalidateSize(), 150);
