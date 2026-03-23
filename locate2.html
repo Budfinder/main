@@ -106,6 +106,20 @@
         right: 24px;
         width: 392px;
       }
+
+      .controls.is-collapsed {
+        width: min(286px, calc(100vw - 48px));
+        max-width: min(286px, calc(100vw - 48px));
+      }
+
+      body.desktop-controls-collapsed #map {
+        left: 334px;
+      }
+
+      body.desktop-controls-collapsed #hero-banner {
+        left: 334px;
+        width: min(440px, calc(100vw - 398px));
+      }
     }
 
     /* Mobile layout */
@@ -495,6 +509,7 @@
     .controls-header-main {
       min-width: 0;
       flex: 1 1 auto;
+      cursor: pointer;
     }
 
     .controls-header-actions {
@@ -570,6 +585,31 @@
       overflow-y: auto;
       max-height: calc(100vh - 118px);
       scrollbar-width: thin;
+    }
+
+    .controls.is-collapsed {
+      max-height: none;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .controls.is-collapsed .controls-header {
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 0;
+      cursor: pointer;
+    }
+
+    .controls.is-collapsed .controls-header-main {
+      cursor: pointer;
+    }
+
+    .controls.is-collapsed .controls-handle {
+      margin-bottom: 6px;
+    }
+
+    .controls.is-collapsed .controls-content {
+      display: none;
     }
 
     .panel-section {
@@ -1629,7 +1669,7 @@
     let markers = [];              // Leaflet markers
     let meLocationMarker = null;   // current user location marker
     let controlsVisible = false;   // controls panel visibility
-    let controlsCollapsed = false; // peek state for compact mobile layout
+    let controlsCollapsed = false; // collapsed atlas state across layouts
     let directionsVisible = false; // directions panel visibility
     let mobileHeroCollapsed = window.innerWidth < 768; // compact hero state for mobile
     let strainListVisible = true; // strain list panel visibility
@@ -1881,15 +1921,17 @@
       const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
       const showMobileDirections = directionsVisible && isCompactMobileLayout();
       const hideDesktopGap = !controlsVisible && !isCompactMobileLayout();
+      const collapseDesktopGap = controlsVisible && controlsCollapsed && !isCompactMobileLayout();
 
       if (controlsDiv) {
-        controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed && isMobile);
+        controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed);
       }
 
       syncHeroBannerState();
       document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
       document.body.classList.toggle('mobile-directions-open', showMobileDirections);
       document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
+      document.body.classList.toggle('desktop-controls-collapsed', collapseDesktopGap);
       if (uiToggles) {
         const togglesReady = uiToggles.dataset.ready === 'true';
         uiToggles.style.display = togglesReady && (!isMobile || !controlsVisible) ? 'block' : 'none';
@@ -1901,8 +1943,15 @@
         btn.textContent = getControlsToggleLabel();
       }
       if (hideBtn) {
-        hideBtn.textContent = 'Close';
-        hideBtn.style.display = isMobile && controlsVisible ? 'inline-flex' : 'none';
+        if (!controlsVisible) {
+          hideBtn.style.display = 'none';
+        } else if (isMobile) {
+          hideBtn.textContent = 'Close';
+          hideBtn.style.display = 'inline-flex';
+        } else {
+          hideBtn.textContent = controlsCollapsed ? 'Expand' : 'Collapse';
+          hideBtn.style.display = 'inline-flex';
+        }
       }
       updateControlsSummary();
     }
@@ -1917,7 +1966,7 @@
     }
 
     function setControlsCollapsed(collapsed) {
-      if (!controlsVisible || !isCompactMobileLayout()) {
+      if (!controlsVisible) {
         controlsCollapsed = false;
       } else {
         controlsCollapsed = !!collapsed;
@@ -1931,7 +1980,7 @@
     function setControlsVisible(show, options = {}) {
       controlsVisible = !!show;
       const controlsDiv = document.querySelector('.controls');
-      if (!controlsVisible || !isCompactMobileLayout()) {
+      if (!controlsVisible) {
         controlsCollapsed = false;
       } else {
         controlsCollapsed = !!options.collapsed;
@@ -4910,7 +4959,11 @@
 
     document.getElementById('mobile-hide-controls').addEventListener('click', e => {
       e.stopPropagation();
-      setControlsVisible(false);
+      if (isCompactMobileLayout()) {
+        setControlsVisible(false);
+        return;
+      }
+      setControlsCollapsed(!controlsCollapsed);
     });
 
     document.getElementById('hero-banner-toggle').addEventListener('click', e => {
@@ -4926,7 +4979,7 @@
 
     document.getElementById('controls-header').addEventListener('click', e => {
       if (e.target.closest('button')) return;
-      if (isCompactMobileLayout() && controlsVisible) {
+      if (controlsVisible) {
         setControlsCollapsed(!controlsCollapsed);
       }
     });
@@ -4953,9 +5006,6 @@
     });
 
     window.addEventListener('resize', () => {
-      if (!isCompactMobileLayout() && controlsCollapsed) {
-        controlsCollapsed = false;
-      }
       if (directionsVisible) {
         setDirectionsVisible(true);
       } else {
