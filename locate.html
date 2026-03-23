@@ -78,7 +78,7 @@
     .directions-panel-head {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 8px;
       margin-bottom: 8px;
     }
@@ -86,6 +86,7 @@
     .directions-panel-head h4 {
       margin: 0;
       font-size: 16px;
+      text-align: right;
     }
 
     .directions-hide-btn {
@@ -2963,15 +2964,15 @@
       const header = document.createElement('div');
       header.className = 'directions-panel-head';
 
-      const title = document.createElement('h4');
-      title.textContent = 'Directions';
-      header.appendChild(title);
-
       const hideBtn = document.createElement('button');
       hideBtn.type = 'button';
       hideBtn.className = 'directions-hide-btn';
       hideBtn.textContent = 'Hide directions';
       header.appendChild(hideBtn);
+
+      const title = document.createElement('h4');
+      title.textContent = 'Directions';
+      header.appendChild(title);
 
       ins.appendChild(header);
 
