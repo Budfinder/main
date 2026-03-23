@@ -93,6 +93,66 @@
       box-sizing: border-box;
     }
 
+    .controls-header {
+      display: none;
+    }
+
+    .controls-title {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1f2b36;
+    }
+
+    .controls-handle {
+      width: 42px;
+      height: 4px;
+      margin: 0 auto 10px;
+      border-radius: 999px;
+      background: #d7dce2;
+    }
+
+    .controls-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef3f8;
+      border: 1px solid #d4dee8;
+      color: #24405b;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .controls label,
+    .controls strong,
+    .controls div,
+    .controls button,
+    .controls select,
+    .controls input {
+      font-family: inherit;
+    }
+
+    .controls select,
+    .controls input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 4px;
+    }
+
+    .controls button {
+      min-height: 36px;
+      box-sizing: border-box;
+    }
+
+    .controls-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      background: rgba(17, 24, 39, 0.24);
+      backdrop-filter: blur(2px);
+      z-index: 1001;
+    }
+
     #upload-panel {
       position: absolute;
       top: 50%;
@@ -371,12 +431,70 @@
     }
 
     @media (max-width: 767px) {
+      .controls {
+        top: auto;
+        left: 8px;
+        right: 8px;
+        bottom: max(8px, env(safe-area-inset-bottom));
+        width: auto;
+        max-width: none;
+        max-height: min(68dvh, 540px);
+        padding: 0;
+        border-radius: 18px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+        overflow: hidden;
+      }
+
+      .controls-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 12px 8px;
+        background: #ffffff;
+        border-bottom: 1px solid #eceff3;
+      }
+
+      .controls-content {
+        max-height: calc(min(68dvh, 540px) - 64px);
+        overflow-y: auto;
+        padding: 0 12px 12px;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+
+      .controls button {
+        width: 100%;
+      }
+
+      .controls-close {
+        width: auto;
+        min-height: 34px;
+        padding: 0 12px;
+      }
+
+      #ui-toggles {
+        top: auto;
+        right: 10px;
+        bottom: max(10px, env(safe-area-inset-bottom));
+      }
+
+      #ui-toggles button {
+        min-height: 42px;
+        padding: 10px 14px;
+        border-radius: 999px;
+      }
+
       #strain-list-panel {
         max-height: 200px;
       }
 
       #strain-list {
         max-height: 110px;
+      }
+
+      body.mobile-controls-open .controls-backdrop {
+        display: block;
       }
     }
 
@@ -513,6 +631,7 @@
   <!-- Map and directions containers -->
   <div id="map"></div>
   <div id="instructions"></div>
+  <div id="controls-backdrop" class="controls-backdrop"></div>
 
   <!-- Top-level controls button -->
   <div id="ui-toggles">
@@ -522,51 +641,60 @@
 
   <!-- Main controls panel -->
   <div class="controls">
-    <label for="destination-select">Destination:</label>
-    <select id="destination-select"></select><br />
-
-    <label for="mode">Mode:</label>
-    <select id="mode">
-      <option value="walking">Walking</option>
-      <option value="driving">Driving</option>
-      <option value="cycling">Cycling</option>
-    </select><br />
-
-    <div style="margin-top:8px;">
-      <button id="toggle-directions" type="button">Show directions</button>
-    </div>
-
-    <div id="csv-switch-wrap" style="display:none; margin-top:8px;">
-      <label for="csv-switch-select">Location CSV:</label>
-      <select id="csv-switch-select" style="width:100%;"></select>
-    </div>
-
-    <div id="time-estimate" style="margin-top:8px;">ETA: --</div>
-    <div id="distance-info"></div>
-    <br />
-
-    <!-- Category filters as tick boxes -->
-    <div id="category-filters">
-      <!-- Checkboxes injected here by JS -->
-    </div>
-
-    <div id="strain-list-panel">
-      <div class="strain-list-head">
-        <strong>Active strains</strong>
+    <div class="controls-header">
+      <div>
+        <div class="controls-handle" aria-hidden="true"></div>
+        <span class="controls-title">Map controls</span>
       </div>
-      <input id="strain-list-search" type="text" placeholder="Filter strains..." />
-      <div id="strain-list-status">Load CSV first.</div>
-      <div id="strain-list"></div>
+      <button id="mobile-close-controls" class="controls-close" type="button">Done</button>
     </div>
+    <div class="controls-content">
+      <label for="destination-select">Destination:</label>
+      <select id="destination-select"></select><br />
 
-    <div style="margin-top:8px;">
-      <button id="clear-strain-btn" type="button">Clear strain filter</button>
-      <div id="strain-status" style="margin-top:6px; font-size:12px; color:#444;">Strain filter: off</div>
+      <label for="mode">Mode:</label>
+      <select id="mode">
+        <option value="walking">Walking</option>
+        <option value="driving">Driving</option>
+        <option value="cycling">Cycling</option>
+      </select><br />
+
+      <div style="margin-top:8px;">
+        <button id="toggle-directions" type="button">Show directions</button>
+      </div>
+
+      <div id="csv-switch-wrap" style="display:none; margin-top:8px;">
+        <label for="csv-switch-select">Location CSV:</label>
+        <select id="csv-switch-select" style="width:100%;"></select>
+      </div>
+
+      <div id="time-estimate" style="margin-top:8px;">ETA: --</div>
+      <div id="distance-info"></div>
+      <br />
+
+      <!-- Category filters as tick boxes -->
+      <div id="category-filters">
+        <!-- Checkboxes injected here by JS -->
+      </div>
+
+      <div id="strain-list-panel">
+        <div class="strain-list-head">
+          <strong>Active strains</strong>
+        </div>
+        <input id="strain-list-search" type="text" placeholder="Filter strains..." />
+        <div id="strain-list-status">Load CSV first.</div>
+        <div id="strain-list"></div>
+      </div>
+
+      <div style="margin-top:8px;">
+        <button id="clear-strain-btn" type="button">Clear strain filter</button>
+        <div id="strain-status" style="margin-top:6px; font-size:12px; color:#444;">Strain filter: off</div>
+      </div>
+
+      <button id="center-on-me-btn" type="button">Center on me</button><br />
+      <button id="nearest-btn">Nearest</button><br />
+      <div id="db-status" style="display:none; margin-top:6px; font-size:12px; color:#444;"></div>
     </div>
-
-    <button id="center-on-me-btn" type="button">Center on me</button><br />
-    <button id="nearest-btn">Nearest</button><br />
-    <div id="db-status" style="display:none; margin-top:6px; font-size:12px; color:#444;"></div>
   </div>
 
   <!-- Leaflet + Routing JS -->
@@ -688,18 +816,51 @@
       if (instructionsDiv) instructionsDiv.innerHTML = '';
     }
 
+    function isCompactMobileLayout() {
+      return window.innerWidth < 768;
+    }
+
+    function getControlsToggleLabel() {
+      if (controlsVisible) {
+        return isCompactMobileLayout() ? 'Hide menu' : 'Hide controls';
+      }
+      return isCompactMobileLayout() ? 'Menu' : 'Show controls';
+    }
+
+    function syncControlsChrome() {
+      const btn = document.getElementById('toggle-controls');
+      const backdrop = document.getElementById('controls-backdrop');
+      const showMobileOverlay = controlsVisible && isCompactMobileLayout();
+
+      document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
+      if (backdrop) {
+        backdrop.style.display = showMobileOverlay ? 'block' : 'none';
+      }
+      if (btn) {
+        btn.textContent = getControlsToggleLabel();
+      }
+    }
+
+    function closeControlsForMapFocus() {
+      if (controlsVisible && isCompactMobileLayout()) {
+        setControlsVisible(false);
+      }
+    }
+
     function setControlsVisible(show) {
       controlsVisible = !!show;
       const controlsDiv = document.querySelector('.controls');
-      const btn = document.getElementById('toggle-controls');
       if (controlsDiv) controlsDiv.style.display = controlsVisible ? 'block' : 'none';
-      if (btn) btn.textContent = controlsVisible ? 'Hide controls' : 'Show controls';
+      syncControlsChrome();
       if (map) {
         setTimeout(() => map.invalidateSize(), 200);
       }
     }
 
     function setDirectionsVisible(show) {
+      if (show && isCompactMobileLayout() && controlsVisible) {
+        setControlsVisible(false);
+      }
       directionsVisible = !!show;
       const directionsDiv = document.getElementById('instructions');
       const mapDiv = document.getElementById('map');
@@ -2394,6 +2555,10 @@
       // Create the Leaflet map
       map = L.map('map').setView([0, 0], 2);
 
+      map.on('click', () => {
+        closeControlsForMapFocus();
+      });
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OSM contributors'
@@ -2500,6 +2665,7 @@
             map.panTo(destCoords);
             markers[destIndex].openPopup();
             markers[destIndex].bringToFront();
+            closeControlsForMapFocus();
           }
           updateDistanceInfo();
         };
@@ -3073,6 +3239,7 @@
         return alert('Current position not available yet.');
       }
       map.panTo(lastPosition);
+      closeControlsForMapFocus();
     });
 
     document.getElementById('nearest-btn').addEventListener('click', () => {
@@ -3119,11 +3286,30 @@
     // =========================================================
 
     document.getElementById('toggle-controls').addEventListener('click', () => {
-      setControlsVisible(!controlsVisible);
+      const nextVisible = !controlsVisible;
+      if (nextVisible && directionsVisible && isCompactMobileLayout()) {
+        setDirectionsVisible(false);
+      }
+      setControlsVisible(nextVisible);
     });
 
     document.getElementById('toggle-directions').addEventListener('click', () => {
       setDirectionsVisible(!directionsVisible);
+    });
+
+    document.getElementById('mobile-close-controls').addEventListener('click', () => {
+      setControlsVisible(false);
+    });
+
+    document.getElementById('controls-backdrop').addEventListener('click', () => {
+      setControlsVisible(false);
+    });
+
+    window.addEventListener('resize', () => {
+      syncControlsChrome();
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 150);
+      }
     });
 
     bootstrapInitialCsvLoad();
