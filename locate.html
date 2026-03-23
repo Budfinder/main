@@ -547,6 +547,11 @@
         bottom: max(10px, env(safe-area-inset-bottom));
       }
 
+      body.mobile-controls-peek #ui-toggles {
+        top: calc(env(safe-area-inset-top) + 10px);
+        bottom: auto;
+      }
+
       #ui-toggles button {
         min-height: 42px;
         padding: 10px 14px;
@@ -910,12 +915,14 @@
       const peekBtn = document.getElementById('mobile-peek-controls');
       const hideBtn = document.getElementById('mobile-hide-controls');
       const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
+      const showMobilePeek = controlsVisible && controlsCollapsed && isCompactMobileLayout();
 
       if (controlsDiv) {
-        controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed && isCompactMobileLayout());
+        controlsDiv.classList.toggle('is-collapsed', showMobilePeek);
       }
 
       document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
+      document.body.classList.toggle('mobile-controls-peek', showMobilePeek);
       if (backdrop) {
         backdrop.style.display = showMobileOverlay ? 'block' : 'none';
       }
