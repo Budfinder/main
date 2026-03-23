@@ -195,6 +195,7 @@
       backdrop-filter: blur(18px);
       box-sizing: border-box;
       color: var(--ink);
+      transition: left 220ms ease, right 220ms ease, top 220ms ease, bottom 220ms ease, opacity 180ms ease, transform 220ms ease;
     }
 
     #hero-banner {
@@ -295,6 +296,20 @@
       right: 24px;
       width: 320px;
       padding: 18px 18px 16px;
+    }
+
+    #map,
+    .controls {
+      transition: left 220ms ease, right 220ms ease, top 220ms ease, bottom 220ms ease, opacity 180ms ease, transform 220ms ease;
+    }
+
+    body.desktop-controls-hidden #map {
+      left: 24px;
+    }
+
+    body.desktop-controls-hidden #hero-banner {
+      left: 24px;
+      width: min(520px, calc(100vw - 408px));
     }
 
     .selection-eyebrow {
@@ -983,41 +998,56 @@
         left: 12px;
         right: 12px;
         width: auto;
-        padding: 14px 16px;
+        padding: 12px 14px;
       }
 
       #hero-banner h1 {
-        font-size: 30px;
+        margin: 8px 0 0;
+        font-size: 24px;
       }
 
-      .hero-copy {
-        font-size: 13px;
-      }
-
+      .hero-copy,
       .hero-stats {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
+        display: none;
       }
 
-      .hero-stat {
-        padding: 10px 12px;
+      .hero-meta-row {
+        margin-top: 8px;
       }
 
-      .hero-stat-value {
-        font-size: 22px;
+      .hero-meta-pill {
+        min-height: 28px;
+        font-size: 11px;
       }
 
       #selection-card {
-        top: 214px;
+        top: 92px;
         left: 12px;
         right: 12px;
         width: auto;
         min-width: 0;
-        padding: 14px 16px;
+        padding: 12px 14px;
       }
 
       #selection-card h2 {
-        font-size: 22px;
+        font-size: 18px;
+      }
+
+      #selected-destination-meta {
+        margin-top: 6px;
+        font-size: 13px;
+      }
+
+      .selection-chip-row {
+        margin-top: 8px;
+      }
+
+      .selection-actions {
+        display: none;
+      }
+
+      #map {
+        top: 164px;
       }
 
       .controls {
@@ -1109,6 +1139,20 @@
 
       #category-filters {
         grid-template-columns: 1fr;
+      }
+
+      body.mobile-controls-open #hero-banner,
+      body.mobile-controls-open #selection-card,
+      body.mobile-directions-open #hero-banner,
+      body.mobile-directions-open #selection-card {
+        opacity: 0;
+        transform: translateY(-12px);
+        pointer-events: none;
+      }
+
+      body.mobile-controls-open #map,
+      body.mobile-directions-open #map {
+        top: 12px;
       }
 
       body.mobile-controls-open .controls-backdrop {
@@ -1621,12 +1665,16 @@
       const peekBtn = document.getElementById('mobile-peek-controls');
       const hideBtn = document.getElementById('mobile-hide-controls');
       const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
+      const showMobileDirections = directionsVisible && isCompactMobileLayout();
+      const hideDesktopGap = !controlsVisible && !isCompactMobileLayout();
 
       if (controlsDiv) {
         controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed && isCompactMobileLayout());
       }
 
       document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
+      document.body.classList.toggle('mobile-directions-open', showMobileDirections);
+      document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
       if (backdrop) {
         backdrop.style.display = showMobileOverlay ? 'block' : 'none';
       }
@@ -1706,7 +1754,7 @@
       if (map) {
         setTimeout(() => map.invalidateSize(), 200);
       }
-      updateControlsSummary();
+      syncControlsChrome();
     }
 
     function normaliseText(s) {
@@ -3774,9 +3822,11 @@
       const websiteLink = document.getElementById('selection-website-link');
       if (!card || !nameEl || !metaEl || !cityEl || !etaEl || !directionsBtn || !centerBtn || !websiteLink) return;
 
-      card.style.display = (directionsVisible && window.innerWidth >= 768) ? 'none' : 'block';
-
       const selectedIndex = getSelectedDestinationIndex();
+      const hideForDesktopDirections = directionsVisible && window.innerWidth >= 768;
+      const hideForMobileEmptyState = isCompactMobileLayout() && (selectedIndex === null || !locations[selectedIndex]);
+      card.style.display = (hideForDesktopDirections || hideForMobileEmptyState) ? 'none' : 'block';
+
       if (selectedIndex === null || !locations[selectedIndex]) {
         card.classList.add('is-empty');
         nameEl.textContent = locations.length ? 'Choose a stop' : 'Loading the atlas';
