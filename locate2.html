@@ -153,7 +153,7 @@
     }
 
     #instructions h4 {
-      margin: 0 0 12px;
+      margin: 0;
       font-family: Georgia, "Times New Roman", serif;
       font-size: 24px;
       letter-spacing: 0.01em;
@@ -162,6 +162,34 @@
     #instructions ol {
       margin: 0;
       padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .directions-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .directions-hide-btn {
+      flex: 0 0 auto;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.66);
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .directions-empty {
+      margin: 0;
       color: var(--muted);
       line-height: 1.55;
     }
@@ -1750,6 +1778,9 @@
 
       if (directionsDiv) directionsDiv.style.display = directionsVisible ? 'block' : 'none';
       if (btn) btn.textContent = directionsVisible ? 'Hide directions' : 'Show directions';
+      if (directionsVisible && directionsDiv && directionsDiv.innerHTML.trim() === '') {
+        renderDirectionsPanel(null, 'Choose a destination to see directions.');
+      }
 
       if (mapDiv) {
         if (directionsVisible) {
@@ -3661,6 +3692,46 @@
       setDirectionsVisible(true);
     }
 
+    function renderDirectionsPanel(routeInstructions, emptyMessage = '') {
+      const ins = document.getElementById('instructions');
+      if (!ins) return;
+
+      ins.innerHTML = '';
+
+      const header = document.createElement('div');
+      header.className = 'directions-panel-head';
+
+      const title = document.createElement('h4');
+      title.textContent = 'Directions';
+      header.appendChild(title);
+
+      const hideBtn = document.createElement('button');
+      hideBtn.type = 'button';
+      hideBtn.className = 'directions-hide-btn';
+      hideBtn.textContent = 'Hide directions';
+      header.appendChild(hideBtn);
+
+      ins.appendChild(header);
+
+      if (Array.isArray(routeInstructions) && routeInstructions.length) {
+        const ol = document.createElement('ol');
+        routeInstructions.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item.text;
+          ol.appendChild(li);
+        });
+        ins.appendChild(ol);
+        return;
+      }
+
+      if (emptyMessage) {
+        const msg = document.createElement('p');
+        msg.className = 'directions-empty';
+        msg.textContent = emptyMessage;
+        ins.appendChild(msg);
+      }
+    }
+
     function clearRouteUi() {
       if (routingControl && map) {
         try {
@@ -3675,7 +3746,13 @@
       if (eta) eta.textContent = '--';
 
       const ins = document.getElementById('instructions');
-      if (ins) ins.innerHTML = '';
+      if (ins) {
+        if (directionsVisible) {
+          renderDirectionsPanel(null, 'Choose a destination to see directions.');
+        } else {
+          ins.innerHTML = '';
+        }
+      }
       updateControlsSummary();
     }
 
@@ -3729,15 +3806,7 @@
 
         document.getElementById('time-estimate').textContent = eta;
 
-        const ins = document.getElementById('instructions');
-        ins.innerHTML = '<h4>Directions</h4>';
-        const ol = document.createElement('ol');
-        e.routes[0].instructions.forEach(i => {
-          const li = document.createElement('li');
-          li.textContent = i.text;
-          ol.appendChild(li);
-        });
-        ins.appendChild(ol);
+        renderDirectionsPanel(e.routes[0].instructions);
 
         updateDistanceInfo();
         updateControlsSummary();
@@ -4365,6 +4434,11 @@
 
     document.getElementById('toggle-directions').addEventListener('click', () => {
       setDirectionsVisible(!directionsVisible);
+    });
+
+    document.getElementById('instructions').addEventListener('click', e => {
+      if (!e.target.closest('.directions-hide-btn')) return;
+      setDirectionsVisible(false);
     });
 
     document.getElementById('selection-directions-btn').addEventListener('click', () => {
