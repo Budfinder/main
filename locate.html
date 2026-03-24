@@ -3021,9 +3021,6 @@
       if (!destinationSelect) return;
 
       destinationSelect.value = String(index);
-      if (!directionsVisible) {
-        setDirectionsVisible(true);
-      }
       destinationSelect.dispatchEvent(new Event('change'));
     }
 
