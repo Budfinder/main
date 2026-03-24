@@ -1223,7 +1223,7 @@
 
       #selection-card {
         top: auto;
-        bottom: calc(env(safe-area-inset-bottom) + 58px);
+        bottom: max(10px, env(safe-area-inset-bottom));
         left: 12px;
         right: 12px;
         width: auto;
@@ -1301,7 +1301,7 @@
       }
 
       body.mobile-selection-visible #map {
-        bottom: calc(env(safe-area-inset-bottom) + 208px);
+        bottom: calc(env(safe-area-inset-bottom) + 160px);
       }
 
       .controls {
@@ -1477,7 +1477,7 @@
 
     body.compact-layout #selection-card {
       top: auto;
-      bottom: calc(env(safe-area-inset-bottom) + 58px);
+      bottom: max(10px, env(safe-area-inset-bottom));
       left: 12px;
       right: 12px;
       width: auto;
@@ -1551,11 +1551,11 @@
     }
 
     body.compact-layout.mobile-selection-visible #map {
-      bottom: calc(env(safe-area-inset-bottom) + 208px);
+      bottom: calc(env(safe-area-inset-bottom) + 160px);
     }
 
     body.compact-layout.selection-card-collapsed.mobile-selection-visible #map {
-      bottom: calc(env(safe-area-inset-bottom) + 92px);
+      bottom: calc(env(safe-area-inset-bottom) + 56px);
     }
 
     body.compact-landscape-layout #selection-card {
