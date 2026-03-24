@@ -1346,6 +1346,255 @@
       }
     }
 
+    body.compact-layout #map {
+      display: none;
+      position: absolute;
+      top: 96px;
+      left: 12px;
+      right: 12px;
+      bottom: 14px;
+    }
+
+    body.compact-layout #instructions {
+      display: none;
+      position: absolute;
+      bottom: 14px;
+      left: 12px;
+      right: 12px;
+      height: 42%;
+      width: auto;
+    }
+
+    body.compact-layout .controls select,
+    body.compact-layout .controls input[type="text"],
+    body.compact-layout .controls input[type="search"] {
+      font-size: 16px;
+    }
+
+    body.compact-layout #hero-banner {
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      width: auto;
+      padding: 12px 14px;
+    }
+
+    body.compact-layout #hero-banner h1 {
+      margin: 8px 0 0;
+      font-size: 24px;
+    }
+
+    body.compact-layout .hero-copy,
+    body.compact-layout .hero-stats {
+      display: none;
+    }
+
+    body.compact-layout .hero-meta-row {
+      margin-top: 8px;
+    }
+
+    body.compact-layout .hero-meta-pill {
+      min-height: 28px;
+      font-size: 11px;
+    }
+
+    body.compact-layout.hero-banner-collapsed #hero-banner {
+      right: auto;
+      padding: 10px 12px;
+      cursor: pointer;
+      max-width: calc(100vw - 24px);
+    }
+
+    body.compact-layout #selection-card {
+      top: auto;
+      bottom: calc(env(safe-area-inset-bottom) + 58px);
+      left: 12px;
+      right: 12px;
+      width: auto;
+      min-width: 0;
+      padding: 10px 12px;
+      max-height: none;
+      overflow: visible;
+    }
+
+    body.compact-layout .selection-eyebrow {
+      display: none;
+    }
+
+    body.compact-layout #selection-card h2 {
+      font-size: 16px;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body.compact-layout #selected-destination-meta {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+    }
+
+    body.compact-layout .selection-chip-row {
+      margin-top: 6px;
+      gap: 6px;
+    }
+
+    body.compact-layout .selection-chip {
+      min-height: 24px;
+      padding: 0 8px;
+      font-size: 11px;
+    }
+
+    body.compact-layout .selection-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    body.compact-layout .selection-actions button,
+    body.compact-layout .selection-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 8px;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.15;
+      white-space: normal;
+      word-break: break-word;
+      min-width: 0;
+    }
+
+    body.compact-layout .selection-actions .selection-link {
+      grid-column: 1 / -1;
+    }
+
+    body.compact-layout.hero-banner-collapsed #map {
+      top: 70px;
+    }
+
+    body.compact-layout.mobile-selection-visible #map {
+      bottom: calc(env(safe-area-inset-bottom) + 208px);
+    }
+
+    body.compact-layout .controls {
+      top: auto;
+      left: 12px;
+      right: 12px;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      width: auto;
+      max-width: none;
+      max-height: min(62dvh, 540px);
+      padding: 0;
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    body.compact-layout .controls-header {
+      align-items: flex-start;
+      padding: 14px 14px 12px;
+      cursor: pointer;
+    }
+
+    body.compact-layout .controls-header-main {
+      cursor: pointer;
+    }
+
+    body.compact-layout .controls-content {
+      max-height: calc(min(62dvh, 540px) - 86px);
+      overflow-y: auto;
+      padding: 0 14px 14px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+
+    body.compact-layout .field-grid,
+    body.compact-layout .panel-metric {
+      grid-template-columns: 1fr;
+    }
+
+    body.compact-layout .controls-hide {
+      width: auto;
+      min-height: 34px;
+      padding: 0 10px;
+    }
+
+    body.compact-layout .controls.is-collapsed {
+      max-height: none;
+      overflow: visible;
+      box-shadow: var(--shadow-md);
+    }
+
+    body.compact-layout .controls.is-collapsed .controls-header {
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 0;
+      cursor: pointer;
+    }
+
+    body.compact-layout .controls.is-collapsed .controls-header-main {
+      cursor: pointer;
+    }
+
+    body.compact-layout .controls.is-collapsed .controls-handle {
+      margin-bottom: 6px;
+    }
+
+    body.compact-layout .controls.is-collapsed .controls-content {
+      display: none;
+    }
+
+    body.compact-layout #ui-toggles {
+      right: 10px;
+      bottom: max(10px, env(safe-area-inset-bottom));
+    }
+
+    body.compact-layout #ui-toggles button {
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+
+    body.compact-layout #strain-list-panel {
+      max-height: min(34dvh, 280px);
+    }
+
+    body.compact-layout #strain-list {
+      max-height: min(180px, calc(34dvh - 92px));
+      min-height: 148px;
+    }
+
+    body.compact-layout #category-filters {
+      grid-template-columns: 1fr;
+    }
+
+    body.compact-layout.mobile-controls-open #hero-banner,
+    body.compact-layout.mobile-controls-open #selection-card,
+    body.compact-layout.mobile-directions-open #hero-banner,
+    body.compact-layout.mobile-directions-open #selection-card {
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+    }
+
+    body.compact-layout.mobile-controls-open #map,
+    body.compact-layout.mobile-directions-open #map {
+      top: 12px;
+      bottom: 14px;
+    }
+
+    body.compact-layout.mobile-controls-open .controls-backdrop {
+      display: block;
+    }
+
     /* =========================================================
        NEW: Logo marker styling (purely visual polish)
        =========================================================
@@ -1854,6 +2103,10 @@
          viewport.height <= 560);
     }
 
+    function syncCompactLayoutState() {
+      document.body.classList.toggle('compact-layout', isCompactMobileLayout());
+    }
+
     function getControlsToggleLabel() {
       if (isCompactMobileLayout()) {
         return 'Atlas';
@@ -1907,6 +2160,7 @@
     }
 
     function syncControlsChrome() {
+      syncCompactLayoutState();
       const btn = document.getElementById('toggle-controls');
       const uiToggles = document.getElementById('ui-toggles');
       const backdrop = document.getElementById('controls-backdrop');
@@ -5001,6 +5255,7 @@
     });
 
     function handleViewportResize() {
+      syncCompactLayoutState();
       if (directionsVisible) {
         setDirectionsVisible(true);
       } else {
@@ -5024,8 +5279,8 @@
 
     loadPersonalisation();
     applyPersonalisation();
-    syncHeroBannerState();
-    updateControlsSummary();
+    syncCompactLayoutState();
+    syncControlsChrome();
     bootstrapInitialCsvLoad();
 
     // Optional: probe DB routes early so status is visible before CSV upload.
