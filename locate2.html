@@ -1929,25 +1929,9 @@
     </div>
     <div class="controls-content">
       <section class="panel-section">
-        <span class="panel-kicker">Personalize</span>
-        <p class="panel-copy">Give this version a little character so it feels like your map, not just a tool.</p>
-        <div class="field-grid">
-          <label class="field-label" for="display-name-input">
-            Explorer name
-            <input id="display-name-input" type="text" maxlength="24" placeholder="Explorer" />
-          </label>
-          <label class="field-label" for="accent-select">
-            Accent
-            <select id="accent-select">
-              <option value="moss">Moss</option>
-              <option value="amber">Amber</option>
-              <option value="lagoon">Lagoon</option>
-              <option value="ember">Ember</option>
-            </select>
-          </label>
-        </div>
-        <div class="button-row">
-          <button id="reset-personalisation-btn" type="button" class="secondary-btn">Reset look</button>
+        <span class="panel-kicker">Category filters</span>
+        <div id="category-filters">
+          <!-- Checkboxes injected here by JS -->
         </div>
       </section>
 
@@ -1985,22 +1969,6 @@
       </section>
 
       <section class="panel-section">
-        <span class="panel-kicker">Source</span>
-        <div id="csv-switch-wrap" style="display:none;">
-          <label for="csv-switch-select">Location CSV</label>
-          <select id="csv-switch-select"></select>
-        </div>
-        <div id="db-status" style="display:none; margin-top:10px; font-size:12px; color:#444;"></div>
-      </section>
-
-      <section class="panel-section">
-        <span class="panel-kicker">Filters</span>
-        <div id="category-filters">
-          <!-- Checkboxes injected here by JS -->
-        </div>
-      </section>
-
-      <section class="panel-section">
         <span class="panel-kicker">Strain radar</span>
         <div id="strain-list-panel">
           <div class="strain-list-head">
@@ -2015,6 +1983,38 @@
           <button id="clear-strain-btn" type="button" class="secondary-btn">Clear strain filter</button>
         </div>
         <div id="strain-status" style="margin-top:8px; font-size:12px; color:#444;">Strain filter: off</div>
+      </section>
+
+      <section class="panel-section">
+        <span class="panel-kicker">Source</span>
+        <div id="csv-switch-wrap" style="display:none;">
+          <label for="csv-switch-select">Location CSV</label>
+          <select id="csv-switch-select"></select>
+        </div>
+        <div id="db-status" style="display:none; margin-top:10px; font-size:12px; color:#444;"></div>
+      </section>
+
+      <section class="panel-section">
+        <span class="panel-kicker">Personalise</span>
+        <p class="panel-copy">Give this version a little character so it feels like your map, not just a tool.</p>
+        <div class="field-grid">
+          <label class="field-label" for="display-name-input">
+            Explorer name
+            <input id="display-name-input" type="text" maxlength="24" placeholder="Explorer" />
+          </label>
+          <label class="field-label" for="accent-select">
+            Accent
+            <select id="accent-select">
+              <option value="moss">Moss</option>
+              <option value="amber">Amber</option>
+              <option value="lagoon">Lagoon</option>
+              <option value="ember">Ember</option>
+            </select>
+          </label>
+        </div>
+        <div class="button-row">
+          <button id="reset-personalisation-btn" type="button" class="secondary-btn">Reset look</button>
+        </div>
       </section>
     </div>
   </div>
@@ -4279,7 +4279,7 @@
             `<a href="${loc.website}" target="_blank">Website</a><br>` +
             `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
             `<button class="fav-btn" data-index="${i}">` +
-              `${favorites.includes(i) ? 'Remove from Favorites' : 'Add to Favorites'}` +
+              `${favorites.includes(i) ? 'Remove from Favourites' : 'Add to Favourites'}` +
             `</button>` +
             `<br>` +
             `<label><input type="checkbox" class="visited-checkbox" data-index="${i}" ${loc.visited ? 'checked' : ''}> Visited</label><br>` +
@@ -5297,7 +5297,7 @@
         } else if (favorites.length < 10) {
           favorites.push(i);
         } else {
-          return alert('Maximum of 10 favorites reached.');
+          return alert('Maximum of 10 favourites reached.');
         }
 
         localStorage.setItem('favorites', JSON.stringify(favorites));
@@ -5305,8 +5305,8 @@
         updateControlsSummary();
 
         e.target.textContent = favorites.includes(i)
-          ? 'Remove from Favorites'
-          : 'Add to Favorites';
+          ? 'Remove from Favourites'
+          : 'Add to Favourites';
       }
     });
 
