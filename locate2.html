@@ -1887,7 +1887,7 @@
   </section>
 
   <section id="selection-card" class="overlay-card is-empty">
-    <div class="selection-card-head">
+    <div id="selection-card-head" class="selection-card-head" role="button" tabindex="0" aria-controls="selection-card-body" aria-expanded="true" aria-label="Toggle selected destination card">
       <div class="selection-card-head-copy">
         <span class="selection-eyebrow">Selected destination</span>
         <h2 id="selected-destination-name">Choose a stop</h2>
@@ -2324,6 +2324,11 @@
 
       if (card) {
         card.classList.toggle('is-collapsed', selectionCardCollapsed && hasSelection);
+      }
+
+      const head = document.getElementById('selection-card-head');
+      if (head) {
+        head.setAttribute('aria-expanded', selectionCardCollapsed ? 'false' : 'true');
       }
     }
 
@@ -5423,10 +5428,26 @@
       setDirectionsVisible(false);
     });
 
+    function toggleSelectionCardFromUi() {
+      const card = document.getElementById('selection-card');
+      if (!card || card.classList.contains('is-empty') || card.style.display === 'none') return;
+      setSelectionCardCollapsed(!selectionCardCollapsed);
+    }
+
     document.getElementById('selection-card-toggle').addEventListener('click', e => {
       e.stopPropagation();
-      if (!isCompactLandscapeLayout()) return;
-      setSelectionCardCollapsed(!selectionCardCollapsed);
+      toggleSelectionCardFromUi();
+    });
+
+    document.getElementById('selection-card-head').addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      toggleSelectionCardFromUi();
+    });
+
+    document.getElementById('selection-card-head').addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      toggleSelectionCardFromUi();
     });
 
     document.getElementById('selection-directions-btn').addEventListener('click', () => {
