@@ -367,6 +367,18 @@
       padding: 18px 18px 16px;
     }
 
+    .selection-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .selection-card-head-copy {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
     #map,
     .controls {
       transition: left 220ms ease, right 220ms ease, top 220ms ease, bottom 220ms ease, opacity 180ms ease, transform 220ms ease;
@@ -413,11 +425,26 @@
       letter-spacing: -0.03em;
     }
 
+    .selection-card-summary {
+      display: none;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     #selected-destination-meta {
       margin: 10px 0 0;
       color: var(--muted);
       font-size: 14px;
       line-height: 1.5;
+    }
+
+    .selection-card-body {
+      margin-top: 10px;
     }
 
     .selection-chip-row {
@@ -470,6 +497,24 @@
       opacity: 0.48;
       cursor: not-allowed;
       transform: none;
+      box-shadow: none;
+    }
+
+    .selection-card-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 114, 96, 0.16);
+      background: rgba(255, 255, 255, 0.58);
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
       box-shadow: none;
     }
 
@@ -1493,6 +1538,66 @@
       bottom: calc(env(safe-area-inset-bottom) + 208px);
     }
 
+    body.compact-landscape-layout #selection-card {
+      left: 12px;
+      right: 12px;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      width: auto;
+      min-width: 0;
+      padding: 12px 14px;
+    }
+
+    body.compact-landscape-layout .selection-card-head {
+      align-items: center;
+      gap: 10px;
+    }
+
+    body.compact-landscape-layout .selection-card-summary {
+      display: block;
+    }
+
+    body.compact-landscape-layout .selection-card-toggle {
+      display: inline-flex;
+    }
+
+    body.compact-landscape-layout #selection-card h2 {
+      font-size: 18px;
+    }
+
+    body.compact-landscape-layout .selection-card-body {
+      margin-top: 8px;
+    }
+
+    body.compact-landscape-layout #selected-destination-meta {
+      margin-top: 0;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    body.compact-landscape-layout .selection-chip-row {
+      margin-top: 8px;
+    }
+
+    body.compact-landscape-layout .selection-actions {
+      margin-top: 10px;
+    }
+
+    body.compact-landscape-layout.mobile-selection-visible #map {
+      bottom: calc(env(safe-area-inset-bottom) + 176px);
+    }
+
+    body.compact-landscape-layout.selection-card-collapsed #selection-card .selection-card-body {
+      display: none;
+    }
+
+    body.compact-landscape-layout.selection-card-collapsed #selection-card {
+      padding-bottom: 12px;
+    }
+
+    body.compact-landscape-layout.selection-card-collapsed.mobile-selection-visible #map {
+      bottom: calc(env(safe-area-inset-bottom) + 92px);
+    }
+
     body.compact-layout .controls {
       top: auto;
       left: 12px;
@@ -1770,17 +1875,25 @@
   </section>
 
   <section id="selection-card" class="overlay-card is-empty">
-    <span class="selection-eyebrow">Selected destination</span>
-    <h2 id="selected-destination-name">Choose a stop</h2>
-    <p id="selected-destination-meta">Tap a marker, pick a destination, or use nearest to start the run.</p>
-    <div class="selection-chip-row">
-      <span class="selection-chip" id="selected-destination-city">No city yet</span>
-      <span class="selection-chip" id="selected-destination-eta">ETA --</span>
+    <div class="selection-card-head">
+      <div class="selection-card-head-copy">
+        <span class="selection-eyebrow">Selected destination</span>
+        <h2 id="selected-destination-name">Choose a stop</h2>
+        <span id="selection-card-summary" class="selection-card-summary">No city yet · ETA --</span>
+      </div>
+      <button id="selection-card-toggle" class="selection-card-toggle" type="button" hidden>Collapse</button>
     </div>
-    <div class="selection-actions">
-      <button id="selection-directions-btn" type="button">Show directions</button>
-      <button id="selection-center-btn" type="button" class="ghost-btn">Focus map</button>
-      <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
+    <div id="selection-card-body" class="selection-card-body">
+      <p id="selected-destination-meta">Tap a marker, pick a destination, or use nearest to start the run.</p>
+      <div class="selection-chip-row">
+        <span class="selection-chip" id="selected-destination-city">No city yet</span>
+        <span class="selection-chip" id="selected-destination-eta">ETA --</span>
+      </div>
+      <div class="selection-actions">
+        <button id="selection-directions-btn" type="button">Show directions</button>
+        <button id="selection-center-btn" type="button" class="ghost-btn">Focus map</button>
+        <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
+      </div>
     </div>
   </section>
 
@@ -1914,7 +2027,10 @@
     let controlsCollapsed = false; // collapsed atlas state across layouts
     let directionsVisible = false; // directions panel visibility
     let heroBannerCollapsed = getViewportSize().width < 768; // compact hero banner state
+    let selectionCardCollapsed = false; // compact landscape destination card state
+    let previousCompactLandscapeLayout = false;
     let strainListVisible = true; // strain list panel visibility
+    let viewportResyncTimers = [];
 
     // Favourite indices stored in localStorage
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -2097,23 +2213,104 @@
 
     function getViewportSize() {
       const visualViewport = window.visualViewport;
+      const docEl = document.documentElement;
+      const body = document.body;
+      const widths = [
+        visualViewport && Number.isFinite(visualViewport.width) ? visualViewport.width : null,
+        docEl && Number.isFinite(docEl.clientWidth) ? docEl.clientWidth : null,
+        body && Number.isFinite(body.clientWidth) ? body.clientWidth : null,
+        Number.isFinite(window.innerWidth) ? window.innerWidth : null
+      ].filter(v => Number.isFinite(v) && v > 0);
+      const heights = [
+        visualViewport && Number.isFinite(visualViewport.height) ? visualViewport.height : null,
+        docEl && Number.isFinite(docEl.clientHeight) ? docEl.clientHeight : null,
+        body && Number.isFinite(body.clientHeight) ? body.clientHeight : null,
+        Number.isFinite(window.innerHeight) ? window.innerHeight : null
+      ].filter(v => Number.isFinite(v) && v > 0);
       return {
-        width: visualViewport && Number.isFinite(visualViewport.width) ? visualViewport.width : window.innerWidth,
-        height: visualViewport && Number.isFinite(visualViewport.height) ? visualViewport.height : window.innerHeight
+        width: widths.length ? Math.min(...widths) : window.innerWidth,
+        height: heights.length ? Math.min(...heights) : window.innerHeight
       };
+    }
+
+    function syncViewportCssVars() {
+      const root = document.documentElement;
+      if (!root) return;
+
+      const viewport = getViewportSize();
+      const viewportHeight = Math.max(240, Math.round(viewport.height));
+      const controlsMaxHeight = Math.max(180, viewportHeight - 48);
+      const controlsContentMaxHeight = Math.max(120, controlsMaxHeight - 70);
+      const mobileControlsMaxHeight = Math.min(540, Math.max(220, viewportHeight - 24));
+      const mobileControlsContentMaxHeight = Math.max(134, mobileControlsMaxHeight - 86);
+      const strainPanelMaxHeight = Math.min(320, Math.max(240, Math.round(viewportHeight * 0.38)));
+      const strainListMaxHeight = Math.max(144, Math.min(200, strainPanelMaxHeight - 96));
+      const mobileStrainPanelMaxHeight = Math.min(280, Math.max(240, Math.round(viewportHeight * 0.34)));
+      const mobileStrainListMaxHeight = Math.max(148, Math.min(180, mobileStrainPanelMaxHeight - 92));
+
+      root.style.setProperty('--app-viewport-height', `${viewportHeight}px`);
+      root.style.setProperty('--app-controls-max-height', `${controlsMaxHeight}px`);
+      root.style.setProperty('--app-controls-content-max-height', `${controlsContentMaxHeight}px`);
+      root.style.setProperty('--app-strain-panel-max-height', `${strainPanelMaxHeight}px`);
+      root.style.setProperty('--app-strain-list-max-height', `${strainListMaxHeight}px`);
+      root.style.setProperty('--app-mobile-controls-max-height', `${mobileControlsMaxHeight}px`);
+      root.style.setProperty('--app-mobile-controls-content-max-height', `${mobileControlsContentMaxHeight}px`);
+      root.style.setProperty('--app-mobile-strain-panel-max-height', `${mobileStrainPanelMaxHeight}px`);
+      root.style.setProperty('--app-mobile-strain-list-max-height', `${mobileStrainListMaxHeight}px`);
     }
 
     function isCompactMobileLayout() {
       const viewport = getViewportSize();
       const isLandscape = viewport.width > viewport.height;
+      const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+      const screenShortSide = Math.min(
+        (window.screen && Number.isFinite(window.screen.width) ? window.screen.width : viewport.width),
+        (window.screen && Number.isFinite(window.screen.height) ? window.screen.height : viewport.height)
+      );
       return viewport.width < 768 ||
-        (window.matchMedia('(pointer: coarse)').matches &&
+        (coarsePointer &&
          isLandscape &&
-         viewport.height <= 560);
+         (viewport.height <= 560 || screenShortSide <= 500));
+    }
+
+    function isCompactLandscapeLayout() {
+      const viewport = getViewportSize();
+      return isCompactMobileLayout() && viewport.width > viewport.height;
     }
 
     function syncCompactLayoutState() {
       document.body.classList.toggle('compact-layout', isCompactMobileLayout());
+    }
+
+    function syncSelectionCardChrome() {
+      const isLandscapeCompact = isCompactLandscapeLayout();
+      const card = document.getElementById('selection-card');
+      const toggleBtn = document.getElementById('selection-card-toggle');
+      const summaryEl = document.getElementById('selection-card-summary');
+      const hasSelection = !!(card && card.style.display !== 'none' && !card.classList.contains('is-empty'));
+
+      if (isLandscapeCompact !== previousCompactLandscapeLayout) {
+        selectionCardCollapsed = isLandscapeCompact;
+        previousCompactLandscapeLayout = isLandscapeCompact;
+      }
+
+      document.body.classList.toggle('compact-landscape-layout', isLandscapeCompact);
+      document.body.classList.toggle('selection-card-collapsed', isLandscapeCompact && selectionCardCollapsed && hasSelection);
+
+      if (summaryEl) {
+        summaryEl.hidden = !isLandscapeCompact;
+      }
+
+      if (toggleBtn) {
+        const canToggle = isLandscapeCompact && hasSelection;
+        toggleBtn.hidden = !canToggle;
+        toggleBtn.textContent = selectionCardCollapsed ? 'Expand' : 'Collapse';
+        toggleBtn.setAttribute('aria-expanded', selectionCardCollapsed ? 'false' : 'true');
+      }
+
+      if (card) {
+        card.classList.toggle('is-collapsed', isLandscapeCompact && selectionCardCollapsed && hasSelection);
+      }
     }
 
     function getControlsToggleLabel() {
@@ -2169,6 +2366,7 @@
     }
 
     function syncControlsChrome() {
+      syncViewportCssVars();
       syncCompactLayoutState();
       const btn = document.getElementById('toggle-controls');
       const uiToggles = document.getElementById('ui-toggles');
@@ -2220,6 +2418,17 @@
       }
       if (isCompactMobileLayout() && !heroBannerCollapsed) {
         setHeroBannerCollapsed(true);
+      }
+      if (isCompactLandscapeLayout() && !selectionCardCollapsed) {
+        setSelectionCardCollapsed(true);
+      }
+    }
+
+    function setSelectionCardCollapsed(collapsed) {
+      selectionCardCollapsed = isCompactLandscapeLayout() ? !!collapsed : false;
+      syncSelectionCardChrome();
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 180);
       }
     }
 
@@ -4655,13 +4864,14 @@
     function updateSelectionCard() {
       const card = document.getElementById('selection-card');
       const nameEl = document.getElementById('selected-destination-name');
+      const summaryEl = document.getElementById('selection-card-summary');
       const metaEl = document.getElementById('selected-destination-meta');
       const cityEl = document.getElementById('selected-destination-city');
       const etaEl = document.getElementById('selected-destination-eta');
       const directionsBtn = document.getElementById('selection-directions-btn');
       const centerBtn = document.getElementById('selection-center-btn');
       const websiteLink = document.getElementById('selection-website-link');
-      if (!card || !nameEl || !metaEl || !cityEl || !etaEl || !directionsBtn || !centerBtn || !websiteLink) return;
+      if (!card || !nameEl || !summaryEl || !metaEl || !cityEl || !etaEl || !directionsBtn || !centerBtn || !websiteLink) return;
 
       const selectedIndex = getSelectedDestinationIndex();
       const hideForDesktopDirections = directionsVisible && !isCompactMobileLayout();
@@ -4678,6 +4888,7 @@
       if (selectedIndex === null || !locations[selectedIndex]) {
         card.classList.add('is-empty');
         nameEl.textContent = locations.length ? 'Choose a stop' : 'Loading the atlas';
+        summaryEl.textContent = locations.length ? `${locations.length} spots loaded` : 'Waiting for locations';
         metaEl.textContent = locations.length
           ? 'Tap a marker, pick a destination, or use nearest to start the run.'
           : 'Once the CSV loads, this card will keep the active destination in view.';
@@ -4688,6 +4899,7 @@
         centerBtn.disabled = true;
         websiteLink.hidden = true;
         websiteLink.removeAttribute('href');
+        syncSelectionCardChrome();
         syncDesktopTogglePosition();
         return;
       }
@@ -4710,6 +4922,7 @@
       cityEl.textContent = loc.city || inferCityFromCsvPath(currentCsvPath) || 'Selected area';
       const etaValue = (document.getElementById('time-estimate') && document.getElementById('time-estimate').textContent) || '--';
       etaEl.textContent = `ETA ${etaValue}`;
+      summaryEl.textContent = `${cityEl.textContent} · ETA ${etaValue}`;
       directionsBtn.disabled = !lastPosition;
       directionsBtn.textContent = directionsVisible ? 'Hide directions' : 'Show directions';
       centerBtn.disabled = false;
@@ -4722,6 +4935,7 @@
         websiteLink.removeAttribute('href');
       }
 
+      syncSelectionCardChrome();
       syncDesktopTogglePosition();
     }
 
@@ -5190,6 +5404,12 @@
       setDirectionsVisible(false);
     });
 
+    document.getElementById('selection-card-toggle').addEventListener('click', e => {
+      e.stopPropagation();
+      if (!isCompactLandscapeLayout()) return;
+      setSelectionCardCollapsed(!selectionCardCollapsed);
+    });
+
     document.getElementById('selection-directions-btn').addEventListener('click', () => {
       const selectedIndex = getSelectedDestinationIndex();
       if (selectedIndex === null) {
@@ -5264,6 +5484,7 @@
     });
 
     function handleViewportResize() {
+      syncViewportCssVars();
       syncCompactLayoutState();
       if (directionsVisible) {
         setDirectionsVisible(true);
@@ -5280,7 +5501,25 @@
       }
     }
 
+    function scheduleViewportResync(delays = [0, 120, 360]) {
+      viewportResyncTimers.forEach(timerId => window.clearTimeout(timerId));
+      viewportResyncTimers = [];
+      delays.forEach(delay => {
+        const timerId = window.setTimeout(() => {
+          handleViewportResize();
+        }, delay);
+        viewportResyncTimers.push(timerId);
+      });
+    }
+
     window.addEventListener('resize', handleViewportResize);
+    window.addEventListener('orientationchange', () => scheduleViewportResync([0, 160, 420]));
+    window.addEventListener('pageshow', () => scheduleViewportResync([0, 120, 360]));
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        scheduleViewportResync([0, 120, 360]);
+      }
+    });
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', handleViewportResize);
       window.visualViewport.addEventListener('scroll', handleViewportResize);
@@ -5288,8 +5527,10 @@
 
     loadPersonalisation();
     applyPersonalisation();
+    syncViewportCssVars();
     syncCompactLayoutState();
     syncControlsChrome();
+    scheduleViewportResync([160, 420]);
     bootstrapInitialCsvLoad();
 
     // Optional: probe DB routes early so status is visible before CSV upload.
