@@ -281,7 +281,8 @@
     }
 
     #strain-list-panel {
-      display: block;
+      display: flex;
+      flex-direction: column;
       width: 100%;
       max-width: 100%;
       max-height: 240px;
@@ -293,6 +294,7 @@
       box-shadow: inset 0 0 3px rgba(0,0,0,0.05);
       font-family: sans-serif;
       box-sizing: border-box;
+      overflow: hidden;
     }
 
     .strain-list-head {
@@ -316,12 +318,16 @@
     }
 
     #strain-list {
+      flex: 1 1 auto;
+      min-height: 0;
       max-height: 140px;
       overflow-y: auto;
+      overscroll-behavior: contain;
       border: 1px solid #ececec;
       border-radius: 6px;
       background: #fafafa;
       padding: 4px;
+      box-sizing: border-box;
     }
 
     .strain-item {
@@ -2034,7 +2040,7 @@
     function setStrainListVisible(show) {
       strainListVisible = !!show;
       const panel = document.getElementById('strain-list-panel');
-      if (panel) panel.style.display = strainListVisible ? 'block' : 'none';
+      if (panel) panel.style.display = strainListVisible ? 'flex' : 'none';
       if (strainListVisible) {
         populateStrainListPanel();
       }

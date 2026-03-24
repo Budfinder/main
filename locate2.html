@@ -38,6 +38,7 @@
       --radius-xl: 28px;
       --radius-lg: 20px;
       --radius-md: 14px;
+      --app-controls-header-height: 92px;
       --app-viewport-height: 100vh;
       --app-controls-max-height: calc(100vh - 48px);
       --app-controls-content-max-height: calc(100vh - 118px);
@@ -649,10 +650,12 @@
     }
 
     .controls-content {
-      padding: 0 18px 18px;
+      padding: 0 18px max(24px, env(safe-area-inset-bottom) + 18px);
       overflow-y: auto;
       max-height: var(--app-controls-content-max-height);
       scrollbar-width: thin;
+      scroll-padding-bottom: max(24px, env(safe-area-inset-bottom) + 18px);
+      overscroll-behavior: contain;
     }
 
     .controls.is-collapsed {
@@ -1331,9 +1334,10 @@
       .controls-content {
         max-height: var(--app-mobile-controls-content-max-height);
         overflow-y: auto;
-        padding: 0 14px 14px;
+        padding: 0 14px max(24px, env(safe-area-inset-bottom) + 16px);
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
+        scroll-padding-bottom: max(24px, env(safe-area-inset-bottom) + 16px);
       }
 
       .field-grid,
@@ -1637,9 +1641,10 @@
     body.compact-layout .controls-content {
       max-height: var(--app-mobile-controls-content-max-height);
       overflow-y: auto;
-      padding: 0 14px 14px;
+      padding: 0 14px max(24px, env(safe-area-inset-bottom) + 16px);
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
+      scroll-padding-bottom: max(24px, env(safe-area-inset-bottom) + 16px);
     }
 
     body.compact-layout .field-grid,
@@ -2009,6 +2014,8 @@
               <option value="amber">Amber</option>
               <option value="lagoon">Lagoon</option>
               <option value="ember">Ember</option>
+              <option value="west-ham">West Ham</option>
+              <option value="spurs">Spurs</option>
             </select>
           </label>
         </div>
@@ -2120,6 +2127,18 @@
         accentStrong: '#7f3925',
         accentSoft: 'rgba(184, 93, 61, 0.16)',
         accentGlow: 'rgba(184, 93, 61, 0.28)'
+      },
+      'west-ham': {
+        accent: '#7a263a',
+        accentStrong: '#4d1524',
+        accentSoft: 'rgba(122, 38, 58, 0.18)',
+        accentGlow: 'rgba(29, 164, 214, 0.24)'
+      },
+      spurs: {
+        accent: '#132257',
+        accentStrong: '#0a1438',
+        accentSoft: 'rgba(19, 34, 87, 0.18)',
+        accentGlow: 'rgba(132, 170, 214, 0.24)'
       }
     };
     let personalisation = {
@@ -2251,15 +2270,20 @@
 
       const viewport = getViewportSize();
       const viewportHeight = Math.max(240, Math.round(viewport.height));
+      const controlsHeader = document.getElementById('controls-header');
+      const measuredHeaderHeight = controlsHeader
+        ? Math.max(74, Math.round(controlsHeader.getBoundingClientRect().height))
+        : 92;
       const controlsMaxHeight = Math.max(180, viewportHeight - 48);
-      const controlsContentMaxHeight = Math.max(120, controlsMaxHeight - 70);
+      const controlsContentMaxHeight = Math.max(120, controlsMaxHeight - measuredHeaderHeight - 8);
       const mobileControlsMaxHeight = Math.min(540, Math.max(220, viewportHeight - 24));
-      const mobileControlsContentMaxHeight = Math.max(134, mobileControlsMaxHeight - 86);
+      const mobileControlsContentMaxHeight = Math.max(120, mobileControlsMaxHeight - measuredHeaderHeight - 8);
       const strainPanelMaxHeight = Math.min(320, Math.max(240, Math.round(viewportHeight * 0.38)));
       const strainListMaxHeight = Math.max(144, Math.min(200, strainPanelMaxHeight - 96));
       const mobileStrainPanelMaxHeight = Math.min(280, Math.max(240, Math.round(viewportHeight * 0.34)));
       const mobileStrainListMaxHeight = Math.max(148, Math.min(180, mobileStrainPanelMaxHeight - 92));
 
+      root.style.setProperty('--app-controls-header-height', `${measuredHeaderHeight}px`);
       root.style.setProperty('--app-viewport-height', `${viewportHeight}px`);
       root.style.setProperty('--app-controls-max-height', `${controlsMaxHeight}px`);
       root.style.setProperty('--app-controls-content-max-height', `${controlsContentMaxHeight}px`);
