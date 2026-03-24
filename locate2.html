@@ -501,7 +501,7 @@
     }
 
     .selection-card-toggle {
-      display: none;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       min-height: 34px;
@@ -518,7 +518,23 @@
       box-shadow: none;
     }
 
+    #selection-card.is-collapsed .selection-card-summary {
+      display: block;
+    }
+
+    #selection-card.is-collapsed .selection-card-body {
+      display: none;
+    }
+
+    #selection-card.is-collapsed {
+      padding-bottom: 12px;
+    }
+
     #selection-card.is-empty .selection-link {
+      display: none;
+    }
+
+    #selection-card.is-empty .selection-card-toggle {
       display: none;
     }
 
@@ -1538,6 +1554,10 @@
       bottom: calc(env(safe-area-inset-bottom) + 208px);
     }
 
+    body.compact-layout.selection-card-collapsed.mobile-selection-visible #map {
+      bottom: calc(env(safe-area-inset-bottom) + 92px);
+    }
+
     body.compact-landscape-layout #selection-card {
       left: 12px;
       right: 12px;
@@ -1584,14 +1604,6 @@
 
     body.compact-landscape-layout.mobile-selection-visible #map {
       bottom: calc(env(safe-area-inset-bottom) + 176px);
-    }
-
-    body.compact-landscape-layout.selection-card-collapsed #selection-card .selection-card-body {
-      display: none;
-    }
-
-    body.compact-landscape-layout.selection-card-collapsed #selection-card {
-      padding-bottom: 12px;
     }
 
     body.compact-landscape-layout.selection-card-collapsed.mobile-selection-visible #map {
@@ -2290,26 +2302,28 @@
       const hasSelection = !!(card && card.style.display !== 'none' && !card.classList.contains('is-empty'));
 
       if (isLandscapeCompact !== previousCompactLandscapeLayout) {
-        selectionCardCollapsed = isLandscapeCompact;
+        if (isLandscapeCompact) {
+          selectionCardCollapsed = true;
+        }
         previousCompactLandscapeLayout = isLandscapeCompact;
       }
 
       document.body.classList.toggle('compact-landscape-layout', isLandscapeCompact);
-      document.body.classList.toggle('selection-card-collapsed', isLandscapeCompact && selectionCardCollapsed && hasSelection);
+      document.body.classList.toggle('selection-card-collapsed', selectionCardCollapsed && hasSelection);
 
       if (summaryEl) {
-        summaryEl.hidden = !isLandscapeCompact;
+        summaryEl.hidden = !(hasSelection && (isLandscapeCompact || selectionCardCollapsed));
       }
 
       if (toggleBtn) {
-        const canToggle = isLandscapeCompact && hasSelection;
+        const canToggle = hasSelection;
         toggleBtn.hidden = !canToggle;
         toggleBtn.textContent = selectionCardCollapsed ? 'Expand' : 'Collapse';
         toggleBtn.setAttribute('aria-expanded', selectionCardCollapsed ? 'false' : 'true');
       }
 
       if (card) {
-        card.classList.toggle('is-collapsed', isLandscapeCompact && selectionCardCollapsed && hasSelection);
+        card.classList.toggle('is-collapsed', selectionCardCollapsed && hasSelection);
       }
     }
 
@@ -2344,7 +2358,7 @@
       const selectionCard = document.getElementById('selection-card');
       if (!uiToggles) return;
 
-      if (isCompactMobileLayout() || !selectionCard) {
+      if (!selectionCard) {
         uiToggles.style.bottom = '';
         return;
       }
@@ -2361,8 +2375,12 @@
         return;
       }
 
-      const viewportBottom = Math.max(24, Math.round(getViewportSize().height - rect.bottom));
-      uiToggles.style.bottom = `${viewportBottom + Math.round(rect.height) + 16}px`;
+      const isCompact = isCompactMobileLayout();
+      const baseGap = isCompact ? 10 : 24;
+      const cardGap = isCompact ? 10 : 16;
+      const viewportHeight = Math.round(getViewportSize().height);
+      const offsetAboveCard = Math.max(baseGap, viewportHeight - Math.round(rect.top) + cardGap);
+      uiToggles.style.bottom = `${offsetAboveCard}px`;
     }
 
     function syncControlsChrome() {
@@ -2419,14 +2437,15 @@
       if (isCompactMobileLayout() && !heroBannerCollapsed) {
         setHeroBannerCollapsed(true);
       }
-      if (isCompactLandscapeLayout() && !selectionCardCollapsed) {
+      if (isCompactMobileLayout() && !selectionCardCollapsed) {
         setSelectionCardCollapsed(true);
       }
     }
 
     function setSelectionCardCollapsed(collapsed) {
-      selectionCardCollapsed = isCompactLandscapeLayout() ? !!collapsed : false;
+      selectionCardCollapsed = !!collapsed;
       syncSelectionCardChrome();
+      syncDesktopTogglePosition();
       if (map) {
         setTimeout(() => map.invalidateSize(), 180);
       }
