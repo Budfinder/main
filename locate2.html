@@ -2050,6 +2050,7 @@
     let previousCompactLandscapeLayout = false;
     let strainListVisible = true; // strain list panel visibility
     let viewportResyncTimers = [];
+    let uiTogglePositionTimer = null;
 
     // Favourite indices stored in localStorage
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -2412,6 +2413,16 @@
       uiToggles.style.bottom = `${offsetAboveCard}px`;
     }
 
+    function scheduleTogglePositionSync(delay = 0) {
+      if (uiTogglePositionTimer !== null) {
+        window.clearTimeout(uiTogglePositionTimer);
+      }
+      uiTogglePositionTimer = window.setTimeout(() => {
+        syncDesktopTogglePosition();
+        uiTogglePositionTimer = null;
+      }, delay);
+    }
+
     function syncControlsChrome() {
       syncViewportCssVars();
       syncCompactLayoutState();
@@ -2457,6 +2468,7 @@
         }
       }
       updateControlsSummary();
+      scheduleTogglePositionSync(isMobile ? 240 : 120);
     }
 
     function minimiseControlsForMapFocus() {
@@ -2475,6 +2487,7 @@
       selectionCardCollapsed = !!collapsed;
       syncSelectionCardChrome();
       syncDesktopTogglePosition();
+      scheduleTogglePositionSync(isCompactMobileLayout() ? 240 : 120);
       if (map) {
         setTimeout(() => map.invalidateSize(), 180);
       }
