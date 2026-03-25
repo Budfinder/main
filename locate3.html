@@ -1,0 +1,5913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Bud Finder Atlas</title>
+
+  <!--
+    OPTIONAL:
+    - Update these paths to match your project structure.
+    - Favicon path must exist, or remove this line.
+  -->
+  <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- Routing Machine CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js"></script>
+
+  <style>
+    :root {
+      --bg-top: #f4e5bf;
+      --bg-mid: #e8dcc1;
+      --bg-bottom: #d8e4cf;
+      --sun-wash: rgba(255, 243, 210, 0.92);
+      --mist-wash: rgba(184, 223, 206, 0.7);
+      --resin-glow: rgba(222, 160, 82, 0.34);
+      --panel: rgba(255, 249, 239, 0.84);
+      --panel-strong: rgba(255, 252, 246, 0.94);
+      --panel-border: rgba(98, 113, 95, 0.16);
+      --ink: #203128;
+      --muted: #5b6b61;
+      --accent: #2e7b59;
+      --accent-strong: #205b42;
+      --accent-soft: rgba(46, 123, 89, 0.16);
+      --accent-glow: rgba(46, 123, 89, 0.28);
+      --shadow-lg: 0 22px 60px rgba(29, 42, 32, 0.18);
+      --shadow-md: 0 14px 36px rgba(29, 42, 32, 0.14);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --app-controls-header-height: 92px;
+      --app-viewport-height: 100vh;
+      --app-controls-max-height: calc(100vh - 48px);
+      --app-controls-content-max-height: calc(100vh - 118px);
+      --app-strain-panel-max-height: min(320px, 38vh);
+      --app-strain-list-max-height: min(200px, calc(38vh - 96px));
+      --app-mobile-controls-max-height: min(62dvh, 540px);
+      --app-mobile-controls-content-max-height: calc(min(62dvh, 540px) - 86px);
+      --app-mobile-strain-panel-max-height: min(34dvh, 280px);
+      --app-mobile-strain-list-max-height: min(180px, calc(34dvh - 92px));
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      position: relative;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      background:
+        radial-gradient(circle at 16% 18%, var(--sun-wash), transparent 32%),
+        radial-gradient(circle at 82% 14%, var(--mist-wash), transparent 24%),
+        radial-gradient(circle at 50% 112%, var(--accent-soft), transparent 36%),
+        linear-gradient(165deg, var(--bg-top) 0%, var(--bg-mid) 42%, var(--bg-bottom) 100%);
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 999px;
+      pointer-events: none;
+      filter: blur(14px);
+      opacity: 0.65;
+      z-index: 0;
+    }
+
+    body::before {
+      width: 34vw;
+      height: 34vw;
+      left: -8vw;
+      bottom: -12vw;
+      background: radial-gradient(circle, var(--resin-glow) 0%, transparent 70%);
+    }
+
+    body::after {
+      width: 28vw;
+      height: 28vw;
+      right: -6vw;
+      top: -7vw;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 72%);
+    }
+
+    /* =========================================================
+       Layout
+       ========================================================= */
+
+    /* Desktop layout */
+    @media (min-width: 768px) {
+      #map {
+        display: none;
+        position: absolute;
+        top: 24px;
+        bottom: 24px;
+        left: 408px;
+        right: 24px;
+      }
+      #instructions {
+        display: none;
+        position: absolute;
+        top: 24px;
+        bottom: 24px;
+        right: 24px;
+        width: 392px;
+      }
+
+      .controls.is-collapsed {
+        width: min(286px, calc(100vw - 48px));
+        max-width: min(286px, calc(100vw - 48px));
+      }
+
+      body.desktop-controls-collapsed #map {
+        left: 334px;
+      }
+
+      body.desktop-controls-collapsed #hero-banner {
+        left: 334px;
+        width: min(440px, calc(100vw - 398px));
+      }
+    }
+
+    /* Mobile layout */
+    @media (max-width: 767px), (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+      #map {
+        display: none;
+        position: absolute;
+        top: 110px;
+        left: 12px;
+        right: 12px;
+        bottom: 14px;
+      }
+      #instructions {
+        display: none;
+        position: absolute;
+        bottom: 14px;
+        left: 12px;
+        right: 12px;
+        height: 42%;
+        width: auto;
+      }
+    }
+
+    /* Common styles */
+    #map,
+    #instructions {
+      background: rgba(255, 251, 246, 0.74);
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(18px);
+      z-index: 1;
+    }
+
+    #map {
+      box-sizing: border-box;
+    }
+
+    #instructions {
+      overflow: auto;
+      padding: 20px 20px 24px;
+      box-sizing: border-box;
+      color: var(--ink);
+    }
+
+    #instructions h4 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      letter-spacing: 0.01em;
+    }
+
+    #instructions ol {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .directions-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .directions-hide-btn {
+      flex: 0 0 auto;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.66);
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .directions-empty {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .controls {
+      position: absolute;
+      display: none;           /* hidden until CSV is loaded */
+      top: 24px;
+      left: 24px;
+      width: min(360px, calc(100vw - 48px));
+      max-width: min(360px, calc(100vw - 48px));
+      max-height: var(--app-controls-max-height);
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      z-index: 1002;
+      box-sizing: border-box;
+    }
+
+    .overlay-card {
+      position: absolute;
+      z-index: 1000;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(18px);
+      box-sizing: border-box;
+      color: var(--ink);
+      transition: left 220ms ease, right 220ms ease, top 220ms ease, bottom 220ms ease, opacity 180ms ease, transform 220ms ease;
+    }
+
+    #hero-banner {
+      top: 24px;
+      left: 408px;
+      width: min(440px, calc(100vw - 472px));
+      padding: 18px 20px;
+    }
+
+    .hero-banner-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .hero-banner-content {
+      min-width: 0;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      flex: 1 1 auto;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.54);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #hero-banner h1 {
+      margin: 14px 0 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 3vw, 42px);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      max-width: 42ch;
+      text-wrap: balance;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .hero-stat {
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.38);
+    }
+
+    .hero-stat-value {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-stat-label {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .hero-meta-pill,
+    .selection-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #selection-card {
+      bottom: 24px;
+      right: 24px;
+      width: 320px;
+      padding: 18px 18px 16px;
+    }
+
+    .selection-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .selection-card-head-copy {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    #map,
+    .controls {
+      transition: left 220ms ease, right 220ms ease, top 220ms ease, bottom 220ms ease, opacity 180ms ease, transform 220ms ease;
+    }
+
+    body.desktop-controls-hidden #map {
+      left: 24px;
+    }
+
+    body.desktop-controls-hidden #hero-banner {
+      left: 24px;
+      width: min(520px, calc(100vw - 408px));
+    }
+
+    body.hero-banner-collapsed #hero-banner {
+      width: fit-content;
+      max-width: min(320px, calc(100vw - 48px));
+      padding: 12px 14px;
+    }
+
+    body.hero-banner-collapsed .hero-banner-head {
+      align-items: center;
+    }
+
+    body.hero-banner-collapsed .hero-banner-content {
+      display: none;
+    }
+
+    .selection-eyebrow {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #selection-card h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+    }
+
+    .selection-card-summary {
+      display: none;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #selected-destination-meta {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .selection-card-body {
+      margin-top: 10px;
+    }
+
+    .selection-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .selection-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .selection-actions button,
+    .selection-actions a {
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+    }
+
+    .selection-actions button:hover,
+    .selection-actions a:hover {
+      transform: translateY(-1px);
+    }
+
+    .selection-actions button,
+    .selection-actions .selection-link {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fffaf4;
+      box-shadow: 0 12px 24px rgba(32, 91, 66, 0.18);
+    }
+
+    .selection-actions .ghost-btn {
+      background: rgba(255, 255, 255, 0.54);
+      color: var(--ink);
+      border-color: rgba(99, 114, 96, 0.16);
+      box-shadow: none;
+    }
+
+    .selection-actions button:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .selection-card-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 114, 96, 0.16);
+      background: rgba(255, 255, 255, 0.58);
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: none;
+    }
+
+    #selection-card.is-collapsed .selection-card-summary {
+      display: block;
+    }
+
+    #selection-card.is-collapsed .selection-card-body {
+      display: none;
+    }
+
+    #selection-card.is-collapsed {
+      padding-bottom: 12px;
+    }
+
+    #selection-card.is-empty .selection-link {
+      display: none;
+    }
+
+    #selection-card.is-empty .selection-card-toggle {
+      display: none;
+    }
+
+    .controls-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 18px 14px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.54), rgba(255, 255, 255, 0.18));
+      border-bottom: 1px solid rgba(92, 107, 97, 0.08);
+    }
+
+    .controls-title {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .controls-summary {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .controls-handle {
+      width: 42px;
+      height: 4px;
+      margin: 0 auto 10px;
+      border-radius: 999px;
+      background: #d7dce2;
+    }
+
+    .controls-header-main {
+      min-width: 0;
+      flex: 1 1 auto;
+      cursor: pointer;
+    }
+
+    .controls-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .controls-hide {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.44);
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .controls label,
+    .controls strong,
+    .controls div,
+    .controls button,
+    .controls select,
+    .controls input {
+      font-family: inherit;
+    }
+
+    .controls select,
+    .controls input[type="text"],
+    .controls input[type="search"] {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 6px;
+      min-height: 44px;
+      padding: 0 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      background: rgba(255, 255, 255, 0.66);
+      color: var(--ink);
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .controls button {
+      min-height: 42px;
+      box-sizing: border-box;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: transform 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
+      box-shadow: 0 14px 26px rgba(32, 91, 66, 0.16);
+    }
+
+    .controls button:hover {
+      transform: translateY(-1px);
+    }
+
+    .controls button:disabled {
+      opacity: 0.48;
+      box-shadow: none;
+      transform: none;
+      cursor: not-allowed;
+    }
+
+    .controls-content {
+      padding: 0 18px max(24px, env(safe-area-inset-bottom) + 18px);
+      overflow-y: auto;
+      max-height: var(--app-controls-content-max-height);
+      scrollbar-width: thin;
+      scroll-padding-bottom: max(24px, env(safe-area-inset-bottom) + 18px);
+      overscroll-behavior: contain;
+    }
+
+    .controls.is-collapsed {
+      max-height: none;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .controls.is-collapsed .controls-header {
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 0;
+      cursor: pointer;
+    }
+
+    .controls.is-collapsed .controls-header-main {
+      cursor: pointer;
+    }
+
+    .controls.is-collapsed .controls-handle {
+      margin-bottom: 6px;
+    }
+
+    .controls.is-collapsed .controls-content {
+      display: none;
+    }
+
+    .panel-section {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.52);
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .panel-section:first-child {
+      margin-top: 0;
+    }
+
+    .panel-kicker {
+      display: block;
+      margin: 0 0 10px;
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .panel-copy {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .field-note {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field-label {
+      display: block;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .button-row button {
+      flex: 1 1 140px;
+    }
+
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.52) !important;
+      color: var(--ink) !important;
+      border: 1px solid rgba(92, 107, 97, 0.12) !important;
+      box-shadow: none !important;
+    }
+
+    .panel-metric {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 10px;
+      margin-top: 10px;
+    }
+
+    .metric-card {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(255, 255, 255, 0.42);
+    }
+
+    .metric-label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .metric-value {
+      display: block;
+      margin-top: 4px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .controls label[for="destination-select"],
+    .controls label[for="mode"],
+    .controls label[for="csv-switch-select"] {
+      display: block;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .controls-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        rgba(17, 24, 39, 0.02) 0%,
+        rgba(17, 24, 39, 0.06) 36%,
+        rgba(17, 24, 39, 0.14) 100%
+      );
+      z-index: 1001;
+    }
+
+    #upload-panel {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--panel-strong);
+      width: min(92vw, 420px);
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(18px);
+      text-align: left;
+      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      z-index: 1005;
+    }
+
+    #upload-panel h3 {
+      margin: 0 0 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      line-height: 1.05;
+    }
+
+    #upload-panel .upload-hint {
+      margin: 0 0 12px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    #upload-panel button {
+      display: none;
+      margin-top: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      border: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #ui-toggles {
+      position: absolute;
+      right: 26px;
+      bottom: 28px;
+      z-index: 1004;
+      display: none;           /* shown after CSV load */
+      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      transition: bottom 220ms ease, right 220ms ease, opacity 180ms ease, transform 220ms ease;
+    }
+
+    #ui-toggles button {
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(255, 250, 241, 0.88);
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(18px);
+      cursor: pointer;
+    }
+
+    #strain-list-panel {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      max-height: var(--app-strain-panel-max-height);
+      background: rgba(255, 255, 255, 0.62);
+      margin-top: 8px;
+      padding: 10px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      border-radius: 18px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      font-family: inherit;
+      box-sizing: border-box;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .strain-list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    #strain-list-search {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 6px;
+    }
+
+    #strain-list-status {
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: #444;
+      overflow-wrap: anywhere;
+    }
+
+    #strain-list {
+      min-height: 160px;
+      max-height: var(--app-strain-list-max-height);
+      overflow-y: auto;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      border-radius: 12px;
+      background: rgba(250, 247, 241, 0.78);
+      padding: 4px;
+      min-width: 0;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      touch-action: pan-y;
+    }
+
+    .strain-item {
+      width: 100%;
+      margin: 3px 0;
+      text-align: left;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      background: rgba(255, 255, 255, 0.84);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: none;
+    }
+
+    .strain-item.active,
+    .popup-strain-btn.active {
+      box-shadow: inset 0 0 0 1px var(--accent-strong);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .strain-item.type-sativa,
+    .popup-strain-btn.type-sativa {
+      background: #e8f2ff;
+      border-color: #7aa7e8;
+      color: #103f7a;
+    }
+
+    .strain-item.type-indica,
+    .popup-strain-btn.type-indica {
+      background: #ffecec;
+      border-color: #e28b8b;
+      color: #7a1e1e;
+    }
+
+    .strain-item.type-hybrid,
+    .popup-strain-btn.type-hybrid {
+      background: #e8f8ea;
+      border-color: #88c792;
+      color: #1f5c2a;
+    }
+
+    .strain-item.type-hash,
+    .popup-strain-btn.type-hash {
+      background: #f7efe3;
+      border-color: #c8a97f;
+      color: #5a3d21;
+    }
+
+    .strain-item.type-kush,
+    .popup-strain-btn.type-kush {
+      background: #e7f6df;
+      border-color: #8abf6b;
+      color: #245320;
+    }
+
+    .strain-item.is-cali,
+    .popup-strain-btn.is-cali {
+      border-width: 2px;
+      border-style: solid;
+      border-color: #d4a12f;
+    }
+
+    .strain-item-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .strain-cali-badge {
+      flex: 0 0 auto;
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #5a3d00;
+      background: #ffe7a6;
+      border: 1px solid #e0bc63;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .strain-empty {
+      padding: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .popup-strains-box {
+      margin: 8px 0;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      border-radius: 14px;
+      background: rgba(255, 252, 247, 0.78);
+      padding: 8px;
+      max-height: 170px;
+      overflow-y: auto;
+    }
+
+    .popup-strains-count {
+      margin: 0 0 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-strong);
+    }
+
+    .popup-strains-list {
+      margin: 0;
+      padding-left: 0;
+      list-style: none;
+      font-size: 12px;
+      line-height: 1.35;
+      color: #222;
+    }
+
+    .popup-strains-list li {
+      margin: 2px 0;
+    }
+
+    .popup-strain-btn {
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.3;
+      cursor: pointer;
+    }
+
+    .popup-strain-meta {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      line-height: 1.25;
+      color: var(--muted);
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .popup-strain-price {
+      font-weight: 700;
+      color: var(--accent-strong);
+    }
+
+    .popup-strain-notes {
+      color: var(--muted);
+    }
+
+    .popup-strain-meta-sep {
+      color: rgba(91, 107, 97, 0.68);
+      margin: 0 4px;
+    }
+
+    .popup-strain-btn.active {
+      background: rgba(255, 255, 255, 0.94);
+      font-weight: 700;
+    }
+
+    .popup-strains-status,
+    .popup-strains-empty {
+      margin: 0;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .price-label-tooltip {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(92, 107, 97, 0.18);
+      border-radius: 999px;
+      color: var(--accent-strong);
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 1;
+      padding: 4px 8px;
+      box-shadow: 0 8px 18px rgba(32, 91, 66, 0.16);
+      white-space: nowrap;
+    }
+
+    #category-filters {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    #category-filters > span {
+      grid-column: 1 / -1;
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #category-filters label {
+      display: flex !important;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #category-filters input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+
+    .leaflet-control-zoom a,
+    .leaflet-bar a {
+      background: rgba(255, 249, 239, 0.94) !important;
+      color: var(--ink) !important;
+      border-color: rgba(92, 107, 97, 0.12) !important;
+    }
+
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+      background: rgba(255, 250, 243, 0.96);
+      color: var(--ink);
+      box-shadow: var(--shadow-md);
+    }
+
+    .leaflet-popup-content {
+      margin: 14px 16px;
+      line-height: 1.5;
+    }
+
+    .popup-locate-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin: 8px 0 6px;
+      min-height: 40px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(32, 91, 66, 0.16);
+    }
+
+    .leaflet-routing-container {
+      display: none !important;
+    }
+
+    @media (max-width: 767px), (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+      .controls select,
+      .controls input[type="text"],
+      .controls input[type="search"] {
+        font-size: 16px;
+      }
+
+      #hero-banner {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        padding: 12px 14px;
+      }
+
+      #hero-banner h1 {
+        margin: 8px 0 0;
+        font-size: 24px;
+      }
+
+      .hero-copy,
+      .hero-stats {
+        display: none;
+      }
+
+      .hero-meta-row {
+        margin-top: 8px;
+      }
+
+      .hero-meta-pill {
+        min-height: 28px;
+        font-size: 11px;
+      }
+
+      body.hero-banner-collapsed #hero-banner {
+        right: auto;
+        padding: 10px 12px;
+        cursor: pointer;
+        max-width: calc(100vw - 24px);
+      }
+
+      #selection-card {
+        top: auto;
+        bottom: max(10px, env(safe-area-inset-bottom));
+        left: 12px;
+        right: 12px;
+        width: auto;
+        min-width: 0;
+        padding: 10px 12px;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .selection-eyebrow {
+        display: none;
+      }
+
+      #selection-card h2 {
+        font-size: 16px;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #selected-destination-meta {
+        margin-top: 4px;
+        font-size: 12px;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+      }
+
+      .selection-chip-row {
+        margin-top: 6px;
+        gap: 6px;
+      }
+
+      .selection-chip {
+        min-height: 24px;
+        padding: 0 8px;
+        font-size: 11px;
+      }
+
+      .selection-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .selection-actions button,
+      .selection-actions a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0 8px;
+        font-size: 11px;
+        text-align: center;
+        line-height: 1.15;
+        white-space: normal;
+        word-break: break-word;
+        min-width: 0;
+      }
+
+      .selection-actions .selection-link {
+        grid-column: 1 / -1;
+      }
+
+      #map {
+        top: 96px;
+      }
+
+      body.hero-banner-collapsed #map {
+        top: 70px;
+      }
+
+      body.mobile-selection-visible #map {
+        bottom: calc(env(safe-area-inset-bottom) + 160px);
+      }
+
+      .controls {
+        top: auto;
+        left: 12px;
+        right: 12px;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        width: auto;
+        max-width: none;
+        max-height: var(--app-mobile-controls-max-height);
+        padding: 0;
+        border-radius: 24px;
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+      }
+
+      .controls-header {
+        align-items: flex-start;
+        padding: 14px 14px 12px;
+        cursor: pointer;
+      }
+
+      .controls-header-main {
+        cursor: pointer;
+      }
+
+      .controls-content {
+        max-height: var(--app-mobile-controls-content-max-height);
+        overflow-y: auto;
+        padding: 0 14px max(24px, env(safe-area-inset-bottom) + 16px);
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        scroll-padding-bottom: max(24px, env(safe-area-inset-bottom) + 16px);
+      }
+
+      .field-grid,
+      .panel-metric {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-hide {
+        width: auto;
+        min-height: 34px;
+        padding: 0 10px;
+      }
+
+      .controls.is-collapsed {
+        max-height: none;
+        overflow: visible;
+        box-shadow: var(--shadow-md);
+      }
+
+      .controls.is-collapsed .controls-header {
+        align-items: center;
+        padding: 12px 14px;
+        border-bottom: 0;
+        cursor: pointer;
+      }
+
+      .controls.is-collapsed .controls-header-main {
+        cursor: pointer;
+      }
+
+      .controls.is-collapsed .controls-handle {
+        margin-bottom: 6px;
+      }
+
+      .controls.is-collapsed .controls-content {
+        display: none;
+      }
+
+      #ui-toggles {
+        right: 10px;
+        bottom: max(10px, env(safe-area-inset-bottom));
+      }
+
+      #ui-toggles button {
+        min-height: 42px;
+        padding: 10px 14px;
+        border-radius: 999px;
+      }
+
+      #strain-list-panel {
+        max-height: var(--app-mobile-strain-panel-max-height);
+      }
+
+      #strain-list {
+        max-height: var(--app-mobile-strain-list-max-height);
+        min-height: 148px;
+      }
+
+      #category-filters {
+        grid-template-columns: 1fr;
+      }
+
+      body.mobile-controls-open #hero-banner,
+      body.mobile-controls-open #selection-card,
+      body.mobile-directions-open #hero-banner,
+      body.mobile-directions-open #selection-card {
+        opacity: 0;
+        transform: translateY(-12px);
+        pointer-events: none;
+      }
+
+      body.mobile-controls-open #map,
+      body.mobile-directions-open #map {
+        top: 12px;
+        bottom: 14px;
+      }
+
+      body.mobile-controls-open .controls-backdrop {
+        display: block;
+      }
+    }
+
+    body.compact-layout #map {
+      display: none;
+      position: absolute;
+      top: 96px;
+      left: 12px;
+      right: 12px;
+      bottom: 14px;
+    }
+
+    body.compact-layout #instructions {
+      display: none;
+      position: absolute;
+      bottom: 14px;
+      left: 12px;
+      right: 12px;
+      height: 42%;
+      width: auto;
+    }
+
+    body.compact-layout .controls select,
+    body.compact-layout .controls input[type="text"],
+    body.compact-layout .controls input[type="search"] {
+      font-size: 16px;
+    }
+
+    body.compact-layout #hero-banner {
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      width: auto;
+      padding: 12px 14px;
+    }
+
+    body.compact-layout #hero-banner h1 {
+      margin: 8px 0 0;
+      font-size: 24px;
+    }
+
+    body.compact-layout .hero-copy,
+    body.compact-layout .hero-stats {
+      display: none;
+    }
+
+    body.compact-layout .hero-meta-row {
+      margin-top: 8px;
+    }
+
+    body.compact-layout .hero-meta-pill {
+      min-height: 28px;
+      font-size: 11px;
+    }
+
+    body.compact-layout.hero-banner-collapsed #hero-banner {
+      right: auto;
+      padding: 10px 12px;
+      cursor: pointer;
+      max-width: calc(100vw - 24px);
+    }
+
+    body.compact-layout #selection-card {
+      top: auto;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      left: 12px;
+      right: 12px;
+      width: auto;
+      min-width: 0;
+      padding: 10px 12px;
+      max-height: none;
+      overflow: visible;
+    }
+
+    body.compact-layout .selection-eyebrow {
+      display: none;
+    }
+
+    body.compact-layout #selection-card h2 {
+      font-size: 16px;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body.compact-layout #selected-destination-meta {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
+      overflow: hidden;
+    }
+
+    body.compact-layout .selection-chip-row {
+      margin-top: 6px;
+      gap: 6px;
+    }
+
+    body.compact-layout .selection-chip {
+      min-height: 24px;
+      padding: 0 8px;
+      font-size: 11px;
+    }
+
+    body.compact-layout .selection-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    body.compact-layout .selection-actions button,
+    body.compact-layout .selection-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 8px;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.15;
+      white-space: normal;
+      word-break: break-word;
+      min-width: 0;
+    }
+
+    body.compact-layout .selection-actions .selection-link {
+      grid-column: 1 / -1;
+    }
+
+    body.compact-layout.hero-banner-collapsed #map {
+      top: 70px;
+    }
+
+    body.compact-layout.mobile-selection-visible #map {
+      bottom: calc(env(safe-area-inset-bottom) + 160px);
+    }
+
+    body.compact-layout.selection-card-collapsed.mobile-selection-visible #map {
+      bottom: calc(env(safe-area-inset-bottom) + 56px);
+    }
+
+    body.compact-landscape-layout #selection-card {
+      left: 12px;
+      right: 12px;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      width: auto;
+      min-width: 0;
+      padding: 12px 14px;
+    }
+
+    body.compact-landscape-layout .selection-card-head {
+      align-items: center;
+      gap: 10px;
+    }
+
+    body.compact-landscape-layout .selection-card-summary {
+      display: block;
+    }
+
+    body.compact-landscape-layout .selection-card-toggle {
+      display: inline-flex;
+    }
+
+    body.compact-landscape-layout #selection-card h2 {
+      font-size: 18px;
+    }
+
+    body.compact-landscape-layout .selection-card-body {
+      margin-top: 8px;
+    }
+
+    body.compact-landscape-layout #selected-destination-meta {
+      margin-top: 0;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    body.compact-landscape-layout .selection-chip-row {
+      margin-top: 8px;
+    }
+
+    body.compact-landscape-layout .selection-actions {
+      margin-top: 10px;
+    }
+
+    body.compact-landscape-layout.mobile-selection-visible #map {
+      bottom: calc(env(safe-area-inset-bottom) + 176px);
+    }
+
+    body.compact-landscape-layout.selection-card-collapsed.mobile-selection-visible #map {
+      bottom: calc(env(safe-area-inset-bottom) + 92px);
+    }
+
+    body.compact-layout .controls {
+      top: auto;
+      left: 12px;
+      right: 12px;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      width: auto;
+      max-width: none;
+      max-height: var(--app-mobile-controls-max-height);
+      padding: 0;
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    body.compact-layout .controls-header {
+      align-items: flex-start;
+      padding: 14px 14px 12px;
+      cursor: pointer;
+    }
+
+    body.compact-layout .controls-header-main {
+      cursor: pointer;
+    }
+
+    body.compact-layout .controls-content {
+      max-height: var(--app-mobile-controls-content-max-height);
+      overflow-y: auto;
+      padding: 0 14px max(24px, env(safe-area-inset-bottom) + 16px);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      scroll-padding-bottom: max(24px, env(safe-area-inset-bottom) + 16px);
+    }
+
+    body.compact-layout .field-grid,
+    body.compact-layout .panel-metric {
+      grid-template-columns: 1fr;
+    }
+
+    body.compact-layout .controls-hide {
+      width: auto;
+      min-height: 34px;
+      padding: 0 10px;
+    }
+
+    body.compact-layout .controls.is-collapsed {
+      max-height: none;
+      overflow: visible;
+      box-shadow: var(--shadow-md);
+    }
+
+    body.compact-layout .controls.is-collapsed .controls-header {
+      align-items: center;
+      padding: 12px 14px;
+      border-bottom: 0;
+      cursor: pointer;
+    }
+
+    body.compact-layout .controls.is-collapsed .controls-header-main {
+      cursor: pointer;
+    }
+
+    body.compact-layout .controls.is-collapsed .controls-handle {
+      margin-bottom: 6px;
+    }
+
+    body.compact-layout .controls.is-collapsed .controls-content {
+      display: none;
+    }
+
+    body.compact-layout #ui-toggles {
+      right: 10px;
+      bottom: max(10px, env(safe-area-inset-bottom));
+    }
+
+    body.compact-layout #ui-toggles button {
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: 999px;
+    }
+
+    body.compact-layout #strain-list-panel {
+      max-height: var(--app-mobile-strain-panel-max-height);
+    }
+
+    body.compact-layout #strain-list {
+      max-height: var(--app-mobile-strain-list-max-height);
+      min-height: 148px;
+    }
+
+    body.compact-layout #category-filters {
+      grid-template-columns: 1fr;
+    }
+
+    body.compact-layout.mobile-controls-open #hero-banner,
+    body.compact-layout.mobile-controls-open #selection-card,
+    body.compact-layout.mobile-directions-open #hero-banner,
+    body.compact-layout.mobile-directions-open #selection-card {
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+    }
+
+    body.compact-layout.mobile-controls-open #map,
+    body.compact-layout.mobile-directions-open #map {
+      top: 12px;
+      bottom: 14px;
+    }
+
+    body.compact-layout.mobile-controls-open .controls-backdrop {
+      display: block;
+    }
+
+    /* =========================================================
+       NEW: Logo marker styling (purely visual polish)
+       =========================================================
+       Leaflet applies the icon image to <img> tags, but we can
+       still use a className for easy CSS polishing.
+    */
+    .shop-marker-icon {
+      background: transparent;
+      border: 0;
+    }
+
+    .shop-marker-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      overflow: visible;
+    }
+
+    .shop-logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: rgba(255, 252, 247, 0.98);
+      padding: 2px;
+      box-sizing: border-box;
+      overflow: hidden;
+      border: 1px solid rgba(92, 107, 97, 0.16);
+      box-shadow: 0 12px 22px rgba(32, 91, 66, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shop-logo-icon img {
+      max-width: 100% !important;
+      max-height: 100% !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      display: block;
+      border-radius: 0;
+      background: white;
+    }
+
+    .marker-price-badge {
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      transform: translate(-50%, 2px);
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(92, 107, 97, 0.18);
+      border-radius: 999px;
+      color: var(--accent-strong);
+      font-weight: 700;
+      font-size: 11px;
+      line-height: 1;
+      padding: 3px 7px;
+      box-shadow: 0 8px 18px rgba(32, 91, 66, 0.16);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .marker-price-badge.hidden {
+      display: none;
+    }
+
+    .me-marker-icon {
+      background: transparent;
+      border: 0;
+    }
+
+    .me-marker-wrap {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+    }
+
+    .me-marker-ping {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(43, 140, 255, 0.28);
+      transform: translate(-50%, -50%) scale(0.8);
+      animation: meMarkerPing 1.8s ease-out infinite;
+    }
+
+    .me-marker-dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: #2b8cff;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes meMarkerPing {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.85;
+      }
+      70% {
+        transform: translate(-50%, -50%) scale(2.1);
+        opacity: 0;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2.1);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Initial panel while locating/loading CSV -->
+  <div id="upload-panel">
+    <h3 id="upload-title">Loading your atlas</h3>
+    <p id="upload-message" class="upload-hint">Looking for the first CSV in locations/ so we can spin up the redesigned map.</p>
+    <button id="manual-csv-btn" type="button">Choose CSV manually</button>
+    <button id="folder-csv-btn" type="button">Choose locations folder</button>
+  </div>
+
+  <!-- Map and directions containers -->
+  <div id="map"></div>
+  <div id="instructions"></div>
+  <div id="controls-backdrop" class="controls-backdrop"></div>
+
+  <section id="hero-banner" class="overlay-card">
+    <div id="hero-banner-head" class="hero-banner-head" role="button" tabindex="0" aria-controls="hero-banner-content" aria-expanded="true" aria-label="Toggle atlas banner">
+      <span class="hero-kicker" id="hero-kicker">Personal atlas</span>
+    </div>
+    <div id="hero-banner-content" class="hero-banner-content">
+      <h1>Bud Finder Atlas</h1>
+      <p class="hero-copy">
+        Plot the next smoke stop, chase a specific strain, and keep a living map of the menus worth the detour.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="hero-visible-count">0</span>
+          <span class="hero-stat-label">Visible spots</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="hero-favourites-count">0</span>
+          <span class="hero-stat-label">Favourites</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="hero-mode-value">Walk</span>
+          <span class="hero-stat-label">Travel mode</span>
+        </div>
+      </div>
+      <div class="hero-meta-row">
+        <span class="hero-meta-pill" id="hero-filter-state">Strain filter off</span>
+        <span class="hero-meta-pill" id="hero-csv-name">No CSV loaded</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="selection-card" class="overlay-card is-empty">
+    <div id="selection-card-head" class="selection-card-head" role="button" tabindex="0" aria-controls="selection-card-body" aria-expanded="true" aria-label="Toggle selected destination card">
+      <div class="selection-card-head-copy">
+        <span class="selection-eyebrow">Current stop</span>
+        <h2 id="selected-destination-name">Choose a stop</h2>
+        <span id="selection-card-summary" class="selection-card-summary">No city yet · ETA --</span>
+      </div>
+      <button id="selection-card-toggle" class="selection-card-toggle" type="button" hidden>Collapse</button>
+    </div>
+    <div id="selection-card-body" class="selection-card-body">
+      <p id="selected-destination-meta">Tap a marker, pick a destination, or use nearest to start the run.</p>
+      <div class="selection-chip-row">
+        <span class="selection-chip" id="selected-destination-city">No city yet</span>
+        <span class="selection-chip" id="selected-destination-eta">ETA --</span>
+      </div>
+      <div class="selection-actions">
+        <button id="selection-directions-btn" type="button">Show directions</button>
+        <button id="selection-center-btn" type="button" class="ghost-btn">Focus map</button>
+        <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top-level controls button -->
+  <div id="ui-toggles" data-ready="false">
+    <button id="toggle-controls" type="button">Atlas</button>
+  </div>
+  <input type="file" id="file-input" accept=".csv" style="display:none;" />
+
+  <!-- Main controls panel -->
+  <div class="controls">
+    <div class="controls-header" id="controls-header">
+      <div class="controls-header-main">
+        <div class="controls-handle" aria-hidden="true"></div>
+        <span class="controls-title">Stash board</span>
+        <span class="controls-summary" id="controls-summary">Choose a destination</span>
+      </div>
+      <div class="controls-header-actions">
+        <button id="mobile-hide-controls" class="controls-hide" type="button">Hide</button>
+      </div>
+    </div>
+    <div class="controls-content">
+      <section class="panel-section">
+        <span class="panel-kicker">Category filters</span>
+        <div id="category-filters">
+          <!-- Checkboxes injected here by JS -->
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <span class="panel-kicker">Route</span>
+        <p class="panel-copy">Search by shop or city, then let the atlas handle the route math.</p>
+        <label for="destination-search">Atlas search</label>
+        <input id="destination-search" type="search" placeholder="Search a shop or city" autocomplete="off" />
+        <div id="destination-search-status" class="field-note">Load a CSV to start narrowing the atlas.</div>
+        <label for="destination-select" style="margin-top:12px;">Destination</label>
+        <select id="destination-select"></select>
+
+        <label for="mode" style="margin-top:12px;">Mode</label>
+        <select id="mode">
+          <option value="walking">Walking</option>
+          <option value="driving">Driving</option>
+          <option value="cycling">Cycling</option>
+        </select>
+
+        <div class="button-row">
+          <button id="toggle-directions" type="button">Show directions</button>
+          <button id="center-on-me-btn" type="button" class="secondary-btn">Center on me</button>
+        </div>
+
+        <div class="button-row">
+          <button id="nearest-btn">Nearest</button>
+        </div>
+
+        <div class="panel-metric">
+          <div class="metric-card">
+            <span class="metric-label">ETA</span>
+            <span class="metric-value" id="time-estimate">--</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Distance</span>
+            <span class="metric-value" id="distance-info">--</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <span class="panel-kicker">Strain radar</span>
+        <div id="strain-list-panel">
+          <div class="strain-list-head">
+            <strong>Active strains</strong>
+          </div>
+          <input id="strain-list-search" type="text" placeholder="Filter strains..." />
+          <div id="strain-list-status">Load CSV first.</div>
+          <div id="strain-list"></div>
+        </div>
+
+        <div class="button-row">
+          <button id="clear-strain-btn" type="button" class="secondary-btn">Clear strain filter</button>
+        </div>
+        <div id="strain-status" style="margin-top:8px; font-size:12px; color:#444;">Strain filter: off</div>
+      </section>
+
+      <section class="panel-section">
+        <span class="panel-kicker">Source</span>
+        <div id="csv-switch-wrap" style="display:none;">
+          <label for="csv-switch-select">Location CSV</label>
+          <select id="csv-switch-select"></select>
+        </div>
+        <div id="db-status" style="display:none; margin-top:10px; font-size:12px; color:#444;"></div>
+      </section>
+
+      <section class="panel-section">
+        <span class="panel-kicker">Set the vibe</span>
+        <p class="panel-copy">Push the atlas a little deeper into your own weed map aesthetic.</p>
+        <div class="field-grid">
+          <label class="field-label" for="display-name-input">
+            Crew name
+            <input id="display-name-input" type="text" maxlength="24" placeholder="Explorer" />
+          </label>
+          <label class="field-label" for="accent-select">
+            Vibe
+            <select id="accent-select">
+              <option value="moss">Moss</option>
+              <option value="golden-haze">Golden Haze</option>
+              <option value="pine-resin">Pine Resin</option>
+              <option value="citrus-haze">Citrus Haze</option>
+              <option value="rosewood-smoke">Rosewood Smoke</option>
+              <option value="coastal-kush">Coastal Kush</option>
+            </select>
+          </label>
+        </div>
+        <div class="button-row">
+          <button id="reset-personalisation-btn" type="button" class="secondary-btn">Reset look</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Leaflet + Routing JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+  <script>
+    // =========================================================
+    // Global state
+    // =========================================================
+
+    let map = null;
+    let routingControl = null;
+    let lastPosition = null;
+    let geolocationWatchId = null;
+    let locations = [];            // parsed locations from CSV
+    let markers = [];              // Leaflet markers
+    let meLocationMarker = null;   // current user location marker
+    let controlsVisible = false;   // controls panel visibility
+    let controlsCollapsed = false; // collapsed atlas state across layouts
+    let directionsVisible = false; // directions panel visibility
+    let heroBannerCollapsed = getViewportSize().width < 768; // compact hero banner state
+    let selectionCardCollapsed = false; // compact landscape destination card state
+    let previousCompactLandscapeLayout = false;
+    let strainListVisible = true; // strain list panel visibility
+    let viewportResyncTimers = [];
+    let uiTogglePositionTimer = null;
+    let locationSearchText = '';
+
+    // Multi-select categories: 'all', 'favourites', and CSV Y/N flags
+    let selectedCategories = ['all'];
+    let categoryOptions = [];
+
+    // Colour/icon setup for category-based markers (fallback when no logo)
+    const _markerColors = ['red','blue','green','orange','yellow','violet','grey','black'];
+    const categoryColors = {};
+    const categoryIcons = {};
+    let defaultIcon;
+
+    // Distance at which we consider "already at this location" (in meters)
+    const VISITED_RADIUS_METERS = 5;
+
+    // Where downloaded logos might live (try in order)
+    const LOGO_BASE_PATHS = ['logos/', 'images/logos/', '/logos/', '/images/logos/'];
+    const FALLBACK_MARKER_ICON_URL =
+      'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png';
+    const LOGO_MARKER_SIZE = 44;
+    const POPUP_LOGO_SIZE = 56;
+    const ME_MARKER_SIZE = 18;
+
+    // DB integration state
+    let dbIntegrationReady = false;
+    let dbIntegrationSource = 'none'; // 'flask' | 'json' | 'none'
+    let dbRouteLinksEnabled = false;
+    let dbByPath = new Map();       // "/cs-shop.html" -> shop_id
+    let dbByNameCity = new Map();   // "name|city" -> shop_id
+    let dbByUniqueName = new Map(); // "name" -> shop_id when unique
+    let dbShopMetaById = new Map(); // shop_id -> { name, city, shop_url }
+
+    // Strain filter state (DB-backed)
+    let strainFilterText = '';
+    let strainAllowedShopIds = null; // Set<number> | null
+    let strainAllowedNameCityKeys = null; // Set<string> | null
+    let strainPriceByShopId = null; // Map<number, string> | null
+    let strainPriceByNameCity = null; // Map<string, string> | null
+    let strainIndexRows = null;      // cached JSON strain index
+    let activeOfferingsRows = null;  // cached JSON offerings rows
+    let activeStrainNames = [];      // clickable strain list for UI panel
+    let popupStrainsByShopId = new Map();      // shop_id -> [strain names]
+    let popupStrainsByNameCity = new Map();    // "name|city" -> [strain names]
+    let popupStrainDetailsByShopId = new Map();   // shop_id -> Map(strain_key -> {priceText, notesText})
+    let popupStrainDetailsByNameCity = new Map(); // "name|city" -> Map(strain_key -> {priceText, notesText})
+    let popupStrainIndexReady = false;
+    let popupStrainIndexPromise = null;
+    let strainMetaByKey = new Map(); // normalised strain name -> visual metadata
+    let discoveredCsvPaths = [];     // discovered CSV paths in the hosted folder
+    let currentCsvPath = '';         // current CSV path when loaded from URL
+    const LEGACY_PERSONALISATION_STORAGE_KEY = 'locate2_personalisation';
+    const PERSONALISATION_STORAGE_KEY = 'locate3_personalisation';
+    const LOCATION_PREFERENCES_STORAGE_KEY = 'locate3_location_preferences';
+    const LEGACY_FAVORITES_STORAGE_KEY = 'favorites';
+    const accentThemeAliases = {
+      amber: 'golden-haze',
+      lagoon: 'coastal-kush',
+      ember: 'rosewood-smoke',
+      'west-ham': 'rosewood-smoke',
+      spurs: 'coastal-kush'
+    };
+    const accentThemes = {
+      moss: {
+        accent: '#2e7b59',
+        accentStrong: '#205b42',
+        accentSoft: 'rgba(46, 123, 89, 0.16)',
+        accentGlow: 'rgba(46, 123, 89, 0.28)',
+        bgTop: '#efe2b6',
+        bgMid: '#e6d9b6',
+        bgBottom: '#d4e2cb',
+        panel: 'rgba(255, 249, 239, 0.84)',
+        panelStrong: 'rgba(255, 252, 246, 0.94)',
+        panelBorder: 'rgba(98, 113, 95, 0.16)',
+        sunWash: 'rgba(255, 243, 210, 0.92)',
+        mistWash: 'rgba(184, 223, 206, 0.7)',
+        resinGlow: 'rgba(222, 160, 82, 0.34)'
+      },
+      'golden-haze': {
+        accent: '#b17b27',
+        accentStrong: '#7a5312',
+        accentSoft: 'rgba(177, 123, 39, 0.18)',
+        accentGlow: 'rgba(177, 123, 39, 0.3)',
+        bgTop: '#f4dfac',
+        bgMid: '#ebd09b',
+        bgBottom: '#dde2bc',
+        panel: 'rgba(255, 248, 235, 0.86)',
+        panelStrong: 'rgba(255, 251, 243, 0.95)',
+        panelBorder: 'rgba(132, 105, 52, 0.18)',
+        sunWash: 'rgba(255, 238, 183, 0.96)',
+        mistWash: 'rgba(215, 225, 177, 0.66)',
+        resinGlow: 'rgba(210, 166, 70, 0.36)'
+      },
+      'pine-resin': {
+        accent: '#3d7a3c',
+        accentStrong: '#224a27',
+        accentSoft: 'rgba(61, 122, 60, 0.18)',
+        accentGlow: 'rgba(61, 122, 60, 0.3)',
+        bgTop: '#e7d7b0',
+        bgMid: '#dbd1af',
+        bgBottom: '#cadec6',
+        panel: 'rgba(248, 247, 238, 0.86)',
+        panelStrong: 'rgba(252, 252, 246, 0.95)',
+        panelBorder: 'rgba(74, 99, 75, 0.18)',
+        sunWash: 'rgba(245, 230, 191, 0.9)',
+        mistWash: 'rgba(176, 213, 189, 0.68)',
+        resinGlow: 'rgba(138, 113, 63, 0.28)'
+      },
+      'citrus-haze': {
+        accent: '#728f1f',
+        accentStrong: '#475b11',
+        accentSoft: 'rgba(114, 143, 31, 0.18)',
+        accentGlow: 'rgba(114, 143, 31, 0.28)',
+        bgTop: '#f1e1ae',
+        bgMid: '#e2d8aa',
+        bgBottom: '#d4e4be',
+        panel: 'rgba(252, 250, 238, 0.86)',
+        panelStrong: 'rgba(255, 253, 246, 0.95)',
+        panelBorder: 'rgba(111, 124, 54, 0.18)',
+        sunWash: 'rgba(253, 241, 193, 0.94)',
+        mistWash: 'rgba(199, 222, 171, 0.66)',
+        resinGlow: 'rgba(190, 151, 67, 0.32)'
+      },
+      'rosewood-smoke': {
+        accent: '#9d5a45',
+        accentStrong: '#693827',
+        accentSoft: 'rgba(157, 90, 69, 0.18)',
+        accentGlow: 'rgba(157, 90, 69, 0.26)',
+        bgTop: '#f0d8be',
+        bgMid: '#e5cfbf',
+        bgBottom: '#d7ddd1',
+        panel: 'rgba(255, 248, 243, 0.86)',
+        panelStrong: 'rgba(255, 251, 247, 0.95)',
+        panelBorder: 'rgba(123, 90, 76, 0.18)',
+        sunWash: 'rgba(253, 229, 203, 0.9)',
+        mistWash: 'rgba(208, 217, 205, 0.64)',
+        resinGlow: 'rgba(176, 111, 80, 0.28)'
+      },
+      'coastal-kush': {
+        accent: '#2a7c79',
+        accentStrong: '#174f50',
+        accentSoft: 'rgba(42, 124, 121, 0.18)',
+        accentGlow: 'rgba(42, 124, 121, 0.28)',
+        bgTop: '#e7ddb8',
+        bgMid: '#dce0bf',
+        bgBottom: '#c8e0d7',
+        panel: 'rgba(246, 250, 246, 0.85)',
+        panelStrong: 'rgba(251, 253, 249, 0.95)',
+        panelBorder: 'rgba(71, 111, 109, 0.18)',
+        sunWash: 'rgba(248, 239, 196, 0.88)',
+        mistWash: 'rgba(170, 218, 210, 0.64)',
+        resinGlow: 'rgba(102, 159, 155, 0.26)'
+      }
+    };
+    let legacyFavoriteIndices = loadStoredJson(LEGACY_FAVORITES_STORAGE_KEY, []);
+    let locationPreferences = loadStoredJson(LOCATION_PREFERENCES_STORAGE_KEY, {});
+    let favorites = [];
+    let personalisation = {
+      displayName: 'Explorer',
+      accent: 'moss'
+    };
+
+    function loadStoredJson(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(fallback)) {
+          return Array.isArray(parsed) ? parsed : fallback;
+        }
+        return (parsed && typeof parsed === 'object') ? parsed : fallback;
+      } catch (_err) {
+        return fallback;
+      }
+    }
+
+    function saveLocationPreferences() {
+      localStorage.setItem(LOCATION_PREFERENCES_STORAGE_KEY, JSON.stringify(locationPreferences));
+    }
+
+    function normaliseAccentThemeKey(value) {
+      const raw = (value || '').toString().trim();
+      return accentThemeAliases[raw] || raw;
+    }
+
+    function getLocationPreferenceKey(loc) {
+      if (!loc) return '';
+      const websitePath = normaliseUrlPath(loc.website);
+      if (websitePath) return `url:${websitePath}`;
+      const nameCityKey = normaliseNameCityKey(loc.name, loc.city || '');
+      if (nameCityKey !== '|') return `name:${nameCityKey}`;
+      if (Array.isArray(loc.coords) && loc.coords.length === 2) {
+        return `coords:${loc.coords[0]},${loc.coords[1]}`;
+      }
+      return '';
+    }
+
+    function readLocationPreference(loc) {
+      const key = getLocationPreferenceKey(loc);
+      if (!key) return null;
+      const stored = locationPreferences[key];
+      return (stored && typeof stored === 'object') ? stored : null;
+    }
+
+    function writeLocationPreference(loc, patch) {
+      const key = getLocationPreferenceKey(loc);
+      if (!key || !patch || typeof patch !== 'object') return;
+      const current = readLocationPreference(loc) || {};
+      locationPreferences[key] = { ...current, ...patch };
+      saveLocationPreferences();
+    }
+
+    function persistLegacyFavorites() {
+      legacyFavoriteIndices = favorites.slice();
+      localStorage.setItem(LEGACY_FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+    }
+
+    function hydrateLocationPreferences() {
+      favorites = [];
+      let hasStoredFavourite = false;
+
+      locations.forEach((loc, index) => {
+        const pref = readLocationPreference(loc);
+        if (!pref) return;
+
+        if (typeof pref.visited === 'boolean') {
+          loc.visited = pref.visited;
+        }
+
+        if (Number.isFinite(pref.rating)) {
+          loc.rating = Math.max(0, Math.min(5, Math.round(pref.rating)));
+        }
+
+        if (pref.favorite) {
+          favorites.push(index);
+          hasStoredFavourite = true;
+        }
+      });
+
+      if (!hasStoredFavourite && Array.isArray(legacyFavoriteIndices)) {
+        legacyFavoriteIndices.forEach(index => {
+          if (!Number.isInteger(index) || index < 0 || index >= locations.length) return;
+          favorites.push(index);
+          writeLocationPreference(locations[index], { favorite: true });
+        });
+      }
+
+      favorites = Array.from(new Set(favorites)).slice(0, 10);
+      persistLegacyFavorites();
+    }
+
+    function setUploadPanelState(titleText, messageText, allowManualCsv) {
+      const panel = document.getElementById('upload-panel');
+      const title = document.getElementById('upload-title');
+      const message = document.getElementById('upload-message');
+      const manualBtn = document.getElementById('manual-csv-btn');
+      const folderBtn = document.getElementById('folder-csv-btn');
+      const isLocalFile = window.location.protocol === 'file:';
+      const supportsDirPicker = typeof window.showDirectoryPicker === 'function';
+      if (title) title.textContent = titleText || '';
+      if (message) message.textContent = messageText || '';
+      if (manualBtn) manualBtn.style.display = allowManualCsv ? 'inline-block' : 'none';
+      if (folderBtn) folderBtn.style.display =
+        (allowManualCsv && isLocalFile && supportsDirPicker) ? 'inline-block' : 'none';
+      if (panel) panel.style.display = titleText || messageText || allowManualCsv ? 'block' : 'none';
+    }
+
+    function loadPersonalisation() {
+      try {
+        const stored = loadStoredJson(PERSONALISATION_STORAGE_KEY, {});
+        const legacy = loadStoredJson(LEGACY_PERSONALISATION_STORAGE_KEY, {});
+        const merged = Object.keys(stored).length ? stored : legacy;
+        if (merged && typeof merged === 'object') {
+          const hasDisplayName = Object.prototype.hasOwnProperty.call(merged, 'displayName');
+          const displayName = (merged.displayName || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
+          const accent = normaliseAccentThemeKey(merged.accent || '');
+          if (hasDisplayName) personalisation.displayName = displayName;
+          if (accentThemes[accent]) personalisation.accent = accent;
+        }
+      } catch (_err) {
+        // Ignore malformed stored preferences.
+      }
+    }
+
+    function savePersonalisation() {
+      localStorage.setItem(PERSONALISATION_STORAGE_KEY, JSON.stringify(personalisation));
+    }
+
+    function applyPersonalisation() {
+      const theme = accentThemes[personalisation.accent] || accentThemes.moss;
+      const rawName = (personalisation.displayName || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
+      const safeName = rawName || 'Explorer';
+      const root = document.documentElement;
+      root.style.setProperty('--bg-top', theme.bgTop);
+      root.style.setProperty('--bg-mid', theme.bgMid);
+      root.style.setProperty('--bg-bottom', theme.bgBottom);
+      root.style.setProperty('--sun-wash', theme.sunWash);
+      root.style.setProperty('--mist-wash', theme.mistWash);
+      root.style.setProperty('--resin-glow', theme.resinGlow);
+      root.style.setProperty('--panel', theme.panel);
+      root.style.setProperty('--panel-strong', theme.panelStrong);
+      root.style.setProperty('--panel-border', theme.panelBorder);
+      root.style.setProperty('--accent', theme.accent);
+      root.style.setProperty('--accent-strong', theme.accentStrong);
+      root.style.setProperty('--accent-soft', theme.accentSoft);
+      root.style.setProperty('--accent-glow', theme.accentGlow);
+
+      const kicker = document.getElementById('hero-kicker');
+      const nameInput = document.getElementById('display-name-input');
+      const accentSelect = document.getElementById('accent-select');
+      if (kicker) kicker.textContent = rawName ? `${safeName}'s atlas` : 'Personal atlas';
+      if (nameInput && nameInput.value !== rawName) nameInput.value = rawName;
+      if (accentSelect && accentSelect.value !== personalisation.accent) accentSelect.value = personalisation.accent;
+      document.title = rawName ? `${safeName}'s Bud Finder Atlas` : 'Bud Finder Atlas';
+    }
+
+    function resetPersonalisation() {
+      personalisation = {
+        displayName: 'Explorer',
+        accent: 'moss'
+      };
+      savePersonalisation();
+      applyPersonalisation();
+      updateControlsSummary();
+    }
+
+    function resetMapState() {
+      if (geolocationWatchId !== null && navigator.geolocation) {
+        try {
+          navigator.geolocation.clearWatch(geolocationWatchId);
+        } catch (_err) {
+          // Ignore if watch id is stale.
+        }
+        geolocationWatchId = null;
+      }
+
+      if (map) {
+        try {
+          if (routingControl) {
+            map.removeControl(routingControl);
+          }
+        } catch (_err) {
+          // Ignore if routing control was already removed.
+        }
+        map.remove();
+        map = null;
+      }
+      routingControl = null;
+      markers = [];
+      lastPosition = null;
+      meLocationMarker = null;
+
+      const mapDiv = document.getElementById('map');
+      const instructionsDiv = document.getElementById('instructions');
+      if (mapDiv) mapDiv.innerHTML = '';
+      if (instructionsDiv) instructionsDiv.innerHTML = '';
+    }
+
+    function getViewportSize() {
+      const visualViewport = window.visualViewport;
+      const docEl = document.documentElement;
+      const body = document.body;
+      const widths = [
+        visualViewport && Number.isFinite(visualViewport.width) ? visualViewport.width : null,
+        docEl && Number.isFinite(docEl.clientWidth) ? docEl.clientWidth : null,
+        body && Number.isFinite(body.clientWidth) ? body.clientWidth : null,
+        Number.isFinite(window.innerWidth) ? window.innerWidth : null
+      ].filter(v => Number.isFinite(v) && v > 0);
+      const heights = [
+        visualViewport && Number.isFinite(visualViewport.height) ? visualViewport.height : null,
+        docEl && Number.isFinite(docEl.clientHeight) ? docEl.clientHeight : null,
+        body && Number.isFinite(body.clientHeight) ? body.clientHeight : null,
+        Number.isFinite(window.innerHeight) ? window.innerHeight : null
+      ].filter(v => Number.isFinite(v) && v > 0);
+      return {
+        width: widths.length ? Math.min(...widths) : window.innerWidth,
+        height: heights.length ? Math.min(...heights) : window.innerHeight
+      };
+    }
+
+    function syncViewportCssVars() {
+      const root = document.documentElement;
+      if (!root) return;
+
+      const viewport = getViewportSize();
+      const viewportHeight = Math.max(240, Math.round(viewport.height));
+      const controlsHeader = document.getElementById('controls-header');
+      const measuredHeaderHeight = controlsHeader
+        ? Math.max(74, Math.round(controlsHeader.getBoundingClientRect().height))
+        : 92;
+      const controlsMaxHeight = Math.max(180, viewportHeight - 48);
+      const controlsContentMaxHeight = Math.max(120, controlsMaxHeight - measuredHeaderHeight - 8);
+      const mobileControlsMaxHeight = Math.min(540, Math.max(220, viewportHeight - 24));
+      const mobileControlsContentMaxHeight = Math.max(120, mobileControlsMaxHeight - measuredHeaderHeight - 8);
+      const strainPanelMaxHeight = Math.min(320, Math.max(240, Math.round(viewportHeight * 0.38)));
+      const strainListMaxHeight = Math.max(144, Math.min(200, strainPanelMaxHeight - 96));
+      const mobileStrainPanelMaxHeight = Math.min(280, Math.max(240, Math.round(viewportHeight * 0.34)));
+      const mobileStrainListMaxHeight = Math.max(148, Math.min(180, mobileStrainPanelMaxHeight - 92));
+
+      root.style.setProperty('--app-controls-header-height', `${measuredHeaderHeight}px`);
+      root.style.setProperty('--app-viewport-height', `${viewportHeight}px`);
+      root.style.setProperty('--app-controls-max-height', `${controlsMaxHeight}px`);
+      root.style.setProperty('--app-controls-content-max-height', `${controlsContentMaxHeight}px`);
+      root.style.setProperty('--app-strain-panel-max-height', `${strainPanelMaxHeight}px`);
+      root.style.setProperty('--app-strain-list-max-height', `${strainListMaxHeight}px`);
+      root.style.setProperty('--app-mobile-controls-max-height', `${mobileControlsMaxHeight}px`);
+      root.style.setProperty('--app-mobile-controls-content-max-height', `${mobileControlsContentMaxHeight}px`);
+      root.style.setProperty('--app-mobile-strain-panel-max-height', `${mobileStrainPanelMaxHeight}px`);
+      root.style.setProperty('--app-mobile-strain-list-max-height', `${mobileStrainListMaxHeight}px`);
+    }
+
+    function isCompactMobileLayout() {
+      const viewport = getViewportSize();
+      const isLandscape = viewport.width > viewport.height;
+      const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+      const screenShortSide = Math.min(
+        (window.screen && Number.isFinite(window.screen.width) ? window.screen.width : viewport.width),
+        (window.screen && Number.isFinite(window.screen.height) ? window.screen.height : viewport.height)
+      );
+      return viewport.width < 768 ||
+        (coarsePointer &&
+         isLandscape &&
+         (viewport.height <= 560 || screenShortSide <= 500));
+    }
+
+    function isCompactLandscapeLayout() {
+      const viewport = getViewportSize();
+      return isCompactMobileLayout() && viewport.width > viewport.height;
+    }
+
+    function syncCompactLayoutState() {
+      document.body.classList.toggle('compact-layout', isCompactMobileLayout());
+    }
+
+    function syncSelectionCardChrome() {
+      const isLandscapeCompact = isCompactLandscapeLayout();
+      const card = document.getElementById('selection-card');
+      const toggleBtn = document.getElementById('selection-card-toggle');
+      const summaryEl = document.getElementById('selection-card-summary');
+      const hasSelection = !!(card && card.style.display !== 'none' && !card.classList.contains('is-empty'));
+
+      if (isLandscapeCompact !== previousCompactLandscapeLayout) {
+        if (isLandscapeCompact) {
+          selectionCardCollapsed = true;
+        }
+        previousCompactLandscapeLayout = isLandscapeCompact;
+      }
+
+      document.body.classList.toggle('compact-landscape-layout', isLandscapeCompact);
+      document.body.classList.toggle('selection-card-collapsed', selectionCardCollapsed && hasSelection);
+
+      if (summaryEl) {
+        summaryEl.hidden = !(hasSelection && (isLandscapeCompact || selectionCardCollapsed));
+      }
+
+      if (toggleBtn) {
+        const canToggle = hasSelection;
+        toggleBtn.hidden = !canToggle;
+        toggleBtn.textContent = selectionCardCollapsed ? 'Expand' : 'Collapse';
+        toggleBtn.setAttribute('aria-expanded', selectionCardCollapsed ? 'false' : 'true');
+      }
+
+      if (card) {
+        card.classList.toggle('is-collapsed', selectionCardCollapsed && hasSelection);
+      }
+
+      const head = document.getElementById('selection-card-head');
+      if (head) {
+        head.setAttribute('aria-expanded', selectionCardCollapsed ? 'false' : 'true');
+      }
+    }
+
+    function getControlsToggleLabel() {
+      if (isCompactMobileLayout()) {
+        return 'Atlas';
+      }
+      return controlsVisible ? 'Hide atlas' : 'Show atlas';
+    }
+
+    function syncHeroBannerState() {
+      const heroHead = document.getElementById('hero-banner-head');
+      if (!heroHead) return;
+
+      const collapsed = !!heroBannerCollapsed;
+      document.body.classList.toggle('hero-banner-collapsed', collapsed);
+      heroHead.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    }
+
+    function setHeroBannerCollapsed(collapsed, options = {}) {
+      const nextCollapsed = !!collapsed;
+      const changed = heroBannerCollapsed !== nextCollapsed;
+      heroBannerCollapsed = nextCollapsed;
+      syncHeroBannerState();
+      if ((changed || options.force) && map) {
+        setTimeout(() => map.invalidateSize(), 160);
+      }
+    }
+
+    function syncDesktopTogglePosition() {
+      const uiToggles = document.getElementById('ui-toggles');
+      const selectionCard = document.getElementById('selection-card');
+      if (!uiToggles) return;
+
+      if (!selectionCard) {
+        uiToggles.style.bottom = '';
+        return;
+      }
+
+      const style = window.getComputedStyle(selectionCard);
+      if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '1') === 0) {
+        uiToggles.style.bottom = '';
+        return;
+      }
+
+      const rect = selectionCard.getBoundingClientRect();
+      if (!rect.width || !rect.height) {
+        uiToggles.style.bottom = '';
+        return;
+      }
+
+      const isCompact = isCompactMobileLayout();
+      const baseGap = isCompact ? 10 : 24;
+      const cardGap = isCompact ? 10 : 16;
+      const viewportHeight = Math.round(getViewportSize().height);
+      const offsetAboveCard = Math.max(baseGap, viewportHeight - Math.round(rect.top) + cardGap);
+      uiToggles.style.bottom = `${offsetAboveCard}px`;
+    }
+
+    function scheduleTogglePositionSync(delay = 0) {
+      if (uiTogglePositionTimer !== null) {
+        window.clearTimeout(uiTogglePositionTimer);
+      }
+      uiTogglePositionTimer = window.setTimeout(() => {
+        syncDesktopTogglePosition();
+        uiTogglePositionTimer = null;
+      }, delay);
+    }
+
+    function syncControlsChrome() {
+      syncViewportCssVars();
+      syncCompactLayoutState();
+      const btn = document.getElementById('toggle-controls');
+      const uiToggles = document.getElementById('ui-toggles');
+      const backdrop = document.getElementById('controls-backdrop');
+      const controlsDiv = document.querySelector('.controls');
+      const hideBtn = document.getElementById('mobile-hide-controls');
+      const isMobile = isCompactMobileLayout();
+      const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
+      const showMobileDirections = directionsVisible && isCompactMobileLayout();
+      const hideDesktopGap = !controlsVisible && !isCompactMobileLayout();
+      const collapseDesktopGap = controlsVisible && controlsCollapsed && !isCompactMobileLayout();
+
+      if (controlsDiv) {
+        controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed);
+      }
+
+      syncHeroBannerState();
+      document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
+      document.body.classList.toggle('mobile-directions-open', showMobileDirections);
+      document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
+      document.body.classList.toggle('desktop-controls-collapsed', collapseDesktopGap);
+      if (uiToggles) {
+        const togglesReady = uiToggles.dataset.ready === 'true';
+        uiToggles.style.display = togglesReady && (!isMobile || !controlsVisible) ? 'block' : 'none';
+      }
+      if (backdrop) {
+        backdrop.style.display = showMobileOverlay ? 'block' : 'none';
+      }
+      if (btn) {
+        btn.textContent = getControlsToggleLabel();
+      }
+      if (hideBtn) {
+        if (!controlsVisible) {
+          hideBtn.style.display = 'none';
+        } else if (isMobile) {
+          hideBtn.textContent = 'Close';
+          hideBtn.style.display = 'inline-flex';
+        } else {
+          hideBtn.textContent = controlsCollapsed ? 'Expand' : 'Collapse';
+          hideBtn.style.display = 'inline-flex';
+        }
+      }
+      updateControlsSummary();
+      scheduleTogglePositionSync(isMobile ? 240 : 120);
+    }
+
+    function minimiseControlsForMapFocus() {
+      if (controlsVisible && isCompactMobileLayout()) {
+        setControlsCollapsed(true);
+      }
+      if (isCompactMobileLayout() && !heroBannerCollapsed) {
+        setHeroBannerCollapsed(true);
+      }
+      if (isCompactMobileLayout() && !selectionCardCollapsed) {
+        setSelectionCardCollapsed(true);
+      }
+    }
+
+    function setSelectionCardCollapsed(collapsed) {
+      selectionCardCollapsed = !!collapsed;
+      syncSelectionCardChrome();
+      syncDesktopTogglePosition();
+      scheduleTogglePositionSync(isCompactMobileLayout() ? 240 : 120);
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 180);
+      }
+    }
+
+    function setControlsCollapsed(collapsed) {
+      if (!controlsVisible) {
+        controlsCollapsed = false;
+      } else {
+        controlsCollapsed = !!collapsed;
+      }
+      syncControlsChrome();
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    }
+
+    function setControlsVisible(show, options = {}) {
+      controlsVisible = !!show;
+      const controlsDiv = document.querySelector('.controls');
+      if (!controlsVisible) {
+        controlsCollapsed = false;
+      } else {
+        controlsCollapsed = !!options.collapsed;
+      }
+      if (controlsDiv) controlsDiv.style.display = controlsVisible ? 'block' : 'none';
+      syncControlsChrome();
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    }
+
+    function setDirectionsVisible(show) {
+      if (show && isCompactMobileLayout() && controlsVisible) {
+        setControlsVisible(false);
+      }
+      directionsVisible = !!show;
+      const directionsDiv = document.getElementById('instructions');
+      const mapDiv = document.getElementById('map');
+      const btn = document.getElementById('toggle-directions');
+
+      if (directionsDiv) directionsDiv.style.display = directionsVisible ? 'block' : 'none';
+      if (btn) btn.textContent = directionsVisible ? 'Hide directions' : 'Show directions';
+      if (directionsVisible && directionsDiv && directionsDiv.innerHTML.trim() === '') {
+        renderDirectionsPanel(null, 'Choose a destination to see directions.');
+      }
+
+      if (mapDiv) {
+        if (directionsVisible) {
+          if (!isCompactMobileLayout()) {
+            mapDiv.style.right = '430px';
+            mapDiv.style.bottom = '24px';
+          } else {
+            mapDiv.style.bottom = '45%';
+            mapDiv.style.right = '12px';
+          }
+        } else {
+          mapDiv.style.right = isCompactMobileLayout() ? '12px' : '24px';
+          mapDiv.style.bottom = isCompactMobileLayout() ? '14px' : '24px';
+        }
+      }
+
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+      syncControlsChrome();
+    }
+
+    function normaliseText(s) {
+      return (s || '').toString().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    }
+
+    function normaliseNameCityKey(name, city) {
+      return `${normaliseText(name)}|${normaliseText(city)}`;
+    }
+
+    function normaliseStrainBaseType(value) {
+      const t = normaliseText(value || '');
+      if (t === 'sativa' || t === 'indica' || t === 'hybrid' || t === 'hash' || t === 'kush') return t;
+      return '';
+    }
+
+    function ensureStrainMetaEntry(key, displayName) {
+      if (!key) return null;
+      if (!strainMetaByKey.has(key)) {
+        strainMetaByKey.set(key, {
+          name: (displayName || '').toString().trim(),
+          typeCounts: { sativa: 0, indica: 0, hybrid: 0, hash: 0, kush: 0 },
+          isCali: false
+        });
+      }
+      const meta = strainMetaByKey.get(key);
+      if (displayName && !meta.name) {
+        meta.name = (displayName || '').toString().trim();
+      }
+      return meta;
+    }
+
+    function mergeStrainMeta(displayName, baseTypeValue, isCaliValue) {
+      const name = (displayName || '').toString().trim();
+      const key = normaliseText(name);
+      if (!key) return;
+      const meta = ensureStrainMetaEntry(key, name);
+      if (!meta) return;
+
+      const baseType = normaliseStrainBaseType(baseTypeValue);
+      if (baseType) {
+        meta.typeCounts[baseType] = (meta.typeCounts[baseType] || 0) + 1;
+      }
+      if (Number(isCaliValue) === 1 || isCaliValue === true) {
+        meta.isCali = true;
+      }
+    }
+
+    function deriveStrainBaseType(meta) {
+      if (!meta || !meta.typeCounts) return 'unknown';
+      const order = ['sativa', 'indica', 'hybrid', 'hash', 'kush'];
+      const types = order.filter(t => (meta.typeCounts[t] || 0) > 0);
+      if (!types.length) return 'unknown';
+      if (types.length === 1) return types[0];
+      types.sort((a, b) => {
+        const diff = (meta.typeCounts[b] || 0) - (meta.typeCounts[a] || 0);
+        if (diff !== 0) return diff;
+        return order.indexOf(a) - order.indexOf(b);
+      });
+      return types[0] || 'unknown';
+    }
+
+    function getStrainVisualMeta(name) {
+      const key = normaliseText(name || '');
+      const meta = key ? strainMetaByKey.get(key) : null;
+      return {
+        baseType: deriveStrainBaseType(meta),
+        isCali: !!(meta && meta.isCali)
+      };
+    }
+
+    function normaliseUrlPath(url) {
+      const raw = (url || '').toString().trim();
+      if (!raw) return '';
+      try {
+        const u = new URL(raw, window.location.href);
+        return (u.pathname || '').toLowerCase().replace(/\/+$/, '');
+      } catch {
+        return '';
+      }
+    }
+
+    function extractShopIdFromHref(href) {
+      const m = (href || '').match(/\/shop\/(\d+)/);
+      if (!m) return null;
+      const id = parseInt(m[1], 10);
+      return Number.isFinite(id) ? id : null;
+    }
+
+    function logoCandidates(logoFilename) {
+      const raw = (logoFilename || '').toString().trim();
+      if (!raw) return [];
+      const encoded = encodeURIComponent(raw);
+      const out = [];
+      LOGO_BASE_PATHS.forEach(base => {
+        out.push(`${base}${encoded}`);
+        out.push(`${base}${raw}`);
+      });
+      return Array.from(new Set(out));
+    }
+
+    function escapeHtmlAttr(s) {
+      return (s || '').toString()
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function escapeHtml(s) {
+      return (s || '').toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function tryNextImageCandidate(imgEl) {
+      const all = (imgEl.dataset.candidates || '').split('|').filter(Boolean);
+      const i = parseInt(imgEl.dataset.idx || '0', 10) + 1;
+      if (i < all.length) {
+        imgEl.dataset.idx = String(i);
+        imgEl.src = all[i];
+        return true;
+      }
+      return false;
+    }
+
+    // Used by popup <img onerror> to try fallback logo paths.
+    function popupLogoFallback(imgEl) {
+      const advanced = tryNextImageCandidate(imgEl);
+      if (!advanced) {
+        imgEl.style.display = 'none';
+      }
+    }
+
+    // Same fallback logic for marker logo images.
+    // If no logo path works, use a plain marker pin image.
+    function markerLogoFallback(imgEl) {
+      const advanced = tryNextImageCandidate(imgEl);
+      if (!advanced) {
+        imgEl.onerror = null;
+        imgEl.src = FALLBACK_MARKER_ICON_URL;
+        imgEl.style.maxWidth = '100%';
+        imgEl.style.maxHeight = '100%';
+        imgEl.style.width = 'auto';
+        imgEl.style.height = 'auto';
+        imgEl.style.objectFit = 'contain';
+        imgEl.style.objectPosition = 'center center';
+        imgEl.style.padding = '0';
+        imgEl.style.background = 'transparent';
+        imgEl.style.margin = '0 auto';
+      }
+    }
+    window.popupLogoFallback = popupLogoFallback;
+    window.markerLogoFallback = markerLogoFallback;
+
+    // =========================================================
+    // Icons
+    // =========================================================
+
+    /**
+     * Initialise marker icons for each category, with different colours.
+     * These are used when a location doesn't have a logo.
+     */
+    function initCategoryIcons() {
+      // Assign each category (except 'all' and 'favourites') a colour
+      categoryOptions
+        .filter(c => c !== 'all' && c !== 'favourites')
+        .forEach((cat, idx) => {
+          categoryColors[cat] = _markerColors[idx % _markerColors.length];
+        });
+
+      // Create actual Leaflet icons for category pins
+      Object.entries(categoryColors).forEach(([cat, color]) => {
+        categoryIcons[cat] = new L.Icon({
+          iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
+          shadowUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
+      });
+
+      // Default grey icon if no category match
+      defaultIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+        shadowUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+    }
+
+    /**
+     * NEW:
+     * Create a Leaflet icon using a coffee shop logo filename from the CSV.
+     * If logo is missing/blank, return null so we can fall back to pin icons.
+     *
+     * CSV column: logo
+     * Example value: boerejongens.png
+     */
+    function createLogoIcon(logoFilename, priceLabel = '') {
+      const candidates = logoCandidates(logoFilename);
+      if (!candidates.length) return null;
+      const joined = candidates.map(escapeHtmlAttr).join('|');
+      const first = escapeHtmlAttr(candidates[0]);
+      const labelText = (priceLabel || '').toString().trim();
+      const safeLabel = escapeHtml(labelText);
+      const badgeClass = safeLabel ? 'marker-price-badge' : 'marker-price-badge hidden';
+
+      return L.divIcon({
+        html:
+          `<div class="shop-marker-wrap">` +
+            `<div class="shop-logo-icon">` +
+              `<img src="${first}" alt="shop logo" ` +
+              `data-candidates="${joined}" data-idx="0" onerror="markerLogoFallback(this)">` +
+            `</div>` +
+            `<span class="${badgeClass}">${safeLabel}</span>` +
+          `</div>`,
+        iconSize: [LOGO_MARKER_SIZE, LOGO_MARKER_SIZE],
+        iconAnchor: [Math.round(LOGO_MARKER_SIZE / 2), LOGO_MARKER_SIZE],
+        popupAnchor: [0, -LOGO_MARKER_SIZE],
+        className: 'shop-marker-icon'
+      });
+    }
+
+    /**
+     * Decide which icon to use for a location:
+     *  1) Use logo icon if present
+     *  2) Else fall back to category pin icon
+     *  3) Else default icon
+     */
+    function chooseMarkerIcon(loc, priceLabel = '') {
+      // 1) Prefer logo icon if available
+      const logoIcon = createLogoIcon(loc.logo, priceLabel);
+      if (logoIcon) return logoIcon;
+
+      // 2) Fall back to first matching category pin
+      let icon = defaultIcon;
+      for (const cat of categoryOptions) {
+        if (cat === 'all' || cat === 'favourites') continue;
+        if (loc[cat] && categoryIcons[cat]) {
+          icon = categoryIcons[cat];
+          break;
+        }
+      }
+      return icon;
+    }
+
+    function createMeMarkerIcon() {
+      return L.divIcon({
+        html:
+          `<div class="me-marker-wrap" aria-label="Your location">` +
+            `<span class="me-marker-ping"></span>` +
+            `<span class="me-marker-dot"></span>` +
+          `</div>`,
+        iconSize: [ME_MARKER_SIZE, ME_MARKER_SIZE],
+        iconAnchor: [Math.round(ME_MARKER_SIZE / 2), Math.round(ME_MARKER_SIZE / 2)],
+        className: 'me-marker-icon'
+      });
+    }
+
+    function updateMeLocationMarker(coords) {
+      if (!map || !Array.isArray(coords) || coords.length !== 2) return;
+
+      if (!meLocationMarker) {
+        meLocationMarker = L.marker(coords, {
+          icon: createMeMarkerIcon(),
+          interactive: false,
+          keyboard: false,
+          zIndexOffset: 3000
+        }).addTo(map);
+        return;
+      }
+
+      meLocationMarker.setLatLng(coords);
+      if (!map.hasLayer(meLocationMarker)) {
+        meLocationMarker.addTo(map);
+      }
+    }
+
+    function popupLogoHtml(loc) {
+      const candidates = logoCandidates(loc.logo);
+      if (!candidates.length) return '';
+      const joined = candidates.map(escapeHtmlAttr).join('|');
+      const first = escapeHtmlAttr(candidates[0]);
+      return `<img src="${first}" alt="${loc.name} logo"
+                  data-candidates="${joined}" data-idx="0"
+                  onerror="popupLogoFallback(this)"
+                  style="width:${POPUP_LOGO_SIZE}px;height:${POPUP_LOGO_SIZE}px;object-fit:contain;display:block;margin:8px auto;border-radius:8px;background:white;">`;
+    }
+
+    // =========================================================
+    // Rating stars
+    // =========================================================
+
+    /**
+     * Convert a rating 0–5 to a "★★★☆☆" string.
+     */
+    function renderStars(rating) {
+      const r = Math.max(0, Math.min(5, rating || 0));
+      const full = '★'.repeat(r);
+      const empty = '☆'.repeat(5 - r);
+      return full + empty;
+    }
+
+    async function fetchDbIndex() {
+      const res = await fetch('/browse?table=shops&limit=5000', { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(`DB index unavailable (${res.status})`);
+
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const rows = [];
+
+      doc.querySelectorAll('tbody tr').forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        if (tds.length < 4) return;
+        const id = parseInt((tds[0].textContent || '').trim(), 10);
+        if (!Number.isFinite(id)) return;
+        rows.push({
+          shop_id: id,
+          name: (tds[1].textContent || '').trim(),
+          city: (tds[2].textContent || '').trim(),
+          shop_url: (tds[3].textContent || '').trim(),
+        });
+      });
+      return rows;
+    }
+
+    function setDbStatus(text) {
+      const el = document.getElementById('db-status');
+      if (!el) return;
+      if (!text) {
+        el.textContent = '';
+        el.style.display = 'none';
+        return;
+      }
+      el.textContent = text;
+      el.style.display = 'block';
+    }
+
+    function normaliseDbRow(raw) {
+      const shopId = parseInt(raw && (raw.shop_id ?? raw.id), 10);
+      if (!Number.isFinite(shopId)) return null;
+      return {
+        shop_id: shopId,
+        name: ((raw && raw.name) || '').toString().trim(),
+        city: ((raw && raw.city) || '').toString().trim(),
+        shop_url: ((raw && (raw.shop_url || raw.website)) || '').toString().trim(),
+      };
+    }
+
+    async function fetchDbIndexFromJson() {
+      const candidates = [
+        'shop_lookup.json',
+        './shop_lookup.json',
+        '/shop_lookup.json',
+        'shops.json',
+        './shops.json',
+        '/shops.json',
+      ];
+
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          let rows = [];
+
+          if (Array.isArray(data)) {
+            rows = data.map(normaliseDbRow).filter(Boolean);
+          } else if (data && typeof data === 'object') {
+            rows = Object.values(data).map(normaliseDbRow).filter(Boolean);
+          }
+
+          if (rows.length) return rows;
+        } catch (_err) {
+          // Try next candidate path.
+        }
+      }
+
+      throw new Error('No JSON shop index available');
+    }
+
+    async function fetchStrainShopIdsFromFlask(q) {
+      const res = await fetch(`/strain_lookup?q=${encodeURIComponent(q)}&limit=5000`, { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const ids = new Set();
+
+      doc.querySelectorAll('tbody tr').forEach(tr => {
+        const link = tr.querySelector('a[href*="/shop/"]');
+        if (!link) return;
+        const id = extractShopIdFromHref(link.getAttribute('href') || '');
+        if (id) ids.add(id);
+      });
+      return ids;
+    }
+
+    async function loadStrainIndexRows() {
+      if (Array.isArray(strainIndexRows)) return strainIndexRows;
+
+      const candidates = ['strain_index.json', './strain_index.json', '/strain_index.json'];
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            strainIndexRows = data;
+            return strainIndexRows;
+          }
+        } catch (_err) {
+          // Try next candidate path.
+        }
+      }
+
+      throw new Error('No strain index JSON available');
+    }
+
+    async function loadActiveOfferingsRows() {
+      if (Array.isArray(activeOfferingsRows)) return activeOfferingsRows;
+
+      const candidates = ['active_offerings.json', './active_offerings.json', '/active_offerings.json'];
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            activeOfferingsRows = data;
+            return activeOfferingsRows;
+          }
+        } catch (_err) {
+          // Try next candidate path.
+        }
+      }
+
+      throw new Error('No active offerings JSON available');
+    }
+
+    function formatPriceAmount(value) {
+      if (!Number.isFinite(value)) return '';
+      const rounded = Math.round(value * 100) / 100;
+      return Number.isInteger(rounded) ? String(rounded) : String(rounded).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    function buildPriceLabel(entries) {
+      if (!Array.isArray(entries) || !entries.length) return '';
+      const valid = entries.filter(e => Number.isFinite(e && e.amount));
+      if (!valid.length) return '';
+
+      const unit = ((valid[0].unit || 'g') + '').trim() || 'g';
+      const currency = ((valid[0].currency || '€') + '').trim() || '€';
+      const amounts = valid.map(e => e.amount).sort((a, b) => a - b);
+      const min = amounts[0];
+      const max = amounts[amounts.length - 1];
+
+      if (Math.abs(max - min) < 0.0001) {
+        return `${currency}${formatPriceAmount(min)}/${unit}`;
+      }
+      return `${currency}${formatPriceAmount(min)}-${formatPriceAmount(max)}/${unit}`;
+    }
+
+    function collectMatchedActiveOfferingRows(qNorm, rows) {
+      if (!qNorm) return [];
+      const exact = [];
+      const partial = [];
+      (rows || []).forEach(r => {
+        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
+        if (!n) return;
+        if (n === qNorm) {
+          exact.push(r);
+        } else if (n.includes(qNorm)) {
+          partial.push(r);
+        }
+      });
+      return exact.length ? exact : partial;
+    }
+
+    async function fetchStrainPriceMapsFromJson(q) {
+      const qNorm = normaliseText(q);
+      if (!qNorm) {
+        return { byShopId: new Map(), byNameCity: new Map() };
+      }
+
+      const rows = await loadActiveOfferingsRows();
+      const matchedRows = collectMatchedActiveOfferingRows(qNorm, rows);
+      const byShopRaw = new Map();
+      const byNameCityRaw = new Map();
+
+      matchedRows.forEach(r => {
+        const amount = parseFloat(r && r.price_amount);
+        if (!Number.isFinite(amount)) return;
+        const currency = ((r && r.price_currency) || '€').toString().trim() || '€';
+        const unit = ((r && r.price_unit) || 'g').toString().trim() || 'g';
+        const priceEntry = { amount, currency, unit };
+
+        const shopId = parseInt(r && r.shop_id, 10);
+        if (Number.isFinite(shopId)) {
+          if (!byShopRaw.has(shopId)) byShopRaw.set(shopId, []);
+          byShopRaw.get(shopId).push(priceEntry);
+        }
+
+        const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
+        if (key !== '|') {
+          if (!byNameCityRaw.has(key)) byNameCityRaw.set(key, []);
+          byNameCityRaw.get(key).push(priceEntry);
+        }
+      });
+
+      const byShopId = new Map();
+      byShopRaw.forEach((entries, shopId) => {
+        const label = buildPriceLabel(entries);
+        if (label) byShopId.set(shopId, label);
+      });
+
+      const byNameCity = new Map();
+      byNameCityRaw.forEach((entries, key) => {
+        const label = buildPriceLabel(entries);
+        if (label) byNameCity.set(key, label);
+      });
+
+      return { byShopId, byNameCity };
+    }
+
+    async function fetchStrainShopIdsFromJson(q) {
+      const qNorm = normaliseText(q);
+      if (!qNorm) return { ids: new Set(), nameCityKeys: new Set(), source: 'none' };
+
+      try {
+        const rows = await loadStrainIndexRows();
+        const exactMatches = [];
+        const partialMatches = [];
+
+        rows.forEach(r => {
+          const n = normaliseText((r && (r.strain_name_normalised || r.strain_name_display)) || '');
+          if (!n) return;
+          if (n === qNorm) {
+            exactMatches.push(r);
+          } else if (n.includes(qNorm)) {
+            partialMatches.push(r);
+          }
+        });
+
+        const matchedRows = exactMatches.length ? exactMatches : partialMatches;
+        const ids = new Set();
+        const nameCityKeys = new Set();
+        matchedRows.forEach(r => {
+          const shops = (r && Array.isArray(r.shops)) ? r.shops : [];
+          shops.forEach(s => {
+            const id = parseInt(s && s.shop_id, 10);
+            if (Number.isFinite(id)) ids.add(id);
+            const key = normaliseNameCityKey(s && s.shop_name, s && s.shop_city);
+            if (key !== '|') nameCityKeys.add(key);
+          });
+        });
+        return { ids, nameCityKeys, source: 'strain_index' };
+      } catch (_strainErr) {
+        // Fallback to active_offerings.json when strain_index.json is missing.
+      }
+
+      const rows = await loadActiveOfferingsRows();
+      const exact = rows.filter(r => {
+        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
+        return n === qNorm;
+      });
+      const partial = rows.filter(r => {
+        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
+        return n.includes(qNorm);
+      });
+      const matchedRows = exact.length ? exact : partial;
+      const ids = new Set();
+      const nameCityKeys = new Set();
+      matchedRows.forEach(r => {
+        const id = parseInt(r && r.shop_id, 10);
+        if (Number.isFinite(id)) ids.add(id);
+        const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
+        if (key !== '|') nameCityKeys.add(key);
+      });
+      return { ids, nameCityKeys, source: 'active_offerings' };
+    }
+
+    function dedupeAndSortStrainNames(names) {
+      const byKey = new Map();
+      (names || []).forEach(name => {
+        const n = (name || '').toString().trim();
+        const key = normaliseText(n);
+        if (!key) return;
+        if (!byKey.has(key)) byKey.set(key, n);
+      });
+      return Array.from(byKey.values()).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    }
+
+    function pushStrainIntoIndex(indexMap, key, strainName) {
+      const k = (key || '').toString().trim();
+      const n = (strainName || '').toString().trim();
+      if (!k || !n) return;
+      if (!indexMap.has(k)) indexMap.set(k, []);
+      indexMap.get(k).push(n);
+    }
+
+    function finalisePopupStrainMap(indexMap) {
+      const out = new Map();
+      indexMap.forEach((names, key) => {
+        const deduped = dedupeAndSortStrainNames(names);
+        if (deduped.length) out.set(key, deduped);
+      });
+      return out;
+    }
+
+    function formatOfferingPriceLabel(row) {
+      const amount = parseFloat(row && row.price_amount);
+      if (!Number.isFinite(amount)) return '';
+      const currency = ((row && row.price_currency) || '€').toString().trim() || '€';
+      const unit = ((row && row.price_unit) || 'g').toString().trim() || 'g';
+      const amountText = Number.isInteger(amount)
+        ? String(amount)
+        : amount.toFixed(2).replace(/\.?0+$/, '');
+      return `${currency}${amountText}/${unit}`;
+    }
+
+    function ensurePopupStrainDetailEntry(rawMap, locationKey, strainKey) {
+      if (!rawMap.has(locationKey)) rawMap.set(locationKey, new Map());
+      const byStrain = rawMap.get(locationKey);
+      if (!byStrain.has(strainKey)) {
+        byStrain.set(strainKey, { prices: new Set(), notes: new Set() });
+      }
+      return byStrain.get(strainKey);
+    }
+
+    function pushPopupStrainDetail(rawMap, locationKey, strainName, row) {
+      const locKey = (locationKey || '').toString().trim();
+      const strainKey = normaliseText((strainName || '').toString().trim());
+      if (!locKey || !strainKey) return;
+
+      const entry = ensurePopupStrainDetailEntry(rawMap, locKey, strainKey);
+      const priceLabel = formatOfferingPriceLabel(row);
+      if (priceLabel) entry.prices.add(priceLabel);
+
+      const noteRaw = ((row && (row.notes ?? row.note)) || '').toString().replace(/\s+/g, ' ').trim();
+      if (noteRaw) entry.notes.add(noteRaw);
+    }
+
+    function finalisePopupStrainDetailMap(rawMap) {
+      const out = new Map();
+      rawMap.forEach((byStrainRaw, locationKey) => {
+        const byStrain = new Map();
+        byStrainRaw.forEach((raw, strainKey) => {
+          const priceText = Array.from(raw.prices || [])
+            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }))
+            .join(', ');
+          const notesText = Array.from(raw.notes || []).join(' | ');
+          byStrain.set(strainKey, { priceText, notesText });
+        });
+        if (byStrain.size) out.set(locationKey, byStrain);
+      });
+      return out;
+    }
+
+    async function ensurePopupStrainIndex() {
+      if (popupStrainIndexReady) return true;
+      if (popupStrainIndexPromise) return popupStrainIndexPromise;
+
+      popupStrainIndexPromise = (async () => {
+        const byIdRaw = new Map();
+        const byNameCityRaw = new Map();
+        const detailsByIdRaw = new Map();
+        const detailsByNameCityRaw = new Map();
+        let sawRows = false;
+
+        try {
+          const rows = await loadStrainIndexRows();
+          if (rows.length) sawRows = true;
+          rows.forEach(r => {
+            const strainName = ((r && (r.strain_name_display || r.strain_name_normalised)) || '').toString().trim();
+            if (!strainName) return;
+            mergeStrainMeta(strainName, '', 0);
+            const shops = (r && Array.isArray(r.shops)) ? r.shops : [];
+            shops.forEach(s => {
+              const id = parseInt(s && s.shop_id, 10);
+              if (Number.isFinite(id)) {
+                pushStrainIntoIndex(byIdRaw, String(id), strainName);
+              }
+              const key = normaliseNameCityKey(s && s.shop_name, s && s.shop_city);
+              if (key !== '|') {
+                pushStrainIntoIndex(byNameCityRaw, key, strainName);
+              }
+            });
+          });
+        } catch (_err) {
+          // Optional source; keep going.
+        }
+
+        try {
+          const rows = await loadActiveOfferingsRows();
+          if (rows.length) sawRows = true;
+          rows.forEach(r => {
+            const strainName = ((r && (r.strain_name || r.strain_name_normalised)) || '').toString().trim();
+            if (!strainName) return;
+            mergeStrainMeta(strainName, r && r.base_type, r && r.is_cali);
+            const id = parseInt(r && r.shop_id, 10);
+            if (Number.isFinite(id)) {
+              pushStrainIntoIndex(byIdRaw, String(id), strainName);
+              pushPopupStrainDetail(detailsByIdRaw, String(id), strainName, r);
+            }
+            const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
+            if (key !== '|') {
+              pushStrainIntoIndex(byNameCityRaw, key, strainName);
+              pushPopupStrainDetail(detailsByNameCityRaw, key, strainName, r);
+            }
+          });
+        } catch (_err) {
+          // Optional source; keep going.
+        }
+
+        popupStrainsByShopId = finalisePopupStrainMap(byIdRaw);
+        popupStrainsByNameCity = finalisePopupStrainMap(byNameCityRaw);
+        popupStrainDetailsByShopId = finalisePopupStrainDetailMap(detailsByIdRaw);
+        popupStrainDetailsByNameCity = finalisePopupStrainDetailMap(detailsByNameCityRaw);
+        popupStrainIndexReady = true;
+
+        return sawRows || popupStrainsByShopId.size > 0 || popupStrainsByNameCity.size > 0;
+      })()
+        .finally(() => {
+          popupStrainIndexPromise = null;
+        });
+
+      return popupStrainIndexPromise;
+    }
+
+    function isCoffeeShopLocation(loc) {
+      if (!loc || typeof loc !== 'object') return false;
+      if (typeof loc.Coffeeshop === 'boolean') return loc.Coffeeshop;
+      const coffeeKey = Object.keys(loc).find(k => normaliseText(k) === 'coffeeshop');
+      return coffeeKey ? !!loc[coffeeKey] : false;
+    }
+
+    function popupStrainContainerId(index) {
+      return `popup-strains-${index}`;
+    }
+
+    function popupWebsitePreviewHtml(loc) {
+      const website = (loc && loc.website) ? (loc.website || '').toString().trim() : '';
+      if (!website) return '';
+      const websiteAttr = escapeHtmlAttr(website);
+      const nameAttr = escapeHtmlAttr((loc && loc.name) ? loc.name : 'shop');
+      return (
+        `<a href="${websiteAttr}" target="_blank">` +
+          `<img src="https://image.thum.io/get/width/300/${websiteAttr}" ` +
+               `alt="Thumbnail of ${nameAttr}" ` +
+               `style="width:100%;height:auto;margin:8px 0;">` +
+        `</a><br>`
+      );
+    }
+
+    function getPopupStrainsForLocation(loc) {
+      if (!loc) return [];
+
+      if (loc.db_shop_id) {
+        const byId = popupStrainsByShopId.get(String(loc.db_shop_id));
+        if (Array.isArray(byId) && byId.length) return byId;
+      }
+
+      const key = normaliseNameCityKey(loc.name, loc.city || '');
+      const byNameCity = popupStrainsByNameCity.get(key);
+      if (Array.isArray(byNameCity) && byNameCity.length) return byNameCity;
+
+      return [];
+    }
+
+    function getPopupStrainDetail(loc, strainName) {
+      const strainKey = normaliseText((strainName || '').toString());
+      if (!loc || !strainKey) return { priceText: '', notesText: '' };
+
+      if (loc.db_shop_id) {
+        const byId = popupStrainDetailsByShopId.get(String(loc.db_shop_id));
+        if (byId && byId.has(strainKey)) {
+          return byId.get(strainKey);
+        }
+      }
+
+      const locationKey = normaliseNameCityKey(loc.name, loc.city || '');
+      const byNameCity = popupStrainDetailsByNameCity.get(locationKey);
+      if (byNameCity && byNameCity.has(strainKey)) {
+        return byNameCity.get(strainKey);
+      }
+
+      return { priceText: '', notesText: '' };
+    }
+
+    async function refreshPopupStrainsForLocation(index) {
+      const loc = locations[index];
+      if (!loc || !isCoffeeShopLocation(loc)) return;
+
+      const containerId = popupStrainContainerId(index);
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      container.style.display = 'block';
+      container.innerHTML = '<p class="popup-strains-status">Loading strains...</p>';
+
+      if (!loc.db_shop_id) {
+        const dbOk = await ensureDbIntegration();
+        if (dbOk) bindDbShopIdToLocation(loc);
+      }
+
+      await ensurePopupStrainIndex();
+
+      const liveContainer = document.getElementById(containerId);
+      if (!liveContainer) return;
+
+      const strains = getPopupStrainsForLocation(loc);
+      if (!strains.length) {
+        const previewHtml = popupWebsitePreviewHtml(loc);
+        if (previewHtml) {
+          liveContainer.style.display = 'block';
+          liveContainer.innerHTML = previewHtml;
+        } else {
+          liveContainer.style.display = 'none';
+          liveContainer.innerHTML = '';
+        }
+        return;
+      }
+
+      liveContainer.style.display = 'block';
+      const countText = `${strains.length} strain${strains.length === 1 ? '' : 's'} available`;
+      const activeKey = normaliseText(strainFilterText || '');
+      const itemsHtml = strains.map(name => {
+        const n = (name || '').toString();
+        const key = normaliseText(n);
+        const isActive = activeKey !== '' && key === activeKey;
+        const meta = getStrainVisualMeta(n);
+        const detail = getPopupStrainDetail(loc, n);
+        const metaParts = [];
+        if (detail && detail.priceText) {
+          metaParts.push(`<span class="popup-strain-price">${escapeHtml(detail.priceText)}</span>`);
+        }
+        if (detail && detail.notesText) {
+          metaParts.push(`<span class="popup-strain-notes">Notes: ${escapeHtml(detail.notesText)}</span>`);
+        }
+        const metaHtml = metaParts.length
+          ? `<span class="popup-strain-meta">${metaParts.join('<span class="popup-strain-meta-sep">•</span>')}</span>`
+          : '';
+        const typeClass = meta.baseType !== 'unknown' ? ` type-${meta.baseType}` : '';
+        const caliClass = meta.isCali ? ' is-cali' : '';
+        const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
+        return (
+          `<li>` +
+            `<button type="button" class="popup-strain-btn${typeClass}${caliClass}${isActive ? ' active' : ''}" data-strain="${escapeHtmlAttr(n)}">` +
+              `<span class="strain-item-main">` +
+                `<span>${escapeHtml(n)}</span>` +
+                `${caliBadge}` +
+              `</span>` +
+              `${metaHtml}` +
+            `</button>` +
+          `</li>`
+        );
+      }).join('');
+      liveContainer.innerHTML =
+        `<p class="popup-strains-count">${countText}</p>` +
+        `<ul class="popup-strains-list">${itemsHtml}</ul>`;
+    }
+
+    async function fetchActiveStrainNames() {
+      try {
+        await ensurePopupStrainIndex();
+        const namesFromMeta = Array.from(strainMetaByKey.values())
+          .map(meta => meta && meta.name)
+          .filter(Boolean);
+        const outFromMeta = dedupeAndSortStrainNames(namesFromMeta);
+        if (outFromMeta.length) return outFromMeta;
+      } catch (_err) {
+        // Fallback below.
+      }
+
+      try {
+        const rows = await loadActiveOfferingsRows();
+        const names = rows.map(r => (r && (r.strain_name || r.strain_name_normalised)) || '');
+        const out = dedupeAndSortStrainNames(names);
+        if (out.length) return out;
+      } catch (_err) {
+        // Fallback below.
+      }
+
+      const rows = await loadStrainIndexRows();
+      const names = rows.map(r => (r && (r.strain_name_display || r.strain_name_normalised)) || '');
+      return dedupeAndSortStrainNames(names);
+    }
+
+    function updateStrainListSelection() {
+      const key = normaliseText(strainFilterText || '');
+      document.querySelectorAll('#strain-list .strain-item').forEach(btn => {
+        const btnKey = normaliseText(btn.getAttribute('data-strain') || '');
+        btn.classList.toggle('active', key !== '' && btnKey === key);
+      });
+      document.querySelectorAll('.popup-strain-btn').forEach(btn => {
+        const btnKey = normaliseText(btn.getAttribute('data-strain') || '');
+        btn.classList.toggle('active', key !== '' && btnKey === key);
+      });
+    }
+
+    function renderStrainList() {
+      const listEl = document.getElementById('strain-list');
+      const searchEl = document.getElementById('strain-list-search');
+      if (!listEl || !searchEl) return;
+
+      const q = normaliseText(searchEl.value || '');
+      const names = activeStrainNames.filter(name => !q || normaliseText(name).includes(q));
+      listEl.innerHTML = '';
+
+      if (!names.length) {
+        listEl.innerHTML = '<div class="strain-empty">No strains found.</div>';
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      names.forEach(name => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'strain-item';
+        btn.setAttribute('data-strain', name);
+        const meta = getStrainVisualMeta(name);
+        if (meta.baseType !== 'unknown') {
+          btn.classList.add(`type-${meta.baseType}`);
+        }
+        if (meta.isCali) {
+          btn.classList.add('is-cali');
+        }
+
+        const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
+        btn.innerHTML =
+          `<span class="strain-item-main">` +
+            `<span>${escapeHtml(name)}</span>` +
+            `${caliBadge}` +
+          `</span>`;
+        frag.appendChild(btn);
+      });
+      listEl.appendChild(frag);
+      updateStrainListSelection();
+    }
+
+    async function populateStrainListPanel() {
+      const statusEl = document.getElementById('strain-list-status');
+      const listEl = document.getElementById('strain-list');
+      if (!statusEl || !listEl) return;
+
+      if (!activeStrainNames.length) {
+        statusEl.textContent = 'Loading active strains...';
+        listEl.innerHTML = '';
+        try {
+          activeStrainNames = await fetchActiveStrainNames();
+        } catch (_err) {
+          statusEl.textContent = 'Strain list unavailable';
+          listEl.innerHTML = '<div class="strain-empty">Unable to load strain data.</div>';
+          return;
+        }
+      }
+
+      statusEl.textContent = `${activeStrainNames.length} active strains`;
+      renderStrainList();
+    }
+
+    function setStrainListVisible(show) {
+      strainListVisible = !!show;
+      const panel = document.getElementById('strain-list-panel');
+      if (panel) panel.style.display = strainListVisible ? 'block' : 'none';
+      if (strainListVisible) {
+        populateStrainListPanel();
+      }
+    }
+
+    async function ensureDbIntegration() {
+      if (dbIntegrationReady) return true;
+      let rows = [];
+
+      try {
+        rows = await fetchDbIndex();
+        dbIntegrationSource = 'flask';
+        dbRouteLinksEnabled = true;
+      } catch (_flaskErr) {
+        try {
+          rows = await fetchDbIndexFromJson();
+          dbIntegrationSource = 'json';
+          dbRouteLinksEnabled = false;
+        } catch (_jsonErr) {
+          dbIntegrationReady = false;
+          dbIntegrationSource = 'none';
+          dbRouteLinksEnabled = false;
+          setDbStatus('');
+          return false;
+        }
+      }
+
+      dbByPath = new Map();
+      dbByNameCity = new Map();
+      dbShopMetaById = new Map();
+      const nameCounts = new Map();
+
+      rows.forEach(r => {
+        const p = normaliseUrlPath(r.shop_url);
+        if (p) dbByPath.set(p, r.shop_id);
+        const nc = normaliseNameCityKey(r.name, r.city);
+        if (nc !== '|') dbByNameCity.set(nc, r.shop_id);
+        if (r && r.shop_id) {
+          dbShopMetaById.set(r.shop_id, {
+            name: (r.name || '').toString().trim(),
+            city: (r.city || '').toString().trim(),
+            shop_url: (r.shop_url || '').toString().trim()
+          });
+        }
+        const nk = normaliseText(r.name);
+        nameCounts.set(nk, (nameCounts.get(nk) || 0) + 1);
+      });
+
+      dbByUniqueName = new Map();
+      rows.forEach(r => {
+        const nk = normaliseText(r.name);
+        if ((nameCounts.get(nk) || 0) === 1) {
+          dbByUniqueName.set(nk, r.shop_id);
+        }
+      });
+
+      dbIntegrationReady = true;
+      if (dbIntegrationSource === 'flask') {
+        setDbStatus(`DB links: connected (${rows.length} shops indexed)`);
+      } else {
+        // No warning banner for JSON/static mode.
+        setDbStatus('');
+      }
+      return true;
+    }
+
+    function bindDbShopIdToLocation(loc) {
+      let shopId = null;
+
+      const byPath = normaliseUrlPath(loc.website);
+      if (byPath && dbByPath.has(byPath)) {
+        shopId = dbByPath.get(byPath);
+      }
+
+      if (!shopId) {
+        const nc = normaliseNameCityKey(loc.name, loc.city || '');
+        if (dbByNameCity.has(nc)) {
+          shopId = dbByNameCity.get(nc);
+        }
+      }
+
+      if (!shopId) {
+        const nk = normaliseText(loc.name);
+        if (dbByUniqueName.has(nk)) {
+          shopId = dbByUniqueName.get(nk);
+        }
+      }
+
+      loc.db_shop_id = shopId || null;
+      if (!loc.city && loc.db_shop_id && dbShopMetaById.has(loc.db_shop_id)) {
+        const shopMeta = dbShopMetaById.get(loc.db_shop_id);
+        if (shopMeta && shopMeta.city) {
+          loc.city = shopMeta.city;
+        }
+      }
+    }
+
+    async function applyStrainFilter(queryText) {
+      const status = document.getElementById('strain-status');
+      const q = (typeof queryText === 'string' ? queryText : '').trim();
+      if (!q) {
+        strainFilterText = '';
+        strainAllowedShopIds = null;
+        strainAllowedNameCityKeys = null;
+        strainPriceByShopId = null;
+        strainPriceByNameCity = null;
+        if (status) status.textContent = 'Strain filter: off';
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+        updateStrainListSelection();
+        return;
+      }
+
+      const dbOk = await ensureDbIntegration();
+
+      // If DB index is available, link shop ids now.
+      if (dbOk) {
+        locations.forEach(bindDbShopIdToLocation);
+      }
+
+      try {
+        let result;
+        if (dbRouteLinksEnabled) {
+          try {
+            const ids = await fetchStrainShopIdsFromFlask(q);
+            result = { ids, nameCityKeys: new Set(), source: 'flask' };
+          } catch (_err) {
+            // Flask endpoint not available: fall back to JSON index.
+            dbRouteLinksEnabled = false;
+            result = await fetchStrainShopIdsFromJson(q);
+          }
+        } else {
+          result = await fetchStrainShopIdsFromJson(q);
+        }
+
+        strainFilterText = q;
+        strainAllowedShopIds = result.ids;
+        strainAllowedNameCityKeys = result.nameCityKeys.size ? result.nameCityKeys : null;
+
+        try {
+          const pricing = await fetchStrainPriceMapsFromJson(q);
+          strainPriceByShopId = pricing.byShopId;
+          strainPriceByNameCity = pricing.byNameCity;
+        } catch (_err) {
+          strainPriceByShopId = null;
+          strainPriceByNameCity = null;
+        }
+
+        const matchedCount = locations.filter((loc, idx) => {
+          const key = normaliseNameCityKey(loc.name, loc.city || '');
+          const byId = loc.db_shop_id && strainAllowedShopIds.has(loc.db_shop_id);
+          const byKey = strainAllowedNameCityKeys && strainAllowedNameCityKeys.has(key);
+          return byId || byKey;
+        }).length;
+        if (status) status.textContent = `Strain filter: "${q}" (${matchedCount} shops)`;
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+        updateStrainListSelection();
+      } catch (err) {
+        strainPriceByShopId = null;
+        strainPriceByNameCity = null;
+        if (status) status.textContent = 'Strain filter unavailable: missing JSON index files';
+      }
+    }
+
+    function clearStrainFilter() {
+      const status = document.getElementById('strain-status');
+      strainFilterText = '';
+      strainAllowedShopIds = null;
+      strainAllowedNameCityKeys = null;
+      strainPriceByShopId = null;
+      strainPriceByNameCity = null;
+      if (status) status.textContent = 'Strain filter: off';
+      updateDestinationDropdown();
+      updateDistanceInfo();
+      updateMarkers();
+      updateStrainListSelection();
+    }
+
+    // =========================================================
+    // CSV loading
+    // =========================================================
+
+    function normaliseDiscoveredCsvPath(pathLike) {
+      const raw = (pathLike || '').toString().trim();
+      if (!raw) return '';
+
+      let pathPart = raw;
+      const isAbsoluteUrl = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw);
+      if (isAbsoluteUrl) {
+        try {
+          pathPart = (new URL(raw)).pathname || '';
+        } catch (_err) {
+          pathPart = raw;
+        }
+      }
+
+      // Normalize separators and remove query/hash fragments.
+      let p = pathPart
+        .replace(/\\/g, '/')
+        .split('#')[0]
+        .split('?')[0]
+        .trim()
+        .replace(/^\.\/+/, '')
+        .replace(/^\/+/, '');
+
+      if (!p || !/\.csv$/i.test(p)) return '';
+
+      // If the path includes a locations/ segment anywhere, keep only from there.
+      const lower = p.toLowerCase();
+      const idx = lower.lastIndexOf('locations/');
+      if (idx >= 0) {
+        p = p.slice(idx);
+      }
+
+      return p;
+    }
+
+    function ensureLocationsPrefix(pathLike) {
+      const p = (pathLike || '').toString().replace(/^\/+/, '');
+      if (!p) return '';
+      return p.toLowerCase().startsWith('locations/') ? p : `locations/${p}`;
+    }
+
+    function pickFirstCsvPath(paths) {
+      const out = Array.from(new Set(
+        (paths || [])
+          .map(p => (p || '').toString().trim())
+          .filter(p => p && /\.csv$/i.test(p))
+      ));
+      out.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      return out[0] || null;
+    }
+
+    function canonicalCsvPath(pathLike) {
+      const normalised = normaliseDiscoveredCsvPath(pathLike);
+      if (normalised) return ensureLocationsPrefix(normalised);
+      return (pathLike || '').toString().trim();
+    }
+
+    function csvLabelFromPath(pathLike) {
+      const p = canonicalCsvPath(pathLike);
+      if (!p) return '';
+      const parts = p.split('/');
+      return parts[parts.length - 1] || p;
+    }
+
+    function inferCityFromCsvPath(pathLike) {
+      const label = csvLabelFromPath(pathLike).replace(/\.csv$/i, '');
+      if (!label) return '';
+
+      const cleaned = label
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\b(?:locations?|location)\b/ig, ' ')
+        .replace(/(?:locations?|location|loc)$/i, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!cleaned) return '';
+      return cleaned
+        .split(' ')
+        .filter(Boolean)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .join(' ');
+    }
+
+    function inferCityForLocationRow(row, csvPathLike) {
+      const candidates = ['city', 'town', 'area', 'municipality', 'district', 'shop_city', 'address_city'];
+      for (const key of candidates) {
+        const value = ((row && row[key]) || '').toString().trim();
+        if (value) return value;
+      }
+      return inferCityFromCsvPath(csvPathLike);
+    }
+
+    function renderCsvSwitchSelect(selectedPathLike) {
+      const wrap = document.getElementById('csv-switch-wrap');
+      const select = document.getElementById('csv-switch-select');
+      if (!wrap || !select) return;
+
+      select.innerHTML = '';
+
+      if (!Array.isArray(discoveredCsvPaths) || discoveredCsvPaths.length <= 1) {
+        wrap.style.display = 'none';
+        return;
+      }
+
+      wrap.style.display = 'block';
+
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.text = 'Select CSV...';
+      placeholder.disabled = true;
+      select.appendChild(placeholder);
+
+      discoveredCsvPaths.forEach(path => {
+        const opt = document.createElement('option');
+        opt.value = path;
+        opt.text = csvLabelFromPath(path);
+        select.appendChild(opt);
+      });
+
+      const selectedPath = canonicalCsvPath(selectedPathLike);
+      if (selectedPath && discoveredCsvPaths.includes(selectedPath)) {
+        select.value = selectedPath;
+      } else if (currentCsvPath && discoveredCsvPaths.includes(currentCsvPath)) {
+        select.value = currentCsvPath;
+      } else {
+        select.value = '';
+      }
+    }
+
+    function setDiscoveredCsvPaths(paths, selectedPathLike) {
+      discoveredCsvPaths = Array.from(new Set(
+        (paths || [])
+          .map(canonicalCsvPath)
+          .filter(p => p && /\.csv$/i.test(p))
+      )).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+      renderCsvSwitchSelect(selectedPathLike);
+    }
+
+    function buildCsvPathVariants(pathLike) {
+      const raw = (pathLike || '').toString().trim();
+      if (!raw) return [];
+
+      const out = [];
+      const seen = new Set();
+      const pushUnique = p => {
+        const v = (p || '').toString().trim();
+        if (!v || seen.has(v)) return;
+        seen.add(v);
+        out.push(v);
+      };
+
+      pushUnique(raw);
+
+      const isAbsoluteUrl = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw);
+      const isDataUrl = raw.toLowerCase().startsWith('data:');
+      if (isAbsoluteUrl || isDataUrl) {
+        return out;
+      }
+
+      const stripped = raw.replace(/^\.\/+/, '').replace(/^\/+/, '');
+      if (!stripped) {
+        return out;
+      }
+
+      pushUnique(stripped);
+      pushUnique(`./${stripped}`);
+      pushUnique(`/${stripped}`);
+
+      if (stripped.toLowerCase().startsWith('locations/')) {
+        const withoutPrefix = stripped.slice('locations/'.length);
+        pushUnique(withoutPrefix);
+        pushUnique(`./${withoutPrefix}`);
+        pushUnique(`/${withoutPrefix}`);
+      } else {
+        pushUnique(`locations/${stripped}`);
+        pushUnique(`./locations/${stripped}`);
+        pushUnique(`/locations/${stripped}`);
+      }
+
+      return out;
+    }
+
+    async function discoverCsvPathsInLocations() {
+      const jsonCandidates = ['locations/index.json', './locations/index.json', '/locations/index.json'];
+      for (const url of jsonCandidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const data = await res.json();
+          const files = Array.isArray(data)
+            ? data
+            : (data && Array.isArray(data.files) ? data.files : []);
+          const csvPaths = files
+            .map(normaliseDiscoveredCsvPath)
+            .filter(Boolean)
+            .map(ensureLocationsPrefix);
+          if (csvPaths.length) {
+            return Array.from(new Set(csvPaths))
+              .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+          }
+        } catch (_err) {
+          // Try next discovery source.
+        }
+      }
+
+      const dirCandidates = ['locations/', './locations/', '/locations/'];
+      for (const url of dirCandidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const html = await res.text();
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          const base = new URL(url, window.location.href);
+          const csvPaths = [];
+
+          doc.querySelectorAll('a[href]').forEach(a => {
+            const href = (a.getAttribute('href') || '').trim();
+            if (!href) return;
+            let resolved;
+            try {
+              resolved = new URL(href, base);
+            } catch (_err) {
+              return;
+            }
+            if (resolved.origin !== window.location.origin) return;
+            const p = (resolved.pathname || '').replace(/^\/+/, '');
+            if (!/\.csv$/i.test(p)) return;
+            csvPaths.push(p);
+          });
+
+          const inLocations = csvPaths
+            .map(normaliseDiscoveredCsvPath)
+            .filter(p => p.toLowerCase().startsWith('locations/'));
+          if (inLocations.length) {
+            return Array.from(new Set(inLocations))
+              .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+          }
+        } catch (_err) {
+          // Try next discovery source.
+        }
+      }
+
+      return [];
+    }
+
+    async function parseCsvInput(input, parseOptions) {
+      return new Promise((resolve, reject) => {
+        Papa.parse(input, {
+          header: true,
+          skipEmptyLines: true,
+          ...(parseOptions || {}),
+          complete: async results => {
+            const hasData = results && Array.isArray(results.data) && results.data.length > 0;
+            if (!hasData) {
+              reject(new Error('No valid rows found in CSV.'));
+              return;
+            }
+            resolve(results.data);
+          },
+          error: err => {
+            reject(err || new Error('CSV parsing failed.'));
+          }
+        });
+      });
+    }
+
+    async function applyCsvRows(rows, options = {}) {
+      const csvPathLike = (options && options.csvPathLike) || currentCsvPath || '';
+      // Map each CSV row into a location object.
+      // NOTE:
+      //  - "logo" is optional.
+      //  - Any additional Y/N columns become boolean flags (categories).
+      locations = rows.map(r => {
+        const obj = {
+          name: r.name,
+          city: inferCityForLocationRow(r, csvPathLike),
+          coords: [parseFloat(r.lat), parseFloat(r.lng)],
+          website: r.website,
+          logo: r.logo,
+          visited: false,
+          rating: 0,
+          db_shop_id: null
+        };
+
+        // Parse visited flag (Y/N)
+        if (typeof r.visited === 'string') {
+          obj.visited = r.visited.trim().toLowerCase() === 'y';
+        }
+
+        // Parse rating as integer 1-5 (anything invalid -> 0 = no rating)
+        if (r.rating !== undefined && r.rating !== null && r.rating !== '') {
+          const pr = parseInt(r.rating, 10);
+          if (!isNaN(pr)) {
+            obj.rating = Math.max(1, Math.min(5, pr));
+          }
+        }
+
+        // Parse other boolean Y/N fields as category flags.
+        Object.entries(r).forEach(([k, v]) => {
+          if (['name','lat','lng','website','visited','rating','logo'].includes(k)) return;
+          if (typeof v === 'string' && v.trim() !== '') {
+            obj[k] = v.toLowerCase() === 'y';
+          }
+        });
+
+        return obj;
+      });
+
+      if (!locations.length) {
+        throw new Error('No valid rows found in CSV.');
+      }
+
+      resetMapState();
+
+      // Reset per-CSV UI/filter state.
+      strainFilterText = '';
+      strainAllowedShopIds = null;
+      strainAllowedNameCityKeys = null;
+      setStrainListVisible(false);
+      const strainStatus = document.getElementById('strain-status');
+      const strainSearch = document.getElementById('strain-list-search');
+      const strainList = document.getElementById('strain-list');
+      const strainListStatus = document.getElementById('strain-list-status');
+      strainPriceByShopId = null;
+      strainPriceByNameCity = null;
+      if (strainStatus) strainStatus.textContent = 'Strain filter: off';
+      if (strainSearch) strainSearch.value = '';
+      if (strainList) strainList.innerHTML = '';
+      if (strainListStatus) strainListStatus.textContent = 'Load CSV first.';
+      const eta = document.getElementById('time-estimate');
+      const distance = document.getElementById('distance-info');
+      const destinationSearchInput = document.getElementById('destination-search');
+      if (eta) eta.textContent = '--';
+      if (distance) distance.textContent = '--';
+      if (destinationSearchInput && destinationSearchInput.value !== locationSearchText) {
+        destinationSearchInput.value = locationSearchText;
+      }
+
+      // Link CSV shops to DB shop ids (if backend is reachable).
+      const dbOk = await ensureDbIntegration();
+      if (dbOk) {
+        locations.forEach(bindDbShopIdToLocation);
+      }
+
+      hydrateLocationPreferences();
+
+      // Determine which keys are boolean flags (Y/N) and not special fields.
+      categoryOptions = Object.keys(locations[0]).filter(
+        key =>
+          !['name','coords','website','visited','rating','logo'].includes(key) &&
+          typeof locations[0][key] === 'boolean'
+      );
+
+      // Add synthetic categories.
+      categoryOptions.unshift('favourites');
+      categoryOptions.unshift('all');
+
+      // Default to showing all locations.
+      selectedCategories = ['all'];
+
+      initCategoryIcons();
+      populateCategorySelect();
+
+      document.getElementById('map').style.display = 'block';
+      document.getElementById('ui-toggles').dataset.ready = 'true';
+      document.getElementById('ui-toggles').style.display = 'block';
+      setUploadPanelState('', '', false);
+
+      // Start with controls/directions hidden; keep strain list ready within controls.
+      setControlsVisible(false);
+      setDirectionsVisible(false);
+      setStrainListVisible(true);
+
+      initApp();
+    }
+
+    async function loadCsvFromFile(file) {
+      const rows = await parseCsvInput(file);
+      await applyCsvRows(rows, { csvPathLike: (file && file.name) || '' });
+
+      const lowerName = (file && file.name) ? file.name.toLowerCase() : '';
+      const matchedPath = discoveredCsvPaths.find(p => {
+        const lp = p.toLowerCase();
+        return lp === lowerName || lp.endsWith(`/${lowerName}`);
+      }) || '';
+
+      currentCsvPath = matchedPath;
+      renderCsvSwitchSelect(currentCsvPath);
+      updateControlsSummary();
+    }
+
+    async function loadFirstCsvFromDirectoryHandle(dirHandle) {
+      if (!dirHandle || typeof dirHandle.entries !== 'function') {
+        throw new Error('Folder picker is not available.');
+      }
+
+      const csvFileNames = [];
+      for await (const [, handle] of dirHandle.entries()) {
+        if (handle && handle.kind === 'file' && /\.csv$/i.test(handle.name || '')) {
+          csvFileNames.push(handle.name);
+        }
+      }
+
+      csvFileNames.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      const firstCsv = csvFileNames[0];
+      if (!firstCsv) {
+        throw new Error('No .csv files found in selected folder.');
+      }
+
+      const fileHandle = await dirHandle.getFileHandle(firstCsv);
+      const file = await fileHandle.getFile();
+      await loadCsvFromFile(file);
+      return firstCsv;
+    }
+
+    async function loadCsvFromPath(path) {
+      const csvPath = (path || '').toString().trim();
+      if (!csvPath) throw new Error('CSV path is empty.');
+
+      const variants = buildCsvPathVariants(csvPath);
+      const attempts = [];
+
+      for (const candidate of variants) {
+        try {
+          const rows = await parseCsvInput(candidate, { download: true });
+          await applyCsvRows(rows, { csvPathLike: candidate });
+          currentCsvPath = canonicalCsvPath(candidate);
+          renderCsvSwitchSelect(currentCsvPath);
+          updateControlsSummary();
+          return;
+        } catch (err) {
+          const reason = (err && err.message) ? err.message : 'unknown error';
+          attempts.push(`${candidate}: ${reason}`);
+        }
+      }
+
+      if (window.location.protocol === 'file:') {
+        throw new Error(
+          'Browser security blocks auto-loading local files from file://. ' +
+          'Use "Choose CSV manually", "Choose locations folder", or run a local HTTP server.'
+        );
+      }
+
+      throw new Error(attempts.slice(0, 3).join(' | ') || 'Could not fetch CSV.');
+    }
+
+    async function bootstrapInitialCsvLoad() {
+      setUploadPanelState('Loading atlas data', 'Looking for the first CSV in locations/...', false);
+
+      const csvPaths = await discoverCsvPathsInLocations();
+      const firstCsv = pickFirstCsvPath(csvPaths);
+      if (!firstCsv) {
+        if (window.location.protocol === 'file:') {
+          setUploadPanelState(
+            'Could not auto-load CSV on file://',
+            'Browser security blocks folder discovery in local-file mode. Choose CSV manually, choose locations folder, or run a local server.',
+            true
+          );
+          return;
+        }
+
+        setUploadPanelState(
+          'No CSV found in locations/',
+          'Add a .csv file to locations/ or choose one manually.',
+          true
+        );
+        return;
+      }
+
+      setDiscoveredCsvPaths(csvPaths, firstCsv);
+
+      try {
+        await loadCsvFromPath(firstCsv);
+      } catch (err) {
+        const reason = err && err.message ? err.message : 'unknown error';
+        setUploadPanelState('Could not load atlas data', `Failed to load ${firstCsv} (${reason}). Choose one manually.`, true);
+      }
+    }
+
+    document.getElementById('manual-csv-btn').addEventListener('click', () => {
+      const input = document.getElementById('file-input');
+      if (input) input.click();
+    });
+
+    document.getElementById('folder-csv-btn').addEventListener('click', async () => {
+      if (typeof window.showDirectoryPicker !== 'function') {
+        setUploadPanelState(
+          'Folder picker not supported',
+          'Use "Choose CSV manually" or run the page on a local HTTP server.',
+          true
+        );
+        return;
+      }
+
+      try {
+        setUploadPanelState(
+          'Loading CSV from selected folder',
+          'Scanning for the first .csv file...',
+          false
+        );
+        const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+        await loadFirstCsvFromDirectoryHandle(dirHandle);
+      } catch (err) {
+        if (err && err.name === 'AbortError') {
+          setUploadPanelState(
+            'CSV not loaded yet',
+            'Choose CSV manually or choose locations folder.',
+            true
+          );
+          return;
+        }
+        const reason = err && err.message ? err.message : 'unknown error';
+        setUploadPanelState('Could not load CSV folder', `Error: ${reason}`, true);
+      }
+    });
+
+    document.getElementById('csv-switch-select').addEventListener('change', async e => {
+      const selectedPath = canonicalCsvPath(e.target.value);
+      if (!selectedPath || selectedPath === currentCsvPath) return;
+
+      setUploadPanelState('Loading atlas data', `Loading ${csvLabelFromPath(selectedPath)}...`, false);
+      try {
+        await loadCsvFromPath(selectedPath);
+      } catch (err) {
+        const reason = err && err.message ? err.message : 'unknown error';
+        setUploadPanelState(
+          'Could not load selected indexed CSV',
+          `Failed to load ${selectedPath} (${reason}).`,
+          true
+        );
+        renderCsvSwitchSelect(currentCsvPath);
+      }
+    });
+
+    document.getElementById('file-input').addEventListener('change', async e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      setUploadPanelState('Loading selected CSV', `Loading ${file.name}...`, false);
+      try {
+        await loadCsvFromFile(file);
+      } catch (err) {
+        const reason = err && err.message ? err.message : 'unknown error';
+        setUploadPanelState('Could not load selected CSV', `Error: ${reason}`, true);
+      } finally {
+        e.target.value = '';
+      }
+    });
+
+    // =========================================================
+    // Map initialisation
+    // =========================================================
+
+    /**
+     * Set up the map, markers, routing, and event listeners.
+     */
+    function initApp() {
+      // Create the Leaflet map
+      map = L.map('map').setView([0, 0], 2);
+
+      map.on('click', () => {
+        minimiseControlsForMapFocus();
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OSM contributors'
+      }).addTo(map);
+
+      // Create a marker for each location
+      locations.forEach((loc, i) => {
+        const initialPriceLabel = getMarkerPriceLabel(loc);
+        const icon = chooseMarkerIcon(loc, initialPriceLabel);
+        const usesLogoIcon = logoCandidates(loc.logo).length > 0;
+        const isCoffeeShop = isCoffeeShopLocation(loc);
+
+        // Popup logo supports multiple fallback paths.
+        const logoHtml = popupLogoHtml(loc);
+
+        const websitePreviewHtml = isCoffeeShop
+          ? ''
+          : popupWebsitePreviewHtml(loc);
+
+        const popupStrainsHtml = isCoffeeShop
+          ? (
+              `<div class="popup-strains-box" id="${popupStrainContainerId(i)}">` +
+                `<p class="popup-strains-status">Loading strains...</p>` +
+              `</div>`
+            )
+          : '';
+
+        // If this CSV shop maps to a DB shop, show quick links.
+        const dbMenuLinks = (dbRouteLinksEnabled && loc.db_shop_id)
+          ? (
+              `<a href="/shop/${loc.db_shop_id}/digitised" target="_blank">Menu (database)</a><br>` +
+              `<a href="/shop/${loc.db_shop_id}" target="_blank">Edit menu entry</a><br>`
+            )
+          : '';
+
+        const marker = L.marker(loc.coords, { icon: icon, zIndexOffset: 1000 })
+          .addTo(map)
+          .bindPopup(
+            `<strong>${loc.name}</strong><br>` +
+            logoHtml +
+            websitePreviewHtml +
+            popupStrainsHtml +
+            dbMenuLinks +
+            `<button type="button" class="popup-locate-btn" data-index="${i}">Locate here</button>` +
+            `<a href="${loc.website}" target="_blank">Website</a><br>` +
+            `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
+            `<button class="fav-btn" data-index="${i}">` +
+              `${favorites.includes(i) ? 'Remove from Favourites' : 'Add to Favourites'}` +
+            `</button>` +
+            `<br>` +
+            `<label><input type="checkbox" class="visited-checkbox" data-index="${i}" ${loc.visited ? 'checked' : ''}> Visited</label><br>` +
+            `<span class="rating-label">Rating: </span>` +
+            `<span class="rating-stars" data-index="${i}" data-rating="${loc.rating}">${renderStars(loc.rating)}</span>`
+          )
+          .on('click', function () {
+            this.openPopup();
+          })
+          .on('popupopen', () => {
+            if (isCoffeeShop) {
+              refreshPopupStrainsForLocation(i);
+            }
+          });
+
+        marker._usesLogoIcon = usesLogoIcon;
+        marker._priceLabelText = initialPriceLabel || '';
+
+        markers[i] = marker;
+      });
+
+      updateDestinationDropdown();
+      updateDistanceInfo();
+      updateMarkers();
+      updateControlsSummary();
+
+      // Let the desktop layout settle before the first fit so we use the
+      // final map width instead of the transitional "panel just hid" state.
+      if (markers.length > 0) {
+        const initialFitDelay = isCompactMobileLayout() ? 60 : 260;
+        window.setTimeout(() => {
+          if (!map) return;
+          map.invalidateSize();
+          requestAnimationFrame(() => {
+            if (!map) return;
+            fitMapToVisibleMarkers();
+          });
+        }, initialFitDelay);
+      }
+
+      // Recalculate route if mode changes.
+      const modeSelect = document.getElementById('mode');
+      if (modeSelect) {
+        modeSelect.onchange = () => {
+          if (lastPosition) {
+            findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
+          }
+          updateControlsSummary();
+        };
+      }
+
+      // Change destination from dropdown.
+      const destinationSelect = document.getElementById('destination-select');
+      if (destinationSelect) {
+        destinationSelect.onchange = () => {
+          const destIndex = getSelectedDestinationIndex();
+          if (destIndex === null) {
+            clearRouteUi();
+            updateDistanceInfo();
+            return;
+          }
+
+          if (lastPosition) {
+            findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
+          } else {
+            clearRouteUi();
+          }
+          focusDestinationOnMap(destIndex);
+          updateDistanceInfo();
+        };
+      }
+
+      // Watch user location via Geolocation API
+      if (navigator.geolocation) {
+        if (geolocationWatchId !== null) {
+          try {
+            navigator.geolocation.clearWatch(geolocationWatchId);
+          } catch (_err) {
+            // Ignore if watch id is stale.
+          }
+          geolocationWatchId = null;
+        }
+
+        geolocationWatchId = navigator.geolocation.watchPosition(
+          p => {
+            const np = [p.coords.latitude, p.coords.longitude];
+            updateMeLocationMarker(np);
+
+            // Only update if moved a reasonable distance
+            if (!lastPosition || haversineDistance(lastPosition, np) > 10) {
+              lastPosition = np;
+
+              const initialIndex = getSelectedDestinationIndex();
+              if (initialIndex !== null) {
+                findRoute(p);
+                focusDestinationOnMap(initialIndex, { animate: false });
+              } else {
+                clearRouteUi();
+              }
+              updateDestinationDropdown();
+              updateDistanceInfo();
+              updateMarkers();
+            }
+          },
+          err => alert(err.message),
+          { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+        );
+      } else {
+        alert('Geolocation not supported.');
+      }
+    }
+
+    // =========================================================
+    // Distance helpers
+    // =========================================================
+
+    /**
+     * Haversine distance between two [lat,lng] in meters.
+     */
+    function haversineDistance([a1, a2], [b1, b2]) {
+      const R = 6371e3;
+      const t = d => d * Math.PI / 180;
+      const φ1 = t(a1);
+      const φ2 = t(b1);
+      const Δφ = t(b1 - a1);
+      const Δλ = t(b2 - a2);
+
+      const a = Math.sin(Δφ / 2) ** 2 +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) ** 2;
+
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    // =========================================================
+    // Routing
+    // =========================================================
+
+    /**
+     * Draw a route from user position to selected destination,
+     * and populate ETA + text directions.
+     */
+    function getSelectedDestinationIndex() {
+      const sel = document.getElementById('destination-select');
+      if (!sel) return null;
+      const i = parseInt(sel.value, 10);
+      if (isNaN(i) || i < 0 || i >= locations.length) {
+        return null;
+      }
+      return i;
+    }
+
+    function getMeasuredMapRect() {
+      const mapDiv = document.getElementById('map');
+      if (!mapDiv) return null;
+      const rect = mapDiv.getBoundingClientRect();
+      if (!rect.width || !rect.height) return null;
+      return rect;
+    }
+
+    function getMapViewportInsets() {
+      const isMobile = isCompactMobileLayout();
+      const baseInset = isMobile ? 14 : 24;
+      let top = baseInset;
+      let right = baseInset;
+      let bottom = baseInset;
+      let left = baseInset;
+      const mapRect = getMeasuredMapRect();
+      if (!mapRect) {
+        return {
+          paddingTopLeft: [left, top],
+          paddingBottomRight: [right, bottom]
+        };
+      }
+
+      function applyOverlayInset(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const style = window.getComputedStyle(el);
+        if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '1') === 0) {
+          return;
+        }
+
+        const rect = el.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+
+        const overlapLeft = Math.max(mapRect.left, rect.left);
+        const overlapRight = Math.min(mapRect.right, rect.right);
+        const overlapTop = Math.max(mapRect.top, rect.top);
+        const overlapBottom = Math.min(mapRect.bottom, rect.bottom);
+        if (overlapRight <= overlapLeft || overlapBottom <= overlapTop) return;
+
+        const overlapWidth = overlapRight - overlapLeft;
+        const mapMidX = mapRect.left + (mapRect.width / 2);
+        const mapMidY = mapRect.top + (mapRect.height / 2);
+        const rectMidX = rect.left + (rect.width / 2);
+        const rectMidY = rect.top + (rect.height / 2);
+
+        if (rectMidY <= mapMidY) {
+          top = Math.max(top, Math.round(overlapBottom - mapRect.top + baseInset));
+        } else {
+          bottom = Math.max(bottom, Math.round(mapRect.bottom - overlapTop + baseInset));
+        }
+
+        if (overlapWidth < mapRect.width * 0.72) {
+          if (rectMidX <= mapMidX) {
+            left = Math.max(left, Math.round(overlapRight - mapRect.left + baseInset));
+          } else {
+            right = Math.max(right, Math.round(mapRect.right - overlapLeft + baseInset));
+          }
+        }
+      }
+
+      applyOverlayInset('hero-banner');
+      applyOverlayInset('selection-card');
+
+      if (isMobile && controlsVisible && !controlsCollapsed) {
+        const controlsDiv = document.querySelector('.controls');
+        if (controlsDiv && controlsDiv.id !== 'selection-card') {
+          const style = window.getComputedStyle(controlsDiv);
+          if (style.display !== 'none') {
+            const rect = controlsDiv.getBoundingClientRect();
+            if (rect.width && rect.height) {
+              const overlapLeft = Math.max(mapRect.left, rect.left);
+              const overlapRight = Math.min(mapRect.right, rect.right);
+              const overlapTop = Math.max(mapRect.top, rect.top);
+              const overlapBottom = Math.min(mapRect.bottom, rect.bottom);
+              if (overlapRight > overlapLeft && overlapBottom > overlapTop) {
+                bottom = Math.max(bottom, Math.round(mapRect.bottom - overlapTop + baseInset));
+              }
+            }
+          }
+        }
+      }
+
+      return {
+        paddingTopLeft: [left, top],
+        paddingBottomRight: [right, bottom]
+      };
+    }
+
+    function clampInsetPair(startInset, endInset, totalSpace, minVisibleSpace) {
+      const safeTotalSpace = Math.max(0, totalSpace);
+      const safeVisibleSpace = Math.min(Math.max(0, minVisibleSpace), safeTotalSpace);
+      const maxInsetTotal = Math.max(0, safeTotalSpace - safeVisibleSpace);
+      const currentTotal = Math.max(0, startInset) + Math.max(0, endInset);
+
+      if (currentTotal <= maxInsetTotal || currentTotal === 0) {
+        return [Math.max(0, startInset), Math.max(0, endInset)];
+      }
+
+      const overflow = currentTotal - maxInsetTotal;
+      const startShare = startInset / currentTotal;
+      const endShare = endInset / currentTotal;
+      let nextStart = Math.max(0, Math.round(startInset - (overflow * startShare)));
+      let nextEnd = Math.max(0, Math.round(endInset - (overflow * endShare)));
+      const adjustedTotal = nextStart + nextEnd;
+
+      if (adjustedTotal > maxInsetTotal) {
+        const remainder = adjustedTotal - maxInsetTotal;
+        if (nextStart >= nextEnd) {
+          nextStart = Math.max(0, nextStart - remainder);
+        } else {
+          nextEnd = Math.max(0, nextEnd - remainder);
+        }
+      }
+
+      return [nextStart, nextEnd];
+    }
+
+    function clampViewportInsets(insets, mapRect, options = {}) {
+      if (!mapRect) return insets;
+
+      let left = Math.max(0, Math.round((insets && insets.paddingTopLeft && insets.paddingTopLeft[0]) || 0));
+      let top = Math.max(0, Math.round((insets && insets.paddingTopLeft && insets.paddingTopLeft[1]) || 0));
+      let right = Math.max(0, Math.round((insets && insets.paddingBottomRight && insets.paddingBottomRight[0]) || 0));
+      let bottom = Math.max(0, Math.round((insets && insets.paddingBottomRight && insets.paddingBottomRight[1]) || 0));
+
+      const minVisibleWidthRatio = Number.isFinite(options.minVisibleWidthRatio) ? options.minVisibleWidthRatio : 0.56;
+      const minVisibleHeightRatio = Number.isFinite(options.minVisibleHeightRatio) ? options.minVisibleHeightRatio : 0.54;
+      const minVisibleWidth = Math.round(mapRect.width * minVisibleWidthRatio);
+      const minVisibleHeight = Math.round(mapRect.height * minVisibleHeightRatio);
+
+      [left, right] = clampInsetPair(left, right, mapRect.width, minVisibleWidth);
+      [top, bottom] = clampInsetPair(top, bottom, mapRect.height, minVisibleHeight);
+
+      return {
+        paddingTopLeft: [left, top],
+        paddingBottomRight: [right, bottom]
+      };
+    }
+
+    function getViewportAdjustedCenter(coords, zoom) {
+      if (!map) return L.latLng(coords[0], coords[1]);
+      const latLng = Array.isArray(coords) ? L.latLng(coords[0], coords[1]) : L.latLng(coords);
+      const insets = getMapViewportInsets();
+      const offset = L.point(
+        (insets.paddingBottomRight[0] - insets.paddingTopLeft[0]) / 2,
+        (insets.paddingBottomRight[1] - insets.paddingTopLeft[1]) / 2
+      );
+      return map.unproject(map.project(latLng, zoom).subtract(offset), zoom);
+    }
+
+    function focusMapOnCoords(coords, options = {}) {
+      if (!map) return;
+      const minZoom = Number.isFinite(options.minZoom) ? options.minZoom : (isCompactMobileLayout() ? 15 : 16);
+      const currentZoom = Number.isFinite(map.getZoom()) ? map.getZoom() : minZoom;
+      const targetZoom = Number.isFinite(options.zoom) ? options.zoom : Math.max(currentZoom, minZoom);
+      const adjustedCenter = getViewportAdjustedCenter(coords, targetZoom);
+      const popupIndex = Number.isInteger(options.popupIndex) ? options.popupIndex : null;
+
+      if (popupIndex !== null) {
+        map.once('moveend', () => {
+          if (!markers[popupIndex]) return;
+          markers[popupIndex].openPopup();
+          markers[popupIndex].bringToFront();
+        });
+      }
+
+      map.flyTo(adjustedCenter, targetZoom, {
+        animate: options.animate !== false,
+        duration: options.duration || 0.45
+      });
+    }
+
+    function focusDestinationOnMap(index, options = {}) {
+      const safeIndex = Number.isInteger(index) ? index : parseInt(index, 10);
+      if (isNaN(safeIndex) || safeIndex < 0 || safeIndex >= locations.length) return;
+      if (options.minimise !== false) {
+        minimiseControlsForMapFocus();
+      }
+      focusMapOnCoords(locations[safeIndex].coords, {
+        popupIndex: options.openPopup === false ? null : safeIndex,
+        minZoom: options.minZoom,
+        zoom: options.zoom,
+        animate: options.animate,
+        duration: options.duration
+      });
+    }
+
+    function fitMapToVisibleMarkers() {
+      if (!map || !markers.length) return;
+      const visibleMarkers = markers.filter((marker, index) => marker && passesCategoryFilter(locations[index], index));
+      const markerSet = visibleMarkers.length ? visibleMarkers : markers.filter(Boolean);
+      if (!markerSet.length) return;
+      const group = L.featureGroup(markerSet);
+      const bounds = group.getBounds();
+      if (!bounds.isValid()) return;
+      const rawInsets = getMapViewportInsets();
+      const mapRect = getMeasuredMapRect();
+      const insets = isCompactMobileLayout()
+        ? rawInsets
+        : clampViewportInsets(rawInsets, mapRect, {
+            minVisibleWidthRatio: 0.56,
+            minVisibleHeightRatio: 0.54
+          });
+      map.fitBounds(bounds, {
+        paddingTopLeft: insets.paddingTopLeft,
+        paddingBottomRight: insets.paddingBottomRight,
+        maxZoom: isCompactMobileLayout() ? 15 : 16
+      });
+    }
+
+    function selectDestinationIndex(index) {
+      const destinationSelect = document.getElementById('destination-select');
+      const safeIndex = Number.isInteger(index) ? index : parseInt(index, 10);
+      if (!destinationSelect || !Number.isInteger(safeIndex) || safeIndex < 0 || safeIndex >= locations.length) {
+        return false;
+      }
+
+      destinationSelect.value = String(safeIndex);
+      destinationSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    }
+
+    function locateDestinationIndex(index) {
+      selectDestinationIndex(index);
+    }
+
+    function renderDirectionsPanel(routeInstructions, emptyMessage = '') {
+      const ins = document.getElementById('instructions');
+      if (!ins) return;
+
+      ins.innerHTML = '';
+
+      const header = document.createElement('div');
+      header.className = 'directions-panel-head';
+
+      const title = document.createElement('h4');
+      title.textContent = 'Directions';
+      header.appendChild(title);
+
+      const hideBtn = document.createElement('button');
+      hideBtn.type = 'button';
+      hideBtn.className = 'directions-hide-btn';
+      hideBtn.textContent = 'Hide directions';
+      header.appendChild(hideBtn);
+
+      ins.appendChild(header);
+
+      if (Array.isArray(routeInstructions) && routeInstructions.length) {
+        const ol = document.createElement('ol');
+        routeInstructions.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item.text;
+          ol.appendChild(li);
+        });
+        ins.appendChild(ol);
+        return;
+      }
+
+      if (emptyMessage) {
+        const msg = document.createElement('p');
+        msg.className = 'directions-empty';
+        msg.textContent = emptyMessage;
+        ins.appendChild(msg);
+      }
+    }
+
+    function clearRouteUi() {
+      if (routingControl && map) {
+        try {
+          map.removeControl(routingControl);
+        } catch (_err) {
+          // Ignore if already removed.
+        }
+      }
+      routingControl = null;
+
+      const eta = document.getElementById('time-estimate');
+      if (eta) eta.textContent = '--';
+
+      const ins = document.getElementById('instructions');
+      if (ins) {
+        if (directionsVisible) {
+          renderDirectionsPanel(null, 'Choose a destination to see directions.');
+        } else {
+          ins.innerHTML = '';
+        }
+      }
+      updateControlsSummary();
+    }
+
+    function findRoute(position) {
+      const userCoords = [position.coords.latitude, position.coords.longitude];
+      const di = getSelectedDestinationIndex();
+      if (di === null) {
+        clearRouteUi();
+        return;
+      }
+      const destCoords = locations[di].coords;
+
+      if (routingControl) map.removeControl(routingControl);
+
+      routingControl = L.Routing.control({
+        waypoints: [L.latLng(...userCoords), L.latLng(...destCoords)],
+        router: L.Routing.osrmv1({
+          serviceUrl: 'https://router.project-osrm.org/route/v1',
+          profile: document.getElementById('mode').value
+        }),
+        fitSelectedRoutes: false,
+        addWaypoints: false,
+        show: false
+      }).addTo(map);
+
+      routingControl.on('routesfound', e => {
+        const summary = e.routes[0].summary;
+        const mode = document.getElementById('mode').value;
+        let totalSec;
+
+        // Different speeds for different modes
+        if (mode === 'walking') {
+          // Walking: ~5 km/h => 1.3889 m/s
+          totalSec = summary.totalDistance / 1.3889;
+        } else if (mode === 'cycling') {
+          // Cycling: ~15 km/h => 4.1667 m/s
+          totalSec = summary.totalDistance / 4.1667;
+        } else {
+          // Driving: use OSRM's estimated time
+          totalSec = summary.totalTime;
+        }
+
+        const hours   = Math.floor(totalSec / 3600);
+        const minutes = Math.floor((totalSec % 3600) / 60);
+        const seconds = Math.floor(totalSec % 60);
+
+        let eta = '';
+        if (hours > 0)   eta += hours + 'h ';
+        if (minutes > 0) eta += minutes + 'm ';
+        eta += seconds + 's';
+
+        document.getElementById('time-estimate').textContent = eta;
+
+        renderDirectionsPanel(e.routes[0].instructions);
+
+        updateDistanceInfo();
+        updateControlsSummary();
+      });
+    }
+
+    // =========================================================
+    // Category filters (checkbox UI)
+    // =========================================================
+
+    /**
+     * Build the list of category checkboxes.
+     */
+    function populateCategorySelect() {
+      const container = document.getElementById('category-filters');
+      if (!container) return;
+
+      container.innerHTML = '<span>Categories:</span><br>';
+
+      const cats = selectedCategories || [];
+
+      categoryOptions.forEach(cat => {
+        const id = 'cat-' + cat;
+        const labelEl = document.createElement('label');
+        labelEl.style.display = 'block';
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.className = 'category-checkbox';
+        input.value = cat;
+        input.id = id;
+
+        // Check the box if it's currently selected, or default to 'all'
+        if ((cats.length === 0 && cat === 'all') || cats.includes(cat)) {
+          input.checked = true;
+        }
+
+        const niceName = cat.charAt(0).toUpperCase() + cat.slice(1);
+        labelEl.appendChild(input);
+        labelEl.appendChild(document.createTextNode(' ' + niceName));
+        container.appendChild(labelEl);
+      });
+
+      updateNearestLabel();
+    }
+
+    /**
+     * Update the "Nearest ..." button label based on selected categories.
+     */
+    function updateNearestLabel() {
+      const btn = document.getElementById('nearest-btn');
+      if (!btn) return;
+
+      const cats = selectedCategories || [];
+      let label = 'Location';
+
+      // If nothing selected or 'all' selected, keep generic label
+      if (cats.length === 0 || cats.includes('all')) {
+        label = 'Location';
+      } else {
+        const nonAll = cats.filter(c => c !== 'all');
+        // Only favourites selected
+        if (nonAll.length === 1 && nonAll[0] === 'favourites') {
+          label = 'Favourite';
+        } else if (nonAll.length === 1 && nonAll[0] !== 'favourites') {
+          const cat = nonAll[0];
+          label = cat.charAt(0).toUpperCase() + cat.slice(1);
+        } else {
+          // Multiple specific categories selected
+          label = 'Location';
+        }
+      }
+
+      btn.textContent = 'Nearest ' + label;
+    }
+
+    function matchesLocationSearch(loc) {
+      const q = (locationSearchText || '').toString().trim().toLowerCase();
+      if (!q) return true;
+
+      const haystack = [
+        loc && loc.name,
+        loc && loc.city,
+        loc && loc.website
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      return haystack.includes(q);
+    }
+
+    function passesBaseFilters(loc, index) {
+      const cats = (Array.isArray(selectedCategories) && selectedCategories.length > 0)
+        ? selectedCategories.slice()
+        : ['all'];
+
+      let categoryOk = true;
+      if (!cats.includes('all')) {
+        const isFav = favorites.includes(index);
+        const nonSpecial = cats.filter(c => c !== 'favourites');
+
+        let baseMatch;
+        if (nonSpecial.length === 0) {
+          baseMatch = true;
+        } else {
+          baseMatch = nonSpecial.some(cat => loc[cat]);
+        }
+
+        if (cats.includes('favourites')) {
+          categoryOk = isFav && baseMatch;
+        } else {
+          categoryOk = baseMatch;
+        }
+      }
+
+      if (!categoryOk) {
+        return false;
+      }
+
+      if (strainAllowedShopIds !== null || strainAllowedNameCityKeys !== null) {
+        if (loc.db_shop_id && strainAllowedShopIds && strainAllowedShopIds.has(loc.db_shop_id)) {
+          return true;
+        }
+        if (strainAllowedNameCityKeys) {
+          const key = normaliseNameCityKey(loc.name, loc.city || '');
+          return strainAllowedNameCityKeys.has(key);
+        }
+        return false;
+      }
+
+      return true;
+    }
+
+    function updateDestinationSearchStatus() {
+      const statusEl = document.getElementById('destination-search-status');
+      if (!statusEl) return;
+
+      if (!locations.length) {
+        statusEl.textContent = 'Load a CSV to start narrowing the atlas.';
+        return;
+      }
+
+      const baseVisibleCount = locations.filter((loc, idx) => passesBaseFilters(loc, idx)).length;
+      const visibleCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
+      const hasSearch = !!(locationSearchText || '').trim();
+
+      if (!hasSearch) {
+        if (!baseVisibleCount) {
+          statusEl.textContent = 'No visible stops yet. Loosen the filters or clear the strain match.';
+          return;
+        }
+
+        statusEl.textContent = strainFilterText
+          ? `Scanning ${baseVisibleCount} strain-matched stops.`
+          : `Scanning ${baseVisibleCount} visible stops.`;
+        return;
+      }
+
+      statusEl.textContent = visibleCount
+        ? `${visibleCount} stop${visibleCount === 1 ? '' : 's'} match "${locationSearchText}".`
+        : `No visible stops match "${locationSearchText}".`;
+    }
+
+    function updateHeroStats() {
+      const visibleEl = document.getElementById('hero-visible-count');
+      const favouritesEl = document.getElementById('hero-favourites-count');
+      const modeEl = document.getElementById('hero-mode-value');
+      const filterEl = document.getElementById('hero-filter-state');
+      const csvEl = document.getElementById('hero-csv-name');
+
+      const visibleCount = locations.length
+        ? locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length
+        : 0;
+
+      if (visibleEl) visibleEl.textContent = String(visibleCount);
+      if (favouritesEl) favouritesEl.textContent = String(favorites.length);
+
+      const modeSelect = document.getElementById('mode');
+      const modeLabel = modeSelect
+        ? ((modeSelect.options[modeSelect.selectedIndex] && modeSelect.options[modeSelect.selectedIndex].text) || 'Walk')
+        : 'Walk';
+      if (modeEl) modeEl.textContent = modeLabel;
+
+      if (filterEl) {
+        const filterBits = [];
+        if (strainFilterText) filterBits.push(`Strain: ${strainFilterText}`);
+        if (locationSearchText) filterBits.push(`Search: ${locationSearchText}`);
+        filterEl.textContent = filterBits.length ? filterBits.join(' · ') : 'No live filters';
+      }
+
+      if (csvEl) {
+        if (currentCsvPath) {
+          csvEl.textContent = `CSV: ${csvLabelFromPath(currentCsvPath)}`;
+        } else if (discoveredCsvPaths.length) {
+          csvEl.textContent = `CSV: ${csvLabelFromPath(discoveredCsvPaths[0])}`;
+        } else {
+          csvEl.textContent = 'No CSV loaded';
+        }
+      }
+    }
+
+    function updateSelectionCard() {
+      const card = document.getElementById('selection-card');
+      const nameEl = document.getElementById('selected-destination-name');
+      const summaryEl = document.getElementById('selection-card-summary');
+      const metaEl = document.getElementById('selected-destination-meta');
+      const cityEl = document.getElementById('selected-destination-city');
+      const etaEl = document.getElementById('selected-destination-eta');
+      const directionsBtn = document.getElementById('selection-directions-btn');
+      const centerBtn = document.getElementById('selection-center-btn');
+      const websiteLink = document.getElementById('selection-website-link');
+      if (!card || !nameEl || !summaryEl || !metaEl || !cityEl || !etaEl || !directionsBtn || !centerBtn || !websiteLink) return;
+
+      const selectedIndex = getSelectedDestinationIndex();
+      const hideForDesktopDirections = directionsVisible && !isCompactMobileLayout();
+      const hideForMobileEmptyState = isCompactMobileLayout() && (selectedIndex === null || !locations[selectedIndex]);
+      card.style.display = (hideForDesktopDirections || hideForMobileEmptyState) ? 'none' : 'block';
+      document.body.classList.toggle(
+        'mobile-selection-visible',
+        isCompactMobileLayout() &&
+          card.style.display !== 'none' &&
+          !document.body.classList.contains('mobile-controls-open') &&
+          !document.body.classList.contains('mobile-directions-open')
+      );
+
+      if (selectedIndex === null || !locations[selectedIndex]) {
+        card.classList.add('is-empty');
+        nameEl.textContent = locations.length ? 'Choose a stop' : 'Loading the atlas';
+        summaryEl.textContent = locations.length ? `${locations.length} spots loaded` : 'Waiting for locations';
+        metaEl.textContent = locations.length
+          ? 'Tap a marker, pick a destination, or use nearest to start the run.'
+          : 'Once the CSV loads, this card will keep the active destination in view.';
+        cityEl.textContent = locations.length ? `${locations.length} spots loaded` : 'Waiting for locations';
+        etaEl.textContent = 'ETA --';
+        directionsBtn.disabled = true;
+        directionsBtn.textContent = 'Show directions';
+        centerBtn.disabled = true;
+        websiteLink.hidden = true;
+        websiteLink.removeAttribute('href');
+        syncSelectionCardChrome();
+        syncDesktopTogglePosition();
+        return;
+      }
+
+      const loc = locations[selectedIndex];
+      const isMobile = isCompactMobileLayout();
+      card.classList.remove('is-empty');
+      nameEl.textContent = loc.name || 'Selected stop';
+
+      const metaParts = [];
+      if (!isMobile && loc.city) metaParts.push(loc.city);
+      if (lastPosition) {
+        const distText = (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km away';
+        metaParts.push(distText);
+      }
+      if (!isMobile && favorites.includes(selectedIndex)) metaParts.push('Favourite');
+      if (!isMobile && loc.visited) metaParts.push('Visited');
+      metaEl.textContent = metaParts.length ? metaParts.join(' · ') : 'Ready when you are';
+
+      cityEl.textContent = loc.city || inferCityFromCsvPath(currentCsvPath) || 'Selected area';
+      const etaValue = (document.getElementById('time-estimate') && document.getElementById('time-estimate').textContent) || '--';
+      etaEl.textContent = `ETA ${etaValue}`;
+      summaryEl.textContent = `${cityEl.textContent} · ETA ${etaValue}`;
+      directionsBtn.disabled = !lastPosition;
+      directionsBtn.textContent = directionsVisible ? 'Hide directions' : 'Show directions';
+      centerBtn.disabled = false;
+
+      if (loc.website) {
+        websiteLink.hidden = false;
+        websiteLink.href = loc.website;
+      } else {
+        websiteLink.hidden = true;
+        websiteLink.removeAttribute('href');
+      }
+
+      syncSelectionCardChrome();
+      syncDesktopTogglePosition();
+    }
+
+    function updateControlsSummary() {
+      const summaryEl = document.getElementById('controls-summary');
+      let summaryText = '';
+      updateHeroStats();
+      updateSelectionCard();
+      updateDestinationSearchStatus();
+      if (!summaryEl) return;
+
+      if (!locations.length) {
+        summaryText = 'Loading locations...';
+        summaryEl.textContent = summaryText;
+        return;
+      }
+
+      const selectedIndex = getSelectedDestinationIndex();
+      if (selectedIndex !== null && locations[selectedIndex]) {
+        const loc = locations[selectedIndex];
+        if (lastPosition) {
+          const distText = (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km';
+          summaryText = `${loc.name} · ${distText}`;
+        } else {
+          summaryText = loc.name;
+        }
+      } else {
+        const visibleCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
+        if (strainFilterText && locationSearchText) {
+          summaryText = `${visibleCount} matches for ${strainFilterText} + ${locationSearchText}`;
+        } else if (locationSearchText) {
+          summaryText = `${visibleCount} stops for "${locationSearchText}"`;
+        } else if (strainFilterText) {
+          summaryText = `${visibleCount} matches for ${strainFilterText}`;
+        } else if ((selectedCategories || []).includes('all')) {
+          summaryText = `${visibleCount} places visible`;
+        } else {
+          summaryText = `${visibleCount} filtered places`;
+        }
+      }
+
+      if (isCompactMobileLayout() && controlsVisible && controlsCollapsed) {
+        summaryText = summaryText ? `Tap to open · ${summaryText}` : 'Tap to open';
+      }
+
+      summaryEl.textContent = summaryText;
+    }
+
+    /**
+     * Check whether a location passes the currently selected category filters.
+     */
+    function passesCategoryFilter(loc, index) {
+      if (!passesBaseFilters(loc, index)) {
+        return false;
+      }
+      return matchesLocationSearch(loc);
+    }
+
+    // Handle changes to category checkboxes (multi-select categories)
+    document.getElementById('category-filters').addEventListener('change', e => {
+      if (!e.target.classList.contains('category-checkbox')) return;
+
+      const cat = e.target.value;
+      const checked = e.target.checked;
+
+      let current = Array.isArray(selectedCategories) ? selectedCategories.slice() : [];
+
+      if (checked) {
+        if (cat === 'all') {
+          // 'All' overrides everything else
+          current = ['all'];
+          // Uncheck all other boxes
+          document.querySelectorAll('.category-checkbox').forEach(cb => {
+            if (cb.value !== 'all') cb.checked = false;
+          });
+        } else {
+          // Add this category, remove 'all' if present
+          current = current.filter(c => c !== 'all');
+          if (!current.includes(cat)) current.push(cat);
+          // Uncheck 'all'
+          const allCb = document.querySelector('.category-checkbox[value="all"]');
+          if (allCb) allCb.checked = false;
+        }
+      } else {
+        // Removing a category
+        current = current.filter(c => c !== cat);
+        // If nothing left, default back to 'all'
+        if (current.length === 0) {
+          current = ['all'];
+          const allCb = document.querySelector('.category-checkbox[value="all"]');
+          if (allCb) allCb.checked = true;
+        }
+      }
+
+      selectedCategories = current;
+      updateNearestLabel();
+      updateDestinationDropdown();
+      updateDistanceInfo();
+      updateMarkers();
+    });
+
+    const clearStrainBtn = document.getElementById('clear-strain-btn');
+    if (clearStrainBtn) {
+      clearStrainBtn.addEventListener('click', () => {
+        clearStrainFilter();
+      });
+    }
+
+    const destinationSearchInput = document.getElementById('destination-search');
+    if (destinationSearchInput) {
+      const handleDestinationSearch = () => {
+        locationSearchText = (destinationSearchInput.value || '').toString().replace(/\s+/g, ' ').trim();
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+      };
+
+      destinationSearchInput.addEventListener('input', handleDestinationSearch);
+      destinationSearchInput.addEventListener('search', handleDestinationSearch);
+    }
+
+    document.getElementById('strain-list-search').addEventListener('input', () => {
+      renderStrainList();
+    });
+
+    document.getElementById('strain-list').addEventListener('click', async e => {
+      const target = e.target.closest('.strain-item');
+      if (!target) return;
+      const strain = target.getAttribute('data-strain') || '';
+      await applyStrainFilter(strain);
+    });
+
+    document.body.addEventListener('click', async e => {
+      const btn = e.target.closest('.popup-strain-btn');
+      if (!btn) return;
+      e.preventDefault();
+      const strain = (btn.getAttribute('data-strain') || '').trim();
+      if (!strain) return;
+
+      await applyStrainFilter(strain);
+      if (map) map.closePopup();
+    });
+
+    // =========================================================
+    // Destination dropdown + markers
+    // =========================================================
+
+    /**
+     * Rebuild the destination dropdown based on filters, sorting favourites first.
+     */
+    function updateDestinationDropdown() {
+      const destSelect = document.getElementById('destination-select');
+      const previousSelection = getSelectedDestinationIndex();
+      destSelect.innerHTML = '';
+
+      const items = locations
+        .map((loc, i) => {
+          // Filter by category selection
+          if (!passesCategoryFilter(loc, i)) return null;
+
+          const isFav = favorites.includes(i);
+          const distText = lastPosition
+            ? (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km'
+            : '';
+
+          return { index: i, name: loc.name, city: loc.city || '', distText, isFav };
+        })
+        .filter(x => x);
+
+      // Sort favourites first, then alphabetically
+      items.sort((a, b) => {
+        if (a.isFav && !b.isFav) return -1;
+        if (!a.isFav && b.isFav) return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.text = items.length
+        ? 'Select a destination...'
+        : ((locationSearchText && locationSearchText.trim())
+            ? `No destinations matching "${locationSearchText}"`
+            : 'No destinations for current filters');
+      placeholder.disabled = true;
+      placeholder.selected = true;
+      destSelect.appendChild(placeholder);
+
+      items.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item.index;
+        opt.text = item.name +
+          (item.city ? ` · ${item.city}` : '') +
+          (item.isFav ? ' ★' : '') +
+          (item.distText ? ` (${item.distText})` : '');
+        destSelect.appendChild(opt);
+      });
+
+      const canRestoreSelection = previousSelection !== null &&
+        items.some(item => item.index === previousSelection);
+      if (canRestoreSelection) {
+        destSelect.value = String(previousSelection);
+      } else {
+        destSelect.value = '';
+        clearRouteUi();
+      }
+
+      updateControlsSummary();
+      updateDistanceInfo();
+    }
+
+    /**
+     * Update distance label for currently selected destination.
+     */
+    function updateDistanceInfo() {
+      const i = getSelectedDestinationIndex();
+      const distanceDiv = document.getElementById('distance-info');
+
+      if (lastPosition && i !== null) {
+        const distText = (haversineDistance(lastPosition, locations[i].coords) / 1000).toFixed(2) + ' km';
+        distanceDiv.textContent = distText;
+      } else if (distanceDiv) {
+        distanceDiv.textContent = '--';
+      }
+      updateControlsSummary();
+    }
+
+    function getMarkerPriceLabel(loc) {
+      if (!strainFilterText) return '';
+      if (!strainPriceByShopId && !strainPriceByNameCity) return '';
+
+      if (loc && loc.db_shop_id && strainPriceByShopId && strainPriceByShopId.has(loc.db_shop_id)) {
+        return strainPriceByShopId.get(loc.db_shop_id) || '';
+      }
+
+      if (loc && strainPriceByNameCity) {
+        const key = normaliseNameCityKey(loc.name, loc.city || '');
+        if (strainPriceByNameCity.has(key)) {
+          return strainPriceByNameCity.get(key) || '';
+        }
+      }
+
+      return '';
+    }
+
+    function syncMarkerPriceDisplay(index, visible) {
+      const marker = markers[index];
+      const loc = locations[index];
+      if (!marker || !loc) return;
+
+      const label = visible ? getMarkerPriceLabel(loc) : '';
+      const current = marker._priceLabelText || '';
+
+      if (marker._usesLogoIcon) {
+        if (current !== label) {
+          marker.setIcon(chooseMarkerIcon(loc, label));
+          marker._priceLabelText = label;
+        }
+        if (marker.getTooltip()) marker.unbindTooltip();
+        return;
+      }
+
+      if (label) {
+        const needsBind = !marker.getTooltip() || current !== label;
+        if (needsBind) {
+          if (marker.getTooltip()) marker.unbindTooltip();
+          marker.bindTooltip(label, {
+            permanent: true,
+            direction: 'top',
+            offset: [0, -20],
+            className: 'price-label-tooltip',
+            opacity: 1
+          });
+          marker._priceLabelText = label;
+        }
+        if (map && map.hasLayer(marker)) {
+          marker.openTooltip();
+        }
+      } else {
+        if (marker.getTooltip()) marker.unbindTooltip();
+        marker._priceLabelText = '';
+      }
+    }
+
+    /**
+     * Show or hide markers based on category filters.
+     */
+    function updateMarkers() {
+      locations.forEach((loc, i) => {
+        const visible = passesCategoryFilter(loc, i);
+        if (visible) {
+          if (!map.hasLayer(markers[i])) map.addLayer(markers[i]);
+        } else {
+          if (map.hasLayer(markers[i])) map.removeLayer(markers[i]);
+        }
+        syncMarkerPriceDisplay(i, visible);
+      });
+    }
+
+    // =========================================================
+    // Favourites, visited, rating interactions
+    // =========================================================
+
+    // Handle favourite (Add / Remove) button clicks in popups
+    document.body.addEventListener('click', e => {
+      const locateBtn = e.target.closest('.popup-locate-btn');
+      if (locateBtn) {
+        const i = parseInt(locateBtn.getAttribute('data-index'), 10);
+        if (isNaN(i) || !locations[i]) return;
+        locateDestinationIndex(i);
+        return;
+      }
+
+      if (e.target.classList.contains('fav-btn')) {
+        const i = parseInt(e.target.getAttribute('data-index'));
+        const idx = favorites.indexOf(i);
+
+        if (idx > -1) {
+          favorites.splice(idx, 1);
+        } else if (favorites.length < 10) {
+          favorites.push(i);
+        } else {
+          return alert('Maximum of 10 favourites reached.');
+        }
+
+        writeLocationPreference(locations[i], { favorite: favorites.includes(i) });
+        persistLegacyFavorites();
+        updateDestinationDropdown();
+        updateControlsSummary();
+
+        e.target.textContent = favorites.includes(i)
+          ? 'Remove from Favourites'
+          : 'Add to Favourites';
+      }
+    });
+
+    // Handle visited checkbox changes
+    document.body.addEventListener('change', e => {
+      if (e.target.classList.contains('visited-checkbox')) {
+        const i = parseInt(e.target.getAttribute('data-index'));
+        if (!isNaN(i) && locations[i]) {
+          locations[i].visited = e.target.checked;
+          writeLocationPreference(locations[i], { visited: e.target.checked });
+          updateControlsSummary();
+        }
+      }
+    });
+
+    // Handle rating star clicks: cycle rating from 1–5
+    document.body.addEventListener('click', e => {
+      if (e.target.classList.contains('rating-stars')) {
+        const i = parseInt(e.target.getAttribute('data-index'));
+        if (isNaN(i) || !locations[i]) return;
+
+        let current = locations[i].rating || 0;
+        // Cycle 1 → 2 → 3 → 4 → 5 → 1 ...
+        current = current >= 5 ? 1 : current + 1;
+
+        locations[i].rating = current;
+        writeLocationPreference(locations[i], { rating: current });
+        e.target.setAttribute('data-rating', current);
+        e.target.textContent = renderStars(current);
+        updateControlsSummary();
+      }
+    });
+
+    // =========================================================
+    // Nearest button
+    // =========================================================
+
+    document.getElementById('center-on-me-btn').addEventListener('click', () => {
+      if (!map) return;
+      if (!lastPosition) {
+        return alert('Current position not available yet.');
+      }
+      focusMapOnCoords(lastPosition, {
+        minZoom: isCompactMobileLayout() ? 14 : 15,
+        animate: true,
+        duration: 0.4
+      });
+      minimiseControlsForMapFocus();
+    });
+
+    document.getElementById('nearest-btn').addEventListener('click', () => {
+      if (!lastPosition) {
+        return alert('Current position not available yet.');
+      }
+
+      let nearestOutsideRadius = null;
+      let minOutside = Infinity;
+      let nearestAny = null;
+      let minAny = Infinity;
+
+      locations.forEach((loc, idx) => {
+        if (!passesCategoryFilter(loc, idx)) return;
+
+        const d = haversineDistance(lastPosition, loc.coords);
+
+        // Track absolute nearest (for fallback)
+        if (d < minAny) {
+          minAny = d;
+          nearestAny = idx;
+        }
+
+        // Track nearest that isn't effectively "where we already are"
+        if (d > VISITED_RADIUS_METERS && d < minOutside) {
+          minOutside = d;
+          nearestOutsideRadius = idx;
+        }
+      });
+
+      // Prefer a location not essentially on top of us
+      const chosenIndex = (nearestOutsideRadius !== null) ? nearestOutsideRadius : nearestAny;
+      if (chosenIndex === null) {
+        return alert('No locations found for selected categories.');
+      }
+
+      const destSelect = document.getElementById('destination-select');
+      destSelect.value = chosenIndex;
+      destSelect.dispatchEvent(new Event('change'));
+    });
+
+    // =========================================================
+    // UI toggles (controls + directions)
+    // =========================================================
+
+    document.getElementById('toggle-controls').addEventListener('click', () => {
+      if (isCompactMobileLayout()) {
+        if (!controlsVisible) {
+          if (directionsVisible) {
+            setDirectionsVisible(false);
+          }
+          setControlsVisible(true, { collapsed: false });
+          return;
+        }
+        if (controlsCollapsed) {
+          setControlsCollapsed(false);
+          return;
+        }
+        setControlsCollapsed(true);
+        return;
+      }
+
+      const nextVisible = !controlsVisible;
+      setControlsVisible(nextVisible);
+    });
+
+    document.getElementById('toggle-directions').addEventListener('click', () => {
+      setDirectionsVisible(!directionsVisible);
+    });
+
+    document.getElementById('instructions').addEventListener('click', e => {
+      if (!e.target.closest('.directions-hide-btn')) return;
+      setDirectionsVisible(false);
+    });
+
+    function toggleSelectionCardFromUi() {
+      const card = document.getElementById('selection-card');
+      if (!card || card.classList.contains('is-empty') || card.style.display === 'none') return;
+      setSelectionCardCollapsed(!selectionCardCollapsed);
+    }
+
+    document.getElementById('selection-card-toggle').addEventListener('click', e => {
+      e.stopPropagation();
+      toggleSelectionCardFromUi();
+    });
+
+    document.getElementById('selection-card-head').addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      toggleSelectionCardFromUi();
+    });
+
+    document.getElementById('selection-card-head').addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      toggleSelectionCardFromUi();
+    });
+
+    document.getElementById('selection-directions-btn').addEventListener('click', () => {
+      const selectedIndex = getSelectedDestinationIndex();
+      if (selectedIndex === null) {
+        setControlsVisible(true, { collapsed: false });
+        return;
+      }
+      if (!lastPosition) {
+        return alert('Current position not available yet.');
+      }
+      if (!directionsVisible) {
+        findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
+      }
+      setDirectionsVisible(!directionsVisible);
+    });
+
+    document.getElementById('selection-center-btn').addEventListener('click', () => {
+      const selectedIndex = getSelectedDestinationIndex();
+      if (selectedIndex === null || !map) return;
+      focusDestinationOnMap(selectedIndex, {
+        minZoom: isCompactMobileLayout() ? 15 : 16,
+        animate: true,
+        duration: 0.45
+      });
+    });
+
+    document.getElementById('mobile-hide-controls').addEventListener('click', e => {
+      e.stopPropagation();
+      if (isCompactMobileLayout()) {
+        setControlsVisible(false);
+        return;
+      }
+      setControlsCollapsed(!controlsCollapsed);
+    });
+
+    document.getElementById('hero-banner-head').addEventListener('click', e => {
+      e.stopPropagation();
+      setHeroBannerCollapsed(!heroBannerCollapsed);
+    });
+
+    document.getElementById('hero-banner-head').addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      setHeroBannerCollapsed(!heroBannerCollapsed);
+    });
+
+    document.getElementById('controls-header').addEventListener('click', e => {
+      if (e.target.closest('button')) return;
+      if (controlsVisible) {
+        setControlsCollapsed(!controlsCollapsed);
+      }
+    });
+
+    document.getElementById('display-name-input').addEventListener('input', e => {
+      const nextName = (e.target.value || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
+      personalisation.displayName = nextName;
+      savePersonalisation();
+      applyPersonalisation();
+      updateControlsSummary();
+    });
+
+    document.getElementById('accent-select').addEventListener('change', e => {
+      const nextAccent = (e.target.value || '').toString();
+      if (!accentThemes[nextAccent]) return;
+      personalisation.accent = nextAccent;
+      savePersonalisation();
+      applyPersonalisation();
+      updateControlsSummary();
+    });
+
+    document.getElementById('reset-personalisation-btn').addEventListener('click', () => {
+      resetPersonalisation();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key !== '/' || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const target = e.target;
+      const tagName = target && target.tagName ? target.tagName.toLowerCase() : '';
+      if (tagName === 'input' || tagName === 'textarea' || (target && target.isContentEditable)) return;
+
+      const searchInput = document.getElementById('destination-search');
+      if (!searchInput) return;
+
+      e.preventDefault();
+      if (!controlsVisible) {
+        setControlsVisible(true, { collapsed: false });
+      } else if (controlsCollapsed) {
+        setControlsCollapsed(false);
+      }
+
+      searchInput.focus();
+      searchInput.select();
+    });
+
+    function handleViewportResize() {
+      syncViewportCssVars();
+      syncCompactLayoutState();
+      if (directionsVisible) {
+        setDirectionsVisible(true);
+      } else {
+        const mapDiv = document.getElementById('map');
+        if (mapDiv) {
+          mapDiv.style.right = isCompactMobileLayout() ? '12px' : '24px';
+          mapDiv.style.bottom = isCompactMobileLayout() ? '14px' : '24px';
+        }
+      }
+      syncControlsChrome();
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 150);
+      }
+    }
+
+    function scheduleViewportResync(delays = [0, 120, 360]) {
+      viewportResyncTimers.forEach(timerId => window.clearTimeout(timerId));
+      viewportResyncTimers = [];
+      delays.forEach(delay => {
+        const timerId = window.setTimeout(() => {
+          handleViewportResize();
+        }, delay);
+        viewportResyncTimers.push(timerId);
+      });
+    }
+
+    window.addEventListener('resize', handleViewportResize);
+    window.addEventListener('orientationchange', () => scheduleViewportResync([0, 160, 420]));
+    window.addEventListener('pageshow', () => scheduleViewportResync([0, 120, 360]));
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        scheduleViewportResync([0, 120, 360]);
+      }
+    });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleViewportResize);
+      window.visualViewport.addEventListener('scroll', handleViewportResize);
+    }
+
+    loadPersonalisation();
+    savePersonalisation();
+    applyPersonalisation();
+    syncViewportCssVars();
+    syncCompactLayoutState();
+    syncControlsChrome();
+    scheduleViewportResync([160, 420]);
+    bootstrapInitialCsvLoad();
+
+    // Optional: probe DB routes early so status is visible before CSV upload.
+    ensureDbIntegration();
+
+    // =========================================================
+    // Service worker (optional offline support)
+    // =========================================================
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
+</body>
+</html>
