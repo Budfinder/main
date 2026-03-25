@@ -131,6 +131,11 @@
         width: min(440px, calc(100vw - 348px));
       }
 
+      body:not(.compact-layout) .controls-header,
+      body:not(.compact-layout) .controls-header-main {
+        cursor: default;
+      }
+
       body:not(.compact-layout) .controls.is-collapsed .controls-header {
         padding: 12px 14px;
       }
@@ -2481,7 +2486,7 @@
           hideBtn.textContent = 'Close';
           hideBtn.style.display = 'inline-flex';
         } else {
-          hideBtn.textContent = controlsCollapsed ? 'Expand' : 'Collapse';
+          hideBtn.textContent = 'Hide atlas';
           hideBtn.style.display = 'inline-flex';
         }
       }
@@ -2512,6 +2517,18 @@
     }
 
     function setControlsCollapsed(collapsed) {
+      if (!isCompactMobileLayout()) {
+        if (collapsed) {
+          setControlsVisible(false);
+          return;
+        }
+        controlsCollapsed = false;
+        syncControlsChrome();
+        if (map) {
+          setTimeout(() => map.invalidateSize(), 200);
+        }
+        return;
+      }
       if (!controlsVisible) {
         controlsCollapsed = false;
       } else {
@@ -5536,7 +5553,7 @@
         setControlsVisible(false);
         return;
       }
-      setControlsCollapsed(!controlsCollapsed);
+      setControlsVisible(false);
     });
 
     document.getElementById('hero-banner-head').addEventListener('click', e => {
@@ -5552,7 +5569,7 @@
 
     document.getElementById('controls-header').addEventListener('click', e => {
       if (e.target.closest('button')) return;
-      if (controlsVisible) {
+      if (controlsVisible && isCompactMobileLayout()) {
         setControlsCollapsed(!controlsCollapsed);
       }
     });

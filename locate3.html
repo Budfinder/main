@@ -232,32 +232,10 @@
         width: 392px;
       }
 
-      .controls.is-collapsed {
-        width: min(220px, calc(100vw - 48px));
-        max-width: min(220px, calc(100vw - 48px));
+      .controls-header-main {
+        cursor: default;
       }
 
-      .controls.is-collapsed .controls-header {
-        padding: 14px 14px;
-        gap: 10px;
-      }
-
-      .controls.is-collapsed .controls-title {
-        font-size: 20px;
-      }
-
-      .controls.is-collapsed .controls-summary {
-        display: none;
-      }
-
-      body.desktop-controls-collapsed #map {
-        left: 268px;
-      }
-
-      body.desktop-controls-collapsed #hero-banner {
-        left: 268px;
-        width: min(440px, calc(100vw - 332px));
-      }
     }
 
     /* Mobile layout */
@@ -2759,7 +2737,6 @@
       const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
       const showMobileDirections = directionsVisible && isCompactMobileLayout();
       const hideDesktopGap = !controlsVisible && !isCompactMobileLayout();
-      const collapseDesktopGap = controlsVisible && controlsCollapsed && !isCompactMobileLayout();
 
       if (controlsDiv) {
         controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed);
@@ -2769,7 +2746,6 @@
       document.body.classList.toggle('mobile-controls-open', showMobileOverlay);
       document.body.classList.toggle('mobile-directions-open', showMobileDirections);
       document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
-      document.body.classList.toggle('desktop-controls-collapsed', collapseDesktopGap);
       if (uiToggles) {
         const togglesReady = uiToggles.dataset.ready === 'true';
         uiToggles.style.display = togglesReady && (!isMobile || !controlsVisible) ? 'block' : 'none';
@@ -2787,7 +2763,7 @@
           hideBtn.textContent = 'Close';
           hideBtn.style.display = 'inline-flex';
         } else {
-          hideBtn.textContent = controlsCollapsed ? 'Expand' : 'Collapse';
+          hideBtn.textContent = 'Hide';
           hideBtn.style.display = 'inline-flex';
         }
       }
@@ -2819,6 +2795,12 @@
 
     function setControlsCollapsed(collapsed) {
       if (!controlsVisible) {
+        controlsCollapsed = false;
+      } else if (!isCompactMobileLayout()) {
+        if (collapsed) {
+          setControlsVisible(false);
+          return;
+        }
         controlsCollapsed = false;
       } else {
         controlsCollapsed = !!collapsed;
@@ -5926,7 +5908,7 @@
         setControlsVisible(false);
         return;
       }
-      setControlsCollapsed(!controlsCollapsed);
+      setControlsVisible(false);
     });
 
     document.getElementById('hero-banner-head').addEventListener('click', e => {
@@ -5942,7 +5924,7 @@
 
     document.getElementById('controls-header').addEventListener('click', e => {
       if (e.target.closest('button')) return;
-      if (controlsVisible) {
+      if (controlsVisible && isCompactMobileLayout()) {
         setControlsCollapsed(!controlsCollapsed);
       }
     });
