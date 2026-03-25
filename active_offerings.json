@@ -3277,8 +3277,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 370,
@@ -3825,23 +3825,6 @@
     "updated_at": "2026-02-20T09:43:34.696278+00:00"
   },
   {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 22,
-    "strain_name": "Animal Mintz",
-    "strain_name_normalised": "animal mintz",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
-  },
-  {
     "shop_id": 370,
     "shop_key": "cs-terps-army-2",
     "shop_name": "Terps Army 2",
@@ -4233,23 +4216,6 @@
     "updated_at": "2026-02-20T23:16:29.442387+00:00"
   },
   {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 485,
-    "strain_name": "BLACK ZUSHI",
-    "strain_name_normalised": "black zushi",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 30.0,
-    "price_unit": "g",
-    "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
-  },
-  {
     "shop_id": 161,
     "shop_key": "cs-green-place",
     "shop_name": "Green Place",
@@ -4503,23 +4469,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:00:22.398906+00:00",
     "updated_at": "2026-02-19T22:00:22.398906+00:00"
-  },
-  {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 2449,
-    "strain_name": "Banana Cooler",
-    "strain_name_normalised": "banana cooler",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 20.0,
-    "price_unit": "g",
-    "notes": "Terps Army Farm",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
   },
   {
     "shop_id": 363,
@@ -4996,23 +4945,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:49:03.849457+00:00",
     "updated_at": "2026-02-19T22:49:03.849457+00:00"
-  },
-  {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 2448,
-    "strain_name": "Big Z",
-    "strain_name_normalised": "big z",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 20.0,
-    "price_unit": "g",
-    "notes": "Terps Army Farm",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
   },
   {
     "shop_id": 4,
@@ -6135,23 +6067,6 @@
     "notes": "1.5g",
     "last_seen_at_utc": "2026-03-07T15:41:17.221860+00:00",
     "updated_at": "2026-03-07T15:41:17.221860+00:00"
-  },
-  {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 2452,
-    "strain_name": "Blue Berry Caviar",
-    "strain_name_normalised": "blue berry caviar",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 25.0,
-    "price_unit": "g",
-    "notes": "Cookies",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
   },
   {
     "shop_id": 69,
@@ -7308,6 +7223,23 @@
     "notes": "Major League Exotics 3.5g",
     "last_seen_at_utc": "2026-03-07T10:59:50.646083+00:00",
     "updated_at": "2026-03-07T10:59:50.646083+00:00"
+  },
+  {
+    "shop_id": 369,
+    "shop_key": "cs-terps-army",
+    "shop_name": "Terps Army",
+    "shop_city": "Amsterdam",
+    "strain_id": 1972,
+    "strain_name": "Blue Zkittlez",
+    "strain_name_normalised": "blue zkittlez",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 25.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 44,
@@ -9843,23 +9775,6 @@
     "updated_at": "2026-03-07T20:10:35.829478+00:00"
   },
   {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 2453,
-    "strain_name": "Cereal a le Mode",
-    "strain_name_normalised": "cereal a le mode",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 25.0,
-    "price_unit": "g",
-    "notes": "Cookies",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
-  },
-  {
     "shop_id": 290,
     "shop_key": "cs-plug-west",
     "shop_name": "The Plug West",
@@ -10982,23 +10897,6 @@
     "updated_at": "2026-03-07T11:14:52.975739+00:00"
   },
   {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 1707,
-    "strain_name": "Cherry Pie",
-    "strain_name_normalised": "cherry pie",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 16.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
-  },
-  {
     "shop_id": 147,
     "shop_key": "cs-gelderse",
     "shop_name": "het Gelderse",
@@ -11760,8 +11658,8 @@
     "price_amount": 30.0,
     "price_unit": "g",
     "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 114,
@@ -15953,14 +15851,14 @@
     "strain_id": 215,
     "strain_name": "Gary Payton",
     "strain_name_normalised": "gary payton",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 16.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 401,
@@ -18832,8 +18730,8 @@
     "price_amount": 20.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 270,
@@ -21178,8 +21076,8 @@
     "price_amount": 30.0,
     "price_unit": "g",
     "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 289,
@@ -22246,11 +22144,11 @@
     "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 16.0,
+    "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 70,
@@ -24563,23 +24461,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T15:33:21.694056+00:00",
     "updated_at": "2026-02-19T15:33:21.694056+00:00"
-  },
-  {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 2463,
-    "strain_name": "Lobster",
-    "strain_name_normalised": "lobster",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 30.0,
-    "price_unit": "g",
-    "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
   },
   {
     "shop_id": 131,
@@ -28060,11 +27941,11 @@
     "base_type": "hybrid",
     "is_cali": 1,
     "price_currency": "€",
-    "price_amount": 25.0,
+    "price_amount": 20.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 305,
@@ -28131,8 +28012,8 @@
     "price_amount": 30.0,
     "price_unit": "g",
     "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 126,
@@ -29036,23 +28917,6 @@
     "updated_at": "2026-02-19T15:38:10.725257+00:00"
   },
   {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 2464,
-    "strain_name": "Oyster",
-    "strain_name_normalised": "oyster",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 30.0,
-    "price_unit": "g",
-    "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
-  },
-  {
     "shop_id": 23,
     "shop_key": "cs-7thheaven",
     "shop_name": "7th Heaven",
@@ -29247,14 +29111,14 @@
     "strain_id": 2442,
     "strain_name": "Pancakes",
     "strain_name_normalised": "pancakes",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 16.0,
+    "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 147,
@@ -29442,6 +29306,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T09:33:30.142811+00:00",
     "updated_at": "2026-03-07T09:33:30.142811+00:00"
+  },
+  {
+    "shop_id": 369,
+    "shop_key": "cs-terps-army",
+    "shop_name": "Terps Army",
+    "shop_city": "Amsterdam",
+    "strain_id": 1788,
+    "strain_name": "Peach Ringz",
+    "strain_name_normalised": "peach ringz",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 16.0,
+    "price_unit": "g",
+    "notes": "Terps Army Farm",
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 305,
@@ -30880,13 +30761,13 @@
     "strain_name": "Pressure",
     "strain_name_normalised": "pressure",
     "base_type": "hybrid",
-    "is_cali": 1,
+    "is_cali": 0,
     "price_currency": "€",
     "price_amount": 18.0,
     "price_unit": "g",
     "notes": "Terps Army Farm",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 231,
@@ -33099,6 +32980,23 @@
     "updated_at": "2026-03-07T12:13:49.392591+00:00"
   },
   {
+    "shop_id": 369,
+    "shop_key": "cs-terps-army",
+    "shop_name": "Terps Army",
+    "shop_city": "Amsterdam",
+    "strain_id": 351,
+    "strain_name": "Runtz",
+    "strain_name_normalised": "runtz",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
+  },
+  {
     "shop_id": 238,
     "shop_key": "cs-media",
     "shop_name": "Club Media",
@@ -33896,6 +33794,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T18:12:16.023092+00:00",
     "updated_at": "2026-03-07T18:12:16.023092+00:00"
+  },
+  {
+    "shop_id": 369,
+    "shop_key": "cs-terps-army",
+    "shop_name": "Terps Army",
+    "shop_city": "Amsterdam",
+    "strain_id": 2987,
+    "strain_name": "Sherbcocktail",
+    "strain_name_normalised": "sherbcocktail",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 17.0,
+    "price_unit": "g",
+    "notes": "Terps Army Farm",
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 51,
@@ -34926,13 +34841,13 @@
     "strain_name": "Skilatti",
     "strain_name_normalised": "skilatti",
     "base_type": "hybrid",
-    "is_cali": 1,
+    "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 35.0,
+    "price_amount": 30.0,
     "price_unit": "g",
     "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 77,
@@ -37804,8 +37719,8 @@
     "price_amount": 12.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 370,
@@ -39737,13 +39652,13 @@
     "strain_name": "The Keeper",
     "strain_name_normalised": "the keeper",
     "base_type": "hybrid",
-    "is_cali": 1,
+    "is_cali": 0,
     "price_currency": "€",
     "price_amount": 18.0,
     "price_unit": "g",
     "notes": "Terps Army Farm",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 98,
@@ -40475,23 +40390,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T11:28:31.384823+00:00",
     "updated_at": "2026-03-07T11:28:31.384823+00:00"
-  },
-  {
-    "shop_id": 369,
-    "shop_key": "cs-terps-army",
-    "shop_name": "Terps Army",
-    "shop_city": "Amsterdam",
-    "strain_id": 274,
-    "strain_name": "Tropicana",
-    "strain_name_normalised": "tropicana",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
   },
   {
     "shop_id": 344,
@@ -41493,8 +41391,8 @@
     "price_amount": 30.0,
     "price_unit": "g",
     "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 288,
@@ -44701,13 +44599,13 @@
     "strain_name": "Yellow Zushi",
     "strain_name_normalised": "yellow zushi",
     "base_type": "hybrid",
-    "is_cali": 1,
+    "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 30.0,
+    "price_amount": 35.0,
     "price_unit": "g",
     "notes": "The TenCo",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 289,
@@ -45628,6 +45526,23 @@
     "updated_at": "2026-03-02T22:38:36.512223+00:00"
   },
   {
+    "shop_id": 369,
+    "shop_key": "cs-terps-army",
+    "shop_name": "Terps Army",
+    "shop_city": "Amsterdam",
+    "strain_id": 1730,
+    "strain_name": "Zkittlez",
+    "strain_name_normalised": "zkittlez",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 25.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
+  },
+  {
     "shop_id": 12,
     "shop_key": "cs-abraxas",
     "shop_name": "Abraxas",
@@ -45944,11 +45859,11 @@
     "base_type": "hybrid",
     "is_cali": 1,
     "price_currency": "€",
-    "price_amount": 18.0,
+    "price_amount": 20.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T14:51:24.158275+00:00",
-    "updated_at": "2026-03-07T14:51:24.158275+00:00"
+    "last_seen_at_utc": "2026-03-25T20:18:08.260792+00:00",
+    "updated_at": "2026-03-25T20:18:08.260792+00:00"
   },
   {
     "shop_id": 370,

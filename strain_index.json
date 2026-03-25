@@ -2398,12 +2398,6 @@
     "strain_name_display": "Animal Mintz",
     "shops": [
       {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 370,
         "shop_key": "cs-terps-army-2",
         "shop_name": "Terps Army 2",
@@ -2718,18 +2712,6 @@
     ]
   },
   {
-    "strain_name_normalised": "banana cooler",
-    "strain_name_display": "Banana Cooler",
-    "shops": [
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "banana cream",
     "strain_name_display": "Banana Cream",
     "shops": [
@@ -3001,18 +2983,6 @@
         "shop_id": 40,
         "shop_key": "cs-babylon",
         "shop_name": "Babylon",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "big z",
-    "strain_name_display": "Big Z",
-    "shops": [
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
         "shop_city": "Amsterdam"
       }
     ]
@@ -3434,12 +3404,6 @@
         "shop_key": "cs-green-place-2",
         "shop_name": "Green Place 2",
         "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
-        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -3649,18 +3613,6 @@
         "shop_id": 435,
         "shop_key": "cs-twilight-zone",
         "shop_name": "Twilight Zone",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "blue berry caviar",
-    "strain_name_display": "Blue Berry Caviar",
-    "shops": [
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
         "shop_city": "Amsterdam"
       }
     ]
@@ -4231,6 +4183,12 @@
         "shop_id": 305,
         "shop_key": "cs-reefer",
         "shop_name": "Reefer",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 369,
+        "shop_key": "cs-terps-army",
+        "shop_name": "Terps Army",
         "shop_city": "Amsterdam"
       }
     ]
@@ -5556,18 +5514,6 @@
     ]
   },
   {
-    "strain_name_normalised": "cereal a le mode",
-    "strain_name_display": "Cereal a le Mode",
-    "shops": [
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "cereal milk",
     "strain_name_display": "Cereal Milk",
     "shops": [
@@ -6169,12 +6115,6 @@
         "shop_id": 314,
         "shop_key": "cs-resin",
         "shop_name": "Resin",
-        "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
         "shop_city": "Amsterdam"
       }
     ]
@@ -12780,18 +12720,6 @@
     ]
   },
   {
-    "strain_name_normalised": "lobster",
-    "strain_name_display": "Lobster",
-    "shops": [
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "lobster tail",
     "strain_name_display": "Lobster Tail",
     "shops": [
@@ -15036,18 +14964,6 @@
     ]
   },
   {
-    "strain_name_normalised": "oyster",
-    "strain_name_display": "Oyster",
-    "shops": [
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "oysterz",
     "strain_name_display": "Oysterz",
     "shops": [
@@ -15259,6 +15175,12 @@
         "shop_id": 256,
         "shop_key": "cs-new-times",
         "shop_name": "New Times",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 369,
+        "shop_key": "cs-terps-army",
+        "shop_name": "Terps Army",
         "shop_city": "Amsterdam"
       }
     ]
@@ -17234,6 +17156,12 @@
         "shop_key": "cs-ruthless",
         "shop_name": "Ruthless",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 369,
+        "shop_key": "cs-terps-army",
+        "shop_name": "Terps Army",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -17551,6 +17479,18 @@
         "shop_id": 379,
         "shop_key": "cs-tyson",
         "shop_name": "Tyson 2.0",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "sherbcocktail",
+    "strain_name_display": "Sherbcocktail",
+    "shops": [
+      {
+        "shop_id": 369,
+        "shop_key": "cs-terps-army",
+        "shop_name": "Terps Army",
         "shop_city": "Amsterdam"
       }
     ]
@@ -20924,12 +20864,6 @@
         "shop_key": "cs-rock-it",
         "shop_name": "Rock-It",
         "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 369,
-        "shop_key": "cs-terps-army",
-        "shop_name": "Terps Army",
-        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -23347,6 +23281,12 @@
         "shop_id": 239,
         "shop_key": "cs-mediterrane",
         "shop_name": "Mediterrane (Drewissharing)",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 369,
+        "shop_key": "cs-terps-army",
+        "shop_name": "Terps Army",
         "shop_city": "Amsterdam"
       }
     ]

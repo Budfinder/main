@@ -5844,6 +5844,12 @@
     "created_at": "2026-02-19T14:14:04.716028+00:00"
   },
   {
+    "strain_id": 2987,
+    "name_display": "Sherbcocktail",
+    "name_normalised": "sherbcocktail",
+    "created_at": "2026-03-25T20:14:44.760852+00:00"
+  },
+  {
     "strain_id": 797,
     "name_display": "Sherbert",
     "name_normalised": "sherbert",
