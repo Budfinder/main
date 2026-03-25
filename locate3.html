@@ -233,17 +233,30 @@
       }
 
       .controls.is-collapsed {
-        width: min(286px, calc(100vw - 48px));
-        max-width: min(286px, calc(100vw - 48px));
+        width: min(220px, calc(100vw - 48px));
+        max-width: min(220px, calc(100vw - 48px));
+      }
+
+      .controls.is-collapsed .controls-header {
+        padding: 14px 14px;
+        gap: 10px;
+      }
+
+      .controls.is-collapsed .controls-title {
+        font-size: 20px;
+      }
+
+      .controls.is-collapsed .controls-summary {
+        display: none;
       }
 
       body.desktop-controls-collapsed #map {
-        left: 334px;
+        left: 268px;
       }
 
       body.desktop-controls-collapsed #hero-banner {
-        left: 334px;
-        width: min(440px, calc(100vw - 398px));
+        left: 268px;
+        width: min(440px, calc(100vw - 332px));
       }
     }
 

@@ -118,17 +118,35 @@
       }
 
       .controls.is-collapsed {
-        width: min(286px, calc(100vw - 48px));
-        max-width: min(286px, calc(100vw - 48px));
+        width: min(236px, calc(100vw - 48px));
+        max-width: min(236px, calc(100vw - 48px));
       }
 
       body.desktop-controls-collapsed #map {
-        left: 334px;
+        left: 284px;
       }
 
       body.desktop-controls-collapsed #hero-banner {
-        left: 334px;
-        width: min(440px, calc(100vw - 398px));
+        left: 284px;
+        width: min(440px, calc(100vw - 348px));
+      }
+
+      body:not(.compact-layout) .controls.is-collapsed .controls-header {
+        padding: 12px 14px;
+      }
+
+      body:not(.compact-layout) .controls.is-collapsed .controls-title {
+        font-size: 20px;
+        white-space: nowrap;
+      }
+
+      body:not(.compact-layout) .controls.is-collapsed .controls-summary {
+        display: none;
+      }
+
+      body:not(.compact-layout) .controls.is-collapsed .controls-hide {
+        min-height: 34px;
+        padding: 0 10px;
       }
     }
 
