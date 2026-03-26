@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Bud Finder Atlas</title>
+  <title>Budfinder 3: Bud Harder</title>
 
   <!--
     OPTIONAL:
@@ -2404,7 +2404,7 @@
       <span class="hero-kicker" id="hero-kicker">Personal atlas</span>
     </div>
     <div id="hero-banner-content" class="hero-banner-content">
-      <h1>Bud Finder Atlas</h1>
+      <h1>Budfinder 3: Bud Harder</h1>
       <p class="hero-copy">
         Plot the next smoke stop, chase a specific strain, and keep a living map of the menus worth the detour.
       </p>
@@ -2578,12 +2578,15 @@
           <label class="field-label" for="accent-select">
             Vibe
             <select id="accent-select">
-              <option value="moss">Moss</option>
-              <option value="golden-haze">Golden Haze</option>
-              <option value="pine-resin">Pine Resin</option>
-              <option value="citrus-haze">Citrus Haze</option>
-              <option value="rosewood-smoke">Rosewood Smoke</option>
-              <option value="coastal-kush">Coastal Kush</option>
+              <option value="northern-lights">Northern Lights</option>
+              <option value="lemon-haze">Lemon Haze</option>
+              <option value="og-kush">OG Kush</option>
+              <option value="pineapple-express">Pineapple Express</option>
+              <option value="blue-dream">Blue Dream</option>
+              <option value="cherry-gelato">Cherry Gelato</option>
+              <option value="granddaddy-purple">Granddaddy Purple</option>
+              <option value="west-ham-united">West Ham United</option>
+              <option value="spurs">Spurs</option>
             </select>
           </label>
         </div>
@@ -2681,14 +2684,20 @@
     const RECENT_DESTINATIONS_STORAGE_KEY = 'locate3_recent_destinations';
     const STRAIN_SHELF_STORAGE_KEY = 'locate3_strain_shelf';
     const accentThemeAliases = {
-      amber: 'golden-haze',
-      lagoon: 'coastal-kush',
-      ember: 'rosewood-smoke',
-      'west-ham': 'rosewood-smoke',
-      spurs: 'coastal-kush'
+      amber: 'lemon-haze',
+      lagoon: 'blue-dream',
+      ember: 'cherry-gelato',
+      moss: 'northern-lights',
+      'golden-haze': 'lemon-haze',
+      'pine-resin': 'og-kush',
+      'citrus-haze': 'pineapple-express',
+      'rosewood-smoke': 'cherry-gelato',
+      'coastal-kush': 'blue-dream',
+      'west-ham': 'west-ham-united',
+      'tottenham-hotspur': 'spurs'
     };
     const accentThemes = {
-      moss: {
+      'northern-lights': {
         accent: '#2e7b59',
         accentStrong: '#205b42',
         accentSoft: 'rgba(46, 123, 89, 0.16)',
@@ -2703,22 +2712,22 @@
         mistWash: 'rgba(184, 223, 206, 0.7)',
         resinGlow: 'rgba(222, 160, 82, 0.34)'
       },
-      'golden-haze': {
-        accent: '#b17b27',
-        accentStrong: '#7a5312',
-        accentSoft: 'rgba(177, 123, 39, 0.18)',
-        accentGlow: 'rgba(177, 123, 39, 0.3)',
-        bgTop: '#f4dfac',
-        bgMid: '#ebd09b',
-        bgBottom: '#dde2bc',
-        panel: 'rgba(255, 248, 235, 0.86)',
-        panelStrong: 'rgba(255, 251, 243, 0.95)',
-        panelBorder: 'rgba(132, 105, 52, 0.18)',
-        sunWash: 'rgba(255, 238, 183, 0.96)',
-        mistWash: 'rgba(215, 225, 177, 0.66)',
-        resinGlow: 'rgba(210, 166, 70, 0.36)'
+      'lemon-haze': {
+        accent: '#b59a20',
+        accentStrong: '#7b6610',
+        accentSoft: 'rgba(181, 154, 32, 0.18)',
+        accentGlow: 'rgba(181, 154, 32, 0.32)',
+        bgTop: '#f8e79a',
+        bgMid: '#f1de8c',
+        bgBottom: '#dfe4b0',
+        panel: 'rgba(255, 250, 232, 0.87)',
+        panelStrong: 'rgba(255, 252, 241, 0.96)',
+        panelBorder: 'rgba(145, 126, 45, 0.18)',
+        sunWash: 'rgba(255, 243, 161, 0.98)',
+        mistWash: 'rgba(219, 229, 167, 0.7)',
+        resinGlow: 'rgba(227, 193, 77, 0.38)'
       },
-      'pine-resin': {
+      'og-kush': {
         accent: '#3d7a3c',
         accentStrong: '#224a27',
         accentSoft: 'rgba(61, 122, 60, 0.18)',
@@ -2733,50 +2742,95 @@
         mistWash: 'rgba(176, 213, 189, 0.68)',
         resinGlow: 'rgba(138, 113, 63, 0.28)'
       },
-      'citrus-haze': {
-        accent: '#728f1f',
-        accentStrong: '#475b11',
-        accentSoft: 'rgba(114, 143, 31, 0.18)',
-        accentGlow: 'rgba(114, 143, 31, 0.28)',
-        bgTop: '#f1e1ae',
-        bgMid: '#e2d8aa',
-        bgBottom: '#d4e4be',
-        panel: 'rgba(252, 250, 238, 0.86)',
-        panelStrong: 'rgba(255, 253, 246, 0.95)',
-        panelBorder: 'rgba(111, 124, 54, 0.18)',
-        sunWash: 'rgba(253, 241, 193, 0.94)',
-        mistWash: 'rgba(199, 222, 171, 0.66)',
-        resinGlow: 'rgba(190, 151, 67, 0.32)'
+      'pineapple-express': {
+        accent: '#b36d2b',
+        accentStrong: '#78451a',
+        accentSoft: 'rgba(179, 109, 43, 0.18)',
+        accentGlow: 'rgba(179, 109, 43, 0.28)',
+        bgTop: '#f4dc9e',
+        bgMid: '#ebcf8e',
+        bgBottom: '#d7e0b5',
+        panel: 'rgba(255, 248, 234, 0.87)',
+        panelStrong: 'rgba(255, 251, 242, 0.96)',
+        panelBorder: 'rgba(138, 101, 54, 0.18)',
+        sunWash: 'rgba(255, 232, 171, 0.94)',
+        mistWash: 'rgba(204, 223, 173, 0.68)',
+        resinGlow: 'rgba(219, 163, 77, 0.34)'
       },
-      'rosewood-smoke': {
-        accent: '#9d5a45',
-        accentStrong: '#693827',
-        accentSoft: 'rgba(157, 90, 69, 0.18)',
-        accentGlow: 'rgba(157, 90, 69, 0.26)',
-        bgTop: '#f0d8be',
-        bgMid: '#e5cfbf',
-        bgBottom: '#d7ddd1',
-        panel: 'rgba(255, 248, 243, 0.86)',
-        panelStrong: 'rgba(255, 251, 247, 0.95)',
-        panelBorder: 'rgba(123, 90, 76, 0.18)',
-        sunWash: 'rgba(253, 229, 203, 0.9)',
-        mistWash: 'rgba(208, 217, 205, 0.64)',
-        resinGlow: 'rgba(176, 111, 80, 0.28)'
+      'blue-dream': {
+        accent: '#2a6d99',
+        accentStrong: '#184564',
+        accentSoft: 'rgba(42, 109, 153, 0.18)',
+        accentGlow: 'rgba(42, 109, 153, 0.28)',
+        bgTop: '#e4dfc7',
+        bgMid: '#d9e0d8',
+        bgBottom: '#c8dff0',
+        panel: 'rgba(245, 249, 252, 0.87)',
+        panelStrong: 'rgba(250, 252, 255, 0.96)',
+        panelBorder: 'rgba(73, 109, 134, 0.18)',
+        sunWash: 'rgba(244, 236, 201, 0.88)',
+        mistWash: 'rgba(183, 214, 236, 0.66)',
+        resinGlow: 'rgba(100, 155, 193, 0.26)'
       },
-      'coastal-kush': {
-        accent: '#2a7c79',
-        accentStrong: '#174f50',
-        accentSoft: 'rgba(42, 124, 121, 0.18)',
-        accentGlow: 'rgba(42, 124, 121, 0.28)',
-        bgTop: '#e7ddb8',
-        bgMid: '#dce0bf',
-        bgBottom: '#c8e0d7',
-        panel: 'rgba(246, 250, 246, 0.85)',
-        panelStrong: 'rgba(251, 253, 249, 0.95)',
-        panelBorder: 'rgba(71, 111, 109, 0.18)',
-        sunWash: 'rgba(248, 239, 196, 0.88)',
-        mistWash: 'rgba(170, 218, 210, 0.64)',
-        resinGlow: 'rgba(102, 159, 155, 0.26)'
+      'cherry-gelato': {
+        accent: '#a14d63',
+        accentStrong: '#6b3040',
+        accentSoft: 'rgba(161, 77, 99, 0.18)',
+        accentGlow: 'rgba(161, 77, 99, 0.26)',
+        bgTop: '#f0d5d9',
+        bgMid: '#e8d7d3',
+        bgBottom: '#dddeda',
+        panel: 'rgba(255, 247, 248, 0.87)',
+        panelStrong: 'rgba(255, 251, 251, 0.96)',
+        panelBorder: 'rgba(132, 86, 97, 0.18)',
+        sunWash: 'rgba(250, 223, 223, 0.9)',
+        mistWash: 'rgba(215, 219, 212, 0.62)',
+        resinGlow: 'rgba(188, 120, 140, 0.28)'
+      },
+      'granddaddy-purple': {
+        accent: '#7b54a3',
+        accentStrong: '#4d316f',
+        accentSoft: 'rgba(123, 84, 163, 0.18)',
+        accentGlow: 'rgba(123, 84, 163, 0.28)',
+        bgTop: '#efdcf7',
+        bgMid: '#e5d8f1',
+        bgBottom: '#d8dbeb',
+        panel: 'rgba(252, 247, 255, 0.87)',
+        panelStrong: 'rgba(255, 251, 255, 0.96)',
+        panelBorder: 'rgba(114, 88, 151, 0.18)',
+        sunWash: 'rgba(245, 223, 255, 0.9)',
+        mistWash: 'rgba(204, 195, 233, 0.66)',
+        resinGlow: 'rgba(153, 114, 207, 0.3)'
+      },
+      'west-ham-united': {
+        accent: '#7a263a',
+        accentStrong: '#4d1826',
+        accentSoft: 'rgba(122, 38, 58, 0.18)',
+        accentGlow: 'rgba(122, 38, 58, 0.3)',
+        bgTop: '#efd8de',
+        bgMid: '#e1d7df',
+        bgBottom: '#d3e1eb',
+        panel: 'rgba(255, 248, 250, 0.87)',
+        panelStrong: 'rgba(255, 251, 252, 0.96)',
+        panelBorder: 'rgba(108, 73, 87, 0.2)',
+        sunWash: 'rgba(236, 202, 213, 0.88)',
+        mistWash: 'rgba(175, 207, 228, 0.64)',
+        resinGlow: 'rgba(98, 162, 206, 0.24)'
+      },
+      spurs: {
+        accent: '#10264d',
+        accentStrong: '#09162e',
+        accentSoft: 'rgba(16, 38, 77, 0.16)',
+        accentGlow: 'rgba(16, 38, 77, 0.24)',
+        bgTop: '#f4f4f8',
+        bgMid: '#e8eaf2',
+        bgBottom: '#d8deec',
+        panel: 'rgba(250, 251, 255, 0.88)',
+        panelStrong: 'rgba(255, 255, 255, 0.97)',
+        panelBorder: 'rgba(94, 106, 136, 0.18)',
+        sunWash: 'rgba(250, 250, 255, 0.9)',
+        mistWash: 'rgba(208, 217, 236, 0.66)',
+        resinGlow: 'rgba(127, 140, 172, 0.22)'
       }
     };
     let legacyFavoriteIndices = loadStoredJson(LEGACY_FAVORITES_STORAGE_KEY, []);
@@ -2786,7 +2840,7 @@
     let favorites = [];
     let personalisation = {
       displayName: 'Explorer',
-      accent: 'moss'
+      accent: 'northern-lights'
     };
 
     function loadStoredJson(key, fallback) {
@@ -2988,7 +3042,7 @@
     }
 
     function applyPersonalisation() {
-      const theme = accentThemes[personalisation.accent] || accentThemes.moss;
+      const theme = accentThemes[personalisation.accent] || accentThemes['northern-lights'];
       const rawName = (personalisation.displayName || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
       const safeName = rawName || 'Explorer';
       const root = document.documentElement;
@@ -3012,13 +3066,13 @@
       if (kicker) kicker.textContent = rawName ? `${safeName}'s atlas` : 'Personal atlas';
       if (nameInput && nameInput.value !== rawName) nameInput.value = rawName;
       if (accentSelect && accentSelect.value !== personalisation.accent) accentSelect.value = personalisation.accent;
-      document.title = rawName ? `${safeName}'s Bud Finder Atlas` : 'Bud Finder Atlas';
+      document.title = rawName ? `${safeName}'s Budfinder 3: Bud Harder` : 'Budfinder 3: Bud Harder';
     }
 
     function resetPersonalisation() {
       personalisation = {
         displayName: 'Explorer',
-        accent: 'moss'
+        accent: 'northern-lights'
       };
       savePersonalisation();
       applyPersonalisation();
