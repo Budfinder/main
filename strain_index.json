@@ -10708,6 +10708,18 @@
         "shop_city": "Alkmaar"
       },
       {
+        "shop_id": 179,
+        "shop_key": "cs-hightime-alk",
+        "shop_name": "High-Time",
+        "shop_city": "Alkmaar"
+      },
+      {
+        "shop_id": 139,
+        "shop_key": "cs-free-i",
+        "shop_name": "Free I",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 200,
         "shop_key": "cs-jolly-joker",
         "shop_name": "Jolly Joker",
@@ -10723,30 +10735,6 @@
         "shop_id": 204,
         "shop_key": "cs-kadinsky3",
         "shop_name": "Kadinsky 3",
-        "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 401,
-        "shop_key": "cs-yin-yang",
-        "shop_name": "Yin Yang",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "jack herrer",
-    "strain_name_display": "Jack Herrer",
-    "shops": [
-      {
-        "shop_id": 179,
-        "shop_key": "cs-hightime-alk",
-        "shop_name": "High-Time",
-        "shop_city": "Alkmaar"
-      },
-      {
-        "shop_id": 139,
-        "shop_key": "cs-free-i",
-        "shop_name": "Free I",
         "shop_city": "Amsterdam"
       },
       {
@@ -10789,6 +10777,12 @@
         "shop_id": 435,
         "shop_key": "cs-twilight-zone",
         "shop_name": "Twilight Zone",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 401,
+        "shop_key": "cs-yin-yang",
+        "shop_name": "Yin Yang",
         "shop_city": "Amsterdam"
       },
       {
