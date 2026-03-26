@@ -17000,23 +17000,6 @@
     "updated_at": "2026-02-20T11:25:47.517759+00:00"
   },
   {
-    "shop_id": 337,
-    "shop_key": "cs-siberie",
-    "shop_name": "Siberie",
-    "shop_city": "Amsterdam",
-    "strain_id": 19,
-    "strain_name": "Giraffe Pussy",
-    "strain_name_normalised": "giraffe pussy",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 21.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
-    "updated_at": "2026-03-07T19:54:56.738776+00:00"
-  },
-  {
     "shop_id": 131,
     "shop_key": "cs-family-first",
     "shop_name": "Family First",
@@ -17083,6 +17066,23 @@
     "notes": "Doja 3.5g",
     "last_seen_at_utc": "2026-03-07T10:59:50.646083+00:00",
     "updated_at": "2026-03-07T10:59:50.646083+00:00"
+  },
+  {
+    "shop_id": 337,
+    "shop_key": "cs-siberie",
+    "shop_name": "Siberie",
+    "shop_city": "Amsterdam",
+    "strain_id": 415,
+    "strain_name": "Giraffe Puzzy",
+    "strain_name_normalised": "giraffe puzzy",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 21.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
+    "updated_at": "2026-03-07T19:54:56.738776+00:00"
   },
   {
     "shop_id": 182,

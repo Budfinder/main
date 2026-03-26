@@ -8904,18 +8904,6 @@
     ]
   },
   {
-    "strain_name_normalised": "giraffe pussy",
-    "strain_name_display": "Giraffe Pussy",
-    "shops": [
-      {
-        "shop_id": 337,
-        "shop_key": "cs-siberie",
-        "shop_name": "Siberie",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "giraffe puzzy",
     "strain_name_display": "Giraffe Puzzy",
     "shops": [
@@ -8941,6 +8929,12 @@
         "shop_id": 305,
         "shop_key": "cs-reefer",
         "shop_name": "Reefer",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 337,
+        "shop_key": "cs-siberie",
+        "shop_name": "Siberie",
         "shop_city": "Amsterdam"
       },
       {

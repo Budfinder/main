@@ -818,6 +818,28 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
     }
 
+    .stash-bag.has-art .stash-bag-art {
+      min-height: 108px;
+      padding-top: 14px;
+    }
+
+    .stash-bag-art-media {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .stash-bag-art-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.42;
+      filter: saturate(1.06) contrast(1.03);
+      transform: scale(1.02);
+    }
+
     .stash-bag-art::before {
       content: "";
       position: absolute;
@@ -826,6 +848,13 @@
         radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.22), transparent 28%),
         radial-gradient(circle at 82% 72%, rgba(255, 255, 255, 0.12), transparent 24%);
       pointer-events: none;
+    }
+
+    .stash-bag.has-art .stash-bag-art::before {
+      background:
+        linear-gradient(180deg, rgba(12, 17, 14, 0.04), rgba(12, 17, 14, 0.42)),
+        radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.16), transparent 28%),
+        radial-gradient(circle at 82% 72%, rgba(255, 255, 255, 0.1), transparent 24%);
     }
 
     .stash-bag-tone-0 .stash-bag-art {
@@ -2641,6 +2670,8 @@
 
     // Where downloaded logos might live (try in order)
     const LOGO_BASE_PATHS = ['logos/', 'images/logos/', '/logos/', '/images/logos/'];
+    const STRAIN_IMAGE_BASE_PATHS = ['images/strains/', './images/strains/', '/images/strains/'];
+    const STRAIN_IMAGE_MAP_CANDIDATES = ['strain_image_map.csv', './strain_image_map.csv', '/strain_image_map.csv'];
     const FALLBACK_MARKER_ICON_URL =
       'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png';
     const LOGO_MARKER_SIZE = 44;
@@ -2675,6 +2706,9 @@
     let popupStrainIndexReady = false;
     let popupStrainIndexPromise = null;
     let strainMetaByKey = new Map(); // normalised strain name -> visual metadata
+    let strainImageByKey = new Map(); // normalised strain name -> image filename
+    let strainImageMapReady = false;
+    let strainImageMapPromise = null;
     let discoveredCsvPaths = [];     // discovered CSV paths in the hosted folder
     let currentCsvPath = '';         // current CSV path when loaded from URL
     const LEGACY_PERSONALISATION_STORAGE_KEY = 'locate2_personalisation';
@@ -3548,6 +3582,18 @@
       return Array.from(new Set(out));
     }
 
+    function strainImageCandidates(imageFilename) {
+      const raw = (imageFilename || '').toString().trim();
+      if (!raw) return [];
+      const encoded = encodeURIComponent(raw);
+      const out = [];
+      STRAIN_IMAGE_BASE_PATHS.forEach(base => {
+        out.push(`${base}${encoded}`);
+        out.push(`${base}${raw}`);
+      });
+      return Array.from(new Set(out));
+    }
+
     function escapeHtmlAttr(s) {
       return (s || '').toString()
         .replace(/&/g, '&amp;')
@@ -3561,6 +3607,28 @@
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
+    }
+
+    function getStrainImageFilename(name) {
+      const key = normaliseText(name || '');
+      if (!key || !strainImageByKey.has(key)) return '';
+      return strainImageByKey.get(key) || '';
+    }
+
+    function getStrainImageHtml(name) {
+      const filename = getStrainImageFilename(name);
+      if (!filename) return '';
+      const candidates = strainImageCandidates(filename);
+      if (!candidates.length) return '';
+      const first = escapeHtmlAttr(candidates[0]);
+      const joined = candidates.map(escapeHtmlAttr).join('|');
+      const safeName = escapeHtmlAttr(name || 'strain');
+      return (
+        `<span class="stash-bag-art-media">` +
+          `<img src="${first}" alt="${safeName} strain art" ` +
+          `data-candidates="${joined}" data-idx="0" onerror="strainImageFallback(this)">` +
+        `</span>`
+      );
     }
 
     function getStashBagToneClass(seedValue) {
@@ -3604,6 +3672,11 @@
       document.body.classList.toggle('mobile-shelf-open', showShelf && isCompactMobileLayout());
       if (toggle) toggle.textContent = showShelf ? 'Hide shelf' : 'Shelf';
       if (!showShelf) return;
+      if (!strainImageMapReady && !strainImageMapPromise) {
+        ensureStrainImageMap().then(() => {
+          if (shelfVisible) updateStashShelf();
+        });
+      }
 
       const entries = getStashShelfEntries();
       if (summary) {
@@ -3625,6 +3698,7 @@
         const isCurrent = normaliseText(strainFilterText) === key;
         const isShelved = isStrainShelved(name);
         const market = getStrainMarketInfo(name);
+        const artHtml = getStrainImageHtml(name);
         const ribbon = isCurrent ? 'Current' : (source === 'shelf' ? 'Shelved' : 'Live');
         const artSub = market.matchCount
           ? `${market.matchCount} shop${market.matchCount === 1 ? '' : 's'} lit up`
@@ -3639,8 +3713,9 @@
           : 'Lowest listed price appears when menu pricing is live.';
 
         return (
-          `<button type="button" class="stash-bag ${getStashBagToneClass(getStrainShelfToneSeed(name))}${isCurrent ? ' is-current is-active-filter' : ''}" data-strain="${escapeHtmlAttr(name)}">` +
+          `<button type="button" class="stash-bag ${getStashBagToneClass(getStrainShelfToneSeed(name))}${artHtml ? ' has-art' : ''}${isCurrent ? ' is-current is-active-filter' : ''}" data-strain="${escapeHtmlAttr(name)}">` +
             `<span class="stash-bag-art">` +
+              `${artHtml}` +
               `<span class="stash-bag-ribbon">${escapeHtml(ribbon)}</span>` +
               `<span class="stash-bag-art-title">${escapeHtml(getStrainShelfArtTitle(meta))}</span>` +
               `<span class="stash-bag-art-sub">${escapeHtml(artSub)}</span>` +
@@ -3674,6 +3749,16 @@
       }
     }
 
+    function strainImageFallback(imgEl) {
+      const advanced = tryNextImageCandidate(imgEl);
+      if (!advanced) {
+        const media = imgEl.closest('.stash-bag-art-media');
+        if (media) media.style.display = 'none';
+        const bag = imgEl.closest('.stash-bag');
+        if (bag) bag.classList.remove('has-art');
+      }
+    }
+
     // Same fallback logic for marker logo images.
     // If no logo path works, use a plain marker pin image.
     function markerLogoFallback(imgEl) {
@@ -3693,6 +3778,7 @@
       }
     }
     window.popupLogoFallback = popupLogoFallback;
+    window.strainImageFallback = strainImageFallback;
     window.markerLogoFallback = markerLogoFallback;
 
     // =========================================================
@@ -4580,6 +4666,9 @@
           activeStrainNames = await fetchActiveStrainNames();
           shelfStrainNames = normaliseShelfStrainNames(shelfStrainNames);
           saveShelfStrains();
+          ensureStrainImageMap().then(() => {
+            if (shelfVisible) updateStashShelf();
+          });
         } catch (_err) {
           statusEl.textContent = 'Strain list unavailable';
           listEl.innerHTML = '<div class="strain-empty">Unable to load strain data.</div>';
@@ -5076,6 +5165,46 @@
           }
         });
       });
+    }
+
+    function buildStrainImageMap(rows) {
+      const nextMap = new Map();
+      (rows || []).forEach(row => {
+        const strainName = ((row && (row.strain_name || row.name)) || '').toString().trim();
+        const imageFilename = ((row && (row.image_filename || row.filename || row.image)) || '').toString().trim();
+        const key = normaliseText(strainName);
+        if (!key || !imageFilename) return;
+        if (!nextMap.has(key)) {
+          nextMap.set(key, imageFilename);
+        }
+      });
+      strainImageByKey = nextMap;
+      strainImageMapReady = true;
+      return nextMap;
+    }
+
+    async function ensureStrainImageMap() {
+      if (strainImageMapReady) return strainImageByKey.size > 0;
+      if (strainImageMapPromise) return strainImageMapPromise;
+
+      strainImageMapPromise = (async () => {
+        for (const path of STRAIN_IMAGE_MAP_CANDIDATES) {
+          try {
+            const rows = await parseCsvInput(path, { download: true });
+            buildStrainImageMap(rows);
+            return strainImageByKey.size > 0;
+          } catch (_err) {
+            // Try next candidate path.
+          }
+        }
+        strainImageByKey = new Map();
+        strainImageMapReady = true;
+        return false;
+      })().finally(() => {
+        strainImageMapPromise = null;
+      });
+
+      return strainImageMapPromise;
     }
 
     async function applyCsvRows(rows, options = {}) {
