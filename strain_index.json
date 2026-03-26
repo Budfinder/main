@@ -426,6 +426,18 @@
     ]
   },
   {
+    "strain_name_normalised": "CHANEL 420",
+    "strain_name_display": "CHANEL 420",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "CLOUD 9",
     "strain_name_display": "CLOUD 9",
     "shops": [
@@ -1089,12 +1101,6 @@
     "strain_name_normalised": "RS11",
     "strain_name_display": "RS11",
     "shops": [
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
-        "shop_city": "Amsterdam"
-      },
       {
         "shop_id": 371,
         "shop_key": "cs-tertulia",
@@ -2482,12 +2488,6 @@
         "shop_city": "Amsterdam"
       },
       {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 43,
         "shop_key": "cs-ballonnetje",
         "shop_name": "Het Ballonnetje",
@@ -3247,6 +3247,12 @@
         "shop_id": 162,
         "shop_key": "cs-green-place-2",
         "shop_name": "Green Place 2",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       },
       {
@@ -5454,6 +5460,18 @@
     ]
   },
   {
+    "strain_name_normalised": "cartier",
+    "strain_name_display": "Cartier",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "casey jones",
     "strain_name_display": "Casey Jones",
     "shops": [
@@ -5569,6 +5587,18 @@
         "shop_id": 238,
         "shop_key": "cs-media",
         "shop_name": "Club Media",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "cheerz",
+    "strain_name_display": "Cheerz",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]
@@ -6544,6 +6574,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 386,
         "shop_key": "cs-voyagers",
         "shop_name": "Voyagers",
@@ -6918,18 +6954,6 @@
     ]
   },
   {
-    "strain_name_normalised": "dawg walker",
-    "strain_name_display": "Dawg Walker",
-    "shops": [
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "dealer's choice",
     "strain_name_display": "Dealer's Choice",
     "shops": [
@@ -7171,6 +7195,12 @@
         "shop_id": 201,
         "shop_key": "cs-kade",
         "shop_name": "De Kade",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       },
       {
@@ -8004,6 +8034,18 @@
     ]
   },
   {
+    "strain_name_normalised": "frozen berriez",
+    "strain_name_display": "Frozen Berriez",
+    "shops": [
+      {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "frozen dessert",
     "strain_name_display": "Frozen Dessert",
     "shops": [
@@ -8185,18 +8227,6 @@
         "shop_id": 162,
         "shop_key": "cs-green-place-2",
         "shop_name": "Green Place 2",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "g unit",
-    "strain_name_display": "G Unit",
-    "shops": [
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]
@@ -8761,6 +8791,12 @@
         "shop_id": 105,
         "shop_key": "cs-dampkring",
         "shop_name": "Dampkring",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
         "shop_city": "Amsterdam"
       },
       {
@@ -9516,18 +9552,6 @@
     ]
   },
   {
-    "strain_name_normalised": "grapefruit z",
-    "strain_name_display": "Grapefruit Z",
-    "shops": [
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "grapes n' cream",
     "strain_name_display": "Grapes N' Cream",
     "shops": [
@@ -9814,12 +9838,6 @@
         "shop_city": "Amsterdam"
       },
       {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 221,
         "shop_key": "cs-loft",
         "shop_name": "Loft",
@@ -9867,6 +9885,12 @@
     "strain_name_normalised": "gushers",
     "strain_name_display": "Gushers",
     "shops": [
+      {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 369,
         "shop_key": "cs-terps-army",
@@ -10471,6 +10495,12 @@
         "shop_id": 238,
         "shop_key": "cs-media",
         "shop_name": "Club Media",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
         "shop_city": "Amsterdam"
       },
       {
@@ -11084,12 +11114,6 @@
         "shop_key": "cs-abraxas",
         "shop_name": "Abraxas",
         "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
-        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -11275,6 +11299,18 @@
         "shop_id": 156,
         "shop_key": "cs-greenhouse-cookies",
         "shop_name": "Greenhouse Cookies",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "king bling",
+    "strain_name_display": "King Bling",
+    "shops": [
+      {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
         "shop_city": "Amsterdam"
       }
     ]
@@ -12052,6 +12088,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 138,
         "shop_key": "cs-freedom",
         "shop_name": "Freedom",
@@ -12061,6 +12103,12 @@
         "shop_id": 158,
         "shop_key": "cs-greenhouse-namaste",
         "shop_name": "Greenhouse Namaste",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       },
       {
@@ -12607,18 +12655,6 @@
         "shop_id": 196,
         "shop_key": "cs-johnny",
         "shop_name": "Johnny",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "lemon tree x zkittlez",
-    "strain_name_display": "Lemon Tree x Zkittlez",
-    "shops": [
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]
@@ -13230,18 +13266,6 @@
     ]
   },
   {
-    "strain_name_normalised": "medellin",
-    "strain_name_display": "Medellin",
-    "shops": [
-      {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "mega haze",
     "strain_name_display": "Mega Haze",
     "shops": [
@@ -13254,9 +13278,27 @@
     ]
   },
   {
+    "strain_name_normalised": "mega z blue",
+    "strain_name_display": "Mega Z Blue",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "mega z dark",
     "strain_name_display": "Mega Z Dark",
     "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 221,
         "shop_key": "cs-loft",
@@ -14046,18 +14088,6 @@
     ]
   },
   {
-    "strain_name_normalised": "mystic marker",
-    "strain_name_display": "Mystic Marker",
-    "shops": [
-      {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "mystical berry",
     "strain_name_display": "Mystical Berry",
     "shops": [
@@ -14548,12 +14578,6 @@
         "shop_city": "Amsterdam"
       },
       {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 4,
         "shop_key": "cs-katsu",
         "shop_name": "Katsu",
@@ -15018,6 +15042,18 @@
     ]
   },
   {
+    "strain_name_normalised": "paint marker",
+    "strain_name_display": "Paint Marker",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "pancake",
     "strain_name_display": "Pancake",
     "shops": [
@@ -15186,6 +15222,18 @@
     ]
   },
   {
+    "strain_name_normalised": "peache n' lime",
+    "strain_name_display": "Peache n' lime",
+    "shops": [
+      {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "peaches",
     "strain_name_display": "Peaches",
     "shops": [
@@ -15244,6 +15292,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 138,
         "shop_key": "cs-freedom",
         "shop_name": "Freedom",
@@ -15259,12 +15313,6 @@
         "shop_id": 188,
         "shop_key": "cs-huntersnorthpapaverweg",
         "shop_name": "Hunter's North - Papaverweg",
-        "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       },
       {
@@ -15568,12 +15616,6 @@
         "shop_city": "Amsterdam"
       },
       {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 98,
         "shop_key": "cs-corner",
         "shop_name": "The Corner",
@@ -15715,6 +15757,18 @@
         "shop_id": 69,
         "shop_key": "cs-bommel",
         "shop_name": "de Bommel",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "point break",
+    "strain_name_display": "Point Break",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]
@@ -16812,6 +16866,18 @@
     ]
   },
   {
+    "strain_name_normalised": "red lightz",
+    "strain_name_display": "Red Lightz",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "red runtz",
     "strain_name_display": "Red Runtz",
     "shops": [
@@ -17065,6 +17131,18 @@
         "shop_id": 349,
         "shop_key": "cs-solo",
         "shop_name": "Solo",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "royal z",
+    "strain_name_display": "Royal Z",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]
@@ -17428,6 +17506,12 @@
     "strain_name_display": "Sherbanger",
     "shops": [
       {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
@@ -17623,12 +17707,6 @@
         "shop_id": 164,
         "shop_key": "cs-grey-area",
         "shop_name": "Grey Area",
-        "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       },
       {
@@ -18408,18 +18486,6 @@
     ]
   },
   {
-    "strain_name_normalised": "sour haze",
-    "strain_name_display": "Sour Haze",
-    "shops": [
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "sour lemon",
     "strain_name_display": "Sour Lemon",
     "shops": [
@@ -18703,6 +18769,18 @@
         "shop_id": 288,
         "shop_key": "cs-plugstore",
         "shop_name": "The Plug Store",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "sticky z",
+    "strain_name_display": "Sticky Z",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]
@@ -19028,6 +19106,12 @@
         "shop_key": "cs-catch-33",
         "shop_name": "Catch 33",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -19305,12 +19389,6 @@
     "strain_name_normalised": "super boof",
     "strain_name_display": "Super Boof",
     "shops": [
-      {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      },
       {
         "shop_id": 155,
         "shop_key": "cs-greenhouse-centrum",
@@ -20568,18 +20646,6 @@
     ]
   },
   {
-    "strain_name_normalised": "toad venom",
-    "strain_name_display": "Toad Venom",
-    "shops": [
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
     "strain_name_normalised": "tokio sunset",
     "strain_name_display": "Tokio Sunset",
     "shops": [
@@ -20707,18 +20773,6 @@
         "shop_id": 182,
         "shop_key": "cs-hit2",
         "shop_name": "The Hit",
-        "shop_city": "Amsterdam"
-      }
-    ]
-  },
-  {
-    "strain_name_normalised": "triple platinum",
-    "strain_name_display": "Triple Platinum",
-    "shops": [
-      {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
         "shop_city": "Amsterdam"
       }
     ]
@@ -21118,12 +21172,6 @@
         "shop_city": "Amsterdam"
       },
       {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 114,
         "shop_key": "cs-dogghouse",
         "shop_name": "Tha Dogg House",
@@ -21249,12 +21297,6 @@
     "strain_name_normalised": "verzace",
     "strain_name_display": "Verzace",
     "shops": [
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
-        "shop_city": "Amsterdam"
-      },
       {
         "shop_id": 264,
         "shop_key": "cs-old-church-2",
@@ -22878,6 +22920,18 @@
     ]
   },
   {
+    "strain_name_normalised": "z money",
+    "strain_name_display": "Z Money",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "z-candy",
     "strain_name_display": "Z-Candy",
     "shops": [
@@ -22914,6 +22968,18 @@
     ]
   },
   {
+    "strain_name_normalised": "zaduree",
+    "strain_name_display": "Zaduree",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "zalah bread",
     "strain_name_display": "Zalah Bread",
     "shops": [
@@ -22945,6 +23011,12 @@
         "shop_id": 52,
         "shop_key": "cs-bij",
         "shop_name": "Bij",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 125,
+        "shop_key": "cs-easy-times",
+        "shop_name": "Easy Times",
         "shop_city": "Amsterdam"
       },
       {
@@ -23059,6 +23131,18 @@
         "shop_id": 213,
         "shop_key": "cs-kroon",
         "shop_name": "de Kroon",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "zermez",
+    "strain_name_display": "Zermez",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]
@@ -23326,12 +23410,6 @@
         "shop_city": "Amsterdam"
       },
       {
-        "shop_id": 125,
-        "shop_key": "cs-easy-times",
-        "shop_name": "Easy Times",
-        "shop_city": "Amsterdam"
-      },
-      {
         "shop_id": 131,
         "shop_key": "cs-family-first",
         "shop_name": "Family First",
@@ -23347,12 +23425,6 @@
         "shop_id": 43,
         "shop_key": "cs-ballonnetje",
         "shop_name": "Het Ballonnetje",
-        "shop_city": "Amsterdam"
-      },
-      {
-        "shop_id": 199,
-        "shop_key": "cs-jollygood",
-        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       },
       {
@@ -23628,6 +23700,18 @@
     ]
   },
   {
+    "strain_name_normalised": "zoyard",
+    "strain_name_display": "Zoyard",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "zoza",
     "strain_name_display": "Zoza",
     "shops": [
@@ -23650,6 +23734,12 @@
     "strain_name_display": "Zprite",
     "shops": [
       {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 256,
         "shop_key": "cs-new-times",
         "shop_name": "New Times",
@@ -23665,6 +23755,18 @@
         "shop_id": 296,
         "shop_key": "cs-prix-d-ami",
         "shop_name": "Prix d'Ami",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "zquirt",
+    "strain_name_display": "Zquirt",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]
@@ -23740,6 +23842,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 221,
         "shop_key": "cs-loft",
         "shop_name": "Loft",
@@ -23761,6 +23869,18 @@
         "shop_id": 370,
         "shop_key": "cs-terps-army-2",
         "shop_name": "Terps Army 2",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "zutopia 2.0",
+    "strain_name_display": "Zutopia 2.0",
+    "shops": [
+      {
+        "shop_id": 199,
+        "shop_key": "cs-jollygood",
+        "shop_name": "Jollygood",
         "shop_city": "Amsterdam"
       }
     ]

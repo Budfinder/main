@@ -1134,6 +1134,12 @@
     "created_at": "2026-03-01T01:05:32.397272+00:00"
   },
   {
+    "strain_id": 3039,
+    "name_display": "CHANEL 420",
+    "name_normalised": "CHANEL 420",
+    "created_at": "2026-03-26T22:39:07.284593+00:00"
+  },
+  {
     "strain_id": 456,
     "name_display": "CLOUD 9",
     "name_normalised": "CLOUD 9",
@@ -1374,6 +1380,12 @@
     "created_at": "2026-02-11T20:24:33.955318+00:00"
   },
   {
+    "strain_id": 3035,
+    "name_display": "Cartier",
+    "name_normalised": "cartier",
+    "created_at": "2026-03-26T22:38:06.036837+00:00"
+  },
+  {
     "strain_id": 1721,
     "name_display": "Casey Jones",
     "name_normalised": "casey jones",
@@ -1426,6 +1438,12 @@
     "name_display": "Champagne Haze",
     "name_normalised": "champagne haze",
     "created_at": "2026-02-20T18:41:36.926885+00:00"
+  },
+  {
+    "strain_id": 3047,
+    "name_display": "Cheerz",
+    "name_normalised": "cheerz",
+    "created_at": "2026-03-26T22:41:21.295999+00:00"
   },
   {
     "strain_id": 23,
@@ -2338,6 +2356,12 @@
     "name_display": "Frosty Girl Scout Cookies",
     "name_normalised": "frosty girl scout cookies",
     "created_at": "2026-03-07T13:30:31.628089+00:00"
+  },
+  {
+    "strain_id": 3005,
+    "name_display": "Frozen Berriez",
+    "name_normalised": "frozen berriez",
+    "created_at": "2026-03-26T22:25:39.909015+00:00"
   },
   {
     "strain_id": 1114,
@@ -3630,6 +3654,12 @@
     "created_at": "2026-02-20T23:27:38.386424+00:00"
   },
   {
+    "strain_id": 3014,
+    "name_display": "King Bling",
+    "name_normalised": "king bling",
+    "created_at": "2026-03-26T22:27:57.577855+00:00"
+  },
+  {
     "strain_id": 2352,
     "name_display": "King Kong",
     "name_normalised": "king kong",
@@ -4222,6 +4252,12 @@
     "name_display": "Mega Haze",
     "name_normalised": "mega haze",
     "created_at": "2026-03-01T09:50:10.591700+00:00"
+  },
+  {
+    "strain_id": 3033,
+    "name_display": "Mega Z Blue",
+    "name_normalised": "mega z blue",
+    "created_at": "2026-03-26T22:37:01.365253+00:00"
   },
   {
     "strain_id": 1693,
@@ -4848,6 +4884,12 @@
     "created_at": "2026-03-07T10:20:28.961611+00:00"
   },
   {
+    "strain_id": 3019,
+    "name_display": "Paint Marker",
+    "name_normalised": "paint marker",
+    "created_at": "2026-03-26T22:31:01.200446+00:00"
+  },
+  {
     "strain_id": 521,
     "name_display": "Pancake",
     "name_normalised": "pancake",
@@ -4924,6 +4966,12 @@
     "name_display": "Peach Tree",
     "name_normalised": "peach tree",
     "created_at": "2026-03-07T10:55:29.975477+00:00"
+  },
+  {
+    "strain_id": 3000,
+    "name_display": "Peache n' lime",
+    "name_normalised": "peache n' lime",
+    "created_at": "2026-03-26T22:24:27.139822+00:00"
   },
   {
     "strain_id": 269,
@@ -5122,6 +5170,12 @@
     "name_display": "Plirple OG",
     "name_normalised": "plirple og",
     "created_at": "2026-03-07T18:23:21.801363+00:00"
+  },
+  {
+    "strain_id": 3018,
+    "name_display": "Point Break",
+    "name_normalised": "point break",
+    "created_at": "2026-03-26T22:30:17.288087+00:00"
   },
   {
     "strain_id": 2031,
@@ -5544,6 +5598,12 @@
     "created_at": "2026-03-07T15:34:11.972917+00:00"
   },
   {
+    "strain_id": 3048,
+    "name_display": "Red Lightz",
+    "name_normalised": "red lightz",
+    "created_at": "2026-03-26T22:41:34.745486+00:00"
+  },
+  {
     "strain_id": 2909,
     "name_display": "Red Runtz",
     "name_normalised": "red runtz",
@@ -5656,6 +5716,12 @@
     "name_display": "Royal Solo",
     "name_normalised": "royal solo",
     "created_at": "2026-03-07T13:00:33.477597+00:00"
+  },
+  {
+    "strain_id": 3027,
+    "name_display": "Royal Z",
+    "name_normalised": "royal z",
+    "created_at": "2026-03-26T22:34:21.385710+00:00"
   },
   {
     "strain_id": 1684,
@@ -6268,6 +6334,12 @@
     "name_display": "Sticky Rice",
     "name_normalised": "sticky rice",
     "created_at": "2026-03-07T15:13:33.624850+00:00"
+  },
+  {
+    "strain_id": 3021,
+    "name_display": "Sticky Z",
+    "name_normalised": "sticky z",
+    "created_at": "2026-03-26T22:31:49.298882+00:00"
   },
   {
     "strain_id": 1184,
@@ -7440,6 +7512,12 @@
     "created_at": "2026-02-11T20:40:30.674320+00:00"
   },
   {
+    "strain_id": 3022,
+    "name_display": "Z Money",
+    "name_normalised": "z money",
+    "created_at": "2026-03-26T22:32:16.867718+00:00"
+  },
+  {
     "strain_id": 1488,
     "name_display": "Z-Candy",
     "name_normalised": "z-candy",
@@ -7468,6 +7546,12 @@
     "name_display": "ZANGRIA S1",
     "name_normalised": "ZANGRIA S1",
     "created_at": "2026-02-10T23:31:42.894063+00:00"
+  },
+  {
+    "strain_id": 3036,
+    "name_display": "Zaduree",
+    "name_normalised": "zaduree",
+    "created_at": "2026-03-26T22:38:22.879508+00:00"
   },
   {
     "strain_id": 234,
@@ -7528,6 +7612,12 @@
     "name_display": "Zereal Killer",
     "name_normalised": "zereal killer",
     "created_at": "2026-02-10T22:30:54.091707+00:00"
+  },
+  {
+    "strain_id": 3037,
+    "name_display": "Zermez",
+    "name_normalised": "zermez",
+    "created_at": "2026-03-26T22:38:38.004635+00:00"
   },
   {
     "strain_id": 359,
@@ -7692,6 +7782,12 @@
     "created_at": "2026-02-11T20:30:20.129210+00:00"
   },
   {
+    "strain_id": 3038,
+    "name_display": "Zoyard",
+    "name_normalised": "zoyard",
+    "created_at": "2026-03-26T22:38:52.907503+00:00"
+  },
+  {
     "strain_id": 690,
     "name_display": "Zoza",
     "name_normalised": "zoza",
@@ -7702,6 +7798,12 @@
     "name_display": "Zprite",
     "name_normalised": "zprite",
     "created_at": "2026-02-19T13:12:16.673055+00:00"
+  },
+  {
+    "strain_id": 3020,
+    "name_display": "Zquirt",
+    "name_normalised": "zquirt",
+    "created_at": "2026-03-26T22:31:29.868722+00:00"
   },
   {
     "strain_id": 2198,
@@ -7732,6 +7834,12 @@
     "name_display": "Zutopia",
     "name_normalised": "zutopia",
     "created_at": "2026-02-03T12:39:47.414494+00:00"
+  },
+  {
+    "strain_id": 3046,
+    "name_display": "Zutopia 2.0",
+    "name_normalised": "zutopia 2.0",
+    "created_at": "2026-03-26T22:40:58.632912+00:00"
   },
   {
     "strain_id": 1495,
