@@ -659,10 +659,11 @@
     }
 
     #stash-shelf {
-      top: 184px;
-      right: 24px;
-      width: min(364px, calc(100vw - 48px));
-      max-height: min(470px, calc(100vh - 216px));
+      top: 24px;
+      left: 24px;
+      width: min(360px, calc(100vw - 48px));
+      max-width: min(360px, calc(100vw - 48px));
+      max-height: var(--app-controls-max-height);
       padding: 18px;
       display: none;
       overflow: hidden;
@@ -763,6 +764,7 @@
       text-align: left;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(242, 239, 229, 0.94));
       color: var(--ink);
+      border: 1px solid rgba(108, 84, 48, 0.08);
       box-shadow: 0 14px 24px rgba(69, 53, 31, 0.14);
       cursor: pointer;
       overflow: hidden;
@@ -908,6 +910,20 @@
       color: var(--muted);
     }
 
+    .stash-bag-price {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-top: 10px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(32, 91, 66, 0.1);
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
     .stash-bag-footer {
       margin-top: auto;
       padding-top: 12px;
@@ -924,6 +940,15 @@
 
     .stash-bag.is-favourite .stash-bag-ribbon {
       background: rgba(255, 241, 183, 0.26);
+    }
+
+    .stash-bag.is-active-filter {
+      border-color: rgba(32, 91, 66, 0.24);
+      box-shadow: 0 0 0 2px rgba(32, 91, 66, 0.14), 0 18px 30px rgba(32, 91, 66, 0.18);
+    }
+
+    .stash-bag.is-active-filter .stash-bag-ribbon {
+      background: rgba(201, 255, 226, 0.2);
     }
 
     .controls-header {
@@ -1388,6 +1413,14 @@
       gap: 8px;
     }
 
+    .strain-item-meta {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      line-height: 1.3;
+      color: rgba(33, 54, 46, 0.74);
+    }
+
     .strain-cali-badge {
       flex: 0 0 auto;
       display: inline-block;
@@ -1399,6 +1432,21 @@
       color: #5a3d00;
       background: #ffe7a6;
       border: 1px solid #e0bc63;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .strain-cheapest-badge {
+      flex: 0 0 auto;
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #124328;
+      background: #d5f4dc;
+      border: 1px solid #7dc691;
       text-transform: uppercase;
       letter-spacing: 0.02em;
     }
@@ -1478,6 +1526,11 @@
     .popup-strain-btn.active {
       background: rgba(255, 255, 255, 0.94);
       font-weight: 700;
+    }
+
+    .popup-strain-btn.is-cheapest {
+      border-color: #76b784;
+      box-shadow: inset 0 0 0 1px rgba(18, 67, 40, 0.18);
     }
 
     .popup-strains-status,
@@ -1791,6 +1844,7 @@
         right: 12px;
         bottom: max(12px, env(safe-area-inset-bottom));
         width: auto;
+        max-width: none;
         max-height: min(56dvh, 460px);
         padding: 14px;
       }
@@ -2123,6 +2177,7 @@
       right: 12px;
       bottom: max(12px, env(safe-area-inset-bottom));
       width: auto;
+      max-width: none;
       max-height: min(56dvh, 460px);
       padding: 14px;
     }
@@ -2237,8 +2292,36 @@
       pointer-events: none;
     }
 
+    .marker-price-badge.is-cheapest {
+      background: #dff8e6;
+      border-color: #7dc691;
+      color: #124328;
+      box-shadow: 0 10px 20px rgba(18, 67, 40, 0.18);
+    }
+
     .marker-price-badge.hidden {
       display: none;
+    }
+
+    .shop-marker-icon.is-cheapest .shop-logo-icon {
+      box-shadow: 0 0 0 3px rgba(125, 198, 145, 0.75), 0 18px 28px rgba(18, 67, 40, 0.24);
+    }
+
+    .shop-marker-icon.is-cheapest .marker-price-badge {
+      background: #dff8e6;
+      border-color: #7dc691;
+      color: #124328;
+    }
+
+    .leaflet-marker-icon.is-cheapest:not(.shop-marker-icon):not(.me-marker-icon) {
+      filter: drop-shadow(0 0 0.4rem rgba(125, 198, 145, 0.9)) drop-shadow(0 0 1rem rgba(18, 67, 40, 0.3));
+    }
+
+    .price-label-tooltip.is-cheapest {
+      background: #dff8e6;
+      border-color: #7dc691;
+      color: #124328;
+      box-shadow: 0 10px 20px rgba(18, 67, 40, 0.18);
     }
 
     .me-marker-icon {
@@ -2374,7 +2457,7 @@
       <div class="stash-shelf-head-copy">
         <span class="selection-eyebrow">Shelf drop</span>
         <h3>Stash Shelf</h3>
-        <p id="stash-shelf-summary" class="stash-shelf-summary">Favourite stops and recent pulls, packed like a little display shelf.</p>
+        <p id="stash-shelf-summary" class="stash-shelf-summary">Shelf strains you can light up on demand, with the cheapest match called out when prices are live.</p>
       </div>
       <button id="stash-shelf-close" class="stash-shelf-close" type="button">Hide</button>
     </div>
@@ -2469,6 +2552,7 @@
         </div>
 
         <div class="button-row">
+          <button id="toggle-current-strain-shelf-btn" type="button" class="secondary-btn" disabled>Put active strain on shelf</button>
           <button id="clear-strain-btn" type="button" class="secondary-btn">Clear strain filter</button>
         </div>
         <div id="strain-status" style="margin-top:8px; font-size:12px; color:#444;">Strain filter: off</div>
@@ -2575,6 +2659,9 @@
     let strainAllowedNameCityKeys = null; // Set<string> | null
     let strainPriceByShopId = null; // Map<number, string> | null
     let strainPriceByNameCity = null; // Map<string, string> | null
+    let strainCheapestShopIds = null; // Set<number> | null
+    let strainCheapestNameCityKeys = null; // Set<string> | null
+    let strainCheapestPriceLabel = '';
     let strainIndexRows = null;      // cached JSON strain index
     let activeOfferingsRows = null;  // cached JSON offerings rows
     let activeStrainNames = [];      // clickable strain list for UI panel
@@ -2592,6 +2679,7 @@
     const LOCATION_PREFERENCES_STORAGE_KEY = 'locate3_location_preferences';
     const LEGACY_FAVORITES_STORAGE_KEY = 'favorites';
     const RECENT_DESTINATIONS_STORAGE_KEY = 'locate3_recent_destinations';
+    const STRAIN_SHELF_STORAGE_KEY = 'locate3_strain_shelf';
     const accentThemeAliases = {
       amber: 'golden-haze',
       lagoon: 'coastal-kush',
@@ -2693,6 +2781,7 @@
     };
     let legacyFavoriteIndices = loadStoredJson(LEGACY_FAVORITES_STORAGE_KEY, []);
     let recentDestinationKeys = loadStoredJson(RECENT_DESTINATIONS_STORAGE_KEY, []);
+    let shelfStrainNames = loadStoredJson(STRAIN_SHELF_STORAGE_KEY, []);
     let locationPreferences = loadStoredJson(LOCATION_PREFERENCES_STORAGE_KEY, {});
     let favorites = [];
     let personalisation = {
@@ -2759,7 +2848,75 @@
       localStorage.setItem(RECENT_DESTINATIONS_STORAGE_KEY, JSON.stringify(recentDestinationKeys));
     }
 
+    function getCanonicalStrainName(name) {
+      const raw = (name || '').toString().replace(/\s+/g, ' ').trim();
+      const key = normaliseText(raw);
+      if (!key) return '';
+      const meta = strainMetaByKey.get(key);
+      if (meta && meta.name) return meta.name;
+      const activeName = activeStrainNames.find(entry => normaliseText(entry) === key);
+      if (activeName) return activeName;
+      return raw;
+    }
+
+    function normaliseShelfStrainNames(names) {
+      const out = [];
+      const seen = new Set();
+      (Array.isArray(names) ? names : []).forEach(name => {
+        const canonical = getCanonicalStrainName(name);
+        const key = normaliseText(canonical);
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        out.push(canonical);
+      });
+      return out.slice(0, 10);
+    }
+
+    function saveShelfStrains() {
+      shelfStrainNames = normaliseShelfStrainNames(shelfStrainNames);
+      localStorage.setItem(STRAIN_SHELF_STORAGE_KEY, JSON.stringify(shelfStrainNames));
+    }
+
+    function isStrainShelved(name) {
+      const key = normaliseText(name);
+      if (!key) return false;
+      return shelfStrainNames.some(entry => normaliseText(entry) === key);
+    }
+
+    function addStrainToShelf(name) {
+      const canonical = getCanonicalStrainName(name);
+      const key = normaliseText(canonical);
+      if (!key) return;
+      shelfStrainNames = [canonical, ...shelfStrainNames.filter(entry => normaliseText(entry) !== key)].slice(0, 10);
+      saveShelfStrains();
+    }
+
+    function removeStrainFromShelf(name) {
+      const key = normaliseText(name);
+      if (!key) return;
+      shelfStrainNames = shelfStrainNames.filter(entry => normaliseText(entry) !== key);
+      saveShelfStrains();
+    }
+
+    function syncActiveStrainShelfButton() {
+      const btn = document.getElementById('toggle-current-strain-shelf-btn');
+      if (!btn) return;
+
+      if (!strainFilterText) {
+        btn.disabled = true;
+        btn.textContent = 'Put active strain on shelf';
+        return;
+      }
+
+      btn.disabled = false;
+      btn.textContent = isStrainShelved(strainFilterText)
+        ? 'Remove current strain from shelf'
+        : 'Put current strain on shelf';
+    }
+
     function hydrateLocationPreferences() {
+      shelfStrainNames = normaliseShelfStrainNames(shelfStrainNames);
+      saveShelfStrains();
       favorites = [];
       let hasStoredFavourite = false;
 
@@ -3091,7 +3248,7 @@
       const isMobile = isCompactMobileLayout();
       const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
       const showMobileDirections = directionsVisible && isCompactMobileLayout();
-      const hideDesktopGap = !controlsVisible && !isCompactMobileLayout();
+      const hideDesktopGap = !controlsVisible && !shelfVisible && !isCompactMobileLayout();
 
       if (controlsDiv) {
         controlsDiv.classList.toggle('is-collapsed', controlsVisible && controlsCollapsed);
@@ -3103,7 +3260,7 @@
       document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
       if (uiToggles) {
         const togglesReady = uiToggles.dataset.ready === 'true';
-        uiToggles.style.display = togglesReady && (!isMobile || !controlsVisible) ? 'block' : 'none';
+        uiToggles.style.display = togglesReady && (!isMobile || (!controlsVisible && !shelfVisible)) ? 'block' : 'none';
       }
       if (backdrop) {
         backdrop.style.display = showMobileOverlay ? 'block' : 'none';
@@ -3167,7 +3324,7 @@
     }
 
     function setControlsVisible(show, options = {}) {
-      if (show && shelfVisible && isCompactMobileLayout()) {
+      if (show && shelfVisible) {
         shelfVisible = false;
       }
       controlsVisible = !!show;
@@ -3189,11 +3346,11 @@
       if (nextVisible && directionsVisible) {
         setDirectionsVisible(false);
       }
-      if (nextVisible && controlsVisible && isCompactMobileLayout()) {
+      if (nextVisible && controlsVisible) {
         setControlsVisible(false);
       }
       shelfVisible = nextVisible;
-      updateStashShelf();
+      syncControlsChrome();
       if (map) {
         setTimeout(() => map.invalidateSize(), 180);
       }
@@ -3352,9 +3509,9 @@
         .replace(/>/g, '&gt;');
     }
 
-    function getStashBagToneClass(index) {
+    function getStashBagToneClass(seedValue) {
       const tones = ['stash-bag-tone-0', 'stash-bag-tone-1', 'stash-bag-tone-2', 'stash-bag-tone-3', 'stash-bag-tone-4'];
-      const key = getLocationPreferenceKey(locations[index]) || String(index);
+      const key = (seedValue || '').toString().trim() || 'stash-bag';
       let score = 0;
       for (let i = 0; i < key.length; i += 1) {
         score = (score + key.charCodeAt(i)) % tones.length;
@@ -3363,37 +3520,21 @@
     }
 
     function getStashShelfEntries() {
-      const selectedIndex = getSelectedDestinationIndex();
       const entries = [];
       const used = new Set();
+      const activeName = getCanonicalStrainName(strainFilterText);
 
-      const pushIndex = (index, source) => {
-        if (!Number.isInteger(index) || index < 0 || index >= locations.length || used.has(index)) return;
-        used.add(index);
-        entries.push({ index, source, loc: locations[index] });
+      const pushEntry = (name, source) => {
+        const canonical = getCanonicalStrainName(name);
+        const key = normaliseText(canonical);
+        if (!key || used.has(key)) return;
+        used.add(key);
+        entries.push({ name: canonical, key, source, meta: getStrainVisualMeta(canonical) });
       };
 
-      recentDestinationKeys.forEach(key => {
-        const index = findLocationIndexByPreferenceKey(key);
-        if (index !== null) pushIndex(index, 'recent');
-      });
-
-      if (selectedIndex !== null) pushIndex(selectedIndex, 'selected');
-      favorites.forEach(index => pushIndex(index, 'favorite'));
-
-      if (entries.length < 6) {
-        locations
-          .map((loc, index) => ({ loc, index }))
-          .filter(item => passesCategoryFilter(item.loc, item.index))
-          .sort((a, b) => {
-            const aScore = (a.loc.rating || 0) + (favorites.includes(a.index) ? 2 : 0) + (!a.loc.visited ? 1 : 0);
-            const bScore = (b.loc.rating || 0) + (favorites.includes(b.index) ? 2 : 0) + (!b.loc.visited ? 1 : 0);
-            return bScore - aScore;
-          })
-          .forEach(item => pushIndex(item.index, 'visible'));
-      }
-
-      return entries.slice(0, 6);
+      if (activeName) pushEntry(activeName, 'active');
+      shelfStrainNames.forEach(name => pushEntry(name, 'shelf'));
+      return entries.slice(0, 8);
     }
 
     function updateStashShelf() {
@@ -3413,46 +3554,48 @@
       const entries = getStashShelfEntries();
       if (summary) {
         if (!locations.length) {
-          summary.textContent = 'Load a city and the shelf will start stocking itself with favourites, recent pulls, and top picks.';
+          summary.textContent = 'Load a city, pick a strain, then park it here for one-tap reruns.';
         } else {
-          summary.textContent = `${entries.length} bag${entries.length === 1 ? '' : 's'} on deck for ${getMissionLabel().toLowerCase()}.`;
+          summary.textContent = entries.length
+            ? `${entries.length} strain bag${entries.length === 1 ? '' : 's'} on deck. Tap one to light up its sellers and crown the cheapest match.`
+            : 'No shelf strains yet. Pick a strain from the radar, then stash it here.';
         }
       }
 
       if (!entries.length) {
-        grid.innerHTML = '<div class="stash-shelf-empty">Star a few favourites or pick a stop to start stocking the shelf.</div>';
+        grid.innerHTML = '<div class="stash-shelf-empty">Pick a strain from the radar or a shop popup, then use "Put current strain on shelf" to keep it close.</div>';
         return;
       }
 
-      const selectedIndex = getSelectedDestinationIndex();
-      grid.innerHTML = entries.map(({ index, source, loc }) => {
-        const isCurrent = selectedIndex === index;
-        const isFavourite = favorites.includes(index);
-        const distanceText = lastPosition
-          ? `${(haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2)} km away`
-          : 'Route me from your live pin';
-        const ratingText = (loc.rating || 0) > 0 ? `${'★'.repeat(loc.rating)}` : 'Unrated';
-        const ribbon = isCurrent
-          ? 'Current'
-          : (source === 'recent' ? 'Recent' : (isFavourite ? 'Favourite' : getMissionLabel()));
-        const artSub = strainFilterText
-          ? `Packed for ${strainFilterText}`
-          : (!loc.visited ? 'Fresh pull' : 'Smoke-tested');
-        const metaBits = [distanceText, ratingText];
-        if (loc.visited) metaBits.push('Visited');
-        if (isFavourite && !isCurrent) metaBits.push('Saved');
+      grid.innerHTML = entries.map(({ name, key, source, meta }) => {
+        const isCurrent = normaliseText(strainFilterText) === key;
+        const isShelved = isStrainShelved(name);
+        const market = getStrainMarketInfo(name);
+        const ribbon = isCurrent ? 'Current' : (source === 'shelf' ? 'Shelved' : 'Live');
+        const artSub = market.matchCount
+          ? `${market.matchCount} shop${market.matchCount === 1 ? '' : 's'} lit up`
+          : 'Ready to scan the atlas';
+        const metaBits = [];
+        if (meta.baseType !== 'unknown') metaBits.push(meta.baseType);
+        if (meta.isCali) metaBits.push('Cali');
+        if (market.matchCount) metaBits.push(`${market.matchCount} sellers`);
+        if (isShelved && !isCurrent) metaBits.push('Saved on shelf');
+        const lowestText = market.cheapestPriceLabel
+          ? `Lowest listed: ${market.cheapestPriceLabel}`
+          : 'Lowest listed price appears when menu pricing is live.';
 
         return (
-          `<button type="button" class="stash-bag ${getStashBagToneClass(index)}${isCurrent ? ' is-current' : ''}${isFavourite ? ' is-favourite' : ''}" data-index="${index}">` +
+          `<button type="button" class="stash-bag ${getStashBagToneClass(getStrainShelfToneSeed(name))}${isCurrent ? ' is-current is-active-filter' : ''}" data-strain="${escapeHtmlAttr(name)}">` +
             `<span class="stash-bag-art">` +
               `<span class="stash-bag-ribbon">${escapeHtml(ribbon)}</span>` +
-              `<span class="stash-bag-art-title">${escapeHtml(loc.city || 'Bud Finder')}</span>` +
+              `<span class="stash-bag-art-title">${escapeHtml(getStrainShelfArtTitle(meta))}</span>` +
               `<span class="stash-bag-art-sub">${escapeHtml(artSub)}</span>` +
             `</span>` +
-            `<span class="stash-bag-name">${escapeHtml(loc.name || 'Mystery stop')}</span>` +
-            `<span class="stash-bag-city">${escapeHtml(loc.city || inferCityFromCsvPath(currentCsvPath) || 'Unknown city')}</span>` +
+            `<span class="stash-bag-name">${escapeHtml(name || 'Mystery strain')}</span>` +
+            `<span class="stash-bag-city">${escapeHtml(isCurrent ? 'Current live filter' : 'Shelf quick filter')}</span>` +
             `<span class="stash-bag-meta">${escapeHtml(metaBits.join(' · '))}</span>` +
-            `<span class="stash-bag-footer">Tap to route this bag</span>` +
+            `<span class="stash-bag-price">${escapeHtml(lowestText)}</span>` +
+            `<span class="stash-bag-footer">Tap to show the shops carrying this strain</span>` +
           `</button>`
         );
       }).join('');
@@ -3825,35 +3968,66 @@
       return exact.length ? exact : partial;
     }
 
-    async function fetchStrainPriceMapsFromJson(q) {
-      const qNorm = normaliseText(q);
+    function parseCompareGroupKey(groupKey) {
+      const [currency = '€', unit = 'g'] = (groupKey || '').split('|');
+      return { currency, unit };
+    }
+
+    function buildStrainPricingInsightFromRows(queryText, rows) {
+      const qNorm = normaliseText(queryText);
       if (!qNorm) {
-        return { byShopId: new Map(), byNameCity: new Map() };
+        return {
+          byShopId: new Map(),
+          byNameCity: new Map(),
+          matchedShopIds: new Set(),
+          matchedNameCityKeys: new Set(),
+          cheapestShopIds: new Set(),
+          cheapestNameCityKeys: new Set(),
+          cheapestPriceLabel: ''
+        };
       }
 
-      const rows = await loadActiveOfferingsRows();
       const matchedRows = collectMatchedActiveOfferingRows(qNorm, rows);
       const byShopRaw = new Map();
       const byNameCityRaw = new Map();
+      const matchedShopIds = new Set();
+      const matchedNameCityKeys = new Set();
+      const compareGroups = new Map();
+      const comparableEntries = [];
 
       matchedRows.forEach(r => {
+        const shopId = parseInt(r && r.shop_id, 10);
+        if (Number.isFinite(shopId)) {
+          matchedShopIds.add(shopId);
+        }
+
+        const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
+        if (key !== '|') {
+          matchedNameCityKeys.add(key);
+        }
+
         const amount = parseFloat(r && r.price_amount);
         if (!Number.isFinite(amount)) return;
         const currency = ((r && r.price_currency) || '€').toString().trim() || '€';
         const unit = ((r && r.price_unit) || 'g').toString().trim() || 'g';
         const priceEntry = { amount, currency, unit };
+        const compareKey = `${currency}|${unit}`;
+        const currentGroup = compareGroups.get(compareKey) || { count: 0, minAmount: Infinity };
+        currentGroup.count += 1;
+        currentGroup.minAmount = Math.min(currentGroup.minAmount, amount);
+        compareGroups.set(compareKey, currentGroup);
 
-        const shopId = parseInt(r && r.shop_id, 10);
         if (Number.isFinite(shopId)) {
           if (!byShopRaw.has(shopId)) byShopRaw.set(shopId, []);
           byShopRaw.get(shopId).push(priceEntry);
         }
 
-        const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
         if (key !== '|') {
           if (!byNameCityRaw.has(key)) byNameCityRaw.set(key, []);
           byNameCityRaw.get(key).push(priceEntry);
         }
+
+        comparableEntries.push({ amount, compareKey, shopId, nameCityKey: key });
       });
 
       const byShopId = new Map();
@@ -3868,7 +4042,48 @@
         if (label) byNameCity.set(key, label);
       });
 
-      return { byShopId, byNameCity };
+      let cheapestShopIds = new Set();
+      let cheapestNameCityKeys = new Set();
+      let cheapestPriceLabel = '';
+
+      const preferredGroup = Array.from(compareGroups.entries())
+        .sort((a, b) => {
+          const countDiff = (b[1].count || 0) - (a[1].count || 0);
+          if (countDiff !== 0) return countDiff;
+          const minDiff = (a[1].minAmount || Infinity) - (b[1].minAmount || Infinity);
+          if (Math.abs(minDiff) > 0.0001) return minDiff;
+          return a[0].localeCompare(b[0]);
+        })[0];
+
+      if (preferredGroup) {
+        const [groupKey] = preferredGroup;
+        const inGroup = comparableEntries.filter(entry => entry.compareKey === groupKey);
+        const cheapestAmount = inGroup.reduce((min, entry) => Math.min(min, entry.amount), Infinity);
+        if (Number.isFinite(cheapestAmount)) {
+          const { currency, unit } = parseCompareGroupKey(groupKey);
+          cheapestPriceLabel = `${currency}${formatPriceAmount(cheapestAmount)}/${unit}`;
+          inGroup.forEach(entry => {
+            if (Math.abs(entry.amount - cheapestAmount) > 0.0001) return;
+            if (Number.isFinite(entry.shopId)) cheapestShopIds.add(entry.shopId);
+            if (entry.nameCityKey && entry.nameCityKey !== '|') cheapestNameCityKeys.add(entry.nameCityKey);
+          });
+        }
+      }
+
+      return {
+        byShopId,
+        byNameCity,
+        matchedShopIds,
+        matchedNameCityKeys,
+        cheapestShopIds,
+        cheapestNameCityKeys,
+        cheapestPriceLabel
+      };
+    }
+
+    async function fetchStrainPriceMapsFromJson(q) {
+      const rows = await loadActiveOfferingsRows();
+      return buildStrainPricingInsightFromRows(q, rows);
     }
 
     async function fetchStrainShopIdsFromJson(q) {
@@ -4177,6 +4392,7 @@
         const n = (name || '').toString();
         const key = normaliseText(n);
         const isActive = activeKey !== '' && key === activeKey;
+        const isCheapest = isActive && isLocationCheapestForActiveStrain(loc);
         const meta = getStrainVisualMeta(n);
         const detail = getPopupStrainDetail(loc, n);
         const metaParts = [];
@@ -4192,12 +4408,14 @@
         const typeClass = meta.baseType !== 'unknown' ? ` type-${meta.baseType}` : '';
         const caliClass = meta.isCali ? ' is-cali' : '';
         const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
+        const cheapestBadge = isCheapest ? '<span class="strain-cheapest-badge">Cheapest</span>' : '';
         return (
           `<li>` +
-            `<button type="button" class="popup-strain-btn${typeClass}${caliClass}${isActive ? ' active' : ''}" data-strain="${escapeHtmlAttr(n)}">` +
+            `<button type="button" class="popup-strain-btn${typeClass}${caliClass}${isActive ? ' active' : ''}${isCheapest ? ' is-cheapest' : ''}" data-strain="${escapeHtmlAttr(n)}">` +
               `<span class="strain-item-main">` +
                 `<span>${escapeHtml(n)}</span>` +
                 `${caliBadge}` +
+                `${cheapestBadge}` +
               `</span>` +
               `${metaHtml}` +
             `</button>` +
@@ -4276,11 +4494,20 @@
         }
 
         const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
+        const metaBits = [];
+        if (isStrainShelved(name)) metaBits.push('On shelf');
+        if (normaliseText(strainFilterText) === normaliseText(name) && strainCheapestPriceLabel) {
+          metaBits.push(`Cheapest ${strainCheapestPriceLabel}`);
+        }
+        const metaHtml = metaBits.length
+          ? `<span class="strain-item-meta">${escapeHtml(metaBits.join(' · '))}</span>`
+          : '';
         btn.innerHTML =
           `<span class="strain-item-main">` +
             `<span>${escapeHtml(name)}</span>` +
             `${caliBadge}` +
-          `</span>`;
+          `</span>` +
+          `${metaHtml}`;
         frag.appendChild(btn);
       });
       listEl.appendChild(frag);
@@ -4297,6 +4524,8 @@
         listEl.innerHTML = '';
         try {
           activeStrainNames = await fetchActiveStrainNames();
+          shelfStrainNames = normaliseShelfStrainNames(shelfStrainNames);
+          saveShelfStrains();
         } catch (_err) {
           statusEl.textContent = 'Strain list unavailable';
           listEl.innerHTML = '<div class="strain-empty">Unable to load strain data.</div>';
@@ -4418,11 +4647,19 @@
         strainAllowedNameCityKeys = null;
         strainPriceByShopId = null;
         strainPriceByNameCity = null;
+        strainCheapestShopIds = null;
+        strainCheapestNameCityKeys = null;
+        strainCheapestPriceLabel = '';
         if (status) status.textContent = 'Strain filter: off';
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
-        updateStrainListSelection();
+        if (activeStrainNames.length) {
+          renderStrainList();
+        } else {
+          updateStrainListSelection();
+        }
+        syncActiveStrainShelfButton();
         return;
       }
 
@@ -4456,26 +4693,40 @@
           const pricing = await fetchStrainPriceMapsFromJson(q);
           strainPriceByShopId = pricing.byShopId;
           strainPriceByNameCity = pricing.byNameCity;
+          strainCheapestShopIds = pricing.cheapestShopIds.size ? pricing.cheapestShopIds : null;
+          strainCheapestNameCityKeys = pricing.cheapestNameCityKeys.size ? pricing.cheapestNameCityKeys : null;
+          strainCheapestPriceLabel = pricing.cheapestPriceLabel || '';
         } catch (_err) {
           strainPriceByShopId = null;
           strainPriceByNameCity = null;
+          strainCheapestShopIds = null;
+          strainCheapestNameCityKeys = null;
+          strainCheapestPriceLabel = '';
         }
 
-        const matchedCount = locations.filter((loc, idx) => {
-          const key = normaliseNameCityKey(loc.name, loc.city || '');
-          const byId = loc.db_shop_id && strainAllowedShopIds.has(loc.db_shop_id);
-          const byKey = strainAllowedNameCityKeys && strainAllowedNameCityKeys.has(key);
-          return byId || byKey;
-        }).length;
-        if (status) status.textContent = `Strain filter: "${q}" (${matchedCount} shops)`;
+        const matchedCount = locations.filter(loc => locationMatchesStrainMatchSets(loc, strainAllowedShopIds, strainAllowedNameCityKeys)).length;
+        if (status) {
+          status.textContent = strainCheapestPriceLabel
+            ? `Strain filter: "${q}" (${matchedCount} shops · cheapest ${strainCheapestPriceLabel})`
+            : `Strain filter: "${q}" (${matchedCount} shops)`;
+        }
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
-        updateStrainListSelection();
+        if (activeStrainNames.length) {
+          renderStrainList();
+        } else {
+          updateStrainListSelection();
+        }
+        syncActiveStrainShelfButton();
       } catch (err) {
         strainPriceByShopId = null;
         strainPriceByNameCity = null;
+        strainCheapestShopIds = null;
+        strainCheapestNameCityKeys = null;
+        strainCheapestPriceLabel = '';
         if (status) status.textContent = 'Strain filter unavailable: missing JSON index files';
+        syncActiveStrainShelfButton();
       }
     }
 
@@ -4486,11 +4737,19 @@
       strainAllowedNameCityKeys = null;
       strainPriceByShopId = null;
       strainPriceByNameCity = null;
+      strainCheapestShopIds = null;
+      strainCheapestNameCityKeys = null;
+      strainCheapestPriceLabel = '';
       if (status) status.textContent = 'Strain filter: off';
       updateDestinationDropdown();
       updateDistanceInfo();
       updateMarkers();
-      updateStrainListSelection();
+      if (activeStrainNames.length) {
+        renderStrainList();
+      } else {
+        updateStrainListSelection();
+      }
+      syncActiveStrainShelfButton();
     }
 
     // =========================================================
@@ -4824,6 +5083,9 @@
       const strainListStatus = document.getElementById('strain-list-status');
       strainPriceByShopId = null;
       strainPriceByNameCity = null;
+      strainCheapestShopIds = null;
+      strainCheapestNameCityKeys = null;
+      strainCheapestPriceLabel = '';
       if (strainStatus) strainStatus.textContent = 'Strain filter: off';
       if (strainSearch) strainSearch.value = '';
       if (strainList) strainList.innerHTML = '';
@@ -5867,6 +6129,77 @@
       return haystack.includes(q);
     }
 
+    function locationMatchesStrainMatchSets(loc, ids, nameCityKeys) {
+      if (!loc) return false;
+      if (loc.db_shop_id && ids && ids.has(loc.db_shop_id)) {
+        return true;
+      }
+      if (nameCityKeys) {
+        const key = normaliseNameCityKey(loc.name, loc.city || '');
+        return nameCityKeys.has(key);
+      }
+      return false;
+    }
+
+    function isLocationCheapestForActiveStrain(loc) {
+      if (!strainFilterText) return false;
+      return locationMatchesStrainMatchSets(loc, strainCheapestShopIds, strainCheapestNameCityKeys);
+    }
+
+    function getStrainMarketInfo(name) {
+      const rows = Array.isArray(activeOfferingsRows) ? activeOfferingsRows : [];
+      const pricing = rows.length ? buildStrainPricingInsightFromRows(name, rows) : null;
+      const strainKey = normaliseText(name);
+      const matchCount = pricing
+        ? locations.filter(loc => locationMatchesStrainMatchSets(loc, pricing.matchedShopIds, pricing.matchedNameCityKeys)).length
+        : locations.filter(loc => getPopupStrainsForLocation(loc).some(entry => normaliseText(entry) === strainKey)).length;
+      return {
+        matchCount,
+        cheapestPriceLabel: pricing ? pricing.cheapestPriceLabel : ''
+      };
+    }
+
+    function getStrainShelfArtTitle(meta) {
+      if (meta.isCali && meta.baseType !== 'unknown') {
+        return `Cali ${meta.baseType}`;
+      }
+      if (meta.isCali) return 'Cali cut';
+      if (meta.baseType !== 'unknown') return `${meta.baseType} cut`;
+      return 'House pick';
+    }
+
+    function getStrainShelfToneSeed(name) {
+      return getCanonicalStrainName(name) || name || 'stash';
+    }
+
+    function resetAtlasFiltersForShelfStrain() {
+      let changed = false;
+      const destinationSearchInput = document.getElementById('destination-search');
+      const missionModeSelect = document.getElementById('mission-mode');
+
+      if (locationSearchText) {
+        locationSearchText = '';
+        changed = true;
+        if (destinationSearchInput) destinationSearchInput.value = '';
+      }
+
+      if (missionMode !== 'free-roam') {
+        missionMode = 'free-roam';
+        changed = true;
+        if (missionModeSelect) missionModeSelect.value = missionMode;
+      }
+
+      if (!(selectedCategories || []).includes('all') || (selectedCategories || []).length !== 1) {
+        selectedCategories = ['all'];
+        syncCategoryCheckboxes();
+        changed = true;
+      }
+
+      if (changed) {
+        updateNearestLabel();
+      }
+    }
+
     function passesBaseFilters(loc, index) {
       const cats = (Array.isArray(selectedCategories) && selectedCategories.length > 0)
         ? selectedCategories.slice()
@@ -5900,14 +6233,7 @@
       }
 
       if (strainAllowedShopIds !== null || strainAllowedNameCityKeys !== null) {
-        if (loc.db_shop_id && strainAllowedShopIds && strainAllowedShopIds.has(loc.db_shop_id)) {
-          return true;
-        }
-        if (strainAllowedNameCityKeys) {
-          const key = normaliseNameCityKey(loc.name, loc.city || '');
-          return strainAllowedNameCityKeys.has(key);
-        }
-        return false;
+        return locationMatchesStrainMatchSets(loc, strainAllowedShopIds, strainAllowedNameCityKeys);
       }
 
       return true;
@@ -5967,6 +6293,7 @@
         const filterBits = [];
         if (missionMode !== 'free-roam') filterBits.push(`Mission: ${getMissionLabel()}`);
         if (strainFilterText) filterBits.push(`Strain: ${strainFilterText}`);
+        if (strainCheapestPriceLabel) filterBits.push(`Lowest: ${strainCheapestPriceLabel}`);
         if (locationSearchText) filterBits.push(`Search: ${locationSearchText}`);
         filterEl.textContent = filterBits.length ? filterBits.join(' · ') : 'No live filters';
       }
@@ -6037,6 +6364,9 @@
         const distText = (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km away';
         metaParts.push(distText);
       }
+      const activePriceLabel = getMarkerPriceLabel(loc);
+      if (!isMobile && activePriceLabel) metaParts.push(activePriceLabel);
+      if (!isMobile && isLocationCheapestForActiveStrain(loc)) metaParts.push('Cheapest match');
       if (!isMobile && favorites.includes(selectedIndex)) metaParts.push('Favourite');
       if (!isMobile && loc.visited) metaParts.push('Visited');
       metaEl.textContent = metaParts.length ? metaParts.join(' · ') : 'Ready when you are';
@@ -6069,6 +6399,7 @@
       updateDestinationSearchStatus();
       updateMissionStatus();
       updateStashShelf();
+      syncActiveStrainShelfButton();
       if (!summaryEl) return;
 
       if (!locations.length) {
@@ -6174,6 +6505,20 @@
       });
     }
 
+    const toggleCurrentStrainShelfBtn = document.getElementById('toggle-current-strain-shelf-btn');
+    if (toggleCurrentStrainShelfBtn) {
+      toggleCurrentStrainShelfBtn.addEventListener('click', () => {
+        if (!strainFilterText) return;
+        if (isStrainShelved(strainFilterText)) {
+          removeStrainFromShelf(strainFilterText);
+        } else {
+          addStrainToShelf(strainFilterText);
+        }
+        renderStrainList();
+        updateControlsSummary();
+      });
+    }
+
     const destinationSearchInput = document.getElementById('destination-search');
     if (destinationSearchInput) {
       const handleDestinationSearch = () => {
@@ -6222,10 +6567,17 @@
     document.getElementById('stash-shelf-grid').addEventListener('click', async e => {
       const bag = e.target.closest('.stash-bag');
       if (!bag) return;
-      const index = parseInt(bag.getAttribute('data-index') || '', 10);
-      if (isNaN(index) || !locations[index]) return;
-      await prepareLocationForDirectSelect(index);
-      selectDestinationIndex(index);
+      const strain = (bag.getAttribute('data-strain') || '').trim();
+      if (!strain) return;
+
+      resetAtlasFiltersForShelfStrain();
+      await applyStrainFilter(strain);
+      if (map) {
+        window.setTimeout(() => {
+          if (!map) return;
+          fitMapToVisibleMarkers();
+        }, 120);
+      }
       if (isCompactMobileLayout()) {
         setShelfVisible(false);
       }
@@ -6271,16 +6623,20 @@
           if (!passesCategoryFilter(loc, i)) return null;
 
           const isFav = favorites.includes(i);
+          const isCheapest = isLocationCheapestForActiveStrain(loc);
+          const priceLabel = getMarkerPriceLabel(loc);
           const distText = lastPosition
             ? (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km'
             : '';
 
-          return { index: i, name: loc.name, city: loc.city || '', distText, isFav };
+          return { index: i, name: loc.name, city: loc.city || '', distText, isFav, isCheapest, priceLabel };
         })
         .filter(x => x);
 
-      // Sort favourites first, then alphabetically
+      // Sort cheapest first when a strain is active, then favourites, then alphabetically.
       items.sort((a, b) => {
+        if (a.isCheapest && !b.isCheapest) return -1;
+        if (!a.isCheapest && b.isCheapest) return 1;
         if (a.isFav && !b.isFav) return -1;
         if (!a.isFav && b.isFav) return 1;
         return a.name.localeCompare(b.name);
@@ -6302,7 +6658,9 @@
         opt.value = item.index;
         opt.text = item.name +
           (item.city ? ` · ${item.city}` : '') +
+          (item.isCheapest ? ` · Cheapest${item.priceLabel ? ` ${item.priceLabel}` : ''}` : '') +
           (item.isFav ? ' ★' : '') +
+          (!item.isCheapest && item.priceLabel ? ` · ${item.priceLabel}` : '') +
           (item.distText ? ` (${item.distText})` : '');
         destSelect.appendChild(opt);
       });
@@ -6354,6 +6712,33 @@
       return '';
     }
 
+    function syncMarkerHighlightState(index, visible) {
+      const marker = markers[index];
+      const loc = locations[index];
+      if (!marker || !loc) return;
+
+      const isCheapest = !!(visible && isLocationCheapestForActiveStrain(loc));
+      marker._isCheapest = isCheapest;
+      marker.setZIndexOffset(isCheapest ? 1400 : 1000);
+
+      const iconEl = marker.getElement();
+      if (iconEl) {
+        iconEl.classList.toggle('is-cheapest', isCheapest);
+        const badge = iconEl.querySelector('.marker-price-badge');
+        if (badge) {
+          badge.classList.toggle('is-cheapest', isCheapest);
+        }
+      }
+
+      const tooltip = marker.getTooltip && marker.getTooltip();
+      if (tooltip) {
+        const tooltipEl = tooltip.getElement && tooltip.getElement();
+        if (tooltipEl) {
+          tooltipEl.classList.toggle('is-cheapest', isCheapest);
+        }
+      }
+    }
+
     function syncMarkerPriceDisplay(index, visible) {
       const marker = markers[index];
       const loc = locations[index];
@@ -6361,6 +6746,8 @@
 
       const label = visible ? getMarkerPriceLabel(loc) : '';
       const current = marker._priceLabelText || '';
+      const isCheapest = !!(visible && isLocationCheapestForActiveStrain(loc));
+      const cheapestChanged = marker._isCheapest !== isCheapest;
 
       if (marker._usesLogoIcon) {
         if (current !== label) {
@@ -6368,18 +6755,19 @@
           marker._priceLabelText = label;
         }
         if (marker.getTooltip()) marker.unbindTooltip();
+        syncMarkerHighlightState(index, visible);
         return;
       }
 
       if (label) {
-        const needsBind = !marker.getTooltip() || current !== label;
+        const needsBind = !marker.getTooltip() || current !== label || cheapestChanged;
         if (needsBind) {
           if (marker.getTooltip()) marker.unbindTooltip();
           marker.bindTooltip(label, {
             permanent: true,
             direction: 'top',
             offset: [0, -20],
-            className: 'price-label-tooltip',
+            className: `price-label-tooltip${isCheapest ? ' is-cheapest' : ''}`,
             opacity: 1
           });
           marker._priceLabelText = label;
@@ -6391,6 +6779,8 @@
         if (marker.getTooltip()) marker.unbindTooltip();
         marker._priceLabelText = '';
       }
+
+      syncMarkerHighlightState(index, visible);
     }
 
     /**
