@@ -1,5 +1,5 @@
 name,lat,lng,website,logo,visited,rating,Coffeeshop,Hotel,Bar,Food,Attraction,Shopping,McDonald's,Albert Heijn
-1e Hulp,52.37168,4.87595,https://www.coffeeshopmenus.org/cs-1e-hulp.html,1e_hulp.png,y,,y,n,n,n,n,n,n,n
+1e Hulp,52.37168,4.87595,https://www.coffeeshopmenus.org/cs-1e-hulp.html,1e_hulp.png,y,5,y,n,n,n,n,n,n,n
 7th Heven,52.38147,4.88623,https://www.coffeeshopmenus.org/cs-7thheaven.html,7th_heaven.png,n,,y,n,n,n,n,n,n,n
 Abraxas,52.37204,4.89125,https://www.coffeeshopmenus.org/cs-abraxas.html,abraxas.png,y,5,y,n,n,n,n,n,n,n
 African Blackstar,52.37377,4.88255,https://www.coffeeshopmenus.org/cs-black-star.html,blackstar.png,n,,y,n,n,n,n,n,n,n
@@ -9,7 +9,7 @@ Atlas,52.3982,4.94153,https://www.coffeeshopmenus.org/cs-atlas-ams.html,atlas.pn
 Babylon,52.37478,4.8965,https://www.coffeeshopmenus.org/cs-babylon.html,babylon.png,n,,y,n,n,n,n,n,n,n
 Bagheera,52.37004,4.89747,https://www.coffeeshopmenus.org/cs-bagheera.html,bagheera.png,y,4,y,n,n,n,n,n,n,n
 Balboa,52.36684,4.8958,https://www.coffeeshopmenus.org/cs-balboa-family.html,balboa_family.png,n,,y,n,n,n,n,n,n,n
-Balou,52.36676,4.89581,https://www.coffeeshopmenus.org/cs-balou.html,balou.png,n,,y,n,n,n,n,n,n,n
+Balou,52.36676,4.89581,https://www.coffeeshopmenus.org/cs-balou.html,balou.png,y,4,y,n,n,n,n,n,n,n
 Barney's,52.3806,4.89101,https://www.coffeeshopmenus.org/cs-barneys.html,barneys_farm.png,y,4,y,n,n,n,n,n,n,n
 Barraka,52.37428,4.8926,https://www.coffeeshopmenus.org/cs-barraka.html,barraka.png,n,,y,n,n,n,n,n,n,n
 Bas Joe,52.37,4.89749,https://www.coffeeshopmenus.org/cs-basjoe.html,basjoe.png,y,3,y,n,n,n,n,n,n,n
@@ -17,7 +17,7 @@ Best Friends,52.36509,4.93965,https://www.coffeeshopmenus.org/cs-best-friends-oo
 Bij,52.36211,4.85548,https://www.coffeeshopmenus.org/cs-bij.html,bij.png,n,,y,n,n,n,n,n,n,n
 Blue Lagoon,52.36059,4.86628,https://www.coffeeshopmenus.org/cs-blue-lagoon.html,blue_lagoon.png,n,,y,n,n,n,n,n,n,n
 Blue Sea,52.35458,4.90157,https://www.coffeeshopmenus.org/cs-blue-sea.html,blue_sea.png,n,,y,n,n,n,n,n,n,n
-Bluebird,52.36996,4.90082,https://www.coffeeshopmenus.org/cs-bluebird.html,bluebird.png,n,,y,n,n,n,n,n,n,n
+Bluebird,52.36996,4.90082,https://www.coffeeshopmenus.org/cs-bluebird.html,bluebird.png,y,5,y,n,n,n,n,n,n,n
 Boerejongens Centrum,52.36488,4.89802,https://www.coffeeshopmenus.org/cs-boerejongens-cent.html,boerejongens_centrum.png,y,3,y,n,n,n,n,n,n,n
 Boerejongens West,52.36234,4.85755,https://www.coffeeshopmenus.org/cs-boerejongens-west.html,boerejongens_centrum.png,y,3,y,n,n,n,n,n,n,n
 Bronx,52.37911,4.87954,https://www.coffeeshopmenus.org/cs-bronx.html,bronx.png,n,,y,n,n,n,n,n,n,n
@@ -31,18 +31,18 @@ Catch 33,52.38262,4.8799,https://www.coffeeshopmenus.org/cs-catch-33.html,catch_
 Chapiteau,52.38244,4.87305,https://www.coffeeshopmenus.org/cs-chapiteau.html,chapiteau.png,n,,y,n,n,n,n,n,n,n
 Cheech & Chong's,52.37126,4.87142,https://www.coffeeshopmenus.org/cs-cheech-chongs-2.html,cheech_and_chongs_2.png,n,,y,n,n,n,n,n,n,n
 Club Media,52.35576,4.89193,https://www.coffeeshopmenus.org/cs-media.html,club_media.png,n,,y,n,n,n,n,n,n,n
-Cookies,52.38026,4.89213,https://www.coffeeshopmenus.org/cs-greenhouse-cookies.html,greenhouse_cookies.png,n,,y,n,n,n,n,n,n,n
+Cookies,52.38026,4.89213,https://www.coffeeshopmenus.org/cs-greenhouse-cookies.html,greenhouse_cookies.png,y,4,y,n,n,n,n,n,n,n
 Crash Light,52.35487,4.92227,https://www.coffeeshopmenus.org/cs-crash-light.html,crashlight.png,n,,y,n,n,n,n,n,n,n
 Crush,52.36576,4.88006,https://www.coffeeshopmenus.org/cs-crush.html,crush.png,n,,y,n,n,n,n,n,n,n
 D&L,52.3572,4.90134,https://www.coffeeshopmenus.org/cs-d-l.html,d_and_l.png,n,,y,n,n,n,n,n,n,n
 de Bommel,52.3689,4.85363,https://www.coffeeshopmenus.org/cs-bommel.html,de_bommel.png,n,,y,n,n,n,n,n,n,n
-De Dampkring,52.36773,4.89042,https://www.coffeeshopmenus.org/cs-dampkring.html,dampkring.png,n,,y,n,n,n,n,n,n,n
+De Dampkring,52.36773,4.89042,https://www.coffeeshopmenus.org/cs-dampkring.html,dampkring.png,y,5,y,n,n,n,n,n,n,n
 De Kade,52.3434,4.86436,https://www.coffeeshopmenus.org/cs-kade.html,de_kade.png,y,4,y,n,n,n,n,n,n,n
 De Kroon,52.37596,4.89596,https://www.coffeeshopmenus.org/cs-kroon.html,de_kroon.png,n,,y,n,n,n,n,n,n,n
 de Overkant,52.36737,4.90661,https://www.coffeeshopmenus.org/cs-overkant-hortus.html,de_overkant_hortus.png,n,,y,n,n,n,n,n,n,n
 De Prijs,52.35798,4.85409,https://www.coffeeshopmenus.org/cs-prijs.html,de_prijs.png,n,,y,n,n,n,n,n,n,n
 de Supermarkt,52.3758,4.87366,https://www.coffeeshopmenus.org/cs-supermarkt.html,de_supermarkt.png,n,,y,n,n,n,n,n,n,n
-DNA,52.34495,4.86444,https://www.coffeeshopmenus.org/cs-dna.html,dna.png,y,2,y,n,n,n,n,n,n,n
+DNA,52.34495,4.86444,https://www.coffeeshopmenus.org/cs-dna.html,dna.png,y,3,y,n,n,n,n,n,n,n
 Dolphins,52.3656,4.88518,https://www.coffeeshopmenus.org/cs-dolphins.html,dolphins.png,n,,y,n,n,n,n,n,n,n
 Eastwood,52.36518,4.92802,https://www.coffeeshopmenus.org/cs-eastwood.html,eastwood.png,n,,y,n,n,n,n,n,n,n
 Easy Times,52.36434,4.88517,https://www.coffeeshopmenus.org/cs-easy-times.html,easy_times.png,n,,y,n,n,n,n,n,n,n
@@ -53,29 +53,29 @@ Flower Power,52.37277,4.87857,https://www.coffeeshopmenus.org/cs-flower-power.ht
 Freedom,52.38261,4.87117,https://www.coffeeshopmenus.org/cs-freedom.html,freedom.png,n,,y,n,n,n,n,n,n,n
 Funny People,52.40194,4.8984,https://www.coffeeshopmenus.org/cs-funnypeople2.html,funny_people_2.png,n,,y,n,n,n,n,n,n,n
 Get Down,52.36394,4.88371,https://www.coffeeshopmenus.org/cs-get-down.html,get_down_to_it.png,y,4,y,n,n,n,n,n,n,n
-Goa,52.37122,4.89865,https://www.coffeeshopmenus.org/cs-goa.html,goa.png,n,,y,n,n,n,n,n,n,n
+Goa,52.37122,4.89865,https://www.coffeeshopmenus.org/cs-goa.html,goa.png,y,4,y,n,n,n,n,n,n,n
 Green Place,52.37206,4.89941,https://www.coffeeshopmenus.org/cs-green-place.html,green_place.png,y,3,y,n,n,n,n,n,n,n
 Green Place 2,52.37938,4.89399,https://www.coffeeshopmenus.org/cs-green-place-2.html,green_place_2.png,n,,y,n,n,n,n,n,n,n
-Greenhouse Centrum,52.37152,4.89569,https://www.coffeeshopmenus.org/cs-greenhouse-centrum.html,greenhouse_centrum.png,n,,y,n,n,n,n,n,n,n
+Greenhouse Centrum,52.37152,4.89569,https://www.coffeeshopmenus.org/cs-greenhouse-centrum.html,greenhouse_centrum.png,y,4,y,n,n,n,n,n,n,n
 Greenhouse Effect,52.3728,4.9,https://www.coffeeshopmenus.org/cs-greenhouse-effect-1.html,greenhouse_effect.png,n,,y,n,n,n,n,n,n,n
 Greenhouse Namaste,52.36673,4.90222,https://www.coffeeshopmenus.org/cs-greenhouse-namaste.html,greenhouse_namaste.png,n,,y,n,n,n,n,n,n,n
 Grey Area,52.3746,4.88887,https://www.coffeeshopmenus.org/cs-grey-area.html,GreyAreaNew.png,y,4,y,n,n,n,n,n,n,n
 Happy Feelings,52.3652,4.88581,https://www.coffeeshopmenus.org/cs-happy-feelings.html,happy_feelings.png,n,,y,n,n,n,n,n,n,n
 Happy People,52.36526,4.92588,https://www.coffeeshopmenus.org/cs-happy-people.html,happy_people.png,n,,y,n,n,n,n,n,n,n
-Hashtag,52.36392,4.89611,https://www.coffeeshopmenus.org/cs-hashtag.html,hashtag.png,n,,y,n,n,n,n,n,n,n
+Hashtag,52.36392,4.89611,https://www.coffeeshopmenus.org/cs-hashtag.html,hashtag.png,y,3,y,n,n,n,n,n,n,n
 Het Ballonnetje,52.36346,4.91067,https://www.coffeeshopmenus.org/cs-ballonnetje.html,het_ballonnetje.png,n,,y,n,n,n,n,n,n,n
 het Geldese,52.37493,4.90135,https://www.coffeeshopmenus.org/cs-gelderse.html,het_gelderse.png,n,,y,n,n,n,n,n,n,n
-Hunter's Downtown,52.36549,4.89767,https://www.coffeeshopmenus.org/cs-huntersdowntown.html,hunters_downtown.png,n,,y,n,n,n,n,n,n,n
+Hunter's Downtown,52.36549,4.89767,https://www.coffeeshopmenus.org/cs-huntersdowntown.html,hunters_downtown.png,y,4,y,n,n,n,n,n,n,n
 Ibiza,52.35738,4.90208,https://www.coffeeshopmenus.org/cs-ibiza.html,ibiza.png,n,,y,n,n,n,n,n,n,n
 Jolly Joker,52.37303,4.90021,https://www.coffeeshopmenus.org/cs-jolly-joker.html,jolly_joker.png,n,,y,n,n,n,n,n,n,n
 Kadinski,52.37038,4.88942,https://www.coffeeshopmenus.org/cs-kadinsky.html,kadinsky.png,y,3,y,n,n,n,n,n,n,n
-Kadinski 2,52.37422,4.89347,https://www.coffeeshopmenus.org/cs-kadinsky2.html,kadinsky_2.png,n,,y,n,n,n,n,n,n,n
+Kadinski 2,52.37422,4.89347,https://www.coffeeshopmenus.org/cs-kadinsky2.html,kadinsky_2.png,y,4,y,n,n,n,n,n,n,n
 Kadinski 3,52.36932,4.893,https://www.coffeeshopmenus.org/cs-kadinsky3.html,kadinsky_3.png,n,,y,n,n,n,n,n,n,n
-Kashmir,52.36408,4.86301,https://www.coffeeshopmenus.org/cs-kashmir-coffeeshop.html,kashmir_coffeeshop.png,n,,y,n,n,n,n,n,n,n
+Kashmir,52.36408,4.86301,https://www.coffeeshopmenus.org/cs-kashmir-coffeeshop.html,kashmir_coffeeshop.png,y,2,y,n,n,n,n,n,n,n
 Katsu,52.35491,4.89339,https://www.coffeeshopmenus.org/cs-katsu.html,katsu.png,n,,y,n,n,n,n,n,n,n
 La Tertulia,52.36953,4.88237,https://www.coffeeshopmenus.org/cs-tertulia.html,la_tertulia.png,n,,y,n,n,n,n,n,n,n
 Massawa,52.36745,4.8619,https://www.coffeeshopmenus.org/cs-marssa.html,massawa.png,n,,y,n,n,n,n,n,n,n
-Mediterrane,52.37556,4.89167,https://www.coffeeshopmenus.org/cs-mediterrane.html,mediterrane_drewissharing.png,n,,y,n,n,n,n,n,n,n
+Mediterrane,52.37556,4.89167,https://www.coffeeshopmenus.org/cs-mediterrane.html,mediterrane_drewissharing.png,y,4,y,n,n,n,n,n,n,n
 Millennium,52.36754,4.86405,https://www.coffeeshopmenus.org/cs-millennium.html,millennium.png,n,,y,n,n,n,n,n,n,n
 Jollygood,52.37188,4.87907,https://www.coffeeshopmenus.org/cs-jollygood.html,Jollygood.png,n,,y,n,n,n,n,n,n,n
 Nachtegaal,52.354,4.9194,https://www.coffeeshopmenus.org/cs-nachtegaal.html,nachtegaal.png,n,,y,n,n,n,n,n,n,n
@@ -88,11 +88,11 @@ Oost,52.35637,4.91633,https://www.coffeeshopmenus.org/cs-oost.html,coffeeshop_oo
 Pacific,52.35309,4.88472,https://www.coffeeshopmenus.org/cs-pacific.html,pacific.png,n,,y,n,n,n,n,n,n,n
 Papillon,52.3517,4.89459,https://www.coffeeshopmenus.org/cs-papillon-ams.html,papillon.png,n,,y,n,n,n,n,n,n,n
 Paradox,52.37459,4.88126,https://www.coffeeshopmenus.org/cs-paradox.html,paradox.png,n,,y,n,n,n,n,n,n,n
-Prix D' Ami,52.37687,4.89725,https://www.coffeeshopmenus.org/cs-prix-d-ami.html,prix_dami.png,n,,y,n,n,n,n,n,n,n
+Prix D' Ami,52.37687,4.89725,https://www.coffeeshopmenus.org/cs-prix-d-ami.html,prix_dami.png,y,5,y,n,n,n,n,n,n,n
 Reefer,52.36971,4.90093,https://www.coffeeshopmenus.org/cs-reefer.html,reefer.png,n,,y,n,n,n,n,n,n,n
 Relax,52.38216,4.88714,https://www.coffeeshopmenus.org/cs-relax-ams.html,relax.png,n,,y,n,n,n,n,n,n,n
 Republiek,52.38218,4.87866,https://www.coffeeshopmenus.org/cs-republiek.html,republiek.png,n,,y,n,n,n,n,n,n,n
-Rick's,52.37171,4.89538,https://www.coffeeshopmenus.org/cs-ricks-cafe.html,ricks_coffeeshop.png,n,,y,n,n,n,n,n,n,n
+Rick's,52.37171,4.89538,https://www.coffeeshopmenus.org/cs-ricks-cafe.html,ricks_coffeeshop.png,y,1,y,n,n,n,n,n,n,n
 Rock-It,52.37284,4.90001,https://www.coffeeshopmenus.org/cs-rock-it.html,ricks_coffeeshop.png,n,,y,n,n,n,n,n,n,n
 Rockland,52.37338,4.8884,https://www.coffeeshopmenus.org/cs-rockland.html,rockland.png,n,,y,n,n,n,n,n,n,n
 Rookies,52.36293,4.88523,https://www.coffeeshopmenus.org/cs-rookies.html,rookies.png,n,,y,n,n,n,n,n,n,n
@@ -101,7 +101,7 @@ Ruthless,52.36548,4.85328,https://www.coffeeshopmenus.org/cs-ruthless.html,ruthl
 Saint,52.36687,4.89499,https://www.coffeeshopmenus.org/cs-saint.html,saint.png,y,3,y,n,n,n,n,n,n,n
 Satvia,52.37453,4.89044,https://www.coffeeshopmenus.org/cs-sativa.html,sativa.png,y,3,y,n,n,n,n,n,n,n
 Sensemillia,52.3751,4.8712,https://www.coffeeshopmenus.org/cs-sensemillia1.html,sensemillia.png,n,,y,n,n,n,n,n,n,n
-Siberie,52.37896,4.89301,https://www.coffeeshopmenus.org/cs-siberie.html,siberie.png,n,,y,n,n,n,n,n,n,n
+Siberie,52.37896,4.89301,https://www.coffeeshopmenus.org/cs-siberie.html,siberie.png,y,4,y,n,n,n,n,n,n,n
 Smokey,52.36576,4.89636,https://www.coffeeshopmenus.org/cs-smokey-ams.html,smokey.png,n,,y,n,n,n,n,n,n,n
 Solo,52.37193,4.90263,https://www.coffeeshopmenus.org/cs-solo.html,solo.png,n,,y,n,n,n,n,n,n,n
 Speakeasy,52.35589,4.90881,https://www.coffeeshopmenus.org/cs-speak-easy-ams-2.html,speak_easy.png,n,,y,n,n,n,n,n,n,n
@@ -111,7 +111,7 @@ Strain Hunters,52.36878,4.88818,https://www.coffeeshopmenus.org/cs-greenhouse-st
 Super Skunk,52.36429,4.8852,https://www.coffeeshopmenus.org/cs-superskunk-2.html,superskunk.png,y,2,y,n,n,n,n,n,n,n
 SuperFly,52.35122,4.90356,https://www.coffeeshopmenus.org/cs-super-fly.html,superfly.png,n,,y,n,n,n,n,n,n,n
 t Keteltje,52.37959,4.87973,https://www.coffeeshopmenus.org/cs-keteltje.html,t_keteltje.png,n,,y,n,n,n,n,n,n,n
-Terps Army,52.37534,4.89358,https://www.coffeeshopmenus.org/cs-terps-army.html,terps_army.png,n,,y,n,n,n,n,n,n,n
+Terps Army,52.37534,4.89358,https://www.coffeeshopmenus.org/cs-terps-army.html,terps_army.png,y,4,y,n,n,n,n,n,n,n
 Terps Army 2,52.3618,4.88626,https://www.coffeeshopmenus.org/cs-terps-army-2.html,terps_army_2.png,y,5,y,n,n,n,n,n,n,n
 Tha Dogg House,52.37277,4.87605,https://www.coffeeshopmenus.org/cs-dogghouse.html,tha_dogg_house.png,n,,y,n,n,n,n,n,n,n
 The Bushdoctor,52.36507,4.89569,https://www.coffeeshopmenus.org/cs-bushdocter.html,bushdocter.png,n,,y,n,n,n,n,n,n,n
