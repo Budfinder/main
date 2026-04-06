@@ -365,8 +365,8 @@
 
     .hero-banner-head {
       display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
+      align-items: center;
+      justify-content: space-between;
       gap: 12px;
       cursor: pointer;
     }
@@ -405,6 +405,24 @@
       background-repeat: no-repeat;
       background-position: center;
       opacity: 0.86;
+    }
+
+    .hero-banner-toggle-copy {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.48);
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
     #hero-banner h1 {
@@ -654,9 +672,9 @@
     }
 
     body.hero-banner-collapsed #hero-banner {
-      width: fit-content;
-      max-width: min(320px, calc(100vw - 48px));
-      padding: 12px 14px;
+      width: min(390px, calc(100vw - 48px));
+      max-width: calc(100vw - 48px);
+      padding: 12px 14px 14px;
     }
 
     body.hero-banner-collapsed .hero-banner-head {
@@ -664,7 +682,30 @@
     }
 
     body.hero-banner-collapsed .hero-banner-content {
+      display: block;
+    }
+
+    body.hero-banner-collapsed .hero-banner-toggle-copy {
+      background: rgba(255, 255, 255, 0.68);
+      color: var(--accent-strong);
+    }
+
+    body.hero-banner-collapsed #hero-banner h1 {
+      margin: 10px 0 0;
+      font-size: clamp(22px, 2.3vw, 30px);
+      line-height: 1.02;
+    }
+
+    body.hero-banner-collapsed .hero-copy,
+    body.hero-banner-collapsed .hero-stats,
+    body.hero-banner-collapsed .hero-meta-row {
       display: none;
+    }
+
+    body.hero-banner-collapsed #top-shelf-rail {
+      margin-top: 10px;
+      padding-top: 0;
+      border-top: 0;
     }
 
     .selection-eyebrow {
@@ -2105,6 +2146,7 @@
       }
 
       body.hero-banner-collapsed #hero-banner {
+        width: auto;
         right: auto;
         padding: 10px 12px;
         cursor: pointer;
@@ -2418,6 +2460,7 @@
     }
 
     body.compact-layout.hero-banner-collapsed #hero-banner {
+      width: auto;
       right: auto;
       padding: 10px 12px;
       cursor: pointer;
@@ -2878,7 +2921,7 @@
   </style>
 </head>
 
-<body>
+<body class="hero-banner-collapsed">
   <div class="atmosphere" aria-hidden="true">
     <div class="atmosphere-leaves"></div>
     <div class="smoke-plume smoke-plume-one"></div>
@@ -2900,8 +2943,9 @@
   <div id="controls-backdrop" class="controls-backdrop"></div>
 
   <section id="hero-banner" class="overlay-card">
-    <div id="hero-banner-head" class="hero-banner-head" role="button" tabindex="0" aria-controls="hero-banner-content" aria-expanded="true" aria-label="Toggle atlas banner">
+    <div id="hero-banner-head" class="hero-banner-head" role="button" tabindex="0" aria-controls="hero-banner-content" aria-expanded="false" aria-label="Expand atlas banner">
       <span class="hero-kicker" id="hero-kicker">Personal atlas</span>
+      <span id="hero-banner-toggle-copy" class="hero-banner-toggle-copy" aria-hidden="true">Expand</span>
     </div>
     <div id="hero-banner-content" class="hero-banner-content">
       <h1>Budfinder 5: Release Candidate 1</h1>
@@ -3160,7 +3204,7 @@
     let controlsCollapsed = false; // collapsed atlas state across layouts
     let directionsVisible = false; // directions panel visibility
     let shelfVisible = false;      // stash shelf overlay visibility
-    let heroBannerCollapsed = getViewportSize().width < 768; // compact hero banner state
+    let heroBannerCollapsed = true; // keep the hero slim by default across layouts
     let selectionCardCollapsed = false; // compact landscape destination card state
     let previousCompactLandscapeLayout = false;
     let strainListVisible = true; // strain list panel visibility
@@ -3985,11 +4029,16 @@
 
     function syncHeroBannerState() {
       const heroHead = document.getElementById('hero-banner-head');
+      const heroToggle = document.getElementById('hero-banner-toggle-copy');
       if (!heroHead) return;
 
       const collapsed = !!heroBannerCollapsed;
       document.body.classList.toggle('hero-banner-collapsed', collapsed);
       heroHead.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      heroHead.setAttribute('aria-label', collapsed ? 'Expand atlas banner' : 'Collapse atlas banner');
+      if (heroToggle) {
+        heroToggle.textContent = collapsed ? 'Expand' : 'Less';
+      }
     }
 
     function setHeroBannerCollapsed(collapsed, options = {}) {
@@ -6212,8 +6261,8 @@
       document.getElementById('ui-toggles').style.display = 'block';
       setUploadPanelState('', '', false);
 
-      // Start with the atlas visible, then let outside interactions dismiss it.
-      setControlsVisible(true, { collapsed: false });
+      // Start with controls/directions hidden; keep strain list ready within controls.
+      setControlsVisible(false);
       setDirectionsVisible(false);
       setStrainListVisible(true);
 
@@ -8377,13 +8426,6 @@
       if (controlsVisible && isCompactMobileLayout()) {
         setControlsCollapsed(!controlsCollapsed);
       }
-    });
-
-    document.addEventListener('click', e => {
-      if (!controlsVisible) return;
-      if (e.target.closest('.controls')) return;
-      if (e.target.closest('#toggle-controls')) return;
-      setControlsVisible(false);
     });
 
     document.getElementById('display-name-input').addEventListener('input', e => {

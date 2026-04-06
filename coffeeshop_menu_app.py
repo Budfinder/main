@@ -792,6 +792,71 @@ def sync_offering_from_menu_entry(
     )
 
 
+def preferred_base_type_for_strain_id(conn: sqlite3.Connection, strain_id: int) -> str:
+    """Return the best-known base_type for a strain from existing entries/offerings."""
+    row = conn.execute(
+        """
+        SELECT base_type
+        FROM (
+            SELECT base_type,
+                   COUNT(*) AS use_count,
+                   MAX(last_seen) AS latest_seen,
+                   MAX(source_rank) AS source_rank
+            FROM (
+                SELECT so.base_type AS base_type,
+                       so.updated_at AS last_seen,
+                       2 AS source_rank
+                FROM shop_offerings so
+                WHERE so.strain_id = ?
+
+                UNION ALL
+
+                SELECT me.base_type AS base_type,
+                       me.created_at AS last_seen,
+                       1 AS source_rank
+                FROM menu_entries me
+                WHERE me.strain_id = ?
+            ) typed_rows
+            GROUP BY base_type
+        )
+        ORDER BY use_count DESC, source_rank DESC, latest_seen DESC, base_type
+        LIMIT 1;
+        """,
+        (strain_id, strain_id),
+    ).fetchone()
+    return str(row["base_type"] or "") if row else ""
+
+
+def consolidate_base_type_for_strain(
+    conn: sqlite3.Connection,
+    strain_id: int,
+    base_type: str,
+) -> Tuple[int, int]:
+    """Apply one base_type to all current entries and offerings for a strain."""
+    now = utc_now_iso()
+    menu_rows = conn.execute(
+        """
+        UPDATE menu_entries
+        SET base_type = ?
+        WHERE strain_id = ?
+          AND base_type <> ?;
+        """,
+        (base_type, strain_id, base_type),
+    ).rowcount
+
+    offering_rows = conn.execute(
+        """
+        UPDATE shop_offerings
+        SET base_type = ?,
+            updated_at = ?
+        WHERE strain_id = ?
+          AND base_type <> ?;
+        """,
+        (base_type, now, strain_id, base_type),
+    ).rowcount
+    return int(menu_rows or 0), int(offering_rows or 0)
+
+
 def add_or_update_menu_entry(
     conn: sqlite3.Connection,
     shop_id: int,
@@ -801,6 +866,7 @@ def add_or_update_menu_entry(
     price_currency: str,
     price_amount_text: str,
     notes: str,
+    consolidate_type: bool = False,
 ) -> Tuple[bool, str]:
     """Upsert a row in menu_entries for this shop/strain (add flow)."""
     base_type = (base_type or "").strip().lower()
@@ -866,8 +932,17 @@ def add_or_update_menu_entry(
         notes=(notes or "").strip(),
     )
 
+    msg = "Saved."
+    if consolidate_type:
+        menu_rows, offering_rows = consolidate_base_type_for_strain(conn, strain_id, base_type)
+        touched = menu_rows + offering_rows
+        if touched > 0:
+            msg = f"Saved. Consolidated type '{base_type}' across {touched} existing rows."
+        else:
+            msg = f"Saved. Type '{base_type}' was already consistent."
+
     conn.commit()
-    return True, "Saved."
+    return True, msg
 
 
 def update_menu_entry_by_id(
@@ -1774,6 +1849,12 @@ PAGE_TMPL = """
                     <label class="radioOption"><input type="checkbox" name="is_cali" value="1"><span>Cali</span></label>
                   </div>
                   <div class="small">Type is one-of; Cali is an overlay.</div>
+                  <div id="type_autofill_hint" class="small" style="margin-top:6px;"></div>
+                  <label class="radioOption" style="margin-top:8px;">
+                    <input type="checkbox" name="consolidate_type" value="1">
+                    <span>Consolidate this type for the strain everywhere</span>
+                  </label>
+                  <div class="small">Optional: update existing entries and offerings for this strain to the chosen type.</div>
                 </div>
 
                 <div>
@@ -1917,6 +1998,7 @@ PAGE_TMPL = """
     const f = document.getElementById('entryForm');
     if (!f) return;
     f.reset();
+    showTypeHint('');
     const s = document.getElementById('strain_name');
     if (s) s.focus();
   }
@@ -2039,7 +2121,33 @@ PAGE_TMPL = """
 
   const strain = document.getElementById('strain_name');
   const priceAmount = document.getElementById('price_amount');
+  const typeHint = document.getElementById('type_autofill_hint');
   if (strain) strain.focus();
+
+  function setBaseType(val) {
+    const el = document.querySelector(`input[name="base_type"][value="${val}"]`);
+    if (el) el.checked = true;
+  }
+
+  function showTypeHint(text) {
+    if (!typeHint) return;
+    typeHint.textContent = text || '';
+  }
+
+  function applySuggestedType(query, items) {
+    const typed = (query || '').trim().toLowerCase();
+    if (!typed) {
+      showTypeHint('');
+      return;
+    }
+    const exact = (items || []).find((item) => ((item.name_display || '').trim().toLowerCase() === typed));
+    if (!exact || !exact.base_type) {
+      showTypeHint('');
+      return;
+    }
+    setBaseType(exact.base_type);
+    showTypeHint(`Prefilled type from existing records: ${exact.base_type}.`);
+  }
 
   document.addEventListener('keydown', (e) => {
     const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
@@ -2051,11 +2159,6 @@ PAGE_TMPL = """
       return;
     }
     if (isTyping) return;
-
-    function setBaseType(val) {
-      const el = document.querySelector(`input[name="base_type"][value="${val}"]`);
-      if (el) el.checked = true;
-    }
     const caliBox = document.querySelector('input[name="is_cali"]');
 
     if (e.key === '1') { setBaseType('sativa'); if (priceAmount) priceAmount.focus(); }
@@ -2090,11 +2193,13 @@ PAGE_TMPL = """
         const dl = document.getElementById('strain_suggestions');
         if (!dl) return;
         dl.innerHTML = '';
-        (data.suggestions || []).forEach((s) => {
+        const items = Array.isArray(data.items) ? data.items : [];
+        items.forEach((item) => {
           const opt = document.createElement('option');
-          opt.value = s;
+          opt.value = item.name_display || '';
           dl.appendChild(opt);
         });
+        applySuggestedType(q, items);
       }, 120);
     });
   }
@@ -3758,13 +3863,22 @@ def create_app(
         strain_name = request.form.get("strain_name", "")
         base_type = request.form.get("base_type", "")
         is_cali = (request.form.get("is_cali") == "1")
+        consolidate_type = (request.form.get("consolidate_type") == "1")
         price_currency = request.form.get("price_currency", DEFAULT_CURRENCY)
         price_amount = request.form.get("price_amount", "")
         notes = request.form.get("notes", "")
 
         c = conn()
         _ok, msg = add_or_update_menu_entry(
-            c, shop_id, strain_name, base_type, is_cali, price_currency, price_amount, notes
+            c,
+            shop_id,
+            strain_name,
+            base_type,
+            is_cali,
+            price_currency,
+            price_amount,
+            notes,
+            consolidate_type=consolidate_type,
         )
         c.close()
         return redirect(url_for("shop_view", shop_id=shop_id, msg=msg))
@@ -4088,13 +4202,38 @@ def create_app(
         if q:
             like = q + "%"
             rows = c.execute(
-                "SELECT name_display FROM strains WHERE name_display LIKE ? ORDER BY name_display LIMIT 30;",
+                """
+                SELECT id, name_display
+                FROM strains
+                WHERE name_display LIKE ?
+                ORDER BY name_display
+                LIMIT 30;
+                """,
                 (like,),
             ).fetchall()
         else:
-            rows = c.execute("SELECT name_display FROM strains ORDER BY id DESC LIMIT 30;").fetchall()
+            rows = c.execute(
+                """
+                SELECT id, name_display
+                FROM strains
+                ORDER BY id DESC
+                LIMIT 30;
+                """
+            ).fetchall()
+        items = [
+            {
+                "name_display": r["name_display"],
+                "base_type": preferred_base_type_for_strain_id(c, int(r["id"])),
+            }
+            for r in rows
+        ]
         c.close()
-        return jsonify({"suggestions": [r["name_display"] for r in rows]})
+        return jsonify(
+            {
+                "suggestions": [item["name_display"] for item in items],
+                "items": items,
+            }
+        )
 
     return app
 
