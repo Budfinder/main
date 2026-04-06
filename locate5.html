@@ -483,29 +483,15 @@
     #selection-card {
       bottom: 24px;
       right: 24px;
-      width: 344px;
+      width: 320px;
       padding: 18px 18px 16px;
     }
 
     #top-shelf-rail {
-      position: absolute;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(720px, max(280px, calc(100vw - 560px)));
       display: none;
-      padding: 10px 12px;
-      border-radius: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.42);
-      background: rgba(255, 249, 239, 0.86);
-      box-shadow: var(--shadow-md);
-      backdrop-filter: blur(18px);
-      z-index: 1003;
-      pointer-events: none;
-    }
-
-    body.desktop-controls-hidden #top-shelf-rail {
-      width: min(780px, max(280px, calc(100vw - 96px)));
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(92, 107, 97, 0.12);
     }
 
     .top-shelf-rail-list {
@@ -517,7 +503,6 @@
       padding-bottom: 2px;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
-      pointer-events: auto;
     }
 
     .top-shelf-rail-item {
@@ -2126,19 +2111,6 @@
         max-width: calc(100vw - 24px);
       }
 
-      #top-shelf-rail {
-        top: 92px;
-        left: 12px;
-        right: 12px;
-        width: auto;
-        transform: none;
-        padding: 10px 12px;
-      }
-
-      body.hero-banner-collapsed #top-shelf-rail {
-        top: 68px;
-      }
-
       #selection-card {
         top: auto;
         bottom: max(10px, env(safe-area-inset-bottom));
@@ -2273,6 +2245,11 @@
         gap: 6px;
       }
 
+      #top-shelf-rail {
+        margin-top: 10px;
+        padding-top: 10px;
+      }
+
       .top-shelf-rail-chip {
         max-width: 188px;
       }
@@ -2363,11 +2340,9 @@
       }
 
       body.mobile-controls-open #hero-banner,
-      body.mobile-controls-open #top-shelf-rail,
       body.mobile-controls-open #selection-card,
       body.mobile-controls-open #stash-shelf,
       body.mobile-directions-open #hero-banner,
-      body.mobile-directions-open #top-shelf-rail,
       body.mobile-directions-open #selection-card,
       body.mobile-directions-open #stash-shelf {
         opacity: 0;
@@ -2447,19 +2422,6 @@
       padding: 10px 12px;
       cursor: pointer;
       max-width: calc(100vw - 24px);
-    }
-
-    body.compact-layout #top-shelf-rail {
-      top: 92px;
-      left: 12px;
-      right: 12px;
-      width: auto;
-      transform: none;
-      padding: 10px 12px;
-    }
-
-    body.compact-layout.hero-banner-collapsed #top-shelf-rail {
-      top: 68px;
     }
 
     body.compact-layout #selection-card {
@@ -2719,6 +2681,11 @@
       gap: 6px;
     }
 
+    body.compact-layout #top-shelf-rail {
+      margin-top: 10px;
+      padding-top: 10px;
+    }
+
     body.compact-layout .top-shelf-rail-chip {
       max-width: 188px;
     }
@@ -2738,11 +2705,9 @@
     }
 
     body.compact-layout.mobile-controls-open #hero-banner,
-    body.compact-layout.mobile-controls-open #top-shelf-rail,
     body.compact-layout.mobile-controls-open #selection-card,
     body.compact-layout.mobile-controls-open #stash-shelf,
     body.compact-layout.mobile-directions-open #hero-banner,
-    body.compact-layout.mobile-directions-open #top-shelf-rail,
     body.compact-layout.mobile-directions-open #selection-card,
     body.compact-layout.mobile-directions-open #stash-shelf {
       opacity: 0;
@@ -2933,9 +2898,6 @@
   <div id="map"></div>
   <div id="instructions"></div>
   <div id="controls-backdrop" class="controls-backdrop"></div>
-  <section id="top-shelf-rail" aria-label="Quick shelf strains">
-    <div id="top-shelf-rail-list" class="top-shelf-rail-list"></div>
-  </section>
 
   <section id="hero-banner" class="overlay-card">
     <div id="hero-banner-head" class="hero-banner-head" role="button" tabindex="0" aria-controls="hero-banner-content" aria-expanded="true" aria-label="Toggle atlas banner">
@@ -2964,6 +2926,9 @@
         <span class="hero-meta-pill" id="hero-filter-state">Strain filter off</span>
         <span class="hero-meta-pill" id="hero-csv-name">No CSV loaded</span>
       </div>
+      <section id="top-shelf-rail" aria-label="Quick shelf strains">
+        <div id="top-shelf-rail-list" class="top-shelf-rail-list"></div>
+      </section>
     </div>
   </section>
 
@@ -3203,6 +3168,7 @@
     let uiTogglePositionTimer = null;
     let locationSearchText = '';
     let missionMode = 'free-roam';
+    let activePopupLocationIndex = null;
 
     // Multi-select categories: 'all', 'favourites', and CSV Y/N flags
     let selectedCategories = ['all'];
@@ -6500,8 +6466,16 @@
             this.openPopup();
           })
           .on('popupopen', () => {
+            activePopupLocationIndex = i;
+            updateControlsSummary();
             if (isCoffeeShop) {
               refreshPopupStrainsForLocation(i);
+            }
+          })
+          .on('popupclose', () => {
+            if (activePopupLocationIndex === i) {
+              activePopupLocationIndex = null;
+              updateControlsSummary();
             }
           });
 
@@ -6706,7 +6680,6 @@
       }
 
       applyOverlayInset('hero-banner');
-      applyOverlayInset('top-shelf-rail');
       applyOverlayInset('selection-card');
       applyOverlayInset('stash-shelf');
 
@@ -7598,9 +7571,10 @@
 
       const selectedIndex = getSelectedDestinationIndex();
       const hideForDesktopDirections = directionsVisible && !isCompactMobileLayout();
+      const hideForDesktopPopup = !isCompactMobileLayout() && activePopupLocationIndex !== null;
       const hideForMobileEmptyState = isCompactMobileLayout() && (selectedIndex === null || !locations[selectedIndex]);
       const hideForMobileShelf = isCompactMobileLayout() && shelfVisible;
-      card.style.display = (hideForDesktopDirections || hideForMobileEmptyState || hideForMobileShelf) ? 'none' : 'block';
+      card.style.display = (hideForDesktopDirections || hideForDesktopPopup || hideForMobileEmptyState || hideForMobileShelf) ? 'none' : 'block';
       document.body.classList.toggle(
         'mobile-selection-visible',
         isCompactMobileLayout() &&
