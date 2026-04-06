@@ -357,18 +357,24 @@
     }
 
     #hero-banner {
-      top: 24px;
-      left: 408px;
-      width: min(440px, calc(100vw - 472px));
-      padding: 18px 20px;
+      top: 50%;
+      left: 50%;
+      width: min(520px, calc(100vw - 48px));
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 48px);
+      padding: 20px 22px;
+      overflow: auto;
+      transform: translate(-50%, -54%);
+      z-index: 1004;
+      transition: opacity 200ms ease, transform 220ms ease, visibility 200ms ease;
     }
 
     .hero-banner-head {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
-      cursor: pointer;
+      cursor: default;
     }
 
     .hero-banner-content {
@@ -423,6 +429,9 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       white-space: nowrap;
+      font: inherit;
+      cursor: pointer;
+      box-shadow: none;
     }
 
     #hero-banner h1 {
@@ -507,9 +516,11 @@
 
     #top-shelf-rail {
       display: none;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(92, 107, 97, 0.12);
+      top: 24px;
+      left: 408px;
+      width: min(520px, calc(100vw - 472px));
+      padding: 12px 14px;
+      z-index: 1000;
     }
 
     .top-shelf-rail-list {
@@ -666,46 +677,20 @@
       left: 24px;
     }
 
-    body.desktop-controls-hidden #hero-banner {
+    body.desktop-controls-hidden #top-shelf-rail {
       left: 24px;
-      width: min(520px, calc(100vw - 408px));
+      width: min(560px, calc(100vw - 48px));
     }
 
-    body.hero-banner-collapsed #hero-banner {
-      width: min(390px, calc(100vw - 48px));
-      max-width: calc(100vw - 48px);
-      padding: 12px 14px 14px;
+    body.hero-popup-hidden #hero-banner {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(0.98);
     }
 
-    body.hero-banner-collapsed .hero-banner-head {
-      align-items: center;
-    }
-
-    body.hero-banner-collapsed .hero-banner-content {
-      display: block;
-    }
-
-    body.hero-banner-collapsed .hero-banner-toggle-copy {
-      background: rgba(255, 255, 255, 0.68);
-      color: var(--accent-strong);
-    }
-
-    body.hero-banner-collapsed #hero-banner h1 {
-      margin: 10px 0 0;
-      font-size: clamp(22px, 2.3vw, 30px);
-      line-height: 1.02;
-    }
-
-    body.hero-banner-collapsed .hero-copy,
-    body.hero-banner-collapsed .hero-stats,
-    body.hero-banner-collapsed .hero-meta-row {
-      display: none;
-    }
-
-    body.hero-banner-collapsed #top-shelf-rail {
-      margin-top: 10px;
-      padding-top: 0;
-      border-top: 0;
+    body:not(.hero-popup-hidden) #top-shelf-rail {
+      display: none !important;
     }
 
     .selection-eyebrow {
@@ -2119,19 +2104,21 @@
       }
 
       #hero-banner {
-        top: 12px;
-        left: 12px;
-        right: 12px;
-        width: auto;
-        padding: 12px 14px;
+        top: 50%;
+        left: 50%;
+        right: auto;
+        width: min(440px, calc(100vw - 24px));
+        max-width: calc(100vw - 24px);
+        max-height: calc(100vh - 24px);
+        padding: 16px 16px 18px;
+        transform: translate(-50%, -50%);
       }
 
       #hero-banner h1 {
-        margin: 8px 0 0;
+        margin: 10px 0 0;
         font-size: 24px;
       }
 
-      .hero-copy,
       .hero-stats {
         display: none;
       }
@@ -2145,12 +2132,12 @@
         font-size: 11px;
       }
 
-      body.hero-banner-collapsed #hero-banner {
+      #top-shelf-rail {
+        top: 12px;
+        left: 12px;
+        right: 12px;
         width: auto;
-        right: auto;
         padding: 10px 12px;
-        cursor: pointer;
-        max-width: calc(100vw - 24px);
       }
 
       #selection-card {
@@ -2228,10 +2215,6 @@
         top: 96px;
       }
 
-      body.hero-banner-collapsed #map {
-        top: 70px;
-      }
-
       body.mobile-selection-visible #map {
         bottom: calc(env(safe-area-inset-bottom) + 160px);
       }
@@ -2288,8 +2271,8 @@
       }
 
       #top-shelf-rail {
-        margin-top: 10px;
-        padding-top: 10px;
+        margin-top: 0;
+        padding: 10px 12px;
       }
 
       .top-shelf-rail-chip {
@@ -2382,9 +2365,11 @@
       }
 
       body.mobile-controls-open #hero-banner,
+      body.mobile-controls-open #top-shelf-rail,
       body.mobile-controls-open #selection-card,
       body.mobile-controls-open #stash-shelf,
       body.mobile-directions-open #hero-banner,
+      body.mobile-directions-open #top-shelf-rail,
       body.mobile-directions-open #selection-card,
       body.mobile-directions-open #stash-shelf {
         opacity: 0;
@@ -2433,19 +2418,21 @@
     }
 
     body.compact-layout #hero-banner {
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      width: auto;
-      padding: 12px 14px;
+      top: 50%;
+      left: 50%;
+      right: auto;
+      width: min(440px, calc(100vw - 24px));
+      max-width: calc(100vw - 24px);
+      max-height: calc(100vh - 24px);
+      padding: 16px 16px 18px;
+      transform: translate(-50%, -50%);
     }
 
     body.compact-layout #hero-banner h1 {
-      margin: 8px 0 0;
+      margin: 10px 0 0;
       font-size: 24px;
     }
 
-    body.compact-layout .hero-copy,
     body.compact-layout .hero-stats {
       display: none;
     }
@@ -2459,12 +2446,12 @@
       font-size: 11px;
     }
 
-    body.compact-layout.hero-banner-collapsed #hero-banner {
+    body.compact-layout #top-shelf-rail {
+      top: 12px;
+      left: 12px;
+      right: 12px;
       width: auto;
-      right: auto;
       padding: 10px 12px;
-      cursor: pointer;
-      max-width: calc(100vw - 24px);
     }
 
     body.compact-layout #selection-card {
@@ -2536,10 +2523,6 @@
 
     body.compact-layout .selection-actions .selection-link {
       grid-column: 1 / -1;
-    }
-
-    body.compact-layout.hero-banner-collapsed #map {
-      top: 70px;
     }
 
     body.compact-layout.mobile-selection-visible #map {
@@ -2724,11 +2707,6 @@
       gap: 6px;
     }
 
-    body.compact-layout #top-shelf-rail {
-      margin-top: 10px;
-      padding-top: 10px;
-    }
-
     body.compact-layout .top-shelf-rail-chip {
       max-width: 188px;
     }
@@ -2748,9 +2726,11 @@
     }
 
     body.compact-layout.mobile-controls-open #hero-banner,
+    body.compact-layout.mobile-controls-open #top-shelf-rail,
     body.compact-layout.mobile-controls-open #selection-card,
     body.compact-layout.mobile-controls-open #stash-shelf,
     body.compact-layout.mobile-directions-open #hero-banner,
+    body.compact-layout.mobile-directions-open #top-shelf-rail,
     body.compact-layout.mobile-directions-open #selection-card,
     body.compact-layout.mobile-directions-open #stash-shelf {
       opacity: 0;
@@ -2921,7 +2901,7 @@
   </style>
 </head>
 
-<body class="hero-banner-collapsed">
+<body>
   <div class="atmosphere" aria-hidden="true">
     <div class="atmosphere-leaves"></div>
     <div class="smoke-plume smoke-plume-one"></div>
@@ -2943,9 +2923,9 @@
   <div id="controls-backdrop" class="controls-backdrop"></div>
 
   <section id="hero-banner" class="overlay-card">
-    <div id="hero-banner-head" class="hero-banner-head" role="button" tabindex="0" aria-controls="hero-banner-content" aria-expanded="false" aria-label="Expand atlas banner">
+    <div id="hero-banner-head" class="hero-banner-head">
       <span class="hero-kicker" id="hero-kicker">Personal atlas</span>
-      <span id="hero-banner-toggle-copy" class="hero-banner-toggle-copy" aria-hidden="true">Expand</span>
+      <button id="hero-banner-close" class="hero-banner-toggle-copy" type="button">Close</button>
     </div>
     <div id="hero-banner-content" class="hero-banner-content">
       <h1>Budfinder 5: Release Candidate 1</h1>
@@ -2970,10 +2950,11 @@
         <span class="hero-meta-pill" id="hero-filter-state">Strain filter off</span>
         <span class="hero-meta-pill" id="hero-csv-name">No CSV loaded</span>
       </div>
-      <section id="top-shelf-rail" aria-label="Quick shelf strains">
-        <div id="top-shelf-rail-list" class="top-shelf-rail-list"></div>
-      </section>
     </div>
+  </section>
+
+  <section id="top-shelf-rail" class="overlay-card" aria-label="Quick shelf strains">
+    <div id="top-shelf-rail-list" class="top-shelf-rail-list"></div>
   </section>
 
   <section id="selection-card" class="overlay-card is-empty">
@@ -3178,8 +3159,10 @@
           </label>
         </div>
         <div class="button-row">
+          <button id="toggle-hero-popup-pref-btn" type="button" class="secondary-btn">Disable intro popup</button>
           <button id="reset-personalisation-btn" type="button" class="secondary-btn">Reset look</button>
         </div>
+        <div id="hero-popup-pref-note" class="field-note">Intro popup shows when Budfinder opens.</div>
       </section>
     </div>
   </div>
@@ -3204,7 +3187,7 @@
     let controlsCollapsed = false; // collapsed atlas state across layouts
     let directionsVisible = false; // directions panel visibility
     let shelfVisible = false;      // stash shelf overlay visibility
-    let heroBannerCollapsed = true; // keep the hero slim by default across layouts
+    let heroPopupVisible = true; // intro popup shows on first load only
     let selectionCardCollapsed = false; // compact landscape destination card state
     let previousCompactLandscapeLayout = false;
     let strainListVisible = true; // strain list panel visibility
@@ -3621,7 +3604,8 @@
     let favorites = [];
     let personalisation = {
       displayName: 'Explorer',
-      accent: 'northern-lights'
+      accent: 'northern-lights',
+      showIntroPopupOnLoad: true
     };
 
     function loadStoredJson(key, fallback) {
@@ -3826,7 +3810,11 @@
           const accent = normaliseAccentThemeKey(merged.accent || '');
           if (hasDisplayName) personalisation.displayName = displayName;
           if (accentThemes[accent]) personalisation.accent = accent;
+          if (typeof merged.showIntroPopupOnLoad === 'boolean') {
+            personalisation.showIntroPopupOnLoad = merged.showIntroPopupOnLoad;
+          }
         }
+        heroPopupVisible = !!personalisation.showIntroPopupOnLoad;
       } catch (_err) {
         // Ignore malformed stored preferences.
       }
@@ -3858,16 +3846,27 @@
       const kicker = document.getElementById('hero-kicker');
       const nameInput = document.getElementById('display-name-input');
       const accentSelect = document.getElementById('accent-select');
+      const heroPopupBtn = document.getElementById('toggle-hero-popup-pref-btn');
+      const heroPopupNote = document.getElementById('hero-popup-pref-note');
       if (kicker) kicker.textContent = rawName ? `${safeName}'s atlas` : 'Personal atlas';
       if (nameInput && nameInput.value !== rawName) nameInput.value = rawName;
       if (accentSelect && accentSelect.value !== personalisation.accent) accentSelect.value = personalisation.accent;
+      if (heroPopupBtn) {
+        heroPopupBtn.textContent = personalisation.showIntroPopupOnLoad ? 'Disable intro popup' : 'Enable intro popup';
+      }
+      if (heroPopupNote) {
+        heroPopupNote.textContent = personalisation.showIntroPopupOnLoad
+          ? 'Intro popup shows when Budfinder opens.'
+          : 'Intro popup is disabled and will stay hidden on load.';
+      }
       document.title = rawName ? `${safeName}'s Budfinder 5: Release Candidate 1` : 'Budfinder 5: Release Candidate 1';
     }
 
     function resetPersonalisation() {
       personalisation = {
         displayName: 'Explorer',
-        accent: 'northern-lights'
+        accent: 'northern-lights',
+        showIntroPopupOnLoad: true
       };
       savePersonalisation();
       applyPersonalisation();
@@ -4028,27 +4027,26 @@
     }
 
     function syncHeroBannerState() {
-      const heroHead = document.getElementById('hero-banner-head');
-      const heroToggle = document.getElementById('hero-banner-toggle-copy');
-      if (!heroHead) return;
+      const hero = document.getElementById('hero-banner');
+      if (!hero) return;
 
-      const collapsed = !!heroBannerCollapsed;
-      document.body.classList.toggle('hero-banner-collapsed', collapsed);
-      heroHead.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-      heroHead.setAttribute('aria-label', collapsed ? 'Expand atlas banner' : 'Collapse atlas banner');
-      if (heroToggle) {
-        heroToggle.textContent = collapsed ? 'Expand' : 'Less';
-      }
+      document.body.classList.toggle('hero-popup-hidden', !heroPopupVisible);
+      hero.setAttribute('aria-hidden', heroPopupVisible ? 'false' : 'true');
     }
 
-    function setHeroBannerCollapsed(collapsed, options = {}) {
-      const nextCollapsed = !!collapsed;
-      const changed = heroBannerCollapsed !== nextCollapsed;
-      heroBannerCollapsed = nextCollapsed;
+    function setHeroPopupVisible(visible, options = {}) {
+      const nextVisible = !!visible;
+      const changed = heroPopupVisible !== nextVisible;
+      heroPopupVisible = nextVisible;
       syncHeroBannerState();
       if ((changed || options.force) && map) {
         setTimeout(() => map.invalidateSize(), 160);
       }
+    }
+
+    function dismissHeroPopup(options = {}) {
+      if (!heroPopupVisible && !options.force) return;
+      setHeroPopupVisible(false, options);
     }
 
     function syncDesktopTogglePosition() {
@@ -4141,8 +4139,8 @@
       if (controlsVisible && isCompactMobileLayout()) {
         setControlsCollapsed(true);
       }
-      if (isCompactMobileLayout() && !heroBannerCollapsed) {
-        setHeroBannerCollapsed(true);
+      if (heroPopupVisible) {
+        dismissHeroPopup();
       }
       if (isCompactMobileLayout() && !selectionCardCollapsed) {
         setSelectionCardCollapsed(true);
@@ -6728,7 +6726,7 @@
         }
       }
 
-      applyOverlayInset('hero-banner');
+      applyOverlayInset('top-shelf-rail');
       applyOverlayInset('selection-card');
       applyOverlayInset('stash-shelf');
 
@@ -8410,15 +8408,9 @@
       setControlsVisible(false);
     });
 
-    document.getElementById('hero-banner-head').addEventListener('click', e => {
+    document.getElementById('hero-banner-close').addEventListener('click', e => {
       e.stopPropagation();
-      setHeroBannerCollapsed(!heroBannerCollapsed);
-    });
-
-    document.getElementById('hero-banner-head').addEventListener('keydown', e => {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      e.preventDefault();
-      setHeroBannerCollapsed(!heroBannerCollapsed);
+      dismissHeroPopup();
     });
 
     document.getElementById('controls-header').addEventListener('click', e => {
@@ -8445,11 +8437,29 @@
       updateControlsSummary();
     });
 
+    document.getElementById('toggle-hero-popup-pref-btn').addEventListener('click', () => {
+      personalisation.showIntroPopupOnLoad = !personalisation.showIntroPopupOnLoad;
+      savePersonalisation();
+      applyPersonalisation();
+      if (!personalisation.showIntroPopupOnLoad) {
+        dismissHeroPopup();
+      }
+    });
+
     document.getElementById('reset-personalisation-btn').addEventListener('click', () => {
       resetPersonalisation();
     });
 
+    document.addEventListener('pointerdown', e => {
+      if (!heroPopupVisible) return;
+      if (e.target.closest('#hero-banner')) return;
+      dismissHeroPopup();
+    }, true);
+
     document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && heroPopupVisible) {
+        dismissHeroPopup();
+      }
       if (e.key !== '/' || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
 
       const target = e.target;
@@ -8460,6 +8470,7 @@
       if (!searchInput) return;
 
       e.preventDefault();
+      dismissHeroPopup();
       if (!controlsVisible) {
         setControlsVisible(true, { collapsed: false });
       } else if (controlsCollapsed) {
