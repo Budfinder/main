@@ -1390,7 +1390,195 @@
       color: var(--ink);
     }
 
+    #destination-card-deck {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .destination-cards-head {
+      display: grid;
+      gap: 10px;
+    }
+
+    .destination-cards-copy strong {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .destination-sort-label {
+      display: block;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .destination-sort-label select {
+      margin-top: 6px;
+    }
+
+    .destination-card-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+      max-height: 340px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      min-width: 0;
+    }
+
+    .destination-card-empty {
+      margin: 0;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.54);
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .destination-card {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+      min-height: 0;
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(92, 107, 97, 0.14) !important;
+      background: rgba(255, 255, 255, 0.78) !important;
+      color: var(--ink) !important;
+      text-align: left;
+      box-shadow: none !important;
+      backdrop-filter: blur(10px);
+    }
+
+    .destination-card.is-selected {
+      border-color: rgba(32, 91, 66, 0.3) !important;
+      box-shadow: inset 0 0 0 1px var(--accent-strong) !important;
+      background: rgba(255, 255, 255, 0.94) !important;
+    }
+
+    .destination-card.is-cheapest {
+      background:
+        linear-gradient(180deg, rgba(255, 243, 198, 0.8), rgba(255, 255, 255, 0.9)) !important;
+      border-color: rgba(188, 139, 31, 0.26) !important;
+    }
+
+    .destination-card-main {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .destination-card-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .destination-card-name {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--ink);
+    }
+
+    .destination-card-city {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .destination-card-price {
+      flex: 0 0 auto;
+      align-self: flex-start;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.46);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .destination-card-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .destination-card-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .destination-card-badge.is-cheapest {
+      background: rgba(255, 236, 180, 0.86);
+      border-color: rgba(188, 139, 31, 0.26);
+      color: #8b5615;
+    }
+
+    .destination-card-badge.is-selected {
+      background: rgba(213, 239, 225, 0.86);
+      border-color: rgba(32, 91, 66, 0.2);
+      color: var(--accent-strong);
+    }
+
+    .destination-card-badge.is-favourite {
+      background: rgba(255, 234, 214, 0.86);
+      border-color: rgba(196, 123, 63, 0.22);
+      color: #9a5320;
+    }
+
+    .destination-card-badge.is-closest {
+      background: rgba(229, 241, 255, 0.88);
+      border-color: rgba(66, 118, 182, 0.18);
+      color: #2a5a95;
+    }
+
+    .destination-card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .destination-card-meta strong {
+      color: var(--ink);
+      font-size: inherit;
+    }
+
+    .destination-card-cta {
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
     .controls label[for="destination-select"],
+    .controls label[for="destination-sort"],
     .controls label[for="mode"],
     .controls label[for="csv-switch-select"] {
       display: block;
@@ -2284,6 +2472,24 @@
         max-width: 96px;
       }
 
+      .destination-card-list {
+        max-height: 280px;
+      }
+
+      .destination-card {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+
+      .destination-card-name {
+        font-size: 14px;
+      }
+
+      .destination-card-meta {
+        gap: 6px 8px;
+        font-size: 11px;
+      }
+
       .strain-shelf-chip-btn {
         min-width: 58px;
         padding: 0 8px;
@@ -2716,6 +2922,24 @@
       max-width: 96px;
     }
 
+    body.compact-layout .destination-card-list {
+      max-height: 280px;
+    }
+
+    body.compact-layout .destination-card {
+      padding: 10px 12px;
+      gap: 8px;
+    }
+
+    body.compact-layout .destination-card-name {
+      font-size: 14px;
+    }
+
+    body.compact-layout .destination-card-meta {
+      gap: 6px 8px;
+      font-size: 11px;
+    }
+
     body.compact-layout .strain-shelf-chip-btn {
       min-width: 58px;
       padding: 0 8px;
@@ -3027,8 +3251,30 @@
         <label for="destination-search">Atlas search</label>
         <input id="destination-search" type="search" placeholder="Search a shop or city" autocomplete="off" />
         <div id="destination-search-status" class="field-note">Load a CSV to start narrowing the atlas.</div>
-        <label for="destination-select" style="margin-top:12px;">Destination</label>
-        <select id="destination-select"></select>
+        <div id="destination-picker-wrap">
+          <label for="destination-select" style="margin-top:12px;">Destination</label>
+          <select id="destination-select"></select>
+        </div>
+
+        <div id="destination-card-deck">
+          <div class="destination-cards-head">
+            <div class="destination-cards-copy">
+              <strong id="destination-card-title">Strain hunt picks</strong>
+              <div id="destination-card-status" class="field-note">Pick a strain to unlock richer route cards.</div>
+            </div>
+            <label class="destination-sort-label" for="destination-sort">
+              Sort
+              <select id="destination-sort">
+                <option value="best-match">Best match</option>
+                <option value="cheapest">Cheapest</option>
+                <option value="closest">Closest</option>
+                <option value="best-rated">Best rated</option>
+                <option value="alphabetical">A-Z</option>
+              </select>
+            </label>
+          </div>
+          <div id="destination-card-list" class="destination-card-list"></div>
+        </div>
 
         <label for="mission-mode" style="margin-top:12px;">Mission</label>
         <select id="mission-mode">
@@ -6558,6 +6804,7 @@
           if (lastPosition) {
             findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
           }
+          updateDestinationDropdown();
           updateControlsSummary();
         };
       }
@@ -6570,6 +6817,7 @@
           if (destIndex === null) {
             clearRouteUi();
             updateDistanceInfo();
+            refreshDestinationCards();
             return;
           }
 
@@ -6582,6 +6830,7 @@
           }
           focusDestinationOnMap(destIndex);
           updateDistanceInfo();
+          refreshDestinationCards();
         };
       }
 
@@ -7904,6 +8153,13 @@
       });
     }
 
+    const destinationSortSelect = document.getElementById('destination-sort');
+    if (destinationSortSelect) {
+      destinationSortSelect.addEventListener('change', () => {
+        updateDestinationDropdown();
+      });
+    }
+
     const surpriseBtn = document.getElementById('surprise-btn');
     if (surpriseBtn) {
       surpriseBtn.addEventListener('click', () => {
@@ -7953,6 +8209,14 @@
       const strain = (chip.getAttribute('data-top-rail-strain') || '').trim();
       if (!strain) return;
       await activateShelfStrain(strain, { closeShelf: false });
+    });
+
+    document.getElementById('destination-card-list').addEventListener('click', e => {
+      const card = e.target.closest('[data-destination-card-index]');
+      if (!card) return;
+      const index = parseInt(card.getAttribute('data-destination-card-index') || '', 10);
+      if (!Number.isInteger(index) || !locations[index]) return;
+      selectDestinationIndex(index);
     });
 
     document.getElementById('strain-spotlight-top-shops').addEventListener('click', e => {
@@ -8006,38 +8270,212 @@
     // Destination dropdown + markers
     // =========================================================
 
+    function getDestinationSortMode() {
+      const sortSelect = document.getElementById('destination-sort');
+      const value = sortSelect ? (sortSelect.value || '').toString().trim() : '';
+      return value || 'best-match';
+    }
+
+    function getDestinationSortLabel() {
+      const sortSelect = document.getElementById('destination-sort');
+      if (!sortSelect) return 'best match';
+      const opt = sortSelect.options[sortSelect.selectedIndex];
+      return ((opt && opt.text) || 'Best match').toLowerCase();
+    }
+
+    function compareOptionalNumbersAsc(a, b) {
+      const aOk = Number.isFinite(a);
+      const bOk = Number.isFinite(b);
+      if (aOk && bOk) {
+        if (Math.abs(a - b) < 0.0001) return 0;
+        return a - b;
+      }
+      if (aOk) return -1;
+      if (bOk) return 1;
+      return 0;
+    }
+
+    function compareStringsAlpha(a, b) {
+      return (a || '').localeCompare((b || ''), undefined, { sensitivity: 'base' });
+    }
+
+    function parsePriceAmountFromLabel(label) {
+      const match = (label || '').toString().match(/(\d+(?:[.,]\d+)?)/);
+      if (!match) return null;
+      const amount = parseFloat(match[1].replace(',', '.'));
+      return Number.isFinite(amount) ? amount : null;
+    }
+
+    function estimateTravelSecondsForMode(distanceMeters, mode) {
+      if (!Number.isFinite(distanceMeters) || distanceMeters < 0) return null;
+      if (mode === 'walking') return distanceMeters / 1.3889;
+      if (mode === 'cycling') return distanceMeters / 4.1667;
+      return distanceMeters / 9.7222;
+    }
+
+    function formatCompactDuration(totalSeconds) {
+      if (!Number.isFinite(totalSeconds) || totalSeconds <= 0) return '';
+      const roundedMinutes = Math.max(1, Math.round(totalSeconds / 60));
+      const hours = Math.floor(roundedMinutes / 60);
+      const minutes = roundedMinutes % 60;
+      if (hours > 0) {
+        return minutes ? `${hours}h ${minutes}m` : `${hours}h`;
+      }
+      return `${roundedMinutes}m`;
+    }
+
+    function buildDestinationItems() {
+      const modeSelect = document.getElementById('mode');
+      const mode = modeSelect ? (modeSelect.value || 'walking') : 'walking';
+      const items = locations
+        .map((loc, index) => {
+          if (!passesCategoryFilter(loc, index)) return null;
+
+          const distanceMeters = lastPosition ? haversineDistance(lastPosition, loc.coords) : null;
+          const etaLabel = formatCompactDuration(estimateTravelSecondsForMode(distanceMeters, mode));
+          const priceLabel = getMarkerPriceLabel(loc);
+          const rating = Number.isFinite(loc.rating) ? Math.max(0, Math.min(5, Math.round(loc.rating))) : 0;
+
+          return {
+            index,
+            loc,
+            name: loc.name || 'Unknown stop',
+            city: loc.city || inferCityFromCsvPath(currentCsvPath) || '',
+            distanceMeters,
+            distText: Number.isFinite(distanceMeters)
+              ? `${(distanceMeters / 1000).toFixed(2)} km`
+              : '',
+            etaLabel,
+            isFav: favorites.includes(index),
+            isCheapest: isLocationCheapestForActiveStrain(loc),
+            priceLabel,
+            priceAmount: parsePriceAmountFromLabel(priceLabel),
+            rating,
+            visited: !!loc.visited,
+            isClosest: false
+          };
+        })
+        .filter(Boolean);
+
+      const minDistance = items.reduce((min, item) => {
+        if (!Number.isFinite(item.distanceMeters)) return min;
+        return Math.min(min, item.distanceMeters);
+      }, Infinity);
+
+      items.forEach(item => {
+        item.isClosest = Number.isFinite(minDistance) && Number.isFinite(item.distanceMeters)
+          ? Math.abs(item.distanceMeters - minDistance) < 0.5
+          : false;
+      });
+
+      return items;
+    }
+
+    function sortDestinationItems(items) {
+      const sortMode = getDestinationSortMode();
+      return (Array.isArray(items) ? items.slice() : []).sort((a, b) => {
+        const alpha = compareStringsAlpha(a.name, b.name) || compareStringsAlpha(a.city, b.city);
+        const byFavourite = a.isFav === b.isFav ? 0 : (a.isFav ? -1 : 1);
+        const byCheapest = a.isCheapest === b.isCheapest ? 0 : (a.isCheapest ? -1 : 1);
+        const byClosest = compareOptionalNumbersAsc(a.distanceMeters, b.distanceMeters);
+        const byPrice = compareOptionalNumbersAsc(a.priceAmount, b.priceAmount);
+        const byRating = b.rating - a.rating;
+
+        if (sortMode === 'cheapest') {
+          return byCheapest || byPrice || byClosest || byFavourite || alpha;
+        }
+        if (sortMode === 'closest') {
+          return byClosest || byCheapest || byFavourite || byRating || alpha;
+        }
+        if (sortMode === 'best-rated') {
+          return byRating || byFavourite || byCheapest || byClosest || alpha;
+        }
+        if (sortMode === 'alphabetical') {
+          return alpha || byCheapest || byFavourite;
+        }
+
+        if (strainFilterText) {
+          return byCheapest || byPrice || byFavourite || byClosest || byRating || alpha;
+        }
+        return byFavourite || byClosest || byRating || alpha;
+      });
+    }
+
+    function renderDestinationCards(items) {
+      const pickerWrap = document.getElementById('destination-picker-wrap');
+      const cardDeck = document.getElementById('destination-card-deck');
+      const titleEl = document.getElementById('destination-card-title');
+      const statusEl = document.getElementById('destination-card-status');
+      const listEl = document.getElementById('destination-card-list');
+      if (!pickerWrap || !cardDeck || !titleEl || !statusEl || !listEl) return;
+
+      const showCards = !!getCanonicalStrainName(strainFilterText || '');
+      pickerWrap.style.display = showCards ? 'none' : 'block';
+
+      if (!showCards) {
+        cardDeck.style.display = 'none';
+        listEl.innerHTML = '';
+        return;
+      }
+
+      const activeName = getCanonicalStrainName(strainFilterText) || strainFilterText;
+      cardDeck.style.display = 'block';
+      titleEl.textContent = `${activeName} route picks`;
+
+      if (!items.length) {
+        statusEl.textContent = `No visible shops are carrying ${activeName} under the current filters.`;
+        listEl.innerHTML = '<p class="destination-card-empty">Loosen the mission, search, or category filters to bring more strain-matched shops back into play.</p>';
+        return;
+      }
+
+      statusEl.textContent = `${items.length} visible shop${items.length === 1 ? '' : 's'} carrying ${activeName}, sorted by ${getDestinationSortLabel()}.`;
+      listEl.innerHTML = items.map(item => {
+        const badges = [];
+        if (item.isSelected) badges.push('<span class="destination-card-badge is-selected">Current route</span>');
+        if (item.isCheapest) badges.push('<span class="destination-card-badge is-cheapest">Cheapest</span>');
+        if (item.isClosest) badges.push('<span class="destination-card-badge is-closest">Closest</span>');
+        if (item.isFav) badges.push('<span class="destination-card-badge is-favourite">Favourite</span>');
+
+        const metaBits = [];
+        if (item.distText) metaBits.push(`<span><strong>${escapeHtml(item.distText)}</strong> away</span>`);
+        if (item.etaLabel) metaBits.push(`<span><strong>ETA ${escapeHtml(item.etaLabel)}</strong></span>`);
+        if (item.rating > 0) metaBits.push(`<span><strong>${escapeHtml(renderStars(item.rating))}</strong></span>`);
+        if (item.visited) metaBits.push('<span>Visited before</span>');
+
+        return (
+          `<button type="button" class="destination-card${item.isSelected ? ' is-selected' : ''}${item.isCheapest ? ' is-cheapest' : ''}" data-destination-card-index="${item.index}">` +
+            `<span class="destination-card-main">` +
+              `<span class="destination-card-copy">` +
+                `<span class="destination-card-name">${escapeHtml(item.name)}</span>` +
+                `<span class="destination-card-city">${escapeHtml(item.city || 'Current atlas')}</span>` +
+              `</span>` +
+              `<span class="destination-card-price">${escapeHtml(item.priceLabel || 'Price offline')}</span>` +
+            `</span>` +
+            `${badges.length ? `<span class="destination-card-badges">${badges.join('')}</span>` : ''}` +
+            `${metaBits.length ? `<span class="destination-card-meta">${metaBits.join('')}</span>` : ''}` +
+            `<span class="destination-card-cta">${item.isSelected ? 'Active route target' : 'Tap to route and focus the map'}</span>` +
+          `</button>`
+        );
+      }).join('');
+    }
+
+    function refreshDestinationCards(items = null) {
+      const preparedItems = sortDestinationItems(items || buildDestinationItems()).map(item => ({
+        ...item,
+        isSelected: getSelectedDestinationIndex() === item.index
+      }));
+      renderDestinationCards(preparedItems);
+    }
+
     /**
-     * Rebuild the destination dropdown based on filters, sorting favourites first.
+     * Rebuild the destination dropdown based on filters, sorting according to the route view.
      */
     function updateDestinationDropdown() {
       const destSelect = document.getElementById('destination-select');
       const previousSelection = getSelectedDestinationIndex();
       destSelect.innerHTML = '';
 
-      const items = locations
-        .map((loc, i) => {
-          // Filter by category selection
-          if (!passesCategoryFilter(loc, i)) return null;
-
-          const isFav = favorites.includes(i);
-          const isCheapest = isLocationCheapestForActiveStrain(loc);
-          const priceLabel = getMarkerPriceLabel(loc);
-          const distText = lastPosition
-            ? (haversineDistance(lastPosition, loc.coords) / 1000).toFixed(2) + ' km'
-            : '';
-
-          return { index: i, name: loc.name, city: loc.city || '', distText, isFav, isCheapest, priceLabel };
-        })
-        .filter(x => x);
-
-      // Sort cheapest first when a strain is active, then favourites, then alphabetically.
-      items.sort((a, b) => {
-        if (a.isCheapest && !b.isCheapest) return -1;
-        if (!a.isCheapest && b.isCheapest) return 1;
-        if (a.isFav && !b.isFav) return -1;
-        if (!a.isFav && b.isFav) return 1;
-        return a.name.localeCompare(b.name);
-      });
+      const items = sortDestinationItems(buildDestinationItems());
 
       const placeholder = document.createElement('option');
       placeholder.value = '';
@@ -8071,6 +8509,7 @@
         clearRouteUi();
       }
 
+      refreshDestinationCards(items);
       updateControlsSummary();
       updateDistanceInfo();
     }
@@ -8239,6 +8678,7 @@
         if (!isNaN(i) && locations[i]) {
           locations[i].visited = e.target.checked;
           writeLocationPreference(locations[i], { visited: e.target.checked });
+          updateDestinationDropdown();
           updateControlsSummary();
         }
       }
@@ -8258,6 +8698,7 @@
         writeLocationPreference(locations[i], { rating: current });
         e.target.setAttribute('data-rating', current);
         e.target.textContent = renderStars(current);
+        updateDestinationDropdown();
         updateControlsSummary();
       }
     });
