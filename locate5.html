@@ -6212,8 +6212,8 @@
       document.getElementById('ui-toggles').style.display = 'block';
       setUploadPanelState('', '', false);
 
-      // Start with controls/directions hidden; keep strain list ready within controls.
-      setControlsVisible(false);
+      // Start with the atlas visible, then let outside interactions dismiss it.
+      setControlsVisible(true, { collapsed: false });
       setDirectionsVisible(false);
       setStrainListVisible(true);
 
@@ -8377,6 +8377,13 @@
       if (controlsVisible && isCompactMobileLayout()) {
         setControlsCollapsed(!controlsCollapsed);
       }
+    });
+
+    document.addEventListener('click', e => {
+      if (!controlsVisible) return;
+      if (e.target.closest('.controls')) return;
+      if (e.target.closest('#toggle-controls')) return;
+      setControlsVisible(false);
     });
 
     document.getElementById('display-name-input').addEventListener('input', e => {
