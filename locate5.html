@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Budfinder 5: Release Candidate 1</title>
+  <title>Budfinder</title>
 
   <!--
     OPTIONAL:
@@ -243,7 +243,7 @@
       #map {
         display: none;
         position: absolute;
-        top: 110px;
+        top: 12px;
         left: 12px;
         right: 12px;
         bottom: 14px;
@@ -2400,7 +2400,7 @@
       }
 
       #map {
-        top: 96px;
+        top: 12px;
       }
 
       body.mobile-selection-visible #map {
@@ -2461,6 +2461,10 @@
       #top-shelf-rail {
         margin-top: 0;
         padding: 10px 12px;
+      }
+
+      body.top-shelf-rail-active #map {
+        top: 92px;
       }
 
       .top-shelf-rail-chip {
@@ -2601,7 +2605,7 @@
     body.compact-layout #map {
       display: none;
       position: absolute;
-      top: 96px;
+      top: 12px;
       left: 12px;
       right: 12px;
       bottom: 14px;
@@ -2658,6 +2662,10 @@
       right: 12px;
       width: auto;
       padding: 10px 12px;
+    }
+
+    body.compact-layout.top-shelf-rail-active #map {
+      top: 92px;
     }
 
     body.compact-layout #selection-card {
@@ -3152,9 +3160,9 @@
       <button id="hero-banner-close" class="hero-banner-toggle-copy" type="button">Close</button>
     </div>
     <div id="hero-banner-content" class="hero-banner-content">
-      <h1>Budfinder 5: Release Candidate 1</h1>
+      <h1>Budfinder</h1>
       <p class="hero-copy">
-        Plot the next smoke stop, chase a specific strain, and keep a living map of the menus worth the detour.
+        Plot the next smoke stop, chase a specific strain, and keep a living map of the menus worth the detour. Version 1.01
       </p>
       <div class="hero-stats">
         <div class="hero-stat">
@@ -3222,6 +3230,7 @@
   <div id="ui-toggles" data-ready="false">
     <button id="toggle-controls" type="button">Atlas</button>
     <button id="toggle-shelf" type="button">Shelf</button>
+    <button id="clear-selection-toggle" type="button" hidden>Clear selection</button>
   </div>
   <input type="file" id="file-input" accept=".csv" style="display:none;" />
 
@@ -4105,7 +4114,7 @@
           ? 'Intro popup shows when Budfinder opens.'
           : 'Intro popup is disabled and will stay hidden on load.';
       }
-      document.title = rawName ? `${safeName}'s Budfinder 5: Release Candidate 1` : 'Budfinder 5: Release Candidate 1';
+      document.title = rawName ? `${safeName}'s Budfinder` : 'Budfinder';
     }
 
     function resetPersonalisation() {
@@ -4285,6 +4294,7 @@
       const changed = heroPopupVisible !== nextVisible;
       heroPopupVisible = nextVisible;
       syncHeroBannerState();
+      updateTopShelfRail();
       if ((changed || options.force) && map) {
         setTimeout(() => map.invalidateSize(), 160);
       }
@@ -4335,6 +4345,12 @@
       }, delay);
     }
 
+    function syncClearSelectionToggle() {
+      const clearBtn = document.getElementById('clear-selection-toggle');
+      if (!clearBtn) return;
+      clearBtn.hidden = getSelectedDestinationIndex() === null;
+    }
+
     function syncControlsChrome() {
       syncViewportCssVars();
       syncCompactLayoutState();
@@ -4366,6 +4382,7 @@
       if (btn) {
         btn.textContent = getControlsToggleLabel();
       }
+      syncClearSelectionToggle();
       if (hideBtn) {
         if (!controlsVisible) {
           hideBtn.style.display = 'none';
@@ -4811,6 +4828,8 @@
       }
 
       const entries = getStashShelfEntries();
+      const shouldShowRail = !!locations.length && !!entries.length && !heroPopupVisible;
+      document.body.classList.toggle('top-shelf-rail-active', shouldShowRail);
       if (!locations.length || !entries.length) {
         rail.style.display = 'none';
         list.innerHTML = '';
@@ -7138,6 +7157,24 @@
       return true;
     }
 
+    function clearDestinationSelection() {
+      const destinationSelect = document.getElementById('destination-select');
+      if (!destinationSelect || getSelectedDestinationIndex() === null) return;
+
+      destinationSelect.value = '';
+      if (map) {
+        map.closePopup();
+      }
+      activePopupLocationIndex = null;
+      if (directionsVisible) {
+        setDirectionsVisible(false);
+      }
+      destinationSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      updateSelectionCard();
+      refreshDestinationCards();
+      syncClearSelectionToggle();
+    }
+
     function locateDestinationIndex(index) {
       selectDestinationIndex(index);
     }
@@ -8016,6 +8053,7 @@
       updateTopShelfRail();
       updateStrainSpotlight();
       syncActiveStrainShelfButton();
+      syncClearSelectionToggle();
       if (!summaryEl) return;
 
       if (!locations.length) {
@@ -8786,6 +8824,10 @@
 
     document.getElementById('toggle-directions').addEventListener('click', () => {
       setDirectionsVisible(!directionsVisible);
+    });
+
+    document.getElementById('clear-selection-toggle').addEventListener('click', () => {
+      clearDestinationSelection();
     });
 
     document.getElementById('instructions').addEventListener('click', e => {
