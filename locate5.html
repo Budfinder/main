@@ -4348,7 +4348,10 @@
     function syncClearSelectionToggle() {
       const clearBtn = document.getElementById('clear-selection-toggle');
       if (!clearBtn) return;
-      clearBtn.hidden = getSelectedDestinationIndex() === null;
+      const hasDestination = getSelectedDestinationIndex() !== null;
+      const hasStrain = !!(strainFilterText || '').trim();
+      clearBtn.hidden = !hasDestination && !hasStrain;
+      clearBtn.textContent = hasDestination && hasStrain ? 'Clear selections' : 'Clear selection';
     }
 
     function syncControlsChrome() {
@@ -7159,19 +7162,29 @@
 
     function clearDestinationSelection() {
       const destinationSelect = document.getElementById('destination-select');
-      if (!destinationSelect || getSelectedDestinationIndex() === null) return;
+      const hasDestination = getSelectedDestinationIndex() !== null;
+      const hasStrain = !!(strainFilterText || '').trim();
+      if (!destinationSelect || (!hasDestination && !hasStrain)) return;
 
-      destinationSelect.value = '';
-      if (map) {
-        map.closePopup();
+      if (hasDestination) {
+        destinationSelect.value = '';
+        if (map) {
+          map.closePopup();
+        }
+        activePopupLocationIndex = null;
+        if (directionsVisible) {
+          setDirectionsVisible(false);
+        }
+        destinationSelect.dispatchEvent(new Event('change', { bubbles: true }));
       }
-      activePopupLocationIndex = null;
-      if (directionsVisible) {
-        setDirectionsVisible(false);
+
+      if (hasStrain) {
+        clearStrainFilter();
+      } else {
+        updateSelectionCard();
+        refreshDestinationCards();
       }
-      destinationSelect.dispatchEvent(new Event('change', { bubbles: true }));
-      updateSelectionCard();
-      refreshDestinationCards();
+
       syncClearSelectionToggle();
     }
 
