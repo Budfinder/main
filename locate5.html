@@ -3508,12 +3508,12 @@
     let strainImageMapPromise = null;
     let discoveredCsvPaths = [];     // discovered CSV paths in the hosted folder
     let currentCsvPath = '';         // current CSV path when loaded from URL
-    const LEGACY_PERSONALISATION_STORAGE_KEY = 'locate2_personalisation';
-    const PERSONALISATION_STORAGE_KEY = 'locate3_personalisation';
-    const LOCATION_PREFERENCES_STORAGE_KEY = 'locate3_location_preferences';
+    // Versionless Budfinder keys are the permanent home; legacy locate keys keep older pages compatible.
+    const PERSONALISATION_STORAGE_KEYS = ['budfinder_personalisation', 'locate3_personalisation', 'locate2_personalisation'];
+    const LOCATION_PREFERENCES_STORAGE_KEYS = ['budfinder_location_preferences', 'locate3_location_preferences'];
     const LEGACY_FAVORITES_STORAGE_KEY = 'favorites';
-    const RECENT_DESTINATIONS_STORAGE_KEY = 'locate3_recent_destinations';
-    const STRAIN_SHELF_STORAGE_KEY = 'locate3_strain_shelf';
+    const RECENT_DESTINATIONS_STORAGE_KEYS = ['budfinder_recent_destinations', 'locate3_recent_destinations'];
+    const STRAIN_SHELF_STORAGE_KEYS = ['budfinder_strain_shelf', 'locate3_strain_shelf'];
     const accentThemeAliases = {
       amber: 'lemon-haze',
       lagoon: 'blue-dream',
@@ -3853,9 +3853,9 @@
       }
     };
     let legacyFavoriteIndices = loadStoredJson(LEGACY_FAVORITES_STORAGE_KEY, []);
-    let recentDestinationKeys = loadStoredJson(RECENT_DESTINATIONS_STORAGE_KEY, []);
-    let shelfStrainNames = loadStoredJson(STRAIN_SHELF_STORAGE_KEY, []);
-    let locationPreferences = loadStoredJson(LOCATION_PREFERENCES_STORAGE_KEY, {});
+    let recentDestinationKeys = loadStoredArray(RECENT_DESTINATIONS_STORAGE_KEYS, []);
+    let shelfStrainNames = loadStoredArray(STRAIN_SHELF_STORAGE_KEYS, []);
+    let locationPreferences = loadStoredObject(LOCATION_PREFERENCES_STORAGE_KEYS, {});
     let favorites = [];
     let personalisation = {
       displayName: 'Explorer',
@@ -3863,22 +3863,87 @@
       showIntroPopupOnLoad: true
     };
 
-    function loadStoredJson(key, fallback) {
+    function normaliseStorageKeys(keys) {
+      return Array.isArray(keys) ? keys.filter(Boolean) : [keys].filter(Boolean);
+    }
+
+    function parseStoredJson(key) {
       try {
         const raw = localStorage.getItem(key);
-        if (!raw) return fallback;
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(fallback)) {
-          return Array.isArray(parsed) ? parsed : fallback;
-        }
-        return (parsed && typeof parsed === 'object') ? parsed : fallback;
+        return raw ? JSON.parse(raw) : undefined;
       } catch (_err) {
-        return fallback;
+        return undefined;
       }
     }
 
+    function loadStoredJson(keys, fallback) {
+      const storageKeys = normaliseStorageKeys(keys);
+      for (const key of storageKeys) {
+        const parsed = parseStoredJson(key);
+        if (Array.isArray(fallback)) {
+          if (Array.isArray(parsed)) return parsed;
+          continue;
+        }
+        if (fallback && typeof fallback === 'object') {
+          if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+          continue;
+        }
+        if (typeof parsed !== 'undefined') return parsed;
+      }
+      return fallback;
+    }
+
+    function loadStoredObject(keys, fallback = {}) {
+      const storageKeys = normaliseStorageKeys(keys);
+      const merged = {};
+      let found = false;
+      storageKeys.slice().reverse().forEach(key => {
+        const parsed = parseStoredJson(key);
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return;
+        Object.assign(merged, parsed);
+        found = true;
+      });
+      return found ? merged : fallback;
+    }
+
+    function loadStoredArray(keys, fallback = []) {
+      const storageKeys = normaliseStorageKeys(keys);
+      const merged = [];
+      const seen = new Set();
+      let found = false;
+      storageKeys.forEach(key => {
+        const parsed = parseStoredJson(key);
+        if (!Array.isArray(parsed)) return;
+        found = true;
+        parsed.forEach(item => {
+          const marker = JSON.stringify(item);
+          if (seen.has(marker)) return;
+          seen.add(marker);
+          merged.push(item);
+        });
+      });
+      return found ? merged : fallback;
+    }
+
+    function saveStoredJson(keys, value) {
+      const storageKeys = normaliseStorageKeys(keys);
+      let raw = '';
+      try {
+        raw = JSON.stringify(value);
+      } catch (_err) {
+        return;
+      }
+      storageKeys.forEach(key => {
+        try {
+          localStorage.setItem(key, raw);
+        } catch (_err) {
+          // Storage can be blocked in private browsing or hardened browser modes.
+        }
+      });
+    }
+
     function saveLocationPreferences() {
-      localStorage.setItem(LOCATION_PREFERENCES_STORAGE_KEY, JSON.stringify(locationPreferences));
+      saveStoredJson(LOCATION_PREFERENCES_STORAGE_KEYS, locationPreferences);
     }
 
     function normaliseAccentThemeKey(value) {
@@ -3915,11 +3980,11 @@
 
     function persistLegacyFavorites() {
       legacyFavoriteIndices = favorites.slice();
-      localStorage.setItem(LEGACY_FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+      saveStoredJson(LEGACY_FAVORITES_STORAGE_KEY, favorites);
     }
 
     function saveRecentDestinations() {
-      localStorage.setItem(RECENT_DESTINATIONS_STORAGE_KEY, JSON.stringify(recentDestinationKeys));
+      saveStoredJson(RECENT_DESTINATIONS_STORAGE_KEYS, recentDestinationKeys);
     }
 
     function getCanonicalStrainName(name) {
@@ -3948,7 +4013,7 @@
 
     function saveShelfStrains() {
       shelfStrainNames = normaliseShelfStrainNames(shelfStrainNames);
-      localStorage.setItem(STRAIN_SHELF_STORAGE_KEY, JSON.stringify(shelfStrainNames));
+      saveStoredJson(STRAIN_SHELF_STORAGE_KEYS, shelfStrainNames);
     }
 
     function isStrainShelved(name) {
@@ -4056,9 +4121,7 @@
 
     function loadPersonalisation() {
       try {
-        const stored = loadStoredJson(PERSONALISATION_STORAGE_KEY, {});
-        const legacy = loadStoredJson(LEGACY_PERSONALISATION_STORAGE_KEY, {});
-        const merged = Object.keys(stored).length ? stored : legacy;
+        const merged = loadStoredObject(PERSONALISATION_STORAGE_KEYS, {});
         if (merged && typeof merged === 'object') {
           const hasDisplayName = Object.prototype.hasOwnProperty.call(merged, 'displayName');
           const displayName = (merged.displayName || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
@@ -4076,7 +4139,7 @@
     }
 
     function savePersonalisation() {
-      localStorage.setItem(PERSONALISATION_STORAGE_KEY, JSON.stringify(personalisation));
+      saveStoredJson(PERSONALISATION_STORAGE_KEYS, personalisation);
     }
 
     function applyPersonalisation() {
