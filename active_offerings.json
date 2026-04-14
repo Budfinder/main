@@ -143,14 +143,14 @@
     "strain_id": 83,
     "strain_name": "AK-47",
     "strain_name_normalised": "AK-47",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 9.0,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:10:03.358140+00:00",
-    "updated_at": "2026-02-19T22:10:03.358140+00:00"
+    "updated_at": "2026-04-14T17:39:19.703005+00:00"
   },
   {
     "shop_id": 49,
@@ -160,14 +160,14 @@
     "strain_id": 83,
     "strain_name": "AK-47",
     "strain_name_normalised": "AK-47",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-02-19T15:34:35.564057+00:00",
-    "updated_at": "2026-02-19T15:34:35.564057+00:00"
+    "updated_at": "2026-04-14T17:39:19.703005+00:00"
   },
   {
     "shop_id": 66,
@@ -228,14 +228,14 @@
     "strain_id": 83,
     "strain_name": "AK-47",
     "strain_name_normalised": "AK-47",
-    "base_type": "sativa",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-03-07T19:55:26.246568+00:00",
-    "updated_at": "2026-03-07T19:55:26.246568+00:00"
+    "updated_at": "2026-04-14T17:39:19.703005+00:00"
   },
   {
     "shop_id": 139,
@@ -268,8 +268,8 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 203,
@@ -330,14 +330,14 @@
     "strain_id": 83,
     "strain_name": "AK-47",
     "strain_name_normalised": "AK-47",
-    "base_type": "sativa",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-03-07T11:30:25.630587+00:00",
-    "updated_at": "2026-03-07T11:30:25.630587+00:00"
+    "updated_at": "2026-04-14T17:39:19.703005+00:00"
   },
   {
     "shop_id": 410,
@@ -415,14 +415,14 @@
     "strain_id": 83,
     "strain_name": "AK-47",
     "strain_name_normalised": "AK-47",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-03-07T12:54:55.178174+00:00",
-    "updated_at": "2026-03-07T12:54:55.178174+00:00"
+    "updated_at": "2026-04-14T17:39:19.703005+00:00"
   },
   {
     "shop_id": 98,
@@ -432,14 +432,14 @@
     "strain_id": 83,
     "strain_name": "AK-47",
     "strain_name_normalised": "AK-47",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 9.5,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-03-07T15:12:18.374111+00:00",
-    "updated_at": "2026-03-07T15:12:18.374111+00:00"
+    "updated_at": "2026-04-14T17:39:19.703005+00:00"
   },
   {
     "shop_id": 433,
@@ -449,14 +449,14 @@
     "strain_id": 83,
     "strain_name": "AK-47",
     "strain_name_normalised": "AK-47",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 9.0,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-03-07T15:35:38.032816+00:00",
-    "updated_at": "2026-03-07T15:35:38.032816+00:00"
+    "updated_at": "2026-04-14T17:39:19.703005+00:00"
   },
   {
     "shop_id": 376,
@@ -761,8 +761,8 @@
     "price_amount": 7.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 202,
@@ -778,8 +778,8 @@
     "price_amount": 8.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 203,
@@ -935,23 +935,6 @@
     "updated_at": "2026-03-07T15:30:06.664783+00:00"
   },
   {
-    "shop_id": 133,
-    "shop_key": "cs-flower-power",
-    "shop_name": "Flower Power",
-    "shop_city": "Amsterdam",
-    "strain_id": 1201,
-    "strain_name": "AMNESIA HAZE G13",
-    "strain_name_normalised": "AMNESIA HAZE G13",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T21:04:42.549759+00:00",
-    "updated_at": "2026-02-20T21:04:42.549759+00:00"
-  },
-  {
     "shop_id": 320,
     "shop_key": "cs-rockland",
     "shop_name": "Rockland",
@@ -1069,23 +1052,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T10:42:27.284741+00:00",
     "updated_at": "2026-02-20T10:42:27.284741+00:00"
-  },
-  {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 2336,
-    "strain_name": "Acai Zoda",
-    "strain_name_normalised": "acai zoda",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 25.0,
-    "price_unit": "g",
-    "notes": "Mythodic",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
   },
   {
     "shop_id": 277,
@@ -2193,6 +2159,23 @@
     "updated_at": "2026-02-19T15:37:09.063384+00:00"
   },
   {
+    "shop_id": 133,
+    "shop_key": "cs-flower-power",
+    "shop_name": "Flower Power",
+    "shop_city": "Amsterdam",
+    "strain_id": 102,
+    "strain_name": "Amnesia Haze",
+    "strain_name_normalised": "amnesia haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 9.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:34:28.664425+00:00",
+    "updated_at": "2026-04-14T17:34:28.664425+00:00"
+  },
+  {
     "shop_id": 139,
     "shop_key": "cs-free-i",
     "shop_name": "Free I",
@@ -2444,8 +2427,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 192,
@@ -3124,8 +3107,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
   },
   {
     "shop_id": 422,
@@ -3226,8 +3209,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "1.2g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 364,
@@ -4012,23 +3995,6 @@
     "updated_at": "2026-04-10T15:54:26.903491+00:00"
   },
   {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 58,
-    "strain_name": "Apples and Bananas",
-    "strain_name_normalised": "apples and bananas",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
-  },
-  {
     "shop_id": 359,
     "shop_key": "cs-stud",
     "shop_name": "Stud",
@@ -4042,8 +4008,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "0.8g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 114,
@@ -4112,23 +4078,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-01T09:04:41.062259+00:00",
     "updated_at": "2026-03-01T09:04:41.062259+00:00"
-  },
-  {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 2328,
-    "strain_name": "Artemiz",
-    "strain_name_normalised": "artemiz",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 22.0,
-    "price_unit": "g",
-    "notes": "Mythodic",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
   },
   {
     "shop_id": 94,
@@ -4656,23 +4605,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
     "updated_at": "2026-03-07T19:54:56.738776+00:00"
-  },
-  {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 358,
-    "strain_name": "Berry White",
-    "strain_name_normalised": "berry white",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
   },
   {
     "shop_id": 4,
@@ -5810,8 +5742,8 @@
     "price_amount": 14.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 187,
@@ -6222,6 +6154,23 @@
     "updated_at": "2026-02-19T22:17:21.909351+00:00"
   },
   {
+    "shop_id": 349,
+    "shop_key": "cs-solo",
+    "shop_name": "Solo",
+    "shop_city": "Amsterdam",
+    "strain_id": 80,
+    "strain_name": "Blue Cheese",
+    "strain_name_normalised": "blue cheese",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
+  },
+  {
     "shop_id": 352,
     "shop_key": "cs-speak-easy-ams-2",
     "shop_name": "Speakeasy 2",
@@ -6594,23 +6543,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:00:22.398906+00:00",
     "updated_at": "2026-02-19T22:00:22.398906+00:00"
-  },
-  {
-    "shop_id": 359,
-    "shop_key": "cs-stud",
-    "shop_name": "Stud",
-    "shop_city": "Amsterdam",
-    "strain_id": 327,
-    "strain_name": "Blue Gem",
-    "strain_name_normalised": "blue gem",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 266,
@@ -7531,6 +7463,23 @@
     "updated_at": "2026-02-19T17:17:49.521349+00:00"
   },
   {
+    "shop_id": 202,
+    "shop_key": "cs-kadinsky",
+    "shop_name": "Kadinsky",
+    "shop_city": "Amsterdam",
+    "strain_id": 648,
+    "strain_name": "Blueberry",
+    "strain_name_normalised": "blueberry",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
+  },
+  {
     "shop_id": 426,
     "shop_key": "cs-stones-corner",
     "shop_name": "Stones Corner",
@@ -7667,23 +7616,6 @@
     "updated_at": "2026-02-28T22:10:00.445205+00:00"
   },
   {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 558,
-    "strain_name": "Blueberry Kush",
-    "strain_name_normalised": "blueberry kush",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
-  },
-  {
     "shop_id": 87,
     "shop_key": "cs-chapiteau",
     "shop_name": "Chapiteau",
@@ -7750,6 +7682,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
     "updated_at": "2026-03-07T19:39:32.103569+00:00"
+  },
+  {
+    "shop_id": 133,
+    "shop_key": "cs-flower-power",
+    "shop_name": "Flower Power",
+    "shop_city": "Amsterdam",
+    "strain_id": 1844,
+    "strain_name": "Bolo Runtz",
+    "strain_name_normalised": "bolo runtz",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:34:28.664425+00:00",
+    "updated_at": "2026-04-14T17:34:28.664425+00:00"
   },
   {
     "shop_id": 257,
@@ -8716,9 +8665,9 @@
     "price_currency": "€",
     "price_amount": 12.0,
     "price_unit": "g",
-    "notes": "Kadinsky Special",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 173,
@@ -9180,23 +9129,6 @@
     "updated_at": "2026-04-10T14:41:24.478050+00:00"
   },
   {
-    "shop_id": 133,
-    "shop_key": "cs-flower-power",
-    "shop_name": "Flower Power",
-    "shop_city": "Amsterdam",
-    "strain_id": 1202,
-    "strain_name": "Candy Kush",
-    "strain_name_normalised": "candy kush",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T21:04:42.549759+00:00",
-    "updated_at": "2026-02-20T21:04:42.549759+00:00"
-  },
-  {
     "shop_id": 138,
     "shop_key": "cs-freedom",
     "shop_name": "Freedom",
@@ -9212,6 +9144,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-04-10T15:54:26.903491+00:00",
     "updated_at": "2026-04-10T15:54:26.903491+00:00"
+  },
+  {
+    "shop_id": 202,
+    "shop_key": "cs-kadinsky",
+    "shop_name": "Kadinsky",
+    "shop_city": "Amsterdam",
+    "strain_id": 1202,
+    "strain_name": "Candy Kush",
+    "strain_name_normalised": "candy kush",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 203,
@@ -9724,6 +9673,23 @@
     "updated_at": "2026-04-10T15:54:26.903491+00:00"
   },
   {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 1224,
+    "strain_name": "Cereal Milk",
+    "strain_name_normalised": "cereal milk",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
+  },
+  {
     "shop_id": 392,
     "shop_key": "cs-watersnip",
     "shop_name": "Juice Bar de Watersnip",
@@ -9909,23 +9875,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T21:03:18.290363+00:00",
     "updated_at": "2026-02-20T21:03:18.290363+00:00"
-  },
-  {
-    "shop_id": 133,
-    "shop_key": "cs-flower-power",
-    "shop_name": "Flower Power",
-    "shop_city": "Amsterdam",
-    "strain_id": 23,
-    "strain_name": "Cheese",
-    "strain_name_normalised": "cheese",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T21:04:42.549759+00:00",
-    "updated_at": "2026-02-20T21:04:42.549759+00:00"
   },
   {
     "shop_id": 138,
@@ -10553,8 +10502,8 @@
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 59,
@@ -10795,23 +10744,6 @@
     "updated_at": "2026-02-20T20:16:33.012554+00:00"
   },
   {
-    "shop_id": 359,
-    "shop_key": "cs-stud",
-    "shop_name": "Stud",
-    "shop_city": "Amsterdam",
-    "strain_id": 1034,
-    "strain_name": "Cherry Gelato",
-    "strain_name_normalised": "cherry gelato",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
-  },
-  {
     "shop_id": 382,
     "shop_key": "cs-vip",
     "shop_name": "V.I.P. Shop",
@@ -10980,6 +10912,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T22:17:21.909351+00:00",
     "updated_at": "2026-02-19T22:17:21.909351+00:00"
+  },
+  {
+    "shop_id": 202,
+    "shop_key": "cs-kadinsky",
+    "shop_name": "Kadinsky",
+    "shop_city": "Amsterdam",
+    "strain_id": 3412,
+    "strain_name": "Cherry Pop",
+    "strain_name_normalised": "cherry pop",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 371,
@@ -11473,6 +11422,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
     "updated_at": "2026-03-07T20:10:35.829478+00:00"
+  },
+  {
+    "shop_id": 202,
+    "shop_key": "cs-kadinsky",
+    "shop_name": "Kadinsky",
+    "shop_city": "Amsterdam",
+    "strain_id": 3414,
+    "strain_name": "Citrus Berry",
+    "strain_name_normalised": "citrus berry",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 92,
@@ -13205,8 +13171,8 @@
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 296,
@@ -13613,8 +13579,8 @@
     "price_amount": 15.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 173,
@@ -13804,6 +13770,23 @@
     "updated_at": "2026-03-01T01:05:38.622259+00:00"
   },
   {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 67,
+    "strain_name": "Enemy of the State",
+    "strain_name_normalised": "enemy of the state",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
+  },
+  {
     "shop_id": 320,
     "shop_key": "cs-rockland",
     "shop_name": "Rockland",
@@ -13862,14 +13845,14 @@
     "strain_id": 67,
     "strain_name": "Enemy of the State",
     "strain_name_normalised": "enemy of the state",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
-    "notes": "1g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 70,
@@ -14093,23 +14076,6 @@
     "updated_at": "2026-03-01T09:15:28.030854+00:00"
   },
   {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 386,
-    "strain_name": "Exodus Cheese",
-    "strain_name_normalised": "exodus cheese",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 16.5,
-    "price_unit": "g",
-    "notes": "Kadinsky Special",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
-  },
-  {
     "shop_id": 74,
     "shop_key": "cs-brug",
     "shop_name": "De Brug",
@@ -14210,23 +14176,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T17:15:45.417070+00:00",
     "updated_at": "2026-02-19T17:15:45.417070+00:00"
-  },
-  {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1496,
-    "strain_name": "Fig and Cherry",
-    "strain_name_normalised": "fig and cherry",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 16.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
   },
   {
     "shop_id": 239,
@@ -15075,8 +15024,8 @@
     "price_amount": 12.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 25,
@@ -15351,23 +15300,6 @@
     "updated_at": "2026-03-07T12:52:48.640686+00:00"
   },
   {
-    "shop_id": 359,
-    "shop_key": "cs-stud",
-    "shop_name": "Stud",
-    "shop_city": "Amsterdam",
-    "strain_id": 320,
-    "strain_name": "G15 HAZE",
-    "strain_name_normalised": "G15 HAZE",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "0.9g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
-  },
-  {
     "shop_id": 98,
     "shop_key": "cs-corner",
     "shop_name": "The Corner",
@@ -15449,8 +15381,8 @@
     "price_amount": 14.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 40,
@@ -16157,14 +16089,14 @@
     "strain_id": 559,
     "strain_name": "Gaz OG",
     "strain_name_normalised": "gaz og",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 12.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 203,
@@ -16352,6 +16284,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T22:38:52.005739+00:00",
     "updated_at": "2026-02-20T22:38:52.005739+00:00"
+  },
+  {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 117,
+    "strain_name": "Gelato",
+    "strain_name_normalised": "gelato",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 205,
@@ -17412,6 +17361,23 @@
     "shop_key": "cs-stud",
     "shop_name": "Stud",
     "shop_city": "Amsterdam",
+    "strain_id": 330,
+    "strain_name": "Girl Scout Cookies",
+    "strain_name_normalised": "girl scout cookies",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "0.9g",
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
+  },
+  {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
     "strain_id": 324,
     "strain_name": "Gizmo",
     "strain_name_normalised": "gizmo",
@@ -17421,8 +17387,8 @@
     "price_amount": 16.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 182,
@@ -17629,23 +17595,6 @@
     "updated_at": "2026-04-10T15:30:29.637486+00:00"
   },
   {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 565,
-    "strain_name": "Gorilla Cheese",
-    "strain_name_normalised": "gorilla cheese",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "Kadinsky Special",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
-  },
-  {
     "shop_id": 179,
     "shop_key": "cs-hightime-alk",
     "shop_name": "High-Time",
@@ -17780,6 +17729,23 @@
     "notes": "Black Diamond",
     "last_seen_at_utc": "2026-02-19T15:36:11.101251+00:00",
     "updated_at": "2026-02-19T15:36:11.101251+00:00"
+  },
+  {
+    "shop_id": 133,
+    "shop_key": "cs-flower-power",
+    "shop_name": "Flower Power",
+    "shop_city": "Amsterdam",
+    "strain_id": 114,
+    "strain_name": "Gorilla Glue",
+    "strain_name_normalised": "gorilla glue",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:34:28.664425+00:00",
+    "updated_at": "2026-04-14T17:34:28.664425+00:00"
   },
   {
     "shop_id": 392,
@@ -18033,8 +17999,8 @@
     "price_amount": 14.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
   },
   {
     "shop_id": 52,
@@ -18486,14 +18452,14 @@
     "strain_id": 222,
     "strain_name": "Guava",
     "strain_name_normalised": "guava",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
-    "notes": "Kadinsky Special",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 371,
@@ -18681,23 +18647,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-01T22:23:33.621184+00:00",
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
-  },
-  {
-    "shop_id": 359,
-    "shop_key": "cs-stud",
-    "shop_name": "Stud",
-    "shop_city": "Amsterdam",
-    "strain_id": 326,
-    "strain_name": "Gumbo",
-    "strain_name_normalised": "gumbo",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 15.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 77,
@@ -18936,23 +18885,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T09:54:13.143494+00:00",
     "updated_at": "2026-02-20T09:54:13.143494+00:00"
-  },
-  {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 447,
-    "strain_name": "Hawian Haze",
-    "strain_name_normalised": "hawian haze",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
   },
   {
     "shop_id": 204,
@@ -19276,23 +19208,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T18:51:58.514308+00:00",
     "updated_at": "2026-02-19T18:51:58.514308+00:00"
-  },
-  {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 1846,
-    "strain_name": "Hermes OG",
-    "strain_name_normalised": "hermes og",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 22.0,
-    "price_unit": "g",
-    "notes": "Mythodic",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
   },
   {
     "shop_id": 429,
@@ -19686,23 +19601,6 @@
     "updated_at": "2026-02-19T22:49:03.849457+00:00"
   },
   {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 563,
-    "strain_name": "Ice",
-    "strain_name_normalised": "ice",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "Kadinsky Special",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
-  },
-  {
     "shop_id": 201,
     "shop_key": "cs-kade",
     "shop_name": "De Kade",
@@ -19888,23 +19786,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-25T22:25:33.772025+00:00",
     "updated_at": "2026-02-25T22:25:33.772025+00:00"
-  },
-  {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 7,
-    "strain_name": "Ice Cream Cake",
-    "strain_name_normalised": "ice cream cake",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
   },
   {
     "shop_id": 204,
@@ -20874,6 +20755,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T20:27:16.686097+00:00",
     "updated_at": "2026-02-20T20:27:16.686097+00:00"
+  },
+  {
+    "shop_id": 133,
+    "shop_key": "cs-flower-power",
+    "shop_name": "Flower Power",
+    "shop_city": "Amsterdam",
+    "strain_id": 237,
+    "strain_name": "Jet Fuel",
+    "strain_name_normalised": "jet fuel",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:34:28.664425+00:00",
+    "updated_at": "2026-04-14T17:34:28.664425+00:00"
   },
   {
     "shop_id": 147,
@@ -21991,11 +21889,11 @@
     "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 15.0,
+    "price_amount": 16.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 185,
@@ -22198,8 +22096,8 @@
     "price_amount": 13.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
   },
   {
     "shop_id": 426,
@@ -22542,6 +22440,23 @@
     "updated_at": "2026-02-20T23:56:56.417249+00:00"
   },
   {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
+    "strain_id": 407,
+    "strain_name": "Kush Mintz",
+    "strain_name_normalised": "kush mintz",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 14.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
+  },
+  {
     "shop_id": 386,
     "shop_key": "cs-voyagers",
     "shop_name": "Voyagers",
@@ -22557,6 +22472,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T15:38:52.653193+00:00",
     "updated_at": "2026-02-19T15:38:52.653193+00:00"
+  },
+  {
+    "shop_id": 133,
+    "shop_key": "cs-flower-power",
+    "shop_name": "Flower Power",
+    "shop_city": "Amsterdam",
+    "strain_id": 3376,
+    "strain_name": "Kush R.S.",
+    "strain_name_normalised": "kush r.s.",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:34:28.664425+00:00",
+    "updated_at": "2026-04-14T17:34:28.664425+00:00"
   },
   {
     "shop_id": 39,
@@ -23715,23 +23647,6 @@
     "updated_at": "2026-02-20T20:09:47.366098+00:00"
   },
   {
-    "shop_id": 133,
-    "shop_key": "cs-flower-power",
-    "shop_name": "Flower Power",
-    "shop_city": "Amsterdam",
-    "strain_id": 13,
-    "strain_name": "Lemon Haze",
-    "strain_name_normalised": "lemon haze",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 7.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T21:04:42.549759+00:00",
-    "updated_at": "2026-02-20T21:04:42.549759+00:00"
-  },
-  {
     "shop_id": 139,
     "shop_key": "cs-free-i",
     "shop_name": "Free I",
@@ -23796,8 +23711,8 @@
     "price_amount": 13.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 203,
@@ -24170,8 +24085,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "0.9g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 364,
@@ -24427,23 +24342,6 @@
     "notes": "@SuperDope",
     "last_seen_at_utc": "2026-02-19T23:27:42.844525+00:00",
     "updated_at": "2026-02-19T23:27:42.844525+00:00"
-  },
-  {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 811,
-    "strain_name": "Lemon Popperz",
-    "strain_name_normalised": "lemon popperz",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
   },
   {
     "shop_id": 39,
@@ -25670,6 +25568,23 @@
     "updated_at": "2026-03-07T13:33:58.686993+00:00"
   },
   {
+    "shop_id": 202,
+    "shop_key": "cs-kadinsky",
+    "shop_name": "Kadinsky",
+    "shop_city": "Amsterdam",
+    "strain_id": 3403,
+    "strain_name": "Maui Haze",
+    "strain_name_normalised": "maui haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
+  },
+  {
     "shop_id": 257,
     "shop_key": "cs-newtimes2",
     "shop_name": "New Times 2",
@@ -25787,23 +25702,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T19:54:56.738776+00:00",
     "updated_at": "2026-03-07T19:54:56.738776+00:00"
-  },
-  {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1497,
-    "strain_name": "Mega-Z",
-    "strain_name_normalised": "mega-z",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 16.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
   },
   {
     "shop_id": 23,
@@ -26059,6 +25957,40 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T19:39:32.103569+00:00",
     "updated_at": "2026-03-07T19:39:32.103569+00:00"
+  },
+  {
+    "shop_id": 133,
+    "shop_key": "cs-flower-power",
+    "shop_name": "Flower Power",
+    "shop_city": "Amsterdam",
+    "strain_id": 296,
+    "strain_name": "Mimosa",
+    "strain_name_normalised": "mimosa",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:34:28.664425+00:00",
+    "updated_at": "2026-04-14T17:34:28.664425+00:00"
+  },
+  {
+    "shop_id": 202,
+    "shop_key": "cs-kadinsky",
+    "shop_name": "Kadinsky",
+    "shop_city": "Amsterdam",
+    "strain_id": 296,
+    "strain_name": "Mimosa",
+    "strain_name_normalised": "mimosa",
+    "base_type": "sativa",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 114,
@@ -26479,11 +26411,11 @@
     "base_type": "hybrid",
     "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 15.0,
+    "price_amount": 14.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 221,
@@ -27149,23 +27081,6 @@
     "updated_at": "2026-03-07T10:35:27.791402+00:00"
   },
   {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 2341,
-    "strain_name": "Mother of Berries",
-    "strain_name_normalised": "mother of berries",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 11.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
-  },
-  {
     "shop_id": 231,
     "shop_key": "cs-marssa",
     "shop_name": "El Marssa",
@@ -27674,6 +27589,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-04-10T16:05:16.787261+00:00",
     "updated_at": "2026-04-10T16:05:16.787261+00:00"
+  },
+  {
+    "shop_id": 349,
+    "shop_key": "cs-solo",
+    "shop_name": "Solo",
+    "shop_city": "Amsterdam",
+    "strain_id": 355,
+    "strain_name": "OG #18",
+    "strain_name_normalised": "og #18",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 14.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
   },
   {
     "shop_id": 74,
@@ -29359,23 +29291,6 @@
     "updated_at": "2026-02-19T18:37:19.672998+00:00"
   },
   {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1489,
-    "strain_name": "Papaya Sorbet",
-    "strain_name_normalised": "papaya sorbet",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
-  },
-  {
     "shop_id": 256,
     "shop_key": "cs-new-times",
     "shop_name": "New Times",
@@ -29578,6 +29493,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T15:38:10.725257+00:00",
     "updated_at": "2026-02-19T15:38:10.725257+00:00"
+  },
+  {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 3389,
+    "strain_name": "Peaches and Cream",
+    "strain_name_normalised": "peaches and cream",
+    "base_type": "hybrid",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 11.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 14,
@@ -30608,13 +30540,13 @@
     "strain_name": "Popcorn USA",
     "strain_name_normalised": "popcorn usa",
     "base_type": "hybrid",
-    "is_cali": 1,
+    "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 11.0,
+    "price_amount": 10.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 293,
@@ -30746,11 +30678,11 @@
     "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 7.0,
+    "price_amount": 6.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 413,
@@ -30828,14 +30760,14 @@
     "strain_id": 549,
     "strain_name": "Power Plant",
     "strain_name_normalised": "power plant",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 8.0,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-03-07T18:25:19.953748+00:00",
-    "updated_at": "2026-03-07T18:25:19.953748+00:00"
+    "updated_at": "2026-04-14T17:39:05.744068+00:00"
   },
   {
     "shop_id": 206,
@@ -30879,14 +30811,14 @@
     "strain_id": 549,
     "strain_name": "Power Plant",
     "strain_name_normalised": "power plant",
-    "base_type": "sativa",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.5,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-02-20T23:31:28.946110+00:00",
-    "updated_at": "2026-02-20T23:31:28.946110+00:00"
+    "updated_at": "2026-04-14T17:39:05.744068+00:00"
   },
   {
     "shop_id": 382,
@@ -30896,14 +30828,14 @@
     "strain_id": 549,
     "strain_name": "Power Plant",
     "strain_name_normalised": "power plant",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.5,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-03-07T20:10:35.829478+00:00",
-    "updated_at": "2026-03-07T20:10:35.829478+00:00"
+    "updated_at": "2026-04-14T17:39:05.744068+00:00"
   },
   {
     "shop_id": 395,
@@ -30913,14 +30845,14 @@
     "strain_id": 549,
     "strain_name": "Power Plant",
     "strain_name_normalised": "power plant",
-    "base_type": "hybrid",
+    "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 8.5,
     "price_unit": "g",
     "notes": "",
     "last_seen_at_utc": "2026-02-20T23:58:36.017979+00:00",
-    "updated_at": "2026-02-20T23:58:36.017979+00:00"
+    "updated_at": "2026-04-14T17:39:05.744068+00:00"
   },
   {
     "shop_id": 51,
@@ -31229,6 +31161,23 @@
     "updated_at": "2026-03-07T18:25:19.953748+00:00"
   },
   {
+    "shop_id": 202,
+    "shop_key": "cs-kadinsky",
+    "shop_name": "Kadinsky",
+    "shop_city": "Amsterdam",
+    "strain_id": 3410,
+    "strain_name": "Purple Gum",
+    "strain_name_normalised": "purple gum",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
+  },
+  {
     "shop_id": 290,
     "shop_key": "cs-plug-west",
     "shop_name": "The Plug West",
@@ -31327,8 +31276,8 @@
     "price_amount": 6.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
   },
   {
     "shop_id": 364,
@@ -31705,23 +31654,6 @@
     "updated_at": "2026-02-20T01:31:56.610180+00:00"
   },
   {
-    "shop_id": 133,
-    "shop_key": "cs-flower-power",
-    "shop_name": "Flower Power",
-    "shop_city": "Amsterdam",
-    "strain_id": 408,
-    "strain_name": "Purple Punch",
-    "strain_name_normalised": "purple punch",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T21:04:42.549759+00:00",
-    "updated_at": "2026-02-20T21:04:42.549759+00:00"
-  },
-  {
     "shop_id": 140,
     "shop_key": "cs-funnypeople2",
     "shop_name": "Funny People 2",
@@ -32052,14 +31984,14 @@
     "strain_id": 321,
     "strain_name": "RS-11",
     "strain_name_normalised": "RS-11",
-    "base_type": "hybrid",
+    "base_type": "sativa",
     "is_cali": 0,
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "0.9g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 382,
@@ -32249,6 +32181,40 @@
     "updated_at": "2026-02-20T23:16:29.442387+00:00"
   },
   {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 253,
+    "strain_name": "Rainbow Runtz",
+    "strain_name_normalised": "rainbow runtz",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
+  },
+  {
+    "shop_id": 202,
+    "shop_key": "cs-kadinsky",
+    "shop_name": "Kadinsky",
+    "shop_city": "Amsterdam",
+    "strain_id": 253,
+    "strain_name": "Rainbow Runtz",
+    "strain_name_normalised": "rainbow runtz",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 12.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
+  },
+  {
     "shop_id": 298,
     "shop_key": "cs-program",
     "shop_name": "ProGram",
@@ -32436,23 +32402,6 @@
     "updated_at": "2026-02-20T20:16:33.012554+00:00"
   },
   {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 567,
-    "strain_name": "Rainbow Warrior",
-    "strain_name_normalised": "rainbow warrior",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
-  },
-  {
     "shop_id": 317,
     "shop_key": "cs-ricks-cafe",
     "shop_name": "Ricks Coffeeshop",
@@ -32468,23 +32417,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T11:16:43.181547+00:00",
     "updated_at": "2026-03-07T11:16:43.181547+00:00"
-  },
-  {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1494,
-    "strain_name": "Rappers Weed",
-    "strain_name_normalised": "rappers weed",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 18.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
   },
   {
     "shop_id": 313,
@@ -32925,8 +32857,8 @@
     "price_amount": 12.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-04-10T15:08:09.567059+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 264,
@@ -33061,8 +32993,8 @@
     "price_amount": 8.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
   },
   {
     "shop_id": 199,
@@ -33434,9 +33366,9 @@
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
-    "notes": "0.9g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 290,
@@ -33777,23 +33709,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-01T22:23:33.621184+00:00",
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
-  },
-  {
-    "shop_id": 202,
-    "shop_key": "cs-kadinsky",
-    "shop_name": "Kadinsky",
-    "shop_city": "Amsterdam",
-    "strain_id": 561,
-    "strain_name": "Secret Weapon",
-    "strain_name_normalised": "secret weapon",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 8.5,
-    "price_unit": "g",
-    "notes": "Kadinsky Special",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
   },
   {
     "shop_id": 12,
@@ -34153,23 +34068,6 @@
     "updated_at": "2026-03-01T22:23:33.621184+00:00"
   },
   {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1486,
-    "strain_name": "Sherbert Cheese",
-    "strain_name_normalised": "sherbert cheese",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
-  },
-  {
     "shop_id": 391,
     "shop_key": "cs-warda-1",
     "shop_name": "Warda 1&2",
@@ -34306,6 +34204,23 @@
     "updated_at": "2026-02-20T22:38:52.005739+00:00"
   },
   {
+    "shop_id": 349,
+    "shop_key": "cs-solo",
+    "shop_name": "Solo",
+    "shop_city": "Amsterdam",
+    "strain_id": 1207,
+    "strain_name": "Shiva Skunk",
+    "strain_name_normalised": "shiva skunk",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 8.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
+  },
+  {
     "shop_id": 313,
     "shop_key": "cs-republiek",
     "shop_name": "Republiek",
@@ -34389,23 +34304,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T15:19:40.091666+00:00",
     "updated_at": "2026-03-07T15:19:40.091666+00:00"
-  },
-  {
-    "shop_id": 359,
-    "shop_key": "cs-stud",
-    "shop_name": "Stud",
-    "shop_city": "Amsterdam",
-    "strain_id": 314,
-    "strain_name": "Silver",
-    "strain_name_normalised": "silver",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 10.0,
-    "price_unit": "g",
-    "notes": "1.2g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
   },
   {
     "shop_id": 164,
@@ -34593,23 +34491,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T20:09:47.366098+00:00",
     "updated_at": "2026-02-20T20:09:47.366098+00:00"
-  },
-  {
-    "shop_id": 133,
-    "shop_key": "cs-flower-power",
-    "shop_name": "Flower Power",
-    "shop_city": "Amsterdam",
-    "strain_id": 65,
-    "strain_name": "Silver Haze",
-    "strain_name_normalised": "silver haze",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 9.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T21:04:42.549759+00:00",
-    "updated_at": "2026-02-20T21:04:42.549759+00:00"
   },
   {
     "shop_id": 140,
@@ -34814,6 +34695,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-07T13:33:58.686993+00:00",
     "updated_at": "2026-03-07T13:33:58.686993+00:00"
+  },
+  {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
+    "strain_id": 65,
+    "strain_name": "Silver Haze",
+    "strain_name_normalised": "silver haze",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 10.0,
+    "price_unit": "g",
+    "notes": "1.2g",
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 364,
@@ -35326,23 +35224,6 @@
     "updated_at": "2026-02-19T15:33:32.929568+00:00"
   },
   {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 2334,
-    "strain_name": "Skywalker",
-    "strain_name_normalised": "skywalker",
-    "base_type": "sativa",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 7.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
-  },
-  {
     "shop_id": 156,
     "shop_key": "cs-greenhouse-cookies",
     "shop_name": "Greenhouse Cookies",
@@ -35632,23 +35513,6 @@
     "updated_at": "2026-03-07T09:33:30.142811+00:00"
   },
   {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 2343,
-    "strain_name": "Solo-Mix",
-    "strain_name_normalised": "solo-mix",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 6.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
-  },
-  {
     "shop_id": 419,
     "shop_key": "cs-smoke-palace",
     "shop_name": "Smoke Palace",
@@ -35800,23 +35664,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-26T22:29:25.429664+00:00",
     "updated_at": "2026-03-26T22:29:25.429664+00:00"
-  },
-  {
-    "shop_id": 133,
-    "shop_key": "cs-flower-power",
-    "shop_name": "Flower Power",
-    "shop_city": "Amsterdam",
-    "strain_id": 1199,
-    "strain_name": "Sour Diesel",
-    "strain_name_normalised": "sour diesel",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 9.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-02-20T21:04:42.549759+00:00",
-    "updated_at": "2026-02-20T21:04:42.549759+00:00"
   },
   {
     "shop_id": 337,
@@ -36733,8 +36580,8 @@
     "price_amount": 13.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 203,
@@ -37349,6 +37196,23 @@
     "updated_at": "2026-02-20T22:45:05.807062+00:00"
   },
   {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 406,
+    "strain_name": "Sunset Sherbert",
+    "strain_name_normalised": "sunset sherbert",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 16.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
+  },
+  {
     "shop_id": 185,
     "shop_key": "cs-huntersdowntown",
     "shop_name": "Hunter's Downtown",
@@ -37944,6 +37808,23 @@
     "updated_at": "2026-04-10T15:16:21.880428+00:00"
   },
   {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 3382,
+    "strain_name": "Super Orange Glue",
+    "strain_name_normalised": "super orange glue",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 16.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
+  },
+  {
     "shop_id": 20,
     "shop_key": "cs-208",
     "shop_name": "208",
@@ -38399,8 +38280,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 203,
@@ -38789,9 +38670,9 @@
     "price_currency": "€",
     "price_amount": 10.0,
     "price_unit": "g",
-    "notes": "1g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 98,
@@ -39083,6 +38964,23 @@
     "updated_at": "2026-02-20T09:54:13.143494+00:00"
   },
   {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 3386,
+    "strain_name": "Sweet Berries",
+    "strain_name_normalised": "sweet berries",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 13.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
+  },
+  {
     "shop_id": 288,
     "shop_key": "cs-plugstore",
     "shop_name": "The Plug Store",
@@ -39285,6 +39183,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-20T20:27:16.686097+00:00",
     "updated_at": "2026-02-20T20:27:16.686097+00:00"
+  },
+  {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 720,
+    "strain_name": "Tangerine",
+    "strain_name_normalised": "tangerine",
+    "base_type": "sativa",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 16.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 289,
@@ -40545,6 +40460,23 @@
     "updated_at": "2026-03-07T11:28:31.384823+00:00"
   },
   {
+    "shop_id": 349,
+    "shop_key": "cs-solo",
+    "shop_name": "Solo",
+    "shop_city": "Amsterdam",
+    "strain_id": 274,
+    "strain_name": "Tropicana",
+    "strain_name_normalised": "tropicana",
+    "base_type": "sativa",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 8.5,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
+  },
+  {
     "shop_id": 344,
     "shop_key": "cs-smokerdam",
     "shop_name": "Smokerdam",
@@ -40817,23 +40749,6 @@
     "updated_at": "2026-04-10T15:16:17.024553+00:00"
   },
   {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 218,
-    "strain_name": "Tropicana Cherry",
-    "strain_name_normalised": "tropicana cherry",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-04-10T15:16:17.024553+00:00"
-  },
-  {
     "shop_id": 114,
     "shop_key": "cs-dogghouse",
     "shop_name": "Tha Dogg House",
@@ -40936,23 +40851,6 @@
     "updated_at": "2026-03-07T10:25:39.844563+00:00"
   },
   {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1484,
-    "strain_name": "Tropicana Runtz",
-    "strain_name_normalised": "tropicana runtz",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
-  },
-  {
     "shop_id": 349,
     "shop_key": "cs-solo",
     "shop_name": "Solo",
@@ -40963,11 +40861,11 @@
     "base_type": "indica",
     "is_cali": 0,
     "price_currency": "€",
-    "price_amount": 12.0,
+    "price_amount": 11.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
   },
   {
     "shop_id": 349,
@@ -40983,8 +40881,8 @@
     "price_amount": 11.5,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
   },
   {
     "shop_id": 69,
@@ -41104,6 +41002,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T18:37:19.672998+00:00",
     "updated_at": "2026-02-19T18:37:19.672998+00:00"
+  },
+  {
+    "shop_id": 359,
+    "shop_key": "cs-stud",
+    "shop_name": "Stud",
+    "shop_city": "Amsterdam",
+    "strain_id": 656,
+    "strain_name": "Uncle Snoop",
+    "strain_name_normalised": "uncle snoop",
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 16.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 114,
@@ -41867,8 +41782,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 182,
@@ -42313,23 +42228,6 @@
     "updated_at": "2026-03-01T09:20:15.279242+00:00"
   },
   {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1487,
-    "strain_name": "White Mimosa",
-    "strain_name_normalised": "white mimosa",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 13.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
-  },
-  {
     "shop_id": 131,
     "shop_key": "cs-family-first",
     "shop_name": "Family First",
@@ -42345,23 +42243,6 @@
     "notes": "",
     "last_seen_at_utc": "2026-02-19T15:37:09.063384+00:00",
     "updated_at": "2026-02-19T15:37:09.063384+00:00"
-  },
-  {
-    "shop_id": 349,
-    "shop_key": "cs-solo",
-    "shop_name": "Solo",
-    "shop_city": "Amsterdam",
-    "strain_id": 2338,
-    "strain_name": "White Rabbit",
-    "strain_name_normalised": "white rabbit",
-    "base_type": "indica",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 16.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-07T13:00:49.061526+00:00",
-    "updated_at": "2026-03-07T13:00:49.061526+00:00"
   },
   {
     "shop_id": 262,
@@ -43516,8 +43397,8 @@
     "price_amount": 11.0,
     "price_unit": "g",
     "notes": "",
-    "last_seen_at_utc": "2026-02-19T15:38:28.514149+00:00",
-    "updated_at": "2026-02-19T15:38:28.514149+00:00"
+    "last_seen_at_utc": "2026-04-14T17:43:18.696842+00:00",
+    "updated_at": "2026-04-14T17:43:18.696842+00:00"
   },
   {
     "shop_id": 221,
@@ -44077,8 +43958,8 @@
     "price_amount": 10.0,
     "price_unit": "g",
     "notes": "1.3g",
-    "last_seen_at_utc": "2026-03-07T20:06:15.210950+00:00",
-    "updated_at": "2026-03-07T20:06:15.210950+00:00"
+    "last_seen_at_utc": "2026-04-14T17:50:43.115401+00:00",
+    "updated_at": "2026-04-14T17:50:43.115401+00:00"
   },
   {
     "shop_id": 364,
@@ -44931,23 +44812,6 @@
     "updated_at": "2026-04-10T15:12:50.119139+00:00"
   },
   {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1488,
-    "strain_name": "Z-Candy",
-    "strain_name_normalised": "z-candy",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 12.5,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
-  },
-  {
     "shop_id": 296,
     "shop_key": "cs-prix-d-ami",
     "shop_name": "Prix d'Ami",
@@ -45696,6 +45560,23 @@
     "updated_at": "2026-04-10T15:45:06.098690+00:00"
   },
   {
+    "shop_id": 349,
+    "shop_key": "cs-solo",
+    "shop_name": "Solo",
+    "shop_city": "Amsterdam",
+    "strain_id": 1,
+    "strain_name": "Zkittles",
+    "strain_name_normalised": "zkittles",
+    "base_type": "indica",
+    "is_cali": 0,
+    "price_currency": "€",
+    "price_amount": 20.0,
+    "price_unit": "g",
+    "notes": "Mythodic",
+    "last_seen_at_utc": "2026-04-14T17:45:57.991641+00:00",
+    "updated_at": "2026-04-14T17:45:57.991641+00:00"
+  },
+  {
     "shop_id": 370,
     "shop_key": "cs-terps-army-2",
     "shop_name": "Terps Army 2",
@@ -45796,6 +45677,23 @@
     "notes": "",
     "last_seen_at_utc": "2026-04-06T12:08:20.528555+00:00",
     "updated_at": "2026-04-06T12:08:20.528555+00:00"
+  },
+  {
+    "shop_id": 43,
+    "shop_key": "cs-ballonnetje",
+    "shop_name": "Het Ballonnetje",
+    "shop_city": "Amsterdam",
+    "strain_id": 1730,
+    "strain_name": "Zkittlez",
+    "strain_name_normalised": "zkittlez",
+    "base_type": "indica",
+    "is_cali": 1,
+    "price_currency": "€",
+    "price_amount": 15.0,
+    "price_unit": "g",
+    "notes": "",
+    "last_seen_at_utc": "2026-04-14T17:38:16.493885+00:00",
+    "updated_at": "2026-04-14T17:38:16.493885+00:00"
   },
   {
     "shop_id": 369,
@@ -45965,23 +45863,6 @@
     "price_unit": "g",
     "notes": "Deo Farms",
     "last_seen_at_utc": "2026-02-20T23:56:56.417249+00:00",
-    "updated_at": "2026-04-06T12:25:33.055741+00:00"
-  },
-  {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 4,
-    "strain_name": "Zoap",
-    "strain_name_normalised": "zoap",
-    "base_type": "hybrid",
-    "is_cali": 0,
-    "price_currency": "€",
-    "price_amount": 14.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
     "updated_at": "2026-04-06T12:25:33.055741+00:00"
   },
   {
@@ -46901,22 +46782,5 @@
     "notes": "",
     "last_seen_at_utc": "2026-03-26T22:41:36.454040+00:00",
     "updated_at": "2026-03-26T22:41:36.454040+00:00"
-  },
-  {
-    "shop_id": 43,
-    "shop_key": "cs-ballonnetje",
-    "shop_name": "Het Ballonnetje",
-    "shop_city": "Amsterdam",
-    "strain_id": 1495,
-    "strain_name": "Zuyaqui",
-    "strain_name_normalised": "zuyaqui",
-    "base_type": "hybrid",
-    "is_cali": 1,
-    "price_currency": "€",
-    "price_amount": 16.0,
-    "price_unit": "g",
-    "notes": "",
-    "last_seen_at_utc": "2026-03-01T01:09:41.242341+00:00",
-    "updated_at": "2026-03-01T01:09:41.242341+00:00"
   }
 ]
