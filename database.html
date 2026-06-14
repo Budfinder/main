@@ -2030,7 +2030,7 @@
         <p class="intro-copy">Use the database when you want to research strains, compare prices, or find shops that carry several Wanted strains at once.</p>
       </div>
       <div class="result-toolbar" aria-label="Database navigation">
-        <span id="result-context" class="result-context">Getting matches ready...</span>
+        <span id="result-context" class="result-context">Loading Amsterdam menu data...</span>
         <div class="result-toolbar-actions">
           <button id="jump-filters" type="button">Filters</button>
           <button id="jump-results" type="button">Results</button>
@@ -2038,7 +2038,7 @@
       </div>
     </header>
 
-    <p id="status" class="status">Loading Amsterdam menu intelligence...</p>
+    <p id="status" class="status">Loading Amsterdam menu data...</p>
 
     <section class="workflow-strip" aria-label="Database workflow">
       <div class="workflow-step">
@@ -2094,7 +2094,7 @@
           <div id="family-filter-grid" class="family-filter-grid" role="group" aria-label="Strain family">
             <button class="is-active" type="button" data-family-filter="">
               <span>All families</span>
-              <small>0</small>
+              <small>Loading</small>
             </button>
           </div>
         </div>
@@ -3210,7 +3210,7 @@
       els.metricStrains.textContent = filteredStats.length.toLocaleString();
       els.metricShops.textContent = shops.size.toLocaleString();
       els.metricOfferings.textContent = filteredOfferings.length.toLocaleString();
-      els.metricCheapest.textContent = prices.length ? money(Math.min(...prices)) : '--';
+      els.metricCheapest.textContent = prices.length ? money(Math.min(...prices)) : 'No price data';
     }
 
     function renderBrowseControls(familySourceStats, filteredStats) {
@@ -4366,6 +4366,11 @@
         render();
       } catch (err) {
         els.status.innerHTML = '<span class="error">Amsterdam data could not be loaded.</span> Try refreshing, or check that the data files are available.';
+        els.metricStrains.textContent = 'Unavailable';
+        els.metricShops.textContent = 'Unavailable';
+        els.metricOfferings.textContent = 'Unavailable';
+        els.metricCheapest.textContent = 'Unavailable';
+        if (els.resultContext) els.resultContext.textContent = 'Amsterdam data could not be loaded.';
       }
     }
 
