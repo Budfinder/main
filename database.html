@@ -1,0 +1,4654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Budfinder</title>
+  <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
+  <style>
+    :root {
+      --bg-top: #f4e5bf;
+      --bg-mid: #e8dcc1;
+      --bg-bottom: #d8e4cf;
+      --sun-wash: rgba(255, 243, 210, 0.92);
+      --mist-wash: rgba(184, 223, 206, 0.7);
+      --resin-glow: rgba(222, 160, 82, 0.34);
+      --accent-soft: rgba(46, 123, 89, 0.16);
+      --accent-glow: rgba(46, 123, 89, 0.28);
+      --panel: rgba(255, 249, 239, 0.84);
+      --panel-strong: rgba(255, 252, 246, 0.94);
+      --panel-border: rgba(98, 113, 95, 0.16);
+      --panel-alt: rgba(255, 255, 255, 0.52);
+      --ink: #203128;
+      --muted: #5b6b61;
+      --line: rgba(92, 107, 97, 0.14);
+      --accent: #2e7b59;
+      --accent-strong: #205b42;
+      --green: var(--accent);
+      --green-dark: var(--accent-strong);
+      --amber: #b46b20;
+      --red: #a84235;
+      --blue: #356f91;
+      --shadow: 0 14px 36px rgba(29, 42, 32, 0.14);
+      --shadow-lg: 0 22px 60px rgba(29, 42, 32, 0.18);
+      --shadow-md: 0 14px 36px rgba(29, 42, 32, 0.14);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --floating-toggle-clearance: calc(max(24px, env(safe-area-inset-top)) + 58px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg-bottom);
+    }
+
+    body {
+      position: relative;
+      min-height: 100%;
+      margin: 0;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Gill Sans", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 16% 18%, var(--sun-wash), transparent 32%),
+        radial-gradient(circle at 82% 14%, var(--mist-wash), transparent 24%),
+        radial-gradient(circle at 50% 112%, var(--accent-soft), transparent 36%),
+        linear-gradient(165deg, var(--bg-top) 0%, var(--bg-mid) 42%, var(--bg-bottom) 100%);
+      background-attachment: fixed;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 999px;
+      pointer-events: none;
+      filter: blur(14px);
+      opacity: 0.65;
+      z-index: 0;
+    }
+
+    body::before {
+      width: 34vw;
+      height: 34vw;
+      left: -8vw;
+      bottom: -12vw;
+      background: radial-gradient(circle, var(--resin-glow) 0%, transparent 70%);
+    }
+
+    body::after {
+      width: 28vw;
+      height: 28vw;
+      right: -6vw;
+      top: -7vw;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 72%);
+    }
+
+    .atmosphere {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .atmosphere-leaves,
+    .smoke-plume {
+      position: absolute;
+      inset: -12%;
+    }
+
+    .atmosphere-leaves {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cg fill='%23205b42'%3E%3Cellipse cx='40' cy='18' rx='6' ry='18'/%3E%3Cellipse cx='25' cy='25' rx='5' ry='17' transform='rotate(-34 25 25)'/%3E%3Cellipse cx='55' cy='25' rx='5' ry='17' transform='rotate(34 55 25)'/%3E%3Cellipse cx='14' cy='40' rx='4' ry='14' transform='rotate(-58 14 40)'/%3E%3Cellipse cx='66' cy='40' rx='4' ry='14' transform='rotate(58 66 40)'/%3E%3Cellipse cx='27' cy='46' rx='4' ry='12' transform='rotate(-20 27 46)'/%3E%3Cellipse cx='53' cy='46' rx='4' ry='12' transform='rotate(20 53 46)'/%3E%3Crect x='38.5' y='34' width='3' height='28' rx='1.5'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 188px 188px;
+      background-position: center center;
+      opacity: 0.065;
+      mix-blend-mode: multiply;
+      transform: rotate(-5deg) scale(1.08);
+      animation: leafFloat 26s ease-in-out infinite alternate;
+    }
+
+    .smoke-plume {
+      --smoke-scale-start: 1;
+      --smoke-scale-mid: 1.06;
+      --smoke-scale-end: 1.12;
+      --smoke-offset-x: 0vw;
+      filter: blur(32px);
+      opacity: 0.18;
+      background:
+        radial-gradient(circle at 20% 78%, rgba(255, 255, 255, 0.22), transparent 16%),
+        radial-gradient(circle at 38% 62%, rgba(255, 255, 255, 0.18), transparent 14%),
+        radial-gradient(circle at 58% 72%, rgba(255, 255, 255, 0.2), transparent 18%),
+        radial-gradient(circle at 82% 84%, rgba(255, 255, 255, 0.16), transparent 15%);
+      animation: smokeLift 24s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    .smoke-plume-one {
+      animation-duration: 22s;
+      animation-delay: -6s;
+      opacity: 0.18;
+    }
+
+    .smoke-plume-two {
+      animation-duration: 30s;
+      animation-delay: -14s;
+      opacity: 0.14;
+      --smoke-scale-start: 1.08;
+      --smoke-scale-mid: 1.14;
+      --smoke-scale-end: 1.2;
+      --smoke-offset-x: 4vw;
+    }
+
+    .smoke-plume-three {
+      animation-duration: 34s;
+      animation-delay: -19s;
+      opacity: 0.12;
+      --smoke-scale-start: 1.16;
+      --smoke-scale-mid: 1.22;
+      --smoke-scale-end: 1.28;
+      --smoke-offset-x: -5vw;
+    }
+
+    @keyframes smokeLift {
+      0% {
+        transform: translate3d(calc(var(--smoke-offset-x) - 1vw), 4vh, 0) scale(var(--smoke-scale-start));
+      }
+      50% {
+        transform: translate3d(calc(var(--smoke-offset-x) + 1vw), -2vh, 0) scale(var(--smoke-scale-mid));
+      }
+      100% {
+        transform: translate3d(calc(var(--smoke-offset-x) - 2vw), -8vh, 0) scale(var(--smoke-scale-end));
+      }
+    }
+
+    @keyframes leafFloat {
+      0% {
+        transform: rotate(-5deg) scale(1.08) translate3d(0, 0, 0);
+      }
+      100% {
+        transform: rotate(-1deg) scale(1.12) translate3d(0, -2vh, 0);
+      }
+    }
+
+    @media (max-width: 767px), (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+      .atmosphere-leaves {
+        background-size: 148px 148px;
+        opacity: 0.045;
+      }
+
+      .smoke-plume {
+        filter: blur(26px);
+        opacity: 0.11;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .atmosphere-leaves,
+      .smoke-plume {
+        animation: none;
+      }
+
+      .smoke-plume {
+        opacity: 0.1;
+      }
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button,
+    .nav-link {
+      min-height: 42px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      box-shadow: 0 14px 26px rgba(32, 91, 66, 0.16);
+      transition: transform 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
+    }
+
+    button:hover,
+    .nav-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .app-mode-toggle {
+      position: fixed;
+      top: max(24px, env(safe-area-inset-top));
+      right: max(24px, env(safe-area-inset-right));
+      z-index: 1007;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: rgba(255, 250, 241, 0.9);
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(18px);
+    }
+
+    .app-mode-toggle a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: var(--ink);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+
+    .app-mode-toggle a:hover {
+      transform: translateY(-1px);
+    }
+
+    .app-mode-toggle a.is-active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      box-shadow: 0 8px 18px rgba(32, 91, 66, 0.16);
+    }
+
+    .global-vibe-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
+      padding: 0 6px 0 12px;
+      border-left: 1px solid var(--panel-border);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .global-vibe-control select {
+      min-height: 30px;
+      max-width: 150px;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      padding: 0 26px 0 10px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.58);
+      font-weight: 800;
+    }
+
+    @media (max-width: 520px) {
+      .global-vibe-control {
+        padding-left: 8px;
+      }
+
+      .global-vibe-control span {
+        display: none;
+      }
+
+      .global-vibe-control select {
+        max-width: 118px;
+        min-height: 44px;
+        height: 44px;
+      }
+    }
+
+    button.is-active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff;
+    }
+
+    .page-shell {
+      position: relative;
+      z-index: 1;
+      width: min(1440px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+      padding: 20px 212px 20px 22px;
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-xl);
+      background: var(--panel);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 100%;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.54);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cg fill='%23205b42'%3E%3Cellipse cx='40' cy='18' rx='6' ry='18'/%3E%3Cellipse cx='25' cy='25' rx='5' ry='17' transform='rotate(-34 25 25)'/%3E%3Cellipse cx='55' cy='25' rx='5' ry='17' transform='rotate(34 55 25)'/%3E%3Cellipse cx='14' cy='40' rx='4' ry='14' transform='rotate(-58 14 40)'/%3E%3Cellipse cx='66' cy='40' rx='4' ry='14' transform='rotate(58 66 40)'/%3E%3Cellipse cx='27' cy='46' rx='4' ry='12' transform='rotate(-20 27 46)'/%3E%3Cellipse cx='53' cy='46' rx='4' ry='12' transform='rotate(20 53 46)'/%3E%3Crect x='38.5' y='34' width='3' height='28' rx='1.5'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.86;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin: 14px 0 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 3vw, 42px);
+      line-height: 0.98;
+    }
+
+    .intro-copy {
+      max-width: 58ch;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      text-wrap: balance;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px;
+      text-decoration: none;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.52);
+      color: var(--ink);
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      box-shadow: none;
+    }
+
+    .status {
+      min-height: 22px;
+      margin: 0 0 14px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.44);
+      color: var(--muted);
+      font-size: 13px;
+      backdrop-filter: blur(14px);
+    }
+
+    .workflow-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 18px;
+    }
+
+    .workflow-step,
+    .trust-note {
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+      backdrop-filter: blur(12px);
+    }
+
+    .workflow-step {
+      display: grid;
+      gap: 6px;
+      padding: 14px;
+    }
+
+    .workflow-step span {
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .workflow-step strong {
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .workflow-step p,
+    .trust-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .trust-note {
+      margin: -4px 0 18px;
+      padding: 12px 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel,
+    .metric,
+    .strain-card,
+    .shop-card,
+    .comparison-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.52);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .panel {
+      padding: 18px;
+      border-color: var(--panel-border);
+      border-radius: var(--radius-xl);
+      background: var(--panel);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+    }
+
+    .side-panel {
+      position: sticky;
+      top: 16px;
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .field label,
+    .filter-label {
+      color: #34413d;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      border-radius: var(--radius-md);
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.66);
+      color: var(--ink);
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .segmented button {
+      padding: 0 8px;
+      font-weight: 700;
+    }
+
+    .segmented button:not(.is-active),
+    .browse-mode-grid button:not(.is-active),
+    .family-filter-grid button:not(.is-active),
+    .card-actions button:not(.is-active),
+    .strain-more-row button,
+    #clear-selected,
+    .selected-pill button {
+      background: rgba(255, 255, 255, 0.52);
+      color: var(--ink);
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      box-shadow: none;
+    }
+
+    .browse-mode-grid,
+    .family-filter-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .browse-mode-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .browse-mode-grid button,
+    .family-filter-grid button {
+      min-height: 38px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .family-filter-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-height: 230px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .family-filter-grid button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .family-filter-grid span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .family-filter-grid small {
+      color: inherit;
+      opacity: 0.72;
+      font-size: 11px;
+    }
+
+    .selected-list {
+      display: grid;
+      gap: 8px;
+      min-height: 48px;
+      margin-top: 8px;
+    }
+
+    #selected-shop-list {
+      max-height: 330px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .selected-pill {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 9px 9px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.52);
+    }
+
+    .selected-pill span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+
+    .selected-pill-main {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .selected-pill button {
+      width: 30px;
+      min-height: 30px;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .selected-pill small {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: normal;
+    }
+
+    .side-action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .side-action-row button {
+      padding-inline: 10px;
+    }
+
+    .selected-shop-pill {
+      border-color: rgba(46, 123, 89, 0.22);
+      background: rgba(234, 248, 239, 0.58);
+    }
+
+    .price-band {
+      margin: 2px 0 14px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.42);
+    }
+
+    .price-band-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .price-band-value {
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .range-stack {
+      display: grid;
+      gap: 8px;
+    }
+
+    input[type="range"] {
+      min-height: 24px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      accent-color: var(--accent);
+    }
+
+    .main-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .result-toolbar {
+      flex: 0 1 620px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: min(100%, 360px);
+      margin-bottom: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      background: rgba(255, 252, 246, 0.88);
+      box-shadow: none;
+      backdrop-filter: blur(16px);
+    }
+
+    .result-context {
+      min-width: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .result-toolbar-actions {
+      display: flex;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .result-toolbar-actions button,
+    .result-toolbar-actions a,
+    .quick-answer-actions button,
+    .quick-answer-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .result-toolbar-actions button,
+    .quick-answer-actions button,
+    .quick-answer-actions a.secondary {
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: rgba(255, 255, 255, 0.56);
+      color: var(--ink);
+      box-shadow: none;
+    }
+
+    .result-toolbar-actions a,
+    .quick-answer-actions a:not(.secondary) {
+      border: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      box-shadow: 0 12px 24px rgba(32, 91, 66, 0.14);
+    }
+
+    .quick-answer {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .quick-answer.is-empty {
+      color: var(--muted);
+    }
+
+    .quick-answer-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .quick-answer-kicker {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .quick-answer h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      line-height: 1.05;
+    }
+
+    .quick-answer-copy {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .quick-answer-price {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(188, 139, 31, 0.22);
+      background: rgba(255, 240, 190, 0.9);
+      color: #8b5615;
+      font-size: 15px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .quick-answer-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-answer-row,
+    .cheapest-shop-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid rgba(92, 107, 97, 0.1);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.56);
+    }
+
+    button.quick-answer-row,
+    button.cheapest-shop-row {
+      width: 100%;
+      color: var(--ink);
+      font-weight: inherit;
+      letter-spacing: 0;
+      text-align: left;
+      box-shadow: none;
+    }
+
+    button.quick-answer-row:hover,
+    button.cheapest-shop-row:hover {
+      border-color: rgba(46, 123, 89, 0.28);
+      background: rgba(244, 252, 246, 0.76);
+    }
+
+    button.quick-answer-row.is-active,
+    button.cheapest-shop-row.is-active {
+      border-color: rgba(46, 123, 89, 0.34);
+      background: rgba(232, 247, 235, 0.84);
+      color: var(--ink);
+    }
+
+    .quick-answer-row strong,
+    .cheapest-shop-row strong {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .quick-answer-row span,
+    .cheapest-shop-row span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .quick-answer-row-price,
+    .cheapest-shop-row-price {
+      color: var(--accent-strong);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .quick-answer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cheapest-shop-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 14px;
+      box-shadow: none;
+    }
+
+    .metric-value {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 26px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2 {
+      margin-bottom: 2px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .section-head p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .browse-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: -2px 0 12px;
+    }
+
+    .browse-summary .chip {
+      background: rgba(255, 250, 239, 0.74);
+      color: var(--ink);
+    }
+
+    .strain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .strain-card {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: none;
+      cursor: pointer;
+      transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+    }
+
+    .strain-card:hover,
+    .strain-card:focus-visible {
+      border-color: rgba(46, 123, 89, 0.28);
+      box-shadow: inset 0 0 0 1px rgba(46, 123, 89, 0.14);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .strain-card.is-selected {
+      border-color: rgba(46, 123, 89, 0.36);
+      background: rgba(245, 255, 248, 0.84);
+      box-shadow: inset 0 0 0 1px rgba(46, 123, 89, 0.22);
+    }
+
+    .strain-card-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .strain-card-main,
+    .comparison-card-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .strain-art {
+      position: relative;
+      flex: 0 0 auto;
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255, 243, 210, 0.9), transparent 38%),
+        linear-gradient(145deg, rgba(46, 123, 89, 0.16), rgba(222, 160, 82, 0.16));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .strain-art img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .strain-art-fallback {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      color: var(--accent-strong);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .strain-card-copy,
+    .comparison-card-copy {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .strain-card h3 {
+      margin-bottom: 4px;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      background: rgba(255, 255, 255, 0.62);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .chip.type-sativa { background: #e8f3df; color: #3c6b29; }
+    .chip.type-indica { background: #eee7f4; color: #60437a; }
+    .chip.type-hybrid { background: #e8f0f7; color: #356f91; }
+    .chip.type-hash { background: #f4eadc; color: #805319; }
+    .chip.type-kush { background: #e7f0e6; color: #2f6c50; }
+    .chip.cali { background: #f8eadf; color: #9d4a20; }
+    .chip.deal-chip {
+      border-color: rgba(188, 139, 31, 0.2);
+      background: rgba(255, 240, 190, 0.78);
+      color: #8b5615;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .card-actions button {
+      padding: 0 8px;
+      font-weight: 700;
+    }
+
+    .strain-more-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .strain-more-row[hidden] {
+      display: none;
+    }
+
+    .strain-more-row button {
+      min-width: 180px;
+      font-weight: 800;
+    }
+
+    .jump-top-btn {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 20;
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: rgba(255, 252, 246, 0.9);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+    }
+
+    .comparison-card {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: none;
+    }
+
+    .comparison-card h3 {
+      margin-bottom: 8px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .comparison-card .strain-art {
+      width: 72px;
+      height: 72px;
+    }
+
+    .comparison-lines {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+    }
+
+    .comparison-lines div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(217, 223, 214, 0.7);
+      padding-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .comparison-lines dt {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .comparison-lines dd {
+      margin: 0;
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .common-shops {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .common-shop-board {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(247, 241, 227, 0.46)),
+        rgba(255, 255, 255, 0.5);
+    }
+
+    .route-plan-board {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding: 14px;
+      border: 1px solid rgba(46, 123, 89, 0.16);
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(244, 252, 246, 0.78), rgba(255, 249, 239, 0.48)),
+        rgba(255, 255, 255, 0.52);
+    }
+
+    .route-plan-head,
+    .route-plan-row-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .route-plan-head h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      line-height: 1;
+    }
+
+    .route-plan-head p,
+    .route-plan-row-head span {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .route-plan-total {
+      flex: 0 0 auto;
+      min-width: 128px;
+      text-align: right;
+    }
+
+    .route-plan-total strong {
+      display: block;
+      color: var(--accent-strong);
+      font-size: 18px;
+    }
+
+    .route-plan-row {
+      display: grid;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .route-plan-row h4 {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .route-plan-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      max-height: 150px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .route-plan-option {
+      min-height: 34px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: rgba(255, 255, 255, 0.58);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: none;
+    }
+
+    .route-plan-option.is-active {
+      border-color: rgba(46, 123, 89, 0.36);
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+    }
+
+    .common-shop-board-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .common-shop-board-head h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      line-height: 1;
+    }
+
+    .common-shop-board-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .common-shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+    }
+
+    .common-shop-card {
+      display: grid;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.74);
+      cursor: pointer;
+      transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+    }
+
+    .common-shop-card:hover,
+    .common-shop-card:focus-visible {
+      border-color: rgba(46, 123, 89, 0.28);
+      box-shadow: inset 0 0 0 1px rgba(46, 123, 89, 0.16);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .common-shop-card.is-selected {
+      border-color: rgba(46, 123, 89, 0.36);
+      box-shadow: inset 0 0 0 1px rgba(46, 123, 89, 0.24);
+    }
+
+    .common-shop-card-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .common-shop-card .shop-art {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+    }
+
+    .common-shop-card-title strong {
+      display: block;
+      line-height: 1.2;
+    }
+
+    .common-shop-card-meta {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .common-shop-card-actions,
+    .shop-row-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      cursor: auto;
+    }
+
+    .common-shop-card-actions button,
+    .common-shop-card-actions a,
+    .shop-row-actions button {
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 14px;
+    }
+
+    .common-shop-card-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: rgba(255, 255, 255, 0.52);
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .common-shops-title {
+      margin: 0;
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .common-shop-group {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.44);
+    }
+
+    .common-shop-group-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .common-shop-group-head span:last-child {
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .common-shop-list {
+      display: grid;
+      gap: 5px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .common-shop-list li {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 34px;
+      padding: 5px 6px 5px 8px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+    }
+
+    .common-shop-list li[data-partial-shop-card]:hover,
+    .common-shop-list li[data-partial-shop-card]:focus-visible {
+      border-color: rgba(46, 123, 89, 0.24);
+      background: rgba(255, 255, 255, 0.62);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .common-shop-list li.is-selected {
+      border-color: rgba(46, 123, 89, 0.32);
+      background: rgba(234, 248, 239, 0.62);
+    }
+
+    .common-shop-list strong {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      color: var(--ink);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .common-shop-list-meta {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .common-shop-list a {
+      color: var(--accent-strong);
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .common-shop-list button {
+      min-height: 28px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: 11px;
+    }
+
+    .shop-list {
+      display: grid;
+      gap: 12px;
+      max-height: 640px;
+      overflow: auto;
+      padding-right: 3px;
+    }
+
+    .shop-card {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: none;
+    }
+
+    .shop-card.is-selected {
+      border-color: rgba(46, 123, 89, 0.34);
+      background: rgba(245, 255, 248, 0.84);
+    }
+
+    .shop-card-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .shop-card-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .shop-art {
+      position: relative;
+      flex: 0 0 auto;
+      width: 60px;
+      height: 60px;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid rgba(92, 107, 97, 0.14);
+      background:
+        rgba(255, 255, 255, 0.82),
+        radial-gradient(circle at 30% 24%, rgba(255, 243, 210, 0.9), transparent 38%),
+        linear-gradient(145deg, rgba(46, 123, 89, 0.16), rgba(222, 160, 82, 0.16));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .shop-art img {
+      position: absolute;
+      inset: 6px;
+      z-index: 1;
+      width: calc(100% - 12px);
+      height: calc(100% - 12px);
+      display: block;
+      object-fit: contain;
+      filter: drop-shadow(0 1px 1px rgba(31, 42, 36, 0.16));
+    }
+
+    .shop-art-fallback {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--accent-strong);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      line-height: 1;
+    }
+
+    .shop-card-copy {
+      min-width: 0;
+    }
+
+    .shop-card-copy strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .shop-card-meta {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .shop-card-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .shop-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .shop-card-actions button,
+    .shop-card-actions a {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 14px;
+    }
+
+    .shop-card-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: rgba(255, 255, 255, 0.52);
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .shop-menu {
+      display: grid;
+      gap: 9px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(92, 107, 97, 0.1);
+    }
+
+    .shop-deals {
+      display: grid;
+      gap: 9px;
+      padding: 10px;
+      border: 1px solid rgba(188, 139, 31, 0.16);
+      border-radius: 16px;
+      background: rgba(255, 244, 211, 0.48);
+    }
+
+    .strain-deal {
+      padding: 9px;
+    }
+
+    .shop-deals-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: #8b5615;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .shop-deal-chip {
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      min-height: 42px;
+      border-color: rgba(188, 139, 31, 0.2);
+      background: rgba(255, 255, 255, 0.58);
+      color: var(--ink);
+      text-align: left;
+      white-space: normal;
+      cursor: pointer;
+    }
+
+    .shop-deal-chip strong {
+      line-height: 1.15;
+    }
+
+    .shop-deal-chip span {
+      color: #8b5615;
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .shop-menu-label {
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .shop-menu-more {
+      display: grid;
+      gap: 8px;
+    }
+
+    .shop-menu-more summary {
+      width: fit-content;
+      cursor: pointer;
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      list-style: none;
+    }
+
+    .shop-menu-more summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .shop-menu-more summary::before {
+      content: '+ ';
+    }
+
+    .shop-menu-more[open] summary::before {
+      content: '− ';
+    }
+
+    .shop-row-actions a {
+      min-height: 34px;
+    }
+
+    .availability-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip.is-fresh {
+      background: rgba(213, 239, 225, 0.86);
+      border-color: rgba(32, 91, 66, 0.18);
+      color: var(--accent-strong);
+    }
+
+    .chip.is-likely {
+      background: rgba(255, 239, 199, 0.86);
+      border-color: rgba(180, 107, 32, 0.18);
+      color: #8b5615;
+    }
+
+    .chip.is-old-intel,
+    .chip.is-price-unknown {
+      background: rgba(245, 224, 219, 0.86);
+      border-color: rgba(168, 66, 53, 0.16);
+      color: var(--red);
+    }
+
+    .availability-tags .strain-menu-chip {
+      cursor: pointer;
+      transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+
+    .availability-tags .strain-menu-chip.has-detail {
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      min-height: 40px;
+      max-width: 100%;
+      border-radius: 16px;
+      text-align: left;
+      white-space: normal;
+    }
+
+    .strain-chip-name {
+      line-height: 1.15;
+    }
+
+    .strain-chip-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      color: inherit;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.1;
+      opacity: 0.78;
+    }
+
+    .availability-tags .strain-menu-chip:hover,
+    .availability-tags .strain-menu-chip:focus-visible {
+      border-color: rgba(46, 123, 89, 0.28);
+      color: var(--accent-strong);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .availability-tags .strain-menu-chip.is-active {
+      border-color: rgba(46, 123, 89, 0.36);
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+    }
+
+    .empty {
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.54);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .error {
+      color: var(--red);
+      font-weight: 800;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .workflow-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        position: static;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding-right: 212px;
+      }
+
+      .result-toolbar {
+        flex-basis: auto;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .app-mode-toggle {
+        position: static;
+        width: fit-content;
+        margin: max(10px, env(safe-area-inset-top)) 10px 0 auto;
+      }
+
+      .app-mode-toggle a {
+        min-height: 44px;
+        padding: 0 12px;
+        font-size: 13px;
+      }
+
+      .page-shell {
+        width: min(100vw - 20px, 1440px);
+        padding-top: 10px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 18px 16px;
+      }
+
+      .nav-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .filter-grid,
+      .card-actions,
+      .browse-mode-grid,
+      .family-filter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      input,
+      select,
+      button,
+      .nav-link,
+      .segmented button,
+      .browse-mode-grid button,
+      .family-filter-grid button,
+      .card-actions button,
+      .side-action-row button,
+      #show-wanted-map,
+      #clear-selected,
+      .quick-answer-actions button,
+      .quick-answer-actions a,
+      .common-shop-card-actions button,
+      .common-shop-card-actions a,
+      .shop-card-actions button,
+      .shop-card-actions a,
+      button.quick-answer-row,
+      button.cheapest-shop-row,
+      .availability-tags .strain-menu-chip {
+        min-height: 44px;
+      }
+
+      .browse-mode-grid,
+      .family-filter-grid,
+      .segmented,
+      .side-action-row,
+      .card-actions,
+      .shop-card-actions,
+      .common-shop-card-actions,
+      .quick-answer-actions {
+        gap: 10px;
+      }
+
+      .family-filter-grid {
+        max-height: none;
+      }
+
+      .selected-pill {
+        grid-template-columns: minmax(0, 1fr) 44px;
+        padding: 10px 10px 10px 13px;
+      }
+
+      .selected-pill button {
+        width: 44px;
+        min-height: 44px;
+      }
+
+      .result-toolbar,
+      .quick-answer-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .result-context {
+        white-space: normal;
+      }
+
+      .result-toolbar-actions,
+      .quick-answer-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quick-answer-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .quick-answer-row,
+      .cheapest-shop-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px 13px;
+      }
+
+      .quick-answer-row-price,
+      .cheapest-shop-row-price {
+        justify-self: start;
+      }
+
+      .chip {
+        min-height: 32px;
+        padding: 5px 10px;
+      }
+
+      .availability-tags {
+        gap: 8px;
+      }
+
+      .availability-tags .strain-menu-chip.has-detail {
+        min-height: 46px;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .shop-card-head {
+        grid-template-columns: 1fr;
+      }
+
+      .shop-card-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-content: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="app-mode-toggle" aria-label="Switch app view">
+    <a href="index.html">Home</a>
+    <a href="map.html">Map</a>
+    <a class="is-active" href="database.html" aria-current="page">Database</a>
+    <label class="global-vibe-control">
+      <span>Vibe</span>
+      <select data-budfinder-vibe-selector aria-label="Vibe"></select>
+    </label>
+  </nav>
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere-leaves"></div>
+    <div class="smoke-plume smoke-plume-one"></div>
+    <div class="smoke-plume smoke-plume-two"></div>
+    <div class="smoke-plume smoke-plume-three"></div>
+  </div>
+  <main class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="kicker">Strain Explorer</span>
+        <h1>Budfinder database</h1>
+        <p class="intro-copy">Pick Wanted strains, compare coffeeshops by match strength, price, and freshness, then send chosen Destinations straight back to the map.</p>
+      </div>
+      <div class="result-toolbar" aria-label="Database navigation">
+        <span id="result-context" class="result-context">Getting matches ready...</span>
+        <div class="result-toolbar-actions">
+          <button id="jump-filters" type="button">Filters</button>
+          <button id="jump-results" type="button">Results</button>
+        </div>
+      </div>
+    </header>
+
+    <p id="status" class="status">Getting menu listings ready...</p>
+
+    <section class="workflow-strip" aria-label="Database workflow">
+      <div class="workflow-step">
+        <span>Step 1</span>
+        <strong>Pick Wanted strains</strong>
+        <p>Search and add Wanted strains.</p>
+      </div>
+      <div class="workflow-step">
+        <span>Step 2</span>
+        <strong>Find matching shops</strong>
+        <p>Compare availability, best deals, city, type, menu freshness, and Wanted-strain coverage.</p>
+      </div>
+      <div class="workflow-step">
+        <span>Step 3</span>
+        <strong>Send Destinations to map</strong>
+        <p>Select the Destinations you like and open them in Budfinder's map workflow.</p>
+      </div>
+    </section>
+    <p class="trust-note">Menus, prices, and availability can change quickly. Treat prices and strain listings as planning guidance, not a guarantee. Check before travelling across town for a specific item, follow local laws and coffeeshop rules, and use location only when you choose location-based map features.</p>
+
+    <div class="layout">
+      <aside class="panel side-panel">
+        <span class="filter-label">View</span>
+        <div class="segmented" role="group" aria-label="View mode">
+          <button class="is-active" type="button" data-view="strains">Strains</button>
+          <button type="button" data-view="compare">Common shops</button>
+          <button type="button" data-view="shops">Shop menus</button>
+        </div>
+
+        <div class="field">
+          <label for="search">Search</label>
+          <input id="search" type="search" placeholder="Amnesia, Katsu, Amsterdam" autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <span class="filter-label">Browse mode</span>
+          <div id="browse-mode-grid" class="browse-mode-grid" role="group" aria-label="Browse mode">
+            <button class="is-active" type="button" data-browse-mode="value">Best value</button>
+            <button type="button" data-browse-mode="available">Most stocked</button>
+            <button type="button" data-browse-mode="fresh">Fresh menus</button>
+            <button type="button" data-browse-mode="under10">Under €10</button>
+            <button type="button" data-browse-mode="rare">Rare finds</button>
+            <button type="button" data-browse-mode="cali">Cali</button>
+            <button type="button" data-browse-mode="sativa">Sativa</button>
+            <button type="button" data-browse-mode="hybrid">Hybrid</button>
+            <button type="button" data-browse-mode="indica">Indica</button>
+            <button type="button" data-browse-mode="az">A-Z</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="filter-label">Family</span>
+          <div id="family-filter-grid" class="family-filter-grid" role="group" aria-label="Strain family">
+            <button class="is-active" type="button" data-family-filter="">
+              <span>All families</span>
+              <small>0</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-grid">
+          <div class="field">
+            <label for="city-filter">City</label>
+            <select id="city-filter">
+              <option value="">All cities</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="type-filter">Type</label>
+            <select id="type-filter">
+              <option value="">All types</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-grid">
+          <div class="field">
+            <label for="cali-filter">Cali</label>
+            <select id="cali-filter">
+              <option value="">All</option>
+              <option value="1">Cali only</option>
+              <option value="0">Non-Cali</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sort-filter">Sort</label>
+            <select id="sort-filter">
+              <option value="">Mode order</option>
+              <option value="deals">Best deals</option>
+              <option value="availability">Most available</option>
+              <option value="cheapest">Lowest price</option>
+              <option value="average">Average price</option>
+              <option value="name">A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="price-band">
+          <div class="price-band-head">
+            <span class="filter-label">Price band</span>
+            <span id="price-band-value" class="price-band-value">Any price</span>
+          </div>
+          <div class="range-stack">
+            <input id="price-min" type="range" min="0" max="50" step="0.5" value="0" aria-label="Minimum price" />
+            <input id="price-max" type="range" min="0" max="50" step="0.5" value="50" aria-label="Maximum price" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Wanted strains</label>
+          <div id="selected-list" class="selected-list">
+            <div class="empty">Search and tap Want to build Wanted strains.</div>
+          </div>
+          <button id="show-wanted-map" type="button" disabled>View Best matches on map</button>
+        </div>
+
+        <button id="clear-selected" type="button">Clear Wanted strains</button>
+
+        <div class="field" style="margin-top:14px;">
+          <label>Trip plan</label>
+          <div id="selected-shop-list" class="selected-list">
+            <div class="empty">Select matching Destinations here, then send them to the map.</div>
+          </div>
+          <div class="side-action-row">
+            <button id="show-selected-shops-map" type="button" disabled>Show on map</button>
+            <button id="clear-selected-shops" type="button">Clear Trip plan</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="main-stack">
+        <section id="quick-answer" class="quick-answer panel is-empty" aria-live="polite">
+          Search a strain to see the best shops, prices, and freshness first.
+        </section>
+
+        <section class="metrics" aria-label="Explorer totals">
+          <div class="metric">
+            <span id="metric-strains" class="metric-value">0</span>
+            <span class="metric-label">Strains</span>
+          </div>
+          <div class="metric">
+            <span id="metric-shops" class="metric-value">0</span>
+            <span class="metric-label">Shops</span>
+          </div>
+          <div class="metric">
+            <span id="metric-offerings" class="metric-value">0</span>
+            <span class="metric-label">Listings</span>
+          </div>
+          <div class="metric">
+            <span id="metric-cheapest" class="metric-value">--</span>
+            <span class="metric-label">Lowest price</span>
+          </div>
+        </section>
+
+        <section id="strains-view" class="panel">
+          <div class="section-head">
+            <div>
+              <h2>Strains</h2>
+              <p id="strains-summary">Pick strains to build Wanted strains.</p>
+            </div>
+          </div>
+          <div id="browse-summary" class="browse-summary" aria-label="Active browse filters"></div>
+          <div id="strain-grid" class="strain-grid"></div>
+          <div id="strain-more-row" class="strain-more-row" hidden>
+            <button id="load-more-strains" type="button">Show more</button>
+          </div>
+        </section>
+
+        <section id="compare-view" class="panel" hidden>
+          <div class="section-head">
+            <div>
+              <h2>Common shops</h2>
+              <p id="compare-summary">Find shops carrying your Wanted strains.</p>
+            </div>
+          </div>
+          <div id="common-shop-board" class="common-shop-board"></div>
+          <div id="route-plan-board" class="route-plan-board"></div>
+          <div id="comparison-grid" class="comparison-grid"></div>
+        </section>
+
+        <section id="shops-view" class="panel" hidden>
+          <div class="section-head">
+            <div>
+              <h2>Shop menus</h2>
+              <p id="shops-summary">Shops are ordered A-Z by default. Choose Best deals to rank below-average prices first.</p>
+            </div>
+          </div>
+          <div id="shop-list" class="shop-list"></div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <button id="jump-top" class="jump-top-btn" type="button">Top</button>
+
+  <script src="scripts/budfinder-theme.js"></script>
+  <script>
+    const state = {
+      offerings: [],
+      shops: [],
+      shopById: new Map(),
+      shopLogoByKey: new Map(),
+      strainImageByKey: new Map(),
+      closedShopSourceTokens: [],
+      unavailableShopIds: new Set(),
+      strainStats: [],
+      selected: [],
+      selectedShopIds: [],
+      routePlanByStrain: {},
+      priceBounds: { min: 0, max: 50 },
+      snapshotTime: 0,
+      hiddenUnavailableListingCount: 0,
+      browseMode: 'value',
+      familyFilter: '',
+      visibleStrainLimit: 36,
+      view: 'strains'
+    };
+
+    const els = {
+      status: document.getElementById('status'),
+      search: document.getElementById('search'),
+      city: document.getElementById('city-filter'),
+      type: document.getElementById('type-filter'),
+      cali: document.getElementById('cali-filter'),
+      sort: document.getElementById('sort-filter'),
+      browseModeGrid: document.getElementById('browse-mode-grid'),
+      familyFilterGrid: document.getElementById('family-filter-grid'),
+      priceMin: document.getElementById('price-min'),
+      priceMax: document.getElementById('price-max'),
+      priceBandValue: document.getElementById('price-band-value'),
+      mapToggle: document.querySelector('.app-mode-toggle a[href="map.html"]'),
+      selectedList: document.getElementById('selected-list'),
+      selectedShopList: document.getElementById('selected-shop-list'),
+      clearSelected: document.getElementById('clear-selected'),
+      showWantedMap: document.getElementById('show-wanted-map'),
+      showSelectedShopsMap: document.getElementById('show-selected-shops-map'),
+      clearSelectedShops: document.getElementById('clear-selected-shops'),
+      metricStrains: document.getElementById('metric-strains'),
+      metricShops: document.getElementById('metric-shops'),
+      metricOfferings: document.getElementById('metric-offerings'),
+      metricCheapest: document.getElementById('metric-cheapest'),
+      quickAnswer: document.getElementById('quick-answer'),
+      resultContext: document.getElementById('result-context'),
+      toolbarMapLink: document.getElementById('toolbar-map-link'),
+      jumpFilters: document.getElementById('jump-filters'),
+      jumpResults: document.getElementById('jump-results'),
+      jumpTop: document.getElementById('jump-top'),
+      strainGrid: document.getElementById('strain-grid'),
+      browseSummary: document.getElementById('browse-summary'),
+      strainMoreRow: document.getElementById('strain-more-row'),
+      loadMoreStrains: document.getElementById('load-more-strains'),
+      comparisonGrid: document.getElementById('comparison-grid'),
+      commonShopBoard: document.getElementById('common-shop-board'),
+      routePlanBoard: document.getElementById('route-plan-board'),
+      shopList: document.getElementById('shop-list'),
+      strainsSummary: document.getElementById('strains-summary'),
+      compareSummary: document.getElementById('compare-summary'),
+      shopsSummary: document.getElementById('shops-summary')
+    };
+
+    function escapeHtml(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function normalise(value) {
+      return String(value || '').trim().toLowerCase();
+    }
+
+    function normaliseSearchText(value) {
+      return normalise(value)
+        .replace(/[^a-z0-9]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function fieldMatchesSearch(value, query) {
+      const text = normaliseSearchText(value);
+      const q = normaliseSearchText(query);
+      if (!q) return true;
+      if (!text) return false;
+      if (text === q) return true;
+      if (` ${text} `.includes(` ${q} `)) return true;
+
+      const words = text.split(' ').filter(Boolean);
+      return q.split(' ').filter(Boolean).every(part => {
+        if (part.length < 4) return words.includes(part);
+        return words.some(word => word.startsWith(part));
+      });
+    }
+
+    function offeringMatchesSearch(item, query) {
+      return [
+        item.strain_name,
+        item.strain_name_normalised,
+        item.shop_name,
+        item.shop_city,
+        item.base_type,
+        item.notes
+      ].some(value => fieldMatchesSearch(value, query));
+    }
+
+    function escapeHtmlAttr(value) {
+      return escapeHtml(value);
+    }
+
+    function money(value, currency = '€', unit = 'g') {
+      const amount = Number(value);
+      if (!Number.isFinite(amount)) return '--';
+      const display = amount % 1 === 0 ? amount.toFixed(0) : amount.toFixed(2);
+      return `${currency || '€'}${display}/${unit || 'g'}`;
+    }
+
+    function formatDate(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return new Intl.DateTimeFormat('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC'
+      }).format(date);
+    }
+
+    function parseTime(value) {
+      const time = new Date(value || '').getTime();
+      return Number.isFinite(time) ? time : null;
+    }
+
+    function freshnessReferenceTime() {
+      return Number.isFinite(state.snapshotTime) && state.snapshotTime > 0
+        ? state.snapshotTime
+        : Date.now();
+    }
+
+    function listingTime(item) {
+      return parseTime(item && (item.updated_at || item.last_seen_at_utc));
+    }
+
+    function ageDaysFromTime(time) {
+      if (!Number.isFinite(time)) return Infinity;
+      return Math.max(0, Math.floor((freshnessReferenceTime() - time) / 86400000));
+    }
+
+    function formatFreshness(value) {
+      if (!value) return '';
+      const time = parseTime(value);
+      if (!Number.isFinite(time)) return '';
+      const days = ageDaysFromTime(time);
+      if (days === 0) return 'updated today';
+      if (days === 1) return 'updated yesterday';
+      if (days < 14) return `updated ${days} days ago`;
+      if (days < 60) return `updated ${Math.round(days / 7)} weeks ago`;
+      return `updated ${formatDate(value)}`;
+    }
+
+    function listingPriceLabel(item) {
+      return Number.isFinite(Number(item && item.price_amount))
+        ? money(item.price_amount, item.price_currency, item.price_unit)
+        : 'Price unknown';
+    }
+
+    function listingUpdatedLabel(item) {
+      return formatFreshness((item && (item.updated_at || item.last_seen_at_utc)) || '');
+    }
+
+    function freshnessBadgeInfo(value) {
+      const time = parseTime(value);
+      if (!Number.isFinite(time)) return null;
+      const days = ageDaysFromTime(time);
+      if (days <= 14) return { label: 'Fresh', className: 'is-fresh' };
+      if (days <= 60) return { label: 'Likely', className: 'is-likely' };
+      return { label: 'Old intel', className: 'is-old-intel' };
+    }
+
+    function sortListingsByPrice(items) {
+      return (Array.isArray(items) ? items.slice() : []).sort((a, b) => {
+        const priceDiff = (Number.isFinite(Number(a.price_amount)) ? Number(a.price_amount) : Infinity) -
+          (Number.isFinite(Number(b.price_amount)) ? Number(b.price_amount) : Infinity);
+        if (priceDiff !== 0) return priceDiff;
+        return compareShopName(a, b);
+      });
+    }
+
+    function cheapestListingsForStat(stat, limit = 3) {
+      const listings = sortListingsByPrice(stat && stat.filteredOfferings ? stat.filteredOfferings : []);
+      return listings.slice(0, limit);
+    }
+
+    function average(values) {
+      const nums = values.map(Number).filter(Number.isFinite);
+      if (!nums.length) return null;
+      return nums.reduce((sum, value) => sum + value, 0) / nums.length;
+    }
+
+    function unique(values) {
+      return Array.from(new Set(values.filter(Boolean)));
+    }
+
+    function compareText(a, b) {
+      return String(a || '').localeCompare(String(b || ''), undefined, {
+        sensitivity: 'base',
+        numeric: true
+      });
+    }
+
+    function compareStrainName(a, b) {
+      return compareText(a && (a.name || a.strain_name), b && (b.name || b.strain_name));
+    }
+
+    function compareShopName(a, b) {
+      const nameDiff = compareText(
+        a && (a.shopName || a.name || a.shop_name),
+        b && (b.shopName || b.name || b.shop_name)
+      );
+      if (nameDiff !== 0) return nameDiff;
+      return compareText(a && (a.city || a.shop_city), b && (b.city || b.shop_city));
+    }
+
+    function sortModeLabel(key) {
+      if (key === 'deals') return 'Best deals';
+      if (key === 'availability') return 'Most available';
+      if (key === 'cheapest') return 'Lowest price';
+      if (key === 'average') return 'Average price';
+      if (key === 'name') return 'A-Z';
+      return '';
+    }
+
+    function sortModeSummary(key) {
+      if (key === 'deals') return 'sorted by best deals';
+      if (key === 'availability') return 'sorted by most available';
+      if (key === 'cheapest') return 'sorted by lowest price';
+      if (key === 'average') return 'sorted by average price';
+      if (key === 'name') return 'ordered A-Z';
+      return 'mode order';
+    }
+
+    function compareDealStrength(a, b) {
+      const aPercent = Number((a && a.percentBelow) || 0);
+      const bPercent = Number((b && b.percentBelow) || 0);
+      if (bPercent !== aPercent) return bPercent - aPercent;
+      const aSaving = Number((a && a.saving) || 0);
+      const bSaving = Number((b && b.saving) || 0);
+      if (bSaving !== aSaving) return bSaving - aSaving;
+      const aPrice = a && Number.isFinite(Number(a.price)) ? Number(a.price) : Infinity;
+      const bPrice = b && Number.isFinite(Number(b.price)) ? Number(b.price) : Infinity;
+      return aPrice - bPrice;
+    }
+
+    function compareStatsByDeal(a, b) {
+      return compareDealStrength(a.filteredBestDeal, b.filteredBestDeal) ||
+        ((b.filteredDealCount || 0) - (a.filteredDealCount || 0)) ||
+        ((b.filteredShopCount || 0) - (a.filteredShopCount || 0)) ||
+        compareStrainName(a, b);
+    }
+
+    function shopTypeCount(row, type) {
+      return (Array.isArray(row && row.offerings) ? row.offerings : [])
+        .filter(item => item.base_type === type).length;
+    }
+
+    function shopCaliCount(row) {
+      return (Array.isArray(row && row.offerings) ? row.offerings : [])
+        .filter(item => Number(item.is_cali) === 1).length;
+    }
+
+    function shopValueScore(row) {
+      const price = row && row.cheapest == null ? 99 : Number(row && row.cheapest);
+      const availability = Math.min(Number(row && row.uniqueStrains) || 0, 36);
+      const latest = latestListingTime(row && row.offerings);
+      const ageDays = latest ? ageDaysFromTime(latest) : 120;
+      const dealDepth = Number(row && row.bestDealPercent) || 0;
+      const dealVolume = Math.min(Number(row && row.belowAverageDeals && row.belowAverageDeals.length) || 0, 12);
+      return price - (availability * 0.08) + Math.min(ageDays, 120) * 0.012 - (dealDepth * 0.035) - (dealVolume * 0.04);
+    }
+
+    function compareShopRowsForBrowseMode(a, b, mode) {
+      const browseMode = mode || 'value';
+      if (browseMode === 'az') return compareShopName(a, b);
+      if (browseMode === 'available') return b.uniqueStrains - a.uniqueStrains || compareShopName(a, b);
+      if (browseMode === 'fresh') {
+        const freshDiff = latestListingTime(b.offerings) - latestListingTime(a.offerings);
+        if (freshDiff !== 0) return freshDiff;
+        return (a.cheapest ?? Infinity) - (b.cheapest ?? Infinity) || compareShopName(a, b);
+      }
+      if (browseMode === 'under10') return (a.cheapest ?? Infinity) - (b.cheapest ?? Infinity) || b.uniqueStrains - a.uniqueStrains || compareShopName(a, b);
+      if (browseMode === 'rare') return b.uniqueStrains - a.uniqueStrains || (a.cheapest ?? Infinity) - (b.cheapest ?? Infinity) || compareShopName(a, b);
+      if (browseMode === 'cali') return shopCaliCount(b) - shopCaliCount(a) || (a.cheapest ?? Infinity) - (b.cheapest ?? Infinity) || compareShopName(a, b);
+      if (browseMode === 'sativa' || browseMode === 'hybrid' || browseMode === 'indica') {
+        return shopTypeCount(b, browseMode) - shopTypeCount(a, browseMode) ||
+          (a.cheapest ?? Infinity) - (b.cheapest ?? Infinity) ||
+          b.uniqueStrains - a.uniqueStrains ||
+          compareShopName(a, b);
+      }
+      const aScore = Number.isFinite(Number(a && a.valueScore)) ? Number(a.valueScore) : shopValueScore(a);
+      const bScore = Number.isFinite(Number(b && b.valueScore)) ? Number(b.valueScore) : shopValueScore(b);
+      return aScore - bScore || b.uniqueStrains - a.uniqueStrains || compareShopName(a, b);
+    }
+
+    function compareShopRowsForSort(a, b, sortKey, browseMode) {
+      if (sortKey === 'deals') {
+        return compareDealStrength(a.bestDeal, b.bestDeal) ||
+          (b.belowAverageDeals.length - a.belowAverageDeals.length) ||
+          (b.uniqueStrains - a.uniqueStrains) ||
+          compareShopName(a, b);
+      }
+      if (sortKey === 'availability') return b.uniqueStrains - a.uniqueStrains || compareShopName(a, b);
+      if (sortKey === 'cheapest') return (a.cheapest ?? Infinity) - (b.cheapest ?? Infinity) || compareShopName(a, b);
+      if (sortKey === 'average') return (a.averagePrice ?? Infinity) - (b.averagePrice ?? Infinity) || compareShopName(a, b);
+      if (sortKey === 'name') return compareShopName(a, b);
+      return compareShopRowsForBrowseMode(a, b, browseMode);
+    }
+
+    function isClosedShop(shop) {
+      const value = shop && shop.is_closed;
+      return value === true || Number(value) === 1 || normalise(value) === 'true';
+    }
+
+    function isHiddenCatalogShop(shop) {
+      if (!shop || shop.show_in_admin == null) return false;
+      const value = shop.show_in_admin;
+      const text = normalise(value);
+      return value === false || Number(value) === 0 || ['false', 'no', 'n', 'off'].includes(text);
+    }
+
+    function hasUnavailableMenuStatus(shop) {
+      const status = normalise(shop && shop.menu_status);
+      return Boolean(status && ['closed', 'archived', 'archive', 'previous', 'old', 'error', 'failed'].includes(status));
+    }
+
+    function isUnavailableCatalogShop(shop) {
+      return Boolean(shop && (isClosedShop(shop) || isHiddenCatalogShop(shop) || hasUnavailableMenuStatus(shop)));
+    }
+
+    function sourceToken(value) {
+      let decoded = String(value || '');
+      try {
+        decoded = decodeURIComponent(decoded);
+      } catch (_err) {
+        // Keep the raw value if the URL has a malformed escape.
+      }
+      return decoded
+        .toLowerCase()
+        .replace(/^cs-/, '')
+        .replace(/&/g, 'and')
+        .replace(/[^a-z0-9]+/g, '');
+    }
+
+    function shopSourceTokens(shop) {
+      return [
+        sourceToken(shop && shop.name),
+        sourceToken(String((shop && shop.shop_key) || '').replace(/^cs-/, ''))
+      ].filter(token => token.length >= 5);
+    }
+
+    function buildClosedShopSourceTokens(shops) {
+      return Array.from(new Set(
+        (Array.isArray(shops) ? shops : [])
+          .filter(isClosedShop)
+          .flatMap(shopSourceTokens)
+      ));
+    }
+
+    function buildUnavailableShopIds(shops) {
+      return new Set(
+        (Array.isArray(shops) ? shops : [])
+          .filter(shop => isUnavailableCatalogShop(shop) || hasClosedShopSourceConflict(shop))
+          .map(shop => String(shop.shop_id || '').trim())
+          .filter(Boolean)
+      );
+    }
+
+    function hasClosedShopSourceConflict(shop) {
+      const source = sourceToken(shop && shop.image_url);
+      if (!source) return false;
+      const ownTokens = new Set(shopSourceTokens(shop));
+      return state.closedShopSourceTokens.some(token => !ownTokens.has(token) && source.includes(token));
+    }
+
+    function isBrowsableMenuShop(shop) {
+      if (!shop) return false;
+      if (state.unavailableShopIds && state.unavailableShopIds.has(String(shop.shop_id))) return false;
+      if (isUnavailableCatalogShop(shop)) return false;
+      if (hasClosedShopSourceConflict(shop)) return false;
+      return true;
+    }
+
+    function isBrowsableShopId(shopId) {
+      const id = String(shopId || '').trim();
+      if (!id || state.unavailableShopIds.has(id)) return false;
+      return isBrowsableMenuShop(state.shopById.get(id));
+    }
+
+    function isBrowsableOffering(item) {
+      return isBrowsableShopId(item && item.shop_id);
+    }
+
+    function getStrainFamilyKeys(name, type = '') {
+      const text = normalise(name);
+      const kind = normalise(type);
+      const keys = FAMILY_DEFINITIONS
+        .filter(family => family.terms.some(term => text.includes(term)))
+        .map(family => family.key);
+      if (kind === 'hash' && !keys.includes('hash')) keys.push('hash');
+      return keys;
+    }
+
+    function familyLabel(key) {
+      const family = FAMILY_BY_KEY.get(String(key || ''));
+      return family ? family.label : 'All families';
+    }
+
+    function browseModeLabel(key) {
+      const mode = BROWSE_MODE_BY_KEY.get(String(key || ''));
+      return mode ? mode.label : 'Best value';
+    }
+
+    function browseModeSummary(key) {
+      const mode = BROWSE_MODE_BY_KEY.get(String(key || ''));
+      return mode ? mode.summary : 'best value';
+    }
+
+    function browseModeIsFilter(key) {
+      return ['under10', 'rare', 'cali', 'sativa', 'hybrid', 'indica'].includes(String(key || ''));
+    }
+
+    function browseModeChipLabel(key) {
+      const label = browseModeLabel(key);
+      return `${browseModeIsFilter(key) ? 'Filter' : 'Order'}: ${label}`;
+    }
+
+    function latestListingTime(listings) {
+      return (Array.isArray(listings) ? listings : []).reduce((latest, item) => {
+        const time = listingTime(item);
+        return Number.isFinite(time) && time > latest ? time : latest;
+      }, 0);
+    }
+
+    function statValueScore(stat) {
+      const price = stat.filteredCheapest == null ? 99 : Number(stat.filteredCheapest);
+      const availability = Math.min(Number(stat.filteredShopCount) || 0, 24);
+      const latest = latestListingTime(stat.filteredOfferings);
+      const ageDays = latest ? ageDaysFromTime(latest) : 120;
+      return price - (availability * 0.12) + Math.min(ageDays, 120) * 0.015;
+    }
+
+    function statMatchesBrowseMode(stat, mode) {
+      if (!browseModeIsFilter(mode)) return true;
+      if (mode === 'under10') return stat.filteredCheapest != null && Number(stat.filteredCheapest) <= 10;
+      if (mode === 'rare') return stat.filteredShopCount > 0 && stat.filteredShopCount <= 4;
+      if (mode === 'cali') return stat.filteredCaliCount > 0;
+      if (mode === 'sativa' || mode === 'hybrid' || mode === 'indica') return statTypeCount(stat, mode) > 0;
+      return true;
+    }
+
+    function statTypeCount(stat, type) {
+      return Number((stat && stat.filteredTypeCounts && stat.filteredTypeCounts[type]) || 0);
+    }
+
+    function compareStatsForBrowseMode(a, b, filters) {
+      if (filters.sort === 'name') return compareStrainName(a, b);
+      if (filters.sort === 'deals') return compareStatsByDeal(a, b);
+      if (filters.sort === 'cheapest') return (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || compareStrainName(a, b);
+      if (filters.sort === 'average') return (a.filteredAvg ?? Infinity) - (b.filteredAvg ?? Infinity) || compareStrainName(a, b);
+      if (filters.sort === 'availability') return b.filteredShopCount - a.filteredShopCount || compareStrainName(a, b);
+
+      const mode = filters.browseMode || 'value';
+      if (mode === 'az') return compareStrainName(a, b);
+      if (mode === 'available') return b.filteredShopCount - a.filteredShopCount || compareStrainName(a, b);
+      if (mode === 'fresh') {
+        const freshDiff = latestListingTime(b.filteredOfferings) - latestListingTime(a.filteredOfferings);
+        if (freshDiff !== 0) return freshDiff;
+        return (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || compareStrainName(a, b);
+      }
+      if (mode === 'under10') return (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || b.filteredShopCount - a.filteredShopCount || compareStrainName(a, b);
+      if (mode === 'rare') return a.filteredShopCount - b.filteredShopCount || (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || compareStrainName(a, b);
+      if (mode === 'cali') return b.filteredCaliCount - a.filteredCaliCount || (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || compareStrainName(a, b);
+      if (mode === 'sativa' || mode === 'hybrid' || mode === 'indica') return statTypeCount(b, mode) - statTypeCount(a, mode) || (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || b.filteredShopCount - a.filteredShopCount || compareStrainName(a, b);
+      return statValueScore(a) - statValueScore(b) || b.filteredShopCount - a.filteredShopCount || compareStrainName(a, b);
+    }
+
+    function resetStrainWindow() {
+      state.visibleStrainLimit = INITIAL_STRAIN_LIMIT;
+    }
+
+    const STRAIN_SHELF_STORAGE_KEYS = ['budfinder_strain_shelf', 'locate3_strain_shelf'];
+    const SELECTED_SHOPS_STORAGE_KEY = 'budfinder_explorer_selected_shops';
+    const MAP_FOCUS_SHOPS_STORAGE_KEY = 'budfinder_map_focus_shops';
+    const INITIAL_STRAIN_LIMIT = 36;
+    const STRAIN_LIMIT_STEP = 36;
+    const BROWSE_MODES = [
+      { key: 'value', label: 'Best value', summary: 'best value' },
+      { key: 'available', label: 'Most stocked', summary: 'most stocked' },
+      { key: 'fresh', label: 'Fresh menus', summary: 'fresh menus' },
+      { key: 'under10', label: 'Under €10', summary: 'under €10' },
+      { key: 'rare', label: 'Rare finds', summary: 'rare finds' },
+      { key: 'cali', label: 'Cali', summary: 'cali' },
+      { key: 'sativa', label: 'Sativa', summary: 'sativa' },
+      { key: 'hybrid', label: 'Hybrid', summary: 'hybrid' },
+      { key: 'indica', label: 'Indica', summary: 'indica' },
+      { key: 'az', label: 'A-Z', summary: 'A-Z' }
+    ];
+    const BROWSE_MODE_BY_KEY = new Map(BROWSE_MODES.map(mode => [mode.key, mode]));
+    const FAMILY_DEFINITIONS = [
+      { key: 'amnesia', label: 'Amnesia', terms: ['amnesia', 'ammo'] },
+      { key: 'haze', label: 'Haze', terms: ['haze', 'silver haze', 'ssh'] },
+      { key: 'kush', label: 'Kush', terms: ['kush', 'og kush', 'kosher'] },
+      { key: 'gelato', label: 'Gelato', terms: ['gelato'] },
+      { key: 'cookies', label: 'Cookies', terms: ['cookies', 'cookie', 'gsc'] },
+      { key: 'cake', label: 'Cake', terms: ['cake', 'wedding cake', 'birthday'] },
+      { key: 'skunk', label: 'Skunk', terms: ['skunk'] },
+      { key: 'cheese', label: 'Cheese', terms: ['cheese'] },
+      { key: 'lemon', label: 'Lemon', terms: ['lemon', 'lemonade'] },
+      { key: 'widow', label: 'Widow', terms: ['widow'] },
+      { key: 'diesel', label: 'Diesel', terms: ['diesel', 'sour d'] },
+      { key: 'runtz', label: 'Runtz/Z', terms: ['runtz', 'zkittle', 'zkit', 'zushi', 'zheetos'] },
+      { key: 'gorilla', label: 'Gorilla', terms: ['gorilla', 'glue', 'gg4'] },
+      { key: 'critical', label: 'Critical', terms: ['critical'] },
+      { key: 'purple', label: 'Purple', terms: ['purple', 'violet'] },
+      { key: 'hash', label: 'Hash', terms: ['hash', 'polm', 'pollen', 'charas', 'filtrato', 'static', 'isolator', 'temple'] }
+    ];
+    const FAMILY_BY_KEY = new Map(FAMILY_DEFINITIONS.map(family => [family.key, family]));
+
+    function parseStoredJson(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : undefined;
+      } catch (_err) {
+        return undefined;
+      }
+    }
+
+    function loadStoredShelfNames() {
+      const out = [];
+      const seen = new Set();
+      STRAIN_SHELF_STORAGE_KEYS.forEach(key => {
+        const parsed = parseStoredJson(key);
+        if (!Array.isArray(parsed)) return;
+        parsed.forEach(name => {
+          const clean = String(name || '').replace(/\s+/g, ' ').trim();
+          const marker = normalise(clean);
+          if (!marker || seen.has(marker)) return;
+          seen.add(marker);
+          out.push(clean);
+        });
+      });
+      return out;
+    }
+
+    function saveStoredShelfNames(names) {
+      let raw = '[]';
+      try {
+        raw = JSON.stringify(names);
+      } catch (_err) {
+        return;
+      }
+      STRAIN_SHELF_STORAGE_KEYS.forEach(key => {
+        try {
+          localStorage.setItem(key, raw);
+        } catch (_err) {
+          // Storage can be blocked in private browsing or hardened browser modes.
+        }
+      });
+    }
+
+    function loadSelectedShopIds() {
+      const parsed = parseStoredJson(SELECTED_SHOPS_STORAGE_KEY);
+      if (!Array.isArray(parsed)) return [];
+      const seen = new Set();
+      return parsed
+        .map(value => String(value || '').trim())
+        .filter(value => {
+          if (!value || seen.has(value)) return false;
+          seen.add(value);
+          return true;
+        });
+    }
+
+    function saveSelectedShopIds() {
+      try {
+        localStorage.setItem(SELECTED_SHOPS_STORAGE_KEY, JSON.stringify(state.selectedShopIds));
+      } catch (_err) {
+        // Storage can be blocked in private browsing or hardened browser modes.
+      }
+    }
+
+    async function loadJson(path) {
+      const candidates = [path, `./${path}`, `/${path}`];
+      let lastError = null;
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`${url} returned ${res.status}`);
+          return await res.json();
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error(`Could not load ${path}`);
+    }
+
+    async function loadText(path) {
+      const candidates = [path, `./${path}`, `/${path}`];
+      let lastError = null;
+      for (const url of candidates) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`${url} returned ${res.status}`);
+          return await res.text();
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error(`Could not load ${path}`);
+    }
+
+    function parseCsvLine(line) {
+      const cells = [];
+      let cell = '';
+      let quoted = false;
+      for (let i = 0; i < line.length; i += 1) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (quoted && line[i + 1] === '"') {
+            cell += '"';
+            i += 1;
+          } else {
+            quoted = !quoted;
+          }
+        } else if (ch === ',' && !quoted) {
+          cells.push(cell);
+          cell = '';
+        } else {
+          cell += ch;
+        }
+      }
+      cells.push(cell);
+      return cells;
+    }
+
+    function buildStrainImageMap(csvText) {
+      const lines = String(csvText || '').split(/\r?\n/).filter(line => line.trim());
+      if (lines.length < 2) return new Map();
+      const headers = parseCsvLine(lines[0]).map(normalise);
+      const nameIndex = headers.indexOf('strain_name');
+      const imageIndex = headers.indexOf('image_filename');
+      const nextMap = new Map();
+      lines.slice(1).forEach(line => {
+        const cells = parseCsvLine(line);
+        const name = (cells[nameIndex] || '').trim();
+        const image = (cells[imageIndex] || '').trim();
+        const key = normalise(name);
+        if (key && image && !nextMap.has(key)) nextMap.set(key, image);
+      });
+      return nextMap;
+    }
+
+    async function loadShopLogoMap() {
+      try {
+        const index = await loadJson('database/locations/index.json');
+        const files = Array.isArray(index && index.files) ? index.files : [];
+        const texts = await Promise.all(
+          files.map(file => loadText(`database/locations/${file}`).catch(() => ''))
+        );
+        const nextMap = new Map();
+        texts.forEach(csvText => {
+          const lines = String(csvText || '').split(/\r?\n/).filter(line => line.trim());
+          if (lines.length < 2) return;
+          const headers = parseCsvLine(lines[0]).map(normalise);
+          const keyIndex = headers.indexOf('shop_key');
+          const logoIndex = headers.indexOf('logo');
+          if (keyIndex < 0 || logoIndex < 0) return;
+          lines.slice(1).forEach(line => {
+            const cells = parseCsvLine(line);
+            const shopKey = (cells[keyIndex] || '').trim();
+            const logo = (cells[logoIndex] || '').trim();
+            if (shopKey && logo && !nextMap.has(shopKey)) nextMap.set(shopKey, logo);
+          });
+        });
+        return nextMap;
+      } catch (_err) {
+        return new Map();
+      }
+    }
+
+    function strainImageCandidates(filename) {
+      const raw = String(filename || '').trim();
+      if (!raw) return [];
+      const encoded = encodeURIComponent(raw);
+      return Array.from(new Set([
+        `images/strains/${encoded}`,
+        `images/strains/${raw}`,
+        `./images/strains/${encoded}`,
+        `./images/strains/${raw}`,
+        `/images/strains/${encoded}`,
+        `/images/strains/${raw}`
+      ]));
+    }
+
+    function strainInitials(name) {
+      const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+      return (parts.slice(0, 2).map(part => part.charAt(0).toUpperCase()).join('') || 'ST').slice(0, 2);
+    }
+
+    function getStrainImageHtml(name) {
+      const filename = state.strainImageByKey.get(normalise(name));
+      const fallback = `<span class="strain-art-fallback">${escapeHtml(strainInitials(name))}</span>`;
+      if (!filename) return `<span class="strain-art">${fallback}</span>`;
+      const candidates = strainImageCandidates(filename);
+      if (!candidates.length) return `<span class="strain-art">${fallback}</span>`;
+      return (
+        `<span class="strain-art">` +
+          `<img src="${escapeHtmlAttr(candidates[0])}" alt="${escapeHtmlAttr(name)} strain art" ` +
+          `data-candidates="${escapeHtmlAttr(candidates.join('|'))}" data-idx="0">` +
+          fallback +
+        `</span>`
+      );
+    }
+
+    function handleStrainImageError(img) {
+      const candidates = String(img.getAttribute('data-candidates') || '').split('|').filter(Boolean);
+      const nextIndex = Number(img.getAttribute('data-idx') || 0) + 1;
+      if (candidates[nextIndex]) {
+        img.setAttribute('data-idx', String(nextIndex));
+        img.src = candidates[nextIndex];
+        return;
+      }
+      img.remove();
+    }
+
+    function logoSlug(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/^cs-/, '')
+        .replace(/&/g, ' and ')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+
+    function shopLogoFilenames(shopKey, shopName) {
+      const explicit = state.shopLogoByKey.get(String(shopKey || '').trim());
+      if (explicit) return [explicit];
+      const slugs = [
+        logoSlug(shopKey),
+        logoSlug(shopName)
+      ].filter(Boolean);
+      const derived = slugs.flatMap(slug => [`${slug}.png`, `${slug}.jpg`, `${slug}.svg`]);
+      return Array.from(new Set(derived.filter(Boolean)));
+    }
+
+    function shopLogoCandidates(filename) {
+      const raw = String(filename || '').trim();
+      if (!raw) return [];
+      const withoutLeading = raw.replace(/^\.?\//, '').replace(/^\/+/, '');
+      const basename = withoutLeading.split('/').filter(Boolean).at(-1) || withoutLeading;
+      const encodedBase = encodeURIComponent(basename);
+      const hasPath = withoutLeading.includes('/');
+      const direct = hasPath
+        ? [withoutLeading]
+        : [];
+      return Array.from(new Set([
+        ...direct,
+        `images/logos/${encodedBase}`,
+        `images/logos/${basename}`
+      ]));
+    }
+
+    function shopInitials(name) {
+      const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+      return (parts.slice(0, 2).map(part => part.charAt(0).toUpperCase()).join('') || 'CS').slice(0, 2);
+    }
+
+    function getShopLogoHtml(shopKey, shopName) {
+      const fallback = `<span class="shop-art-fallback">${escapeHtml(shopInitials(shopName))}</span>`;
+      const candidates = shopLogoFilenames(shopKey, shopName).flatMap(shopLogoCandidates);
+      if (!candidates.length) return `<span class="shop-art">${fallback}</span>`;
+      return (
+        `<span class="shop-art">` +
+          `<img src="${escapeHtmlAttr(candidates[0])}" alt="${escapeHtmlAttr(shopName)} logo" ` +
+          `data-candidates="${escapeHtmlAttr(candidates.join('|'))}" data-idx="0">` +
+          fallback +
+        `</span>`
+      );
+    }
+
+    function handleShopLogoError(img) {
+      const candidates = String(img.getAttribute('data-candidates') || '').split('|').filter(Boolean);
+      const nextIndex = Number(img.getAttribute('data-idx') || 0) + 1;
+      if (candidates[nextIndex]) {
+        img.setAttribute('data-idx', String(nextIndex));
+        img.src = candidates[nextIndex];
+        return;
+      }
+      img.remove();
+    }
+
+    function buildStats() {
+      const byStrain = new Map();
+      state.offerings.forEach(item => {
+        const key = item.strain_name_normalised || normalise(item.strain_name);
+        if (!key) return;
+        if (!byStrain.has(key)) {
+          byStrain.set(key, {
+            key,
+            name: item.strain_name || key,
+            offerings: [],
+            shops: new Map(),
+            cities: new Set(),
+            types: new Map(),
+            caliCount: 0
+          });
+        }
+        const stat = byStrain.get(key);
+        stat.offerings.push(item);
+        stat.cities.add(item.shop_city || '');
+        if (item.shop_id != null) stat.shops.set(String(item.shop_id), item);
+        if (item.base_type) stat.types.set(item.base_type, (stat.types.get(item.base_type) || 0) + 1);
+        if (Number(item.is_cali) === 1) stat.caliCount += 1;
+      });
+
+      state.strainStats = Array.from(byStrain.values()).map(stat => {
+        const prices = stat.offerings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+        const cheapest = prices.length ? Math.min(...prices) : null;
+        const avg = average(prices);
+        const topType = Array.from(stat.types.entries()).sort((a, b) => b[1] - a[1])[0];
+        const topTypeName = topType ? topType[0] : '';
+        return {
+          ...stat,
+          shopCount: stat.shops.size,
+          listingCount: stat.offerings.length,
+          cities: Array.from(stat.cities).filter(Boolean).sort(compareText),
+          cheapest,
+          avg,
+          topType: topTypeName,
+          families: getStrainFamilyKeys(stat.name, topTypeName),
+          typeCount: stat.types.size
+        };
+      });
+    }
+
+    function populateFilters() {
+      const cities = unique(state.offerings.map(item => item.shop_city)).sort(compareText);
+      const types = unique(state.offerings.map(item => item.base_type)).sort(compareText);
+      els.city.innerHTML = '<option value="">All cities</option>' + cities.map(city => `<option value="${escapeHtml(city)}">${escapeHtml(city)}</option>`).join('');
+      els.type.innerHTML = '<option value="">All types</option>' + types.map(type => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join('');
+    }
+
+    function setupPriceBand() {
+      const prices = state.offerings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+      const min = prices.length ? Math.floor(Math.min(...prices) * 2) / 2 : 0;
+      const max = prices.length ? Math.ceil(Math.max(...prices) * 2) / 2 : 50;
+      state.priceBounds = { min, max };
+      [els.priceMin, els.priceMax].forEach(input => {
+        input.min = String(min);
+        input.max = String(max);
+        input.step = '0.5';
+      });
+      els.priceMin.value = String(min);
+      els.priceMax.value = String(max);
+      syncPriceBandLabels();
+    }
+
+    function syncPriceBandLabels() {
+      let min = Number(els.priceMin.value);
+      let max = Number(els.priceMax.value);
+      if (min > max) {
+        const active = document.activeElement;
+        if (active === els.priceMin) {
+          max = min;
+          els.priceMax.value = String(max);
+        } else {
+          min = max;
+          els.priceMin.value = String(min);
+        }
+      }
+      const fullRange = min <= state.priceBounds.min && max >= state.priceBounds.max;
+      els.priceBandValue.textContent = fullRange ? 'Any price' : `${money(min)} to ${money(max)}`;
+    }
+
+    function currentFilters() {
+      syncPriceBandLabels();
+      return {
+        q: normalise(els.search.value),
+        city: els.city.value,
+        type: els.type.value,
+        cali: els.cali.value,
+        priceMin: Number(els.priceMin.value),
+        priceMax: Number(els.priceMax.value),
+        sort: els.sort.value,
+        browseMode: state.browseMode,
+        family: state.familyFilter
+      };
+    }
+
+    function offeringMatches(item, filters) {
+      if (filters.city && item.shop_city !== filters.city) return false;
+      if (filters.type && item.base_type !== filters.type) return false;
+      if (filters.cali !== '' && String(Number(item.is_cali) || 0) !== filters.cali) return false;
+      const amount = Number(item.price_amount);
+      if (Number.isFinite(amount)) {
+        if (Number.isFinite(filters.priceMin) && amount < filters.priceMin) return false;
+        if (Number.isFinite(filters.priceMax) && amount > filters.priceMax) return false;
+      }
+      if (filters.q) {
+        if (!offeringMatchesSearch(item, filters.q)) return false;
+      }
+      return true;
+    }
+
+    function getBaseFilteredOfferings() {
+      const filters = currentFilters();
+      return state.offerings.filter(item => offeringMatches(item, filters));
+    }
+
+    function offeringsForStats(stats) {
+      return (Array.isArray(stats) ? stats : []).flatMap(stat => stat.filteredOfferings || []);
+    }
+
+    function getFilteredOfferings(stats) {
+      return Array.isArray(stats) ? offeringsForStats(stats) : offeringsForStats(getFilteredStats());
+    }
+
+    function getFilteredStats(options = {}) {
+      const filtered = getBaseFilteredOfferings();
+      const keys = new Set(filtered.map(item => item.strain_name_normalised || normalise(item.strain_name)));
+      const filters = currentFilters();
+      const stats = state.strainStats
+        .filter(stat => keys.has(stat.key))
+        .map(stat => {
+          const matchingOfferings = stat.offerings.filter(item => offeringMatches(item, filters));
+          const prices = matchingOfferings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+          const filteredDeals = belowAverageDealsForOfferings(matchingOfferings);
+          const matchingTypes = new Map();
+          matchingOfferings.forEach(item => {
+            if (item.base_type) matchingTypes.set(item.base_type, (matchingTypes.get(item.base_type) || 0) + 1);
+          });
+          return {
+            ...stat,
+            filteredOfferings: matchingOfferings,
+            filteredShopCount: new Set(matchingOfferings.map(item => item.shop_id)).size,
+            filteredListingCount: matchingOfferings.length,
+            filteredCheapest: prices.length ? Math.min(...prices) : null,
+            filteredHighest: prices.length ? Math.max(...prices) : null,
+            filteredAvg: average(prices),
+            filteredBestDeal: filteredDeals[0] || null,
+            filteredDealCount: filteredDeals.length,
+            filteredCaliCount: matchingOfferings.filter(item => Number(item.is_cali) === 1).length,
+            filteredHashCount: matchingOfferings.filter(item => item.base_type === 'hash').length,
+            filteredTypeCounts: Object.fromEntries(matchingTypes.entries()),
+            filteredTopType: Array.from(matchingTypes.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] || ''
+          };
+        })
+        .filter(stat => options.ignoreFamily || !filters.family || stat.families.includes(filters.family))
+        .filter(stat => options.ignoreBrowseMode || statMatchesBrowseMode(stat, filters.browseMode));
+
+      stats.sort((a, b) => compareStatsForBrowseMode(a, b, filters));
+      return stats;
+    }
+
+    function renderMetrics(filteredOfferings, filteredStats) {
+      const shops = new Set(filteredOfferings.map(item => item.shop_id));
+      const prices = filteredOfferings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+      els.metricStrains.textContent = filteredStats.length.toLocaleString();
+      els.metricShops.textContent = shops.size.toLocaleString();
+      els.metricOfferings.textContent = filteredOfferings.length.toLocaleString();
+      els.metricCheapest.textContent = prices.length ? money(Math.min(...prices)) : '--';
+    }
+
+    function renderBrowseControls(familySourceStats, filteredStats) {
+      if (els.browseModeGrid) {
+        els.browseModeGrid.querySelectorAll('[data-browse-mode]').forEach(button => {
+          button.classList.toggle('is-active', button.dataset.browseMode === state.browseMode);
+        });
+      }
+
+      if (els.familyFilterGrid) {
+        const counts = new Map();
+        familySourceStats.forEach(stat => {
+          (stat.families || []).forEach(key => {
+            counts.set(key, (counts.get(key) || 0) + 1);
+          });
+        });
+        const families = FAMILY_DEFINITIONS
+          .map(family => ({ ...family, count: counts.get(family.key) || 0 }))
+          .filter(family => family.count > 0 || family.key === state.familyFilter)
+          .sort((a, b) => compareText(a.label, b.label));
+        const allActive = !state.familyFilter;
+        els.familyFilterGrid.innerHTML = `
+          <button class="${allActive ? 'is-active' : ''}" type="button" data-family-filter="">
+            <span>All families</span>
+            <small>${familySourceStats.length.toLocaleString()}</small>
+          </button>
+          ${families.map(family => `
+            <button class="${state.familyFilter === family.key ? 'is-active' : ''}" type="button" data-family-filter="${escapeHtmlAttr(family.key)}">
+              <span>${escapeHtml(family.label)}</span>
+              <small>${family.count.toLocaleString()}</small>
+            </button>
+          `).join('')}
+        `;
+      }
+
+      if (els.browseSummary) {
+        const filters = currentFilters();
+        const visible = Math.min(state.visibleStrainLimit, filteredStats.length);
+        const chips = [
+          browseModeChipLabel(state.browseMode),
+          state.familyFilter ? familyLabel(state.familyFilter) : 'All families',
+          filters.sort ? `Sort: ${sortModeLabel(filters.sort)}` : '',
+          `${visible.toLocaleString()} of ${filteredStats.length.toLocaleString()} strains`
+        ].filter(Boolean);
+        els.browseSummary.innerHTML = chips.map(chip => `<span class="chip">${escapeHtml(chip)}</span>`).join('');
+      }
+    }
+
+    function shopIdsForListings(listings) {
+      const seen = new Set();
+      return (Array.isArray(listings) ? listings : [])
+        .map(item => String((item && item.shop_id) || '').trim())
+        .filter(id => {
+          if (!id || seen.has(id) || !isBrowsableShopId(id)) return false;
+          seen.add(id);
+          return true;
+        });
+    }
+
+    function visibleOfferingsForStat(stat) {
+      if (!stat) return [];
+      return Array.isArray(stat.filteredOfferings) ? stat.filteredOfferings : (stat.offerings || []);
+    }
+
+    function quickAnswerShouldUseDeal(filters) {
+      const hasSearch = Boolean(normalise(filters && filters.q));
+      if (hasSearch) return false;
+      if (filters && filters.sort === 'deals') return true;
+      return !filters.sort && (!filters.browseMode || filters.browseMode === 'value');
+    }
+
+    function quickAnswerListingId(item) {
+      return [
+        item && item.shop_id,
+        item && (item.strain_id || item.strain_name_normalised || item.strain_name),
+        item && item.price_amount,
+        item && item.price_unit
+      ].map(value => String(value || '').trim()).join('|');
+    }
+
+    function quickAnswerListingsForStat(stat, featured, limit = 5) {
+      const seen = new Set();
+      const listings = [];
+      [featured, ...cheapestListingsForStat(stat, limit + 1)].filter(Boolean).forEach(item => {
+        const id = quickAnswerListingId(item);
+        if (!id || seen.has(id)) return;
+        seen.add(id);
+        listings.push(item);
+      });
+      return listings.slice(0, limit);
+    }
+
+    function pickQuickAnswerStat(filteredStats, filters) {
+      if (!filteredStats.length) return null;
+      const q = normalise(filters && filters.q);
+      if (q) {
+        const exact = filteredStats.find(stat => normalise(stat.name) === q || stat.key === q);
+        if (exact) return exact;
+        return filteredStats[0];
+      }
+      if (quickAnswerShouldUseDeal(filters)) {
+        return filteredStats
+          .filter(stat => stat.filteredBestDeal)
+          .slice()
+          .sort(compareStatsByDeal)[0] || filteredStats[0];
+      }
+      return filteredStats[0];
+    }
+
+    function renderQuickAnswer(filteredOfferings, filteredStats) {
+      if (!els.quickAnswer) return;
+      const filters = currentFilters();
+      const stat = pickQuickAnswerStat(filteredStats, filters);
+
+      if (!stat || !filteredOfferings.length) {
+        els.quickAnswer.classList.add('is-empty');
+        els.quickAnswer.innerHTML = filters.q
+          ? `No current listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name, a shop name, or a broader filter.`
+          : 'Search a strain to see the best shops, prices, and freshness first.';
+        return;
+      }
+
+      const featuredDeal = quickAnswerShouldUseDeal(filters) ? stat.filteredBestDeal : null;
+      const featured = (featuredDeal && featuredDeal.item) || cheapestListingsForStat(stat, 1)[0];
+      const listings = quickAnswerListingsForStat(stat, featured, 5);
+      if (!featured) {
+        els.quickAnswer.classList.add('is-empty');
+        els.quickAnswer.innerHTML = `No priced listings are visible for ${escapeHtml(stat.name)} yet. Try including price-unknown listings or another strain.`;
+        return;
+      }
+
+      const allShopIds = shopIdsForListings(stat.filteredOfferings);
+      const featuredShopId = String(featured.shop_id || '');
+      const priceLabel = listingPriceLabel(featured);
+      const updated = listingUpdatedLabel(featured);
+      const mapContext = { strainName: stat.name, strainShopIds: allShopIds };
+      const allMapUrl = mapUrlForShopIds(allShopIds, mapContext);
+      const featuredMapUrl = mapUrlForShopIds([featuredShopId], mapContext);
+      const sourceUrl = shopLinkForId(featuredShopId);
+      const featuredDealCopy = featuredDeal
+        ? `${featuredDeal.percentBelow}% below average ${money(featuredDeal.averagePrice, featured.price_currency, featured.price_unit)}`
+        : '';
+      const headline = filters.q
+        ? `Cheapest visible ${stat.name}`
+        : featuredDeal
+          ? `Best value: ${stat.name}`
+          : `${browseModeLabel(filters.browseMode)} pick: ${stat.name}`;
+
+      els.quickAnswer.classList.remove('is-empty');
+      els.quickAnswer.innerHTML = `
+        <div class="quick-answer-head">
+          <div>
+            <span class="quick-answer-kicker">Best answer</span>
+            <h2>${escapeHtml(headline)}</h2>
+            <p class="quick-answer-copy">
+              ${escapeHtml(featured.shop_name || 'Unknown shop')}${featured.shop_city ? ` · ${escapeHtml(featured.shop_city)}` : ''}
+              ${featuredDealCopy ? ` · ${escapeHtml(featuredDealCopy)}` : ''}${updated ? ` · ${escapeHtml(updated)}` : ''}.
+              Map Best matches to use Starting point and Trip plan tools.
+            </p>
+          </div>
+          <span class="quick-answer-price">${escapeHtml(priceLabel)}</span>
+        </div>
+        <div class="quick-answer-list">
+          ${listings.map(item => {
+            const shopId = String(item.shop_id || '');
+            const meta = [
+              item.shop_city || '',
+              listingUpdatedLabel(item),
+              item.grower ? `Grower: ${item.grower}` : ''
+            ].filter(Boolean).join(' · ');
+            return `
+                <button type="button" class="quick-answer-row${isShopSelected(shopId) ? ' is-active' : ''}" data-toggle-map-shop="${escapeHtmlAttr(shopId)}" aria-label="${isShopSelected(shopId) ? 'Remove' : 'Add'} ${escapeHtmlAttr(item.shop_name || 'Unknown shop')} ${isShopSelected(shopId) ? 'from' : 'to'} Trip plan">
+                <span>
+                  <strong>${escapeHtml(item.shop_name || 'Unknown shop')}</strong>
+                  <span>${escapeHtml(meta || 'Menu matched')}</span>
+                </span>
+                <span class="quick-answer-row-price">${escapeHtml(listingPriceLabel(item))}</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+        <div class="quick-answer-actions">
+          <a href="${escapeHtmlAttr(featuredMapUrl)}" data-map-shop="${escapeHtmlAttr(featuredShopId)}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}">${featuredDeal ? 'Map deal' : 'Map cheapest'}</a>
+          <a class="secondary" href="${escapeHtmlAttr(allMapUrl)}" data-map-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}">Map all ${allShopIds.length}</a>
+          <a class="secondary" href="${escapeHtmlAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">Open menu</a>
+          <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Wanted' : 'Want this'}</button>
+          <button type="button" data-focus-shops="${escapeHtmlAttr(stat.key)}">Browse shops</button>
+        </div>
+      `;
+    }
+
+    function updateResultToolbar(filteredOfferings, filteredStats) {
+      if (els.resultContext) {
+        const filters = currentFilters();
+        const viewName = state.view === 'shops' ? 'shop menus' : state.view === 'compare' ? 'common shops' : 'strains';
+        const bits = [
+          `${filteredStats.length.toLocaleString()} strains`,
+          `${new Set(filteredOfferings.map(item => item.shop_id)).size.toLocaleString()} shops`,
+          `${filteredOfferings.length.toLocaleString()} listings`
+        ];
+        const scope = [
+          browseModeSummary(filters.browseMode),
+          filters.family ? familyLabel(filters.family) : ''
+        ].filter(Boolean).join(' · ');
+        const label = scope ? `${viewName} · ${scope}` : viewName;
+        els.resultContext.textContent = filters.q
+          ? `${label}: ${bits.join(' · ')} for "${els.search.value}"`
+          : `${label}: ${bits.join(' · ')}`;
+      }
+
+      if (els.toolbarMapLink) {
+        els.toolbarMapLink.href = mapUrlForShopIds(state.selectedShopIds);
+        els.toolbarMapLink.textContent = state.selectedShopIds.length
+          ? `Map ${state.selectedShopIds.length}`
+          : 'Map';
+      }
+    }
+
+    function getStatByKey(key) {
+      const cleanKey = normalise(key);
+      return state.strainStats.find(stat => stat.key === cleanKey) || null;
+    }
+
+    function getCanonicalShelfName(nameOrKey) {
+      const clean = String(nameOrKey || '').replace(/\s+/g, ' ').trim();
+      const key = normalise(clean);
+      if (!key) return '';
+      const stat = getStatByKey(key);
+      return stat && stat.name ? stat.name : clean;
+    }
+
+    function normaliseShelfNames(names) {
+      const out = [];
+      const seen = new Set();
+      (Array.isArray(names) ? names : []).forEach(name => {
+        const canonical = getCanonicalShelfName(name);
+        const key = normalise(canonical);
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        out.push(canonical);
+      });
+      return out.slice(0, 10);
+    }
+
+    function loadSharedShelf() {
+      state.selected = normaliseShelfNames(loadStoredShelfNames()).map(name => normalise(name));
+    }
+
+    function saveSharedShelf() {
+      const names = normaliseShelfNames(state.selected.map(key => {
+        const stat = getStatByKey(key);
+        return stat && stat.name ? stat.name : key;
+      }));
+      state.selected = names.map(name => normalise(name));
+      saveStoredShelfNames(names);
+    }
+
+    function getShopMeta(shopId) {
+      return state.shopById.get(String(shopId)) || {};
+    }
+
+    function isShopSelected(shopId) {
+      return state.selectedShopIds.includes(String(shopId));
+    }
+
+    function sanitizeShopIds(shopIds) {
+      const seen = new Set();
+      return (Array.isArray(shopIds) ? shopIds : [])
+        .map(id => String(id || '').trim())
+        .filter(id => {
+          if (!id || seen.has(id) || !isBrowsableShopId(id)) return false;
+          seen.add(id);
+          return true;
+        });
+    }
+
+    function toggleSelectedShop(shopId) {
+      const id = String(shopId || '').trim();
+      if (!id || !isBrowsableShopId(id)) return;
+      if (isShopSelected(id)) {
+        state.selectedShopIds = state.selectedShopIds.filter(item => item !== id);
+      } else {
+        state.selectedShopIds = [id, ...state.selectedShopIds.filter(item => item !== id)];
+      }
+      saveSelectedShopIds();
+      render();
+    }
+
+    function setSelectedShops(shopIds) {
+      state.selectedShopIds = sanitizeShopIds(shopIds);
+      saveSelectedShopIds();
+      render();
+    }
+
+    function getPlannedShopIds(stats = selectedStats()) {
+      const selectedKeys = new Set(stats.map(stat => stat.key));
+      const seen = new Set();
+      const ids = [];
+      Object.entries(state.routePlanByStrain || {}).forEach(([strainKey, shopId]) => {
+        const id = String(shopId || '').trim();
+        if (!selectedKeys.has(strainKey) || !id || seen.has(id) || !isBrowsableShopId(id)) return;
+        seen.add(id);
+        ids.push(id);
+      });
+      return ids;
+    }
+
+    function syncSelectedShopsFromRoutePlan(stats = selectedStats()) {
+      const ids = getPlannedShopIds(stats);
+      state.selectedShopIds = ids;
+      saveSelectedShopIds();
+    }
+
+    function setRoutePlanShop(strainKey, shopId) {
+      const key = String(strainKey || '').trim();
+      const id = String(shopId || '').trim();
+      if (!key || !id || !isBrowsableShopId(id)) return;
+      state.routePlanByStrain = {
+        ...(state.routePlanByStrain || {}),
+        [key]: id
+      };
+      syncSelectedShopsFromRoutePlan(selectedStats());
+      render();
+    }
+
+    function clearRoutePlan() {
+      state.routePlanByStrain = {};
+      setSelectedShops([]);
+    }
+
+    function mapUrlForShopIds(shopIds, context = {}) {
+      const ids = sanitizeShopIds(shopIds);
+      if (!ids.length) return 'map.html';
+      const params = new URLSearchParams();
+      params.set('shops', ids.join(','));
+      params.set('source', 'explorer');
+      const strainName = String((context && context.strainName) || '').trim();
+      const strainShopIds = (Array.isArray(context && context.strainShopIds) ? context.strainShopIds : [])
+        .map(id => String(id || '').trim())
+        .filter(isBrowsableShopId);
+      if (strainName) params.set('strain', strainName);
+      if (strainShopIds.length) params.set('strain_shops', Array.from(new Set(strainShopIds)).join(','));
+      return `map.html?${params.toString()}`;
+    }
+
+    function prepareMapHandoff(context = {}) {
+      const shopIds = sanitizeShopIds(Array.isArray(context.shopIds) ? context.shopIds : state.selectedShopIds);
+      if (!shopIds.length) return;
+      const payload = {
+        shopIds,
+        strainName: String(context.strainName || '').trim(),
+        strainShopIds: sanitizeShopIds(Array.isArray(context.strainShopIds) ? context.strainShopIds : []),
+        createdAt: new Date().toISOString()
+      };
+      try {
+        localStorage.setItem(MAP_FOCUS_SHOPS_STORAGE_KEY, JSON.stringify(payload));
+      } catch (_err) {
+        // The URL carries the important part; storage is just a courtesy.
+      }
+    }
+
+    function updateMapToggleHref() {
+      if (!els.mapToggle) return;
+      els.mapToggle.href = mapUrlForShopIds(state.selectedShopIds);
+      els.mapToggle.title = state.selectedShopIds.length
+        ? `Show ${state.selectedShopIds.length} selected coffeeshop${state.selectedShopIds.length === 1 ? '' : 's'} on the map`
+        : 'Show the full map';
+    }
+
+    function goToMapWithSelectedShops() {
+      if (!state.selectedShopIds.length) return;
+      prepareMapHandoff();
+      window.location.href = mapUrlForShopIds(state.selectedShopIds);
+    }
+
+    function mapContextFromElement(element) {
+      const strainName = String((element && element.dataset && element.dataset.strainName) || '').trim();
+      const strainShopIds = String((element && element.dataset && element.dataset.strainShops) || '')
+        .split(',')
+        .map(id => id.trim())
+        .filter(Boolean);
+      return { strainName, strainShopIds };
+    }
+
+    function goToMapShopIds(shopIds, context = {}) {
+      const ids = sanitizeShopIds(Array.isArray(shopIds) ? shopIds : [shopIds]);
+      if (!ids.length) return;
+      state.selectedShopIds = Array.from(new Set(ids));
+      saveSelectedShopIds();
+      prepareMapHandoff({ ...context, shopIds: state.selectedShopIds });
+      window.location.href = mapUrlForShopIds(state.selectedShopIds, context);
+    }
+
+    function goToMapWithWantedStrains() {
+      const stats = selectedStats();
+      const ids = sanitizeShopIds(stats.flatMap(stat => shopIdsForListings(visibleOfferingsForStat(stat))));
+      if (!ids.length) return;
+      const strainNames = stats.map(stat => stat.name).filter(Boolean);
+      goToMapShopIds(ids, {
+        strainName: strainNames.length === 1 ? strainNames[0] : '',
+        strainShopIds: ids
+      });
+    }
+
+    function isSelected(key) {
+      return state.selected.includes(key);
+    }
+
+    function toggleSelected(key) {
+      if (isSelected(key)) {
+        state.selected = state.selected.filter(item => item !== key);
+        if (state.routePlanByStrain && state.routePlanByStrain[key]) {
+          delete state.routePlanByStrain[key];
+          syncSelectedShopsFromRoutePlan(selectedStats());
+        }
+      } else {
+        const canonical = getCanonicalShelfName(key);
+        state.selected = [normalise(canonical), ...state.selected.filter(item => item !== normalise(canonical))].slice(0, 10);
+      }
+      saveSharedShelf();
+      render();
+    }
+
+    function renderSelected() {
+      if (!state.selected.length) {
+        els.selectedList.innerHTML = '<div class="empty">Search and tap Want to build Wanted strains, then compare Best matches.</div>';
+        if (els.showWantedMap) els.showWantedMap.disabled = true;
+        return;
+      }
+      const selectedRows = state.selected
+        .map(key => {
+          const stat = state.strainStats.find(item => item.key === key);
+          const offerings = visibleOfferingsForStat(stat);
+          return { key, name: stat ? stat.name : key, shopCount: stat ? shopIdsForListings(offerings).length : 0 };
+        })
+        .sort(compareStrainName);
+      els.selectedList.innerHTML = selectedRows.map(({ key, name, shopCount }) => {
+        const count = Number(shopCount);
+        return `
+          <div class="selected-pill">
+            <span class="selected-pill-main"><span>${escapeHtml(name)}</span>${Number.isFinite(count) ? `<small> ${count} matching shop${count === 1 ? '' : 's'}</small>` : ''}</span>
+            <button type="button" data-remove-selected="${escapeHtml(key)}" aria-label="Remove ${escapeHtml(name)}">x</button>
+          </div>
+        `;
+      }).join('');
+      if (els.showWantedMap) {
+        const matchingShopCount = sanitizeShopIds(selectedStats().flatMap(stat => shopIdsForListings(visibleOfferingsForStat(stat)))).length;
+        els.showWantedMap.disabled = matchingShopCount === 0;
+        els.showWantedMap.textContent = matchingShopCount
+          ? `View ${matchingShopCount} Best matches on map`
+          : 'No Best matches on map';
+      }
+    }
+
+    function renderSelectedShops() {
+      updateMapToggleHref();
+      if (!state.selectedShopIds.length) {
+        els.selectedShopList.innerHTML = '<div class="empty">Select matching Destinations here, then send them to the map.</div>';
+        els.showSelectedShopsMap.disabled = true;
+        return;
+      }
+
+      els.showSelectedShopsMap.disabled = false;
+      const selectedRows = state.selectedShopIds
+        .map(shopId => {
+          const meta = getShopMeta(shopId);
+          return {
+            shopId,
+            name: meta.name || `Shop ${shopId}`,
+            city: meta.city || ''
+          };
+        })
+        .sort(compareShopName);
+      els.selectedShopList.innerHTML = selectedRows.map(({ shopId, name, city }) => {
+        return `
+          <div class="selected-pill selected-shop-pill">
+            <span>${escapeHtml(name)}${city ? ` · ${escapeHtml(city)}` : ''}</span>
+            <button type="button" data-toggle-map-shop="${escapeHtml(shopId)}" aria-label="Remove ${escapeHtml(name)}">x</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderStrains(stats) {
+      const visibleStats = stats.slice(0, state.visibleStrainLimit);
+      const filters = currentFilters();
+      const mode = browseModeSummary(state.browseMode);
+      const family = state.familyFilter ? ` in ${familyLabel(state.familyFilter)}` : '';
+      const sortSuffix = filters.sort ? ` · ${sortModeSummary(filters.sort)}` : '';
+      els.strainsSummary.textContent = `${stats.length.toLocaleString()} ${mode} strain${stats.length === 1 ? '' : 's'}${family} match the current filters${sortSuffix}.`;
+      if (!stats.length) {
+        els.strainGrid.innerHTML = '<div class="empty">No strains match these filters. Try clearing one filter, widening the price range, or searching a shorter name.</div>';
+        if (els.strainMoreRow) els.strainMoreRow.hidden = true;
+        return;
+      }
+      els.strainGrid.innerHTML = visibleStats.map(stat => {
+        const selected = isSelected(stat.key);
+        const cities = stat.cities.slice(0, 3).join(', ');
+        const moreCities = stat.cities.length > 3 ? ` +${stat.cities.length - 3}` : '';
+        const cheapestListings = cheapestListingsForStat(stat, 3);
+        const cheapestShopId = cheapestListings[0] ? String(cheapestListings[0].shop_id || '') : '';
+        const allShopIds = shopIdsForListings(stat.filteredOfferings);
+        const familyChips = (stat.families || []).slice(0, 2).map(key => `<span class="chip">${escapeHtml(familyLabel(key))}</span>`).join('');
+        const bestDeal = stat.filteredBestDeal;
+        const bestDealItem = bestDeal && bestDeal.item;
+        const bestDealPrice = bestDealItem ? money(bestDeal.price, bestDealItem.price_currency, bestDealItem.price_unit) : '';
+        const bestDealAverage = bestDealItem ? money(bestDeal.averagePrice, bestDealItem.price_currency, bestDealItem.price_unit) : '';
+        return `
+          <article class="strain-card${selected ? ' is-selected' : ''}" data-strain-card="${escapeHtml(stat.key)}" tabindex="0" aria-pressed="${selected ? 'true' : 'false'}" title="${selected ? 'Remove' : 'Add'} ${escapeHtml(stat.name)} ${selected ? 'from' : 'to'} Wanted strains">
+            <div class="strain-card-main">
+              ${getStrainImageHtml(stat.name)}
+              <div class="strain-card-copy">
+                <div class="strain-card-head">
+                  <div>
+                    <h3>${escapeHtml(stat.name)}</h3>
+                    <div class="muted">${escapeHtml(cities || 'City unknown')}${escapeHtml(moreCities)}</div>
+                  </div>
+                  <span class="chip">${stat.filteredShopCount} shops</span>
+                </div>
+              </div>
+            </div>
+            <div class="chip-row">
+              ${familyChips}
+              ${stat.topType ? `<span class="chip type-${escapeHtml(stat.topType)}">${escapeHtml(stat.topType)}</span>` : ''}
+              <span class="chip">Low ${money(stat.filteredCheapest)}</span>
+              <span class="chip">Avg ${money(stat.filteredAvg)}</span>
+              <span class="chip">High ${money(stat.filteredHighest)}</span>
+              <span class="chip">${stat.filteredListingCount} listings</span>
+              ${bestDeal ? `<span class="chip deal-chip">${bestDeal.percentBelow}% below avg</span>` : ''}
+              ${stat.caliCount ? `<span class="chip cali">${stat.caliCount} cali</span>` : ''}
+            </div>
+            ${bestDeal && bestDealItem ? `
+              <div class="shop-deals strain-deal">
+                <div class="shop-deals-head">
+                  <span>Best deal</span>
+                  <span>${bestDeal.percentBelow}% below avg</span>
+                </div>
+                <button type="button" class="cheapest-shop-row${isShopSelected(bestDealItem.shop_id) ? ' is-active' : ''}" data-toggle-map-shop="${escapeHtmlAttr(bestDealItem.shop_id)}" aria-label="${isShopSelected(bestDealItem.shop_id) ? 'Remove' : 'Add'} ${escapeHtmlAttr(bestDealItem.shop_name || 'Unknown shop')} ${isShopSelected(bestDealItem.shop_id) ? 'from' : 'to'} Trip plan">
+                  <span>
+                    <strong>${escapeHtml(bestDealItem.shop_name || 'Unknown shop')}</strong>
+                    <span>${escapeHtml([bestDealItem.shop_city || '', `avg ${bestDealAverage}`].filter(Boolean).join(' · '))}</span>
+                  </span>
+                  <span class="cheapest-shop-row-price">${escapeHtml(bestDealPrice)}</span>
+                </button>
+              </div>
+            ` : ''}
+            <div class="cheapest-shop-list" aria-label="Cheapest shops carrying ${escapeHtmlAttr(stat.name)}">
+              ${cheapestListings.map(item => {
+                const shopId = String(item.shop_id || '');
+                const freshness = freshnessBadgeInfo(item.updated_at || item.last_seen_at_utc);
+                const meta = [
+                  item.shop_city || '',
+                  listingUpdatedLabel(item)
+                ].filter(Boolean).join(' · ');
+                return `
+                  <button type="button" class="cheapest-shop-row${isShopSelected(shopId) ? ' is-active' : ''}" data-toggle-map-shop="${escapeHtmlAttr(shopId)}" aria-label="${isShopSelected(shopId) ? 'Remove' : 'Add'} ${escapeHtmlAttr(item.shop_name || 'Unknown shop')} ${isShopSelected(shopId) ? 'from' : 'to'} Trip plan">
+                    <span>
+                      <strong>${escapeHtml(item.shop_name || 'Unknown shop')}</strong>
+                      <span>${escapeHtml(meta || 'Menu matched')}</span>
+                    </span>
+                    <span class="cheapest-shop-row-price">${escapeHtml(listingPriceLabel(item))}</span>
+                    ${freshness ? `<span class="chip ${freshness.className}">${escapeHtml(freshness.label)}</span>` : ''}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+            <div class="card-actions">
+              <button type="button" data-select-strain="${escapeHtml(stat.key)}" class="${selected ? 'is-active' : ''}">${selected ? 'Wanted' : 'Want'}</button>
+              <button type="button" data-map-shop="${escapeHtmlAttr(cheapestShopId)}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}" ${cheapestShopId ? '' : 'disabled'}>Map cheapest</button>
+              <button type="button" data-focus-shops="${escapeHtml(stat.key)}">Shops</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+      if (els.strainMoreRow && els.loadMoreStrains) {
+        const remaining = Math.max(0, stats.length - visibleStats.length);
+        els.strainMoreRow.hidden = remaining <= 0;
+        els.loadMoreStrains.textContent = remaining > STRAIN_LIMIT_STEP
+          ? `Show ${STRAIN_LIMIT_STEP} more (${remaining.toLocaleString()} left)`
+          : `Show ${remaining.toLocaleString()} more`;
+      }
+    }
+
+    function selectedStats() {
+      return state.selected
+        .map(key => state.strainStats.find(stat => stat.key === key))
+        .filter(Boolean)
+        .sort(compareStrainName);
+    }
+
+    function shopLinkForId(shopId) {
+      const meta = state.shopById.get(String(shopId)) || {};
+      return meta.shop_url || `/shop/${encodeURIComponent(shopId)}/digitised`;
+    }
+
+    function belowAverageDealsForOfferings(offerings) {
+      const byStrain = new Map();
+      (Array.isArray(offerings) ? offerings : []).forEach(item => {
+        const key = item.strain_name_normalised || normalise(item.strain_name);
+        const stat = getStatByKey(key);
+        const averagePrice = Number(stat && stat.avg);
+        const price = Number(item.price_amount);
+        if (!key || !Number.isFinite(price) || !Number.isFinite(averagePrice) || averagePrice <= 0 || price >= averagePrice) return;
+        const percentBelow = Math.round(((averagePrice - price) / averagePrice) * 100);
+        if (percentBelow <= 0) return;
+        const current = byStrain.get(key);
+        const deal = {
+          key,
+          item,
+          price,
+          averagePrice,
+          percentBelow,
+          saving: averagePrice - price
+        };
+        if (!current || deal.percentBelow > current.percentBelow || (deal.percentBelow === current.percentBelow && deal.price < current.price)) {
+          byStrain.set(key, deal);
+        }
+      });
+      return Array.from(byStrain.values()).sort((a, b) => {
+        if (b.percentBelow !== a.percentBelow) return b.percentBelow - a.percentBelow;
+        if (b.saving !== a.saving) return b.saving - a.saving;
+        return compareStrainName(a.item, b.item);
+      });
+    }
+
+    function getCommonShopRows(stats = selectedStats()) {
+      if (!stats.length) return [];
+      const selectedKeys = stats.map(stat => stat.key);
+      const rowsByShop = new Map();
+
+      stats.forEach(stat => {
+        stat.shops.forEach((listing, shopId) => {
+          const id = String(shopId);
+          const meta = getShopMeta(id);
+          if (!rowsByShop.has(id)) {
+            rowsByShop.set(id, {
+              shopId: id,
+              shopKey: listing.shop_key || meta.shop_key || '',
+              name: listing.shop_name || meta.name || 'Unknown shop',
+              city: listing.shop_city || meta.city || '',
+              href: shopLinkForId(id),
+              listingsByStrain: new Map()
+            });
+          }
+          rowsByShop.get(id).listingsByStrain.set(stat.key, listing);
+        });
+      });
+
+      return Array.from(rowsByShop.values())
+        .map(row => {
+          const listings = selectedKeys.map(key => row.listingsByStrain.get(key)).filter(Boolean);
+          const prices = listings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+          const total = prices.length === selectedKeys.length
+            ? prices.reduce((sum, value) => sum + value, 0)
+            : null;
+          return {
+            ...row,
+            listings,
+            matchCount: row.listingsByStrain.size,
+            total
+          };
+        })
+        .filter(row => row.matchCount === selectedKeys.length)
+        .sort((a, b) => {
+          const nameDiff = compareShopName(a, b);
+          if (nameDiff !== 0) return nameDiff;
+          return (a.total ?? Infinity) - (b.total ?? Infinity);
+        });
+    }
+
+    function routePlanSummary(stats) {
+      const rows = stats.map(stat => {
+        const shopId = String((state.routePlanByStrain || {})[stat.key] || '');
+        if (!shopId) return null;
+        const listing = stat.shops.get(shopId);
+        if (!listing) return null;
+        return { stat, shopId, listing };
+      }).filter(Boolean);
+      const prices = rows.map(row => Number(row.listing.price_amount)).filter(Number.isFinite);
+      return {
+        rows,
+        selectedCount: rows.length,
+        missingCount: Math.max(0, stats.length - rows.length),
+        pricedCount: prices.length,
+        total: prices.length ? prices.reduce((sum, value) => sum + value, 0) : null,
+        shopIds: Array.from(new Set(rows.map(row => row.shopId)))
+      };
+    }
+
+    function renderRoutePlanBoard(stats) {
+      if (!stats.length) {
+        els.routePlanBoard.innerHTML = '<div class="empty">Add Wanted strains to build a Trip plan, compare prices, and send Destinations to the map.</div>';
+        return;
+      }
+
+      const summary = routePlanSummary(stats);
+      const totalLabel = summary.total == null
+        ? '--'
+        : `${money(summary.total).replace(/\/g$/, '')}`;
+      const helper = summary.missingCount
+        ? `Choose ${summary.missingCount} more strain${summary.missingCount === 1 ? '' : 's'} to complete the basket.`
+        : (summary.pricedCount === summary.selectedCount ? `${summary.shopIds.length} coffeeshop${summary.shopIds.length === 1 ? '' : 's'} selected for the map.` : 'Basket has an unknown price.');
+
+      els.routePlanBoard.innerHTML = `
+        <div class="route-plan-head">
+          <div>
+            <h3>Build a Trip plan</h3>
+            <p>Pick one Destination for each item in Wanted strains. The map will show the Trip plan Destinations.</p>
+          </div>
+          <div class="route-plan-total">
+            <strong>${escapeHtml(totalLabel)}</strong>
+            <span class="muted">${escapeHtml(helper)}</span>
+          </div>
+        </div>
+        ${stats.map(stat => {
+          const activeShopId = String((state.routePlanByStrain || {})[stat.key] || '');
+          const options = Array.from(stat.shops.entries())
+            .map(([shopId, listing]) => ({
+              shopId: String(shopId),
+              listing,
+              price: Number(listing.price_amount),
+              name: listing.shop_name || getShopMeta(shopId).name || 'Unknown shop',
+              city: listing.shop_city || getShopMeta(shopId).city || ''
+            }))
+            .sort((a, b) => {
+              const nameDiff = compareShopName(a, b);
+              if (nameDiff !== 0) return nameDiff;
+              const priceDiff = (Number.isFinite(a.price) ? a.price : Infinity) - (Number.isFinite(b.price) ? b.price : Infinity);
+              return priceDiff;
+            });
+          const active = activeShopId ? options.find(option => option.shopId === activeShopId) : null;
+          const activeLabel = active
+            ? `${active.name}${Number.isFinite(active.price) ? ` · ${money(active.price, active.listing.price_currency, active.listing.price_unit)}` : ''}`
+            : 'No coffeeshop selected';
+          return `
+            <div class="route-plan-row">
+              <div class="route-plan-row-head">
+                <div>
+                  <h4>${escapeHtml(stat.name)}</h4>
+                  <span>${escapeHtml(activeLabel)}</span>
+                </div>
+                <span>${options.length} option${options.length === 1 ? '' : 's'}</span>
+              </div>
+              <div class="route-plan-options">
+                ${options.map(option => {
+                  const selected = activeShopId === option.shopId;
+                  const price = Number.isFinite(option.price)
+                    ? money(option.price, option.listing.price_currency, option.listing.price_unit)
+                    : 'Price unknown';
+                  const city = option.city ? ` · ${option.city}` : '';
+                  return `<button type="button" class="route-plan-option${selected ? ' is-active' : ''}" data-route-plan-strain="${escapeHtml(stat.key)}" data-route-plan-shop="${escapeHtml(option.shopId)}">${escapeHtml(option.name)}${escapeHtml(city)} · ${escapeHtml(price)}</button>`;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      `;
+    }
+
+    function renderCommonShopBoard(stats) {
+      if (!stats.length) {
+        els.commonShopBoard.innerHTML = '<div class="empty">Add Wanted strains to find coffeeshops carrying the full set.</div>';
+        return;
+      }
+
+      const rows = getCommonShopRows(stats);
+      if (!rows.length) {
+        els.commonShopBoard.innerHTML = '<div class="empty">No coffeeshop carries all Wanted strains yet. Try matching fewer strains or use Shop Menus for partial matches.</div>';
+        return;
+      }
+
+      const selectedCount = state.selectedShopIds.length;
+      const shown = rows;
+      els.commonShopBoard.innerHTML = `
+        <div class="common-shop-board-head">
+          <div>
+            <h3>${rows.length} common coffeeshop${rows.length === 1 ? '' : 's'}</h3>
+            <p>${stats.length} Wanted strains matched. Select Destinations, then send them to the map.</p>
+          </div>
+          <button type="button" data-select-common-shops>${selectedCount ? 'Replace with common' : 'Select common'}</button>
+        </div>
+        <div class="common-shop-grid">
+          ${shown.map(row => {
+            const selected = isShopSelected(row.shopId);
+            const totalLabel = row.total == null
+              ? 'Mixed price'
+              : `${money(row.total).replace(/\/g$/, '')} total`;
+            const listingTags = row.listings.map(item => {
+              const price = Number.isFinite(Number(item.price_amount))
+                ? money(item.price_amount, item.price_currency, item.price_unit)
+                : 'Price unknown';
+              const freshness = freshnessBadgeInfo(item.updated_at || item.last_seen_at_utc);
+              return `<span class="chip">${escapeHtml(item.strain_name)} ${escapeHtml(price)}</span>${freshness ? `<span class="chip ${freshness.className}">${escapeHtml(freshness.label)}</span>` : ''}`;
+            }).join('');
+            return `
+              <article class="common-shop-card${selected ? ' is-selected' : ''}" data-common-shop-card="${escapeHtml(row.shopId)}" tabindex="0" aria-pressed="${selected ? 'true' : 'false'}" title="${selected ? 'Remove' : 'Select'} ${escapeHtml(row.name)} for the map">
+                <div class="common-shop-card-title">
+                  <div class="shop-card-main">
+                    ${getShopLogoHtml(row.shopKey, row.name)}
+                    <div class="shop-card-copy">
+                      <strong>${escapeHtml(row.name)}</strong>
+                      <span class="common-shop-card-meta">${escapeHtml(row.city || 'Current city')}</span>
+                    </div>
+                  </div>
+                  <span class="chip">${escapeHtml(totalLabel)}</span>
+                </div>
+                <div class="availability-tags">${listingTags}</div>
+                <div class="common-shop-card-actions">
+                  <button type="button" data-toggle-map-shop="${escapeHtml(row.shopId)}" class="${selected ? 'is-active' : ''}">${selected ? 'Selected' : 'Select'}</button>
+                  <a href="${escapeHtml(row.href)}" target="_blank" rel="noopener noreferrer">Menu</a>
+                </div>
+              </article>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderCommonShopsForStat(stat, allStats) {
+      const otherStats = allStats.filter(other => other.key !== stat.key);
+      if (!otherStats.length) {
+        return '<div class="empty">Add another item to Wanted strains to see common coffeeshops.</div>';
+      }
+
+      const groups = otherStats.map(other => {
+        const otherShopIds = new Set(Array.from(other.shops.keys()));
+        const commonListings = Array.from(stat.shops.entries())
+          .filter(([shopId]) => otherShopIds.has(shopId))
+          .map(([shopId, listing]) => ({
+            shopId,
+            name: listing.shop_name || 'Unknown shop',
+            city: listing.shop_city || '',
+            priceLabel: Number.isFinite(Number(listing.price_amount))
+              ? money(listing.price_amount, listing.price_currency, listing.price_unit)
+              : 'Price unknown',
+            href: shopLinkForId(shopId)
+          }))
+          .sort((a, b) => {
+            const nameDiff = compareShopName(a, b);
+            if (nameDiff !== 0) return nameDiff;
+            return compareText(a.priceLabel, b.priceLabel);
+          });
+
+        const listHtml = commonListings.length
+          ? commonListings.map(shop => {
+              const selected = isShopSelected(shop.shopId);
+              const metaParts = [shop.city, shop.priceLabel].filter(Boolean);
+              return (
+              `<li class="${selected ? 'is-selected' : ''}" data-partial-shop-card="${escapeHtml(shop.shopId)}" tabindex="0" aria-pressed="${selected ? 'true' : 'false'}" title="${selected ? 'Remove' : 'Select'} ${escapeHtml(shop.name)} for the map">` +
+                `<span><strong>${escapeHtml(shop.name)}</strong><span class="common-shop-list-meta">${escapeHtml(metaParts.join(' · '))}</span></span>` +
+                `<button type="button" data-toggle-map-shop="${escapeHtml(shop.shopId)}" class="${selected ? 'is-active' : ''}">${selected ? 'Selected' : 'Select'}</button>` +
+              `</li>`
+              );
+            }).join('')
+          : '<li><span class="muted">No shared coffeeshops for this pair yet.</span></li>';
+
+        return (
+          `<div class="common-shop-group">` +
+            `<div class="common-shop-group-head">` +
+              `<span>${escapeHtml(other.name)}</span>` +
+              `<span>${commonListings.length} shared</span>` +
+            `</div>` +
+            `<ul class="common-shop-list">${listHtml}</ul>` +
+          `</div>`
+        );
+      }).join('');
+
+      return `<div class="common-shops"><h4 class="common-shops-title">Common coffeeshops</h4>${groups}</div>`;
+    }
+
+    function renderCompare() {
+      const stats = selectedStats();
+      const commonRows = getCommonShopRows(stats);
+      els.compareSummary.textContent = stats.length
+        ? `${stats.length} Wanted strains selected · ${commonRows.length} common coffeeshop${commonRows.length === 1 ? '' : 's'}.`
+        : 'Add strains from the list to find common coffeeshops.';
+      renderCommonShopBoard(stats);
+      renderRoutePlanBoard(stats);
+      if (!stats.length) {
+        els.comparisonGrid.innerHTML = '';
+        return;
+      }
+      els.comparisonGrid.innerHTML = stats.map(stat => {
+        const allShops = Array.from(stat.shops.values());
+        const cheapestListing = allShops.slice().sort((a, b) => {
+          const priceDiff = (Number.isFinite(Number(a.price_amount)) ? Number(a.price_amount) : Infinity) -
+            (Number.isFinite(Number(b.price_amount)) ? Number(b.price_amount) : Infinity);
+          return priceDiff || compareShopName(a, b);
+        })[0];
+        const overlap = stats
+          .filter(other => other.key !== stat.key)
+          .map(other => {
+            const otherShopIds = new Set(Array.from(other.shops.keys()));
+            const count = Array.from(stat.shops.keys()).filter(id => otherShopIds.has(id)).length;
+            return `${other.name}: ${count}`;
+          })
+          .join(' | ');
+        return `
+          <article class="comparison-card">
+            <div class="comparison-card-main">
+              ${getStrainImageHtml(stat.name)}
+              <div class="comparison-card-copy">
+                <h3>${escapeHtml(stat.name)}</h3>
+              </div>
+            </div>
+            <dl class="comparison-lines">
+              <div><dt>Shops carrying it</dt><dd>${stat.shopCount} shops</dd></div>
+              <div><dt>Listings</dt><dd>${stat.listingCount}</dd></div>
+              <div><dt>Lowest price</dt><dd>${cheapestListing ? `${money(cheapestListing.price_amount, cheapestListing.price_currency, cheapestListing.price_unit)} at ${escapeHtml(cheapestListing.shop_name)}` : '--'}</dd></div>
+              <div><dt>Average price</dt><dd>${stat.avg == null ? '--' : money(stat.avg)}</dd></div>
+              <div><dt>Main type</dt><dd>${escapeHtml(stat.topType || '--')}</dd></div>
+              <div><dt>Cities</dt><dd>${stat.cities.length}</dd></div>
+              <div><dt>Shared shops</dt><dd>${escapeHtml(overlap || '--')}</dd></div>
+            </dl>
+            ${renderCommonShopsForStat(stat, stats)}
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderShops(filteredOfferings) {
+      const selected = new Set(state.selected);
+      const filters = currentFilters();
+      const grouped = new Map();
+      filteredOfferings.forEach(item => {
+        const shopId = String(item.shop_id || `${item.shop_name}-${item.shop_city}`);
+        const shopMeta = state.shopById.get(String(item.shop_id)) || {};
+        if (!grouped.has(shopId)) {
+          grouped.set(shopId, {
+            shopId,
+            shopName: item.shop_name || 'Unknown shop',
+            city: item.shop_city || 'Unknown city',
+            shopKey: item.shop_key || shopMeta.shop_key || '',
+            shopUrl: shopMeta.shop_url || '',
+            offerings: []
+          });
+        }
+        grouped.get(shopId).offerings.push(item);
+      });
+
+      const rows = Array.from(grouped.values()).map(row => {
+        const selectedMatches = row.offerings.filter(item => selected.has(item.strain_name_normalised || normalise(item.strain_name)));
+        const prices = row.offerings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+        const belowAverageDeals = belowAverageDealsForOfferings(row.offerings);
+        const enrichedRow = {
+          ...row,
+          selectedMatches,
+          belowAverageDeals,
+          bestDeal: belowAverageDeals[0] || null,
+          cheapest: prices.length ? Math.min(...prices) : null,
+          averagePrice: average(prices),
+          bestDealPercent: belowAverageDeals[0] ? belowAverageDeals[0].percentBelow : 0,
+          uniqueStrains: new Set(row.offerings.map(item => item.strain_name_normalised || normalise(item.strain_name))).size,
+          menuUpdatedAt: row.offerings
+            .map(item => item.updated_at || item.last_seen_at_utc || '')
+            .filter(Boolean)
+            .sort()
+            .at(-1) || ''
+        };
+        enrichedRow.valueScore = shopValueScore(enrichedRow);
+        return enrichedRow;
+      }).sort((a, b) => compareShopRowsForSort(a, b, filters.sort, filters.browseMode));
+
+      const dealTotal = rows.reduce((sum, row) => sum + row.belowAverageDeals.length, 0);
+      const sortSummary = filters.sort
+        ? sortModeSummary(filters.sort)
+        : `${browseModeIsFilter(filters.browseMode) ? 'filtered and ordered by' : 'ordered by'} ${browseModeLabel(filters.browseMode).toLowerCase()}`;
+      const wantedNote = selected.size ? ' Wanted-strain matches are highlighted.' : '';
+      els.shopsSummary.textContent = `${rows.length.toLocaleString()} shops match the current filters, ${sortSummary} · ${dealTotal.toLocaleString()} below-average price${dealTotal === 1 ? '' : 's'}.${wantedNote}`;
+      if (!rows.length) {
+        els.shopList.innerHTML = '<div class="empty">No shops match these filters. Try clearing a filter, widening the price range, or searching a different area.</div>';
+        return;
+      }
+      els.shopList.innerHTML = rows.slice(0, 180).map(row => {
+        const sortedOfferings = row.offerings
+          .slice()
+          .sort((a, b) => {
+            const aKey = a.strain_name_normalised || normalise(a.strain_name);
+            const bKey = b.strain_name_normalised || normalise(b.strain_name);
+            const selectedDiff = Number(selected.has(bKey)) - Number(selected.has(aKey));
+            if (selectedDiff !== 0) return selectedDiff;
+            return compareStrainName(a, b);
+          });
+        const renderTags = items => items.map(item => {
+            const key = item.strain_name_normalised || normalise(item.strain_name);
+            const selectedStrain = selected.has(key);
+            const grower = String(item.grower || '').trim();
+            const notes = String(item.notes || '').trim();
+            const price = Number.isFinite(Number(item.price_amount))
+              ? money(item.price_amount, item.price_currency, item.price_unit)
+              : '';
+            const inlinePrice = price ? ` · ${price}` : '';
+            if (!grower && !notes) {
+              return (
+                `<button type="button" class="chip strain-menu-chip type-${escapeHtml(item.base_type || '')}${selectedStrain ? ' is-active' : ''}" data-select-strain="${escapeHtml(key)}">` +
+                  `${escapeHtml(item.strain_name)}${escapeHtml(inlinePrice)}` +
+                `</button>`
+              );
+            }
+            const freshness = freshnessBadgeInfo(item.updated_at || item.last_seen_at_utc);
+            const meta = [
+              grower ? `Grower: ${grower}` : '',
+              notes ? `Note: ${notes}` : '',
+              price,
+              freshness ? freshness.label : '',
+              price ? '' : 'Price unknown'
+            ].filter(Boolean);
+            return (
+              `<button type="button" class="chip strain-menu-chip has-detail type-${escapeHtml(item.base_type || '')}${selectedStrain ? ' is-active' : ''}" data-select-strain="${escapeHtml(key)}">` +
+                `<span class="strain-chip-name">${escapeHtml(item.strain_name)}</span>` +
+                `${meta.length ? `<span class="strain-chip-meta">${escapeHtml(meta.join(' · '))}</span>` : ''}` +
+              `</button>`
+            );
+          })
+          .join('');
+        const previewItems = sortedOfferings.slice(0, 12);
+        const extraItems = sortedOfferings.slice(12);
+        const previewTags = renderTags(previewItems);
+        const extraTags = renderTags(extraItems);
+        const href = row.shopUrl || `/shop/${encodeURIComponent(row.shopId)}/digitised`;
+        const label = row.shopUrl ? 'Source' : 'Menu';
+        const shopSelected = isShopSelected(row.shopId);
+        const matchLabel = selected.size
+          ? `${row.selectedMatches.length}/${selected.size} wanted`
+          : `${row.uniqueStrains} strains`;
+        const updatedLabel = formatDate(row.menuUpdatedAt);
+        const freshness = freshnessBadgeInfo(row.menuUpdatedAt);
+        const dealTags = row.belowAverageDeals.slice(0, 6).map(deal => {
+          const price = money(deal.price, deal.item.price_currency, deal.item.price_unit);
+          const averageLabel = money(deal.averagePrice, deal.item.price_currency, deal.item.price_unit);
+          return (
+            `<button type="button" class="chip shop-deal-chip type-${escapeHtml(deal.item.base_type || '')}" data-select-strain="${escapeHtml(deal.key)}">` +
+              `<strong>${escapeHtml(deal.item.strain_name)}</strong>` +
+              `<span>${escapeHtml(price)} · ${deal.percentBelow}% below avg ${escapeHtml(averageLabel)}</span>` +
+            `</button>`
+          );
+        }).join('');
+        const hiddenDealCount = Math.max(0, row.belowAverageDeals.length - 6);
+        return `
+          <article class="shop-card${shopSelected ? ' is-selected' : ''}" data-shop-value-score="${escapeHtmlAttr(row.valueScore.toFixed(4))}" data-shop-strain-count="${escapeHtmlAttr(row.uniqueStrains)}">
+            <div class="shop-card-head">
+              <div class="shop-card-main">
+                ${getShopLogoHtml(row.shopKey, row.shopName)}
+                <div class="shop-card-copy">
+                  <strong>${escapeHtml(row.shopName)}</strong>
+                  <div class="shop-card-meta">${escapeHtml(row.city)}${updatedLabel ? ` · Menu updated ${escapeHtml(updatedLabel)}` : ''}</div>
+                  <div class="shop-card-metrics">
+                    <span class="chip">${escapeHtml(matchLabel)}</span>
+                    <span class="chip ${row.cheapest == null ? 'is-price-unknown' : ''}">${row.cheapest == null ? 'Price unknown' : `Lowest ${money(row.cheapest)}`}</span>
+                    ${freshness ? `<span class="chip ${freshness.className}">${escapeHtml(freshness.label)}</span>` : ''}
+                    ${row.averagePrice == null ? '' : `<span class="chip">Avg ${money(row.averagePrice)}</span>`}
+                    ${row.belowAverageDeals.length ? `<span class="chip deal-chip">Best ${row.bestDealPercent}% below avg</span>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="shop-card-actions">
+                <button type="button" data-toggle-map-shop="${escapeHtml(row.shopId)}" class="${shopSelected ? 'is-active' : ''}">${shopSelected ? 'Selected' : 'Select'}</button>
+                <a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${label}</a>
+              </div>
+            </div>
+            ${row.belowAverageDeals.length ? `
+              <div class="shop-deals">
+                <div class="shop-deals-head">
+                  <span>Below average</span>
+                  <span>${row.bestDealPercent}% best</span>
+                </div>
+                <div class="availability-tags">${dealTags}</div>
+                ${hiddenDealCount ? `<div class="muted">${hiddenDealCount.toLocaleString()} more below-average strain${hiddenDealCount === 1 ? '' : 's'} in this visible menu.</div>` : ''}
+              </div>
+            ` : ''}
+            <div class="shop-menu">
+              <div class="shop-menu-label">${selected.size ? 'Relevant menu' : 'Menu preview'}</div>
+              <div class="availability-tags">${previewTags}</div>
+              ${extraItems.length ? `
+                <details class="shop-menu-more">
+                  <summary>Show ${extraItems.length} more strain${extraItems.length === 1 ? '' : 's'}</summary>
+                  <div class="availability-tags">${extraTags}</div>
+                </details>
+              ` : ''}
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function setView(view) {
+      state.view = view;
+      document.querySelectorAll('[data-view]').forEach(button => {
+        button.classList.toggle('is-active', button.dataset.view === view);
+      });
+      document.getElementById('strains-view').hidden = view !== 'strains';
+      document.getElementById('compare-view').hidden = view !== 'compare';
+      document.getElementById('shops-view').hidden = view !== 'shops';
+      if (state.offerings.length && state.strainStats.length) {
+        const filteredStats = getFilteredStats();
+        updateResultToolbar(getFilteredOfferings(filteredStats), filteredStats);
+      }
+    }
+
+    function render() {
+      const filteredStats = getFilteredStats();
+      const filteredOfferings = getFilteredOfferings(filteredStats);
+      const familySourceStats = getFilteredStats({ ignoreFamily: true });
+      updateResultToolbar(filteredOfferings, filteredStats);
+      renderBrowseControls(familySourceStats, filteredStats);
+      renderQuickAnswer(filteredOfferings, filteredStats);
+      renderMetrics(filteredOfferings, filteredStats);
+      renderSelected();
+      renderSelectedShops();
+      renderStrains(filteredStats);
+      renderCompare();
+      renderShops(filteredOfferings);
+    }
+
+    function renderAfterFilterChange() {
+      resetStrainWindow();
+      render();
+    }
+
+    async function init() {
+      try {
+        const [offerings, shops, manifest, imageMapCsv, shopLogoMap] = await Promise.all([
+          loadJson('database/active_offerings.json'),
+          loadJson('database/shops.json').catch(() => []),
+          loadJson('database/manifest.json').catch(() => null),
+          loadText('database/strain_image_map.csv').catch(() => ''),
+          loadShopLogoMap()
+        ]);
+        state.snapshotTime = parseTime(manifest && manifest.exported_at_utc) || Date.now();
+        const loadedOfferings = Array.isArray(offerings) ? offerings : [];
+        state.shops = Array.isArray(shops) ? shops : [];
+        state.shopById = new Map(state.shops.map(shop => [String(shop.shop_id), shop]));
+        state.closedShopSourceTokens = buildClosedShopSourceTokens(state.shops);
+        state.unavailableShopIds = buildUnavailableShopIds(state.shops);
+        state.offerings = loadedOfferings.filter(isBrowsableOffering);
+        state.hiddenUnavailableListingCount = Math.max(0, loadedOfferings.length - state.offerings.length);
+        state.strainImageByKey = buildStrainImageMap(imageMapCsv);
+        state.shopLogoByKey = shopLogoMap instanceof Map ? shopLogoMap : new Map();
+        buildStats();
+        loadSharedShelf();
+        state.selectedShopIds = sanitizeShopIds(loadSelectedShopIds());
+        saveSharedShelf();
+        saveSelectedShopIds();
+        populateFilters();
+        setupPriceBand();
+        const exported = manifest && manifest.exported_at_utc
+          ? ` Snapshot ${new Date(manifest.exported_at_utc).toLocaleString()}.`
+          : '';
+        const hidden = state.hiddenUnavailableListingCount
+          ? ` Hidden ${state.hiddenUnavailableListingCount.toLocaleString()} listing${state.hiddenUnavailableListingCount === 1 ? '' : 's'} from closed, archived, or inactive shops.`
+          : '';
+        els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.${exported}${hidden}`;
+        render();
+      } catch (err) {
+        els.status.innerHTML = '<span class="error">Budfinder could not get menu listings ready.</span> Refresh the page, then try again.';
+      }
+    }
+
+    ['input', 'change'].forEach(eventName => {
+      els.search.addEventListener(eventName, renderAfterFilterChange);
+    });
+    [els.city, els.type, els.cali, els.sort].forEach(el => el.addEventListener('change', renderAfterFilterChange));
+    [els.priceMin, els.priceMax].forEach(el => el.addEventListener('input', renderAfterFilterChange));
+
+    if (els.browseModeGrid) {
+      els.browseModeGrid.addEventListener('click', event => {
+        const button = event.target.closest('[data-browse-mode]');
+        if (!button) return;
+        const nextMode = button.dataset.browseMode;
+        const explicitSortWasActive = Boolean(els.sort.value);
+        if (nextMode === state.browseMode && !explicitSortWasActive) return;
+        state.browseMode = nextMode;
+        els.sort.value = '';
+        resetStrainWindow();
+        render();
+      });
+    }
+
+    if (els.familyFilterGrid) {
+      els.familyFilterGrid.addEventListener('click', event => {
+        const button = event.target.closest('[data-family-filter]');
+        if (!button) return;
+        state.familyFilter = button.dataset.familyFilter || '';
+        resetStrainWindow();
+        render();
+      });
+    }
+
+    if (els.loadMoreStrains) {
+      els.loadMoreStrains.addEventListener('click', () => {
+        state.visibleStrainLimit += STRAIN_LIMIT_STEP;
+        render();
+      });
+    }
+
+    document.querySelectorAll('[data-view]').forEach(button => {
+      button.addEventListener('click', () => setView(button.dataset.view));
+    });
+
+    els.strainGrid.addEventListener('click', event => {
+      const toggleShopButton = event.target.closest('[data-toggle-map-shop]');
+      if (toggleShopButton) {
+        toggleSelectedShop(toggleShopButton.dataset.toggleMapShop);
+        return;
+      }
+
+      const selectButton = event.target.closest('[data-select-strain]');
+      if (selectButton) {
+        toggleSelected(selectButton.dataset.selectStrain);
+        return;
+      }
+      const shopButton = event.target.closest('[data-focus-shops]');
+      if (shopButton) {
+        if (!isSelected(shopButton.dataset.focusShops)) toggleSelected(shopButton.dataset.focusShops);
+        setView('shops');
+        document.getElementById('shops-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      const mapButton = event.target.closest('[data-map-shop]');
+      if (mapButton) {
+        goToMapShopIds([mapButton.dataset.mapShop], mapContextFromElement(mapButton));
+        return;
+      }
+
+      if (event.target.closest('a, button')) return;
+
+      const card = event.target.closest('[data-strain-card]');
+      if (card) {
+        toggleSelected(card.dataset.strainCard);
+      }
+    });
+
+    if (els.quickAnswer) {
+      els.quickAnswer.addEventListener('click', event => {
+        const toggleShopButton = event.target.closest('[data-toggle-map-shop]');
+        if (toggleShopButton) {
+          toggleSelectedShop(toggleShopButton.dataset.toggleMapShop);
+          return;
+        }
+
+        const mapShop = event.target.closest('[data-map-shop]');
+        if (mapShop) {
+          event.preventDefault();
+          goToMapShopIds([mapShop.dataset.mapShop], mapContextFromElement(mapShop));
+          return;
+        }
+
+        const mapStrain = event.target.closest('[data-map-strain-shops]');
+        if (mapStrain) {
+          event.preventDefault();
+          goToMapShopIds((mapStrain.dataset.mapStrainShops || '').split(','), mapContextFromElement(mapStrain));
+          return;
+        }
+
+        const selectButton = event.target.closest('[data-select-strain]');
+        if (selectButton) {
+          toggleSelected(selectButton.dataset.selectStrain);
+          return;
+        }
+
+        const shopButton = event.target.closest('[data-focus-shops]');
+        if (shopButton) {
+          if (!isSelected(shopButton.dataset.focusShops)) toggleSelected(shopButton.dataset.focusShops);
+          setView('shops');
+          document.getElementById('shops-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
+    els.strainGrid.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      if (event.target.closest('a, button')) return;
+      const card = event.target.closest('[data-strain-card]');
+      if (!card) return;
+      event.preventDefault();
+      toggleSelected(card.dataset.strainCard);
+    });
+
+    els.selectedList.addEventListener('click', event => {
+      const button = event.target.closest('[data-remove-selected]');
+      if (!button) return;
+      state.selected = state.selected.filter(key => key !== button.dataset.removeSelected);
+      if (state.routePlanByStrain && state.routePlanByStrain[button.dataset.removeSelected]) {
+        delete state.routePlanByStrain[button.dataset.removeSelected];
+        syncSelectedShopsFromRoutePlan(selectedStats());
+      }
+      saveSharedShelf();
+      render();
+    });
+
+    els.selectedShopList.addEventListener('click', event => {
+      const button = event.target.closest('[data-toggle-map-shop]');
+      if (!button) return;
+      toggleSelectedShop(button.dataset.toggleMapShop);
+    });
+
+    els.commonShopBoard.addEventListener('click', event => {
+      const selectCommonButton = event.target.closest('[data-select-common-shops]');
+      if (selectCommonButton) {
+        setSelectedShops(getCommonShopRows(selectedStats()).map(row => row.shopId));
+        return;
+      }
+
+      const toggleButton = event.target.closest('[data-toggle-map-shop]');
+      if (toggleButton) {
+        toggleSelectedShop(toggleButton.dataset.toggleMapShop);
+        return;
+      }
+
+      if (event.target.closest('a, button')) return;
+
+      const card = event.target.closest('[data-common-shop-card]');
+      if (card) {
+        toggleSelectedShop(card.dataset.commonShopCard);
+      }
+    });
+
+    els.commonShopBoard.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      if (event.target.closest('a, button')) return;
+      const card = event.target.closest('[data-common-shop-card]');
+      if (!card) return;
+      event.preventDefault();
+      toggleSelectedShop(card.dataset.commonShopCard);
+    });
+
+    els.routePlanBoard.addEventListener('click', event => {
+      const button = event.target.closest('[data-route-plan-strain][data-route-plan-shop]');
+      if (!button) return;
+      setRoutePlanShop(button.dataset.routePlanStrain, button.dataset.routePlanShop);
+    });
+
+    els.comparisonGrid.addEventListener('click', event => {
+      const toggleButton = event.target.closest('[data-toggle-map-shop]');
+      if (toggleButton) {
+        toggleSelectedShop(toggleButton.dataset.toggleMapShop);
+        return;
+      }
+
+      if (event.target.closest('a, button')) return;
+
+      const card = event.target.closest('[data-partial-shop-card]');
+      if (card) {
+        toggleSelectedShop(card.dataset.partialShopCard);
+      }
+    });
+
+    els.comparisonGrid.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      if (event.target.closest('a, button')) return;
+      const card = event.target.closest('[data-partial-shop-card]');
+      if (!card) return;
+      event.preventDefault();
+      toggleSelectedShop(card.dataset.partialShopCard);
+    });
+
+    els.shopList.addEventListener('click', event => {
+      const strainButton = event.target.closest('[data-select-strain]');
+      if (strainButton) {
+        toggleSelected(strainButton.dataset.selectStrain);
+        return;
+      }
+
+      const button = event.target.closest('[data-toggle-map-shop]');
+      if (!button) return;
+      toggleSelectedShop(button.dataset.toggleMapShop);
+    });
+
+    els.clearSelected.addEventListener('click', () => {
+      state.selected = [];
+      state.routePlanByStrain = {};
+      saveSharedShelf();
+      render();
+    });
+
+    if (els.showWantedMap) {
+      els.showWantedMap.addEventListener('click', goToMapWithWantedStrains);
+    }
+
+    els.showSelectedShopsMap.addEventListener('click', goToMapWithSelectedShops);
+
+    if (els.mapToggle) {
+      els.mapToggle.addEventListener('click', () => {
+        prepareMapHandoff();
+      });
+    }
+
+    if (els.toolbarMapLink) {
+      els.toolbarMapLink.addEventListener('click', () => {
+        prepareMapHandoff();
+      });
+    }
+
+    if (els.jumpFilters) {
+      els.jumpFilters.addEventListener('click', () => {
+        document.querySelector('.side-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        els.search.focus({ preventScroll: true });
+      });
+    }
+
+    if (els.jumpResults) {
+      els.jumpResults.addEventListener('click', () => {
+        const target = state.view === 'shops'
+          ? document.getElementById('shops-view')
+          : state.view === 'compare'
+            ? document.getElementById('compare-view')
+            : document.getElementById('strains-view');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    if (els.jumpTop) {
+      els.jumpTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    els.clearSelectedShops.addEventListener('click', () => {
+      setSelectedShops([]);
+    });
+
+    document.addEventListener('error', event => {
+      if (event.target && event.target.matches && event.target.matches('.strain-art img')) {
+        handleStrainImageError(event.target);
+      }
+      if (event.target && event.target.matches && event.target.matches('.shop-art img')) {
+        handleShopLogoError(event.target);
+      }
+    }, true);
+
+    window.addEventListener('storage', event => {
+      if (!STRAIN_SHELF_STORAGE_KEYS.includes(event.key)) return;
+      loadSharedShelf();
+      render();
+    });
+
+    window.addEventListener('pageshow', () => {
+      if (!state.strainStats.length) return;
+      loadSharedShelf();
+      render();
+    });
+
+    init();
+  </script>
+</body>
+</html>
