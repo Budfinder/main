@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Budfinder | Amsterdam coffeeshop strain finder and map</title>
+  <meta name="description" content="Budfinder helps you search Amsterdam coffeeshop menu data, build Wanted strains, compare nearby shops, spot useful price signals, and choose your next Destination." />
+  <link rel="canonical" href="https://budfinder.app/" />
+  <meta property="og:title" content="Budfinder | Amsterdam coffeeshop strain finder" />
+  <meta property="og:description" content="Search Amsterdam coffeeshop menu data, build Wanted strains, compare nearby shops, spot price signals, and plan your next Destination." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://budfinder.app/" />
+  <meta property="og:image" content="https://budfinder.app/images/IMG_5124.ico" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
+  <style>
+    :root {
+      --bg-top: #efe2b6;
+      --bg-mid: #e6d9b6;
+      --bg-bottom: #d4e2cb;
+      --sun-wash: rgba(255, 243, 210, 0.92);
+      --mist-wash: rgba(184, 223, 206, 0.7);
+      --resin-glow: rgba(222, 160, 82, 0.34);
+      --accent: #2e7b59;
+      --accent-strong: #205b42;
+      --accent-soft: rgba(46, 123, 89, 0.16);
+      --accent-glow: rgba(46, 123, 89, 0.28);
+      --ink: #203128;
+      --muted: #5b6b61;
+      --soft: rgba(32, 49, 40, 0.58);
+      --panel: rgba(255, 249, 239, 0.84);
+      --panel-strong: rgba(255, 252, 246, 0.94);
+      --panel-border: rgba(98, 113, 95, 0.16);
+      --panel-alt: rgba(255, 255, 255, 0.52);
+      --line: rgba(92, 107, 97, 0.14);
+      --line-strong: rgba(92, 107, 97, 0.22);
+      --green: var(--accent);
+      --green-strong: var(--accent-strong);
+      --amber: #b46b20;
+      --amber-strong: #8a4f16;
+      --red: #a84235;
+      --paper: #fff7e8;
+      --paper-ink: #1f3027;
+      --shadow: 0 14px 36px rgba(29, 42, 32, 0.14);
+      --shadow-md: 0 14px 36px rgba(29, 42, 32, 0.14);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg-bottom);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Gill Sans", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 16% 18%, var(--sun-wash), transparent 32%),
+        radial-gradient(circle at 82% 14%, var(--mist-wash), transparent 24%),
+        radial-gradient(circle at 50% 112%, var(--accent-soft), transparent 36%),
+        linear-gradient(165deg, var(--bg-top) 0%, var(--bg-mid) 42%, var(--bg-bottom) 100%);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at -4vw 110%, var(--resin-glow), transparent 32%),
+        radial-gradient(circle at 104% -8%, var(--accent-glow), transparent 28%);
+      opacity: 0.72;
+    }
+
+    a,
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-mode-toggle {
+      position: fixed;
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 999px;
+      background: rgba(255, 250, 241, 0.9);
+      color: var(--ink);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(18px);
+    }
+
+    .app-mode-toggle a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .app-mode-toggle a[aria-current="page"] {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      box-shadow: 0 8px 18px rgba(32, 91, 66, 0.16);
+    }
+
+    .global-vibe-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 38px;
+      padding: 0 6px 0 12px;
+      border-left: 1px solid var(--panel-border);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .global-vibe-control select {
+      min-height: 30px;
+      max-width: 150px;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      padding: 0 26px 0 10px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.58);
+      font-weight: 800;
+    }
+
+    @media (max-width: 520px) {
+      .global-vibe-control {
+        padding-left: 8px;
+      }
+
+      .global-vibe-control span {
+        display: none;
+      }
+
+      .global-vibe-control select {
+        max-width: 118px;
+        min-height: 44px;
+        height: 44px;
+      }
+    }
+
+    .page {
+      position: relative;
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+
+    .hero {
+      min-height: calc(100vh - 68px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+      gap: 28px;
+      align-items: center;
+      padding: 58px 0 28px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
+    }
+
+    .kicker-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 28px;
+    }
+
+    .kicker,
+    .version-pill,
+    .stat-chip,
+    .mini-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      min-height: 30px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      background: var(--panel-alt);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .version-pill {
+      color: #fff9f0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      border-color: transparent;
+    }
+
+    h1 {
+      max-width: 790px;
+      margin: 18px 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 76px;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 690px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    .home-search {
+      display: grid;
+      gap: 12px;
+      max-width: 720px;
+      margin-top: 30px;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      padding: 6px;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .search-row input {
+      width: 100%;
+      min-height: 48px;
+      border: 0;
+      outline: 0;
+      border-radius: 999px;
+      padding: 0 16px;
+      color: var(--ink);
+      background: transparent;
+      font-size: 16px;
+    }
+
+    .search-row input::placeholder {
+      color: var(--soft);
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .chip-btn,
+    .showcase-button,
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0 17px;
+      font-weight: 900;
+      text-decoration: none;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover,
+    .chip-btn:hover,
+    .showcase-button:hover,
+    .card-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--amber), var(--green));
+      color: #122017;
+      box-shadow: 0 16px 34px rgba(31, 122, 77, 0.28);
+    }
+
+    .secondary-btn,
+    .showcase-button {
+      color: var(--ink);
+      background: var(--panel);
+      border-color: var(--panel-border);
+    }
+
+    .quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-btn {
+      min-height: 34px;
+      padding: 0 12px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.42);
+      border-color: var(--panel-border);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .journey {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .intent-panel {
+      margin-top: 24px;
+      padding: 16px;
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .intent-panel h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 26px;
+      line-height: 1.12;
+    }
+
+    .intent-panel > p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .stat-chip {
+      min-height: 34px;
+      color: var(--ink);
+      text-transform: none;
+    }
+
+    .journey-card {
+      display: grid;
+      gap: 5px;
+      min-height: 92px;
+      padding: 13px;
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.46);
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .journey-card strong {
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .journey-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .journey-card small {
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .intel-board,
+    .feature-card,
+    .workflow,
+    .note,
+    .about-card {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+    }
+
+    .intel-board {
+      display: grid;
+      gap: 16px;
+      padding: 18px;
+      border-radius: var(--radius);
+    }
+
+    .board-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .eyebrow {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .board-head h2,
+    .section-title,
+    .workflow h2,
+    .about-card h2 {
+      margin: 6px 0 0;
+      color: var(--ink);
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .board-copy,
+    .section-copy {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .showcase-status {
+      min-height: 20px;
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .showcase-skeleton {
+      min-height: 92px;
+      border-radius: var(--radius);
+      border: 1px solid var(--panel-border);
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.22)),
+        rgba(255, 255, 255, 0.36);
+      background-size: 220% 100%;
+      animation: skeletonSlide 1.4s ease-in-out infinite;
+    }
+
+    @keyframes skeletonSlide {
+      0% { background-position: 120% 0; }
+      100% { background-position: -120% 0; }
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .shop-card,
+    .strain-card {
+      min-width: 0;
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.36);
+      overflow: hidden;
+    }
+
+    .shop-card {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 12px;
+      padding: 12px;
+      text-decoration: none;
+    }
+
+    .shop-art,
+    .strain-art {
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid rgba(18, 32, 23, 0.1);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      color: #1f3027;
+      font-weight: 900;
+    }
+
+    .shop-art {
+      width: 72px;
+      height: 72px;
+      padding: 8px;
+    }
+
+    .shop-art img,
+    .strain-art img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .shop-art-fallback,
+    .strain-art-fallback {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 8px;
+    }
+
+    .card-copy {
+      min-width: 0;
+    }
+
+    .card-copy strong {
+      display: block;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-copy span,
+    .card-copy small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .mini-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .mini-badge {
+      min-height: 24px;
+      padding: 4px 7px;
+      color: var(--ink);
+      font-size: 10px;
+      text-transform: none;
+    }
+
+    .mini-badge.is-deal {
+      color: #102017;
+      background: rgba(116, 208, 141, 0.9);
+      border-color: transparent;
+    }
+
+    .strain-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .strain-card {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      text-decoration: none;
+    }
+
+    .strain-art {
+      width: 100%;
+      aspect-ratio: 1.45;
+      background:
+        linear-gradient(135deg, rgba(255, 247, 232, 0.94), rgba(218, 235, 211, 0.9));
+    }
+
+    .section {
+      margin-top: 28px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .feature-card,
+    .about-card {
+      padding: 18px;
+      border-radius: var(--radius);
+    }
+
+    .feature-card strong {
+      display: block;
+      color: var(--ink);
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .feature-card p,
+    .about-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .workflow {
+      display: grid;
+      gap: 18px;
+      padding: 22px;
+      border-radius: var(--radius);
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .workflow-card {
+      padding: 16px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.36);
+      border: 1px solid var(--panel-border);
+    }
+
+    .workflow-card b {
+      display: block;
+      color: var(--amber-strong);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .workflow-card strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: 17px;
+    }
+
+    .workflow-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .version-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .version-box {
+      padding: 13px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.36);
+      border: 1px solid var(--panel-border);
+    }
+
+    .version-box span {
+      display: block;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .version-box strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    :focus-visible {
+      outline: 3px solid rgba(243, 189, 90, 0.92);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 980px) {
+      .app-mode-toggle {
+        position: static;
+        width: fit-content;
+        margin: 14px 18px 0 auto;
+      }
+
+      .page {
+        padding-top: 10px;
+      }
+
+      .hero,
+      .about-grid,
+      .feature-grid,
+      .workflow-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 24px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .app-mode-toggle a {
+        min-height: 44px;
+      }
+
+      h1 {
+        font-size: 44px;
+      }
+
+      .lead {
+        font-size: 17px;
+      }
+
+      .search-row {
+        grid-template-columns: 1fr;
+        border-radius: var(--radius);
+      }
+
+      .search-row input,
+      .search-row button {
+        border-radius: var(--radius);
+      }
+
+      .showcase-grid,
+      .strain-row,
+      .version-grid,
+      .journey {
+        grid-template-columns: 1fr;
+      }
+
+      .board-head {
+        display: grid;
+      }
+
+      .actions {
+        display: grid;
+      }
+
+      .actions a,
+      .primary-btn,
+      .secondary-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="app-mode-toggle" aria-label="Main navigation">
+    <a href="index.html" aria-current="page">Home</a>
+    <a href="map.html">Map</a>
+    <a href="database.html">Database</a>
+    <label class="global-vibe-control">
+      <span>Vibe</span>
+      <select data-budfinder-vibe-selector aria-label="Vibe"></select>
+    </label>
+  </nav>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="home-title">
+      <div class="hero-copy">
+        <div class="brand">
+          <img src="images/IMG_5124.ico" alt="" />
+          <span>Budfinder</span>
+        </div>
+
+        <div class="kicker-row">
+          <span class="kicker">Amsterdam coffeeshop intelligence</span>
+          <span class="version-pill">Version 1.13 - updated 10 June 2026</span>
+        </div>
+
+        <h1 id="home-title">Find your next Amsterdam coffeeshop with better information.</h1>
+        <p class="lead">Build a Wanted strain list, compare nearby coffeeshops, spot useful price signals, and choose your next Destination before you start walking.</p>
+
+        <div class="actions" aria-label="Primary actions">
+          <a class="primary-btn" href="map.html">Open the map</a>
+          <a class="secondary-btn" href="#home-search-form">Search strains</a>
+        </div>
+
+        <section class="intent-panel" aria-labelledby="intent-title">
+          <h2 id="intent-title">What are you trying to do?</h2>
+          <p>Pick the fastest route into Budfinder.</p>
+          <div class="journey" aria-label="Primary Budfinder journeys">
+          <a class="journey-card" href="database.html">
+            <small>I know the strains I want</small>
+            <strong>Build my Wanted list</strong>
+            <span>Build Wanted strains and find the best matching coffeeshops.</span>
+          </a>
+          <a class="journey-card" href="map.html?source=home&near=me">
+            <small>I'm already in a coffeeshop</small>
+            <strong>Explore from here</strong>
+            <span>Set this as your Starting point and compare nearby options.</span>
+          </a>
+          <a class="journey-card" href="database.html?mode=under10">
+            <small>I want a good-value stop</small>
+            <strong>Find good-value shops</strong>
+            <span>Find nearby options with useful price signals.</span>
+          </a>
+          </div>
+        </section>
+
+        <form id="home-search-form" class="home-search" action="map.html">
+          <label class="eyebrow" for="home-search-input">What are you looking for?</label>
+          <div class="search-row">
+            <input id="home-search-input" name="search" type="search" placeholder="Try Gelato, Family First, De Pijp..." autocomplete="off" />
+            <button class="primary-btn" type="submit">Start searching</button>
+          </div>
+          <div class="quick-chips" aria-label="Quick searches">
+            <button class="chip-btn" type="button" data-search="Gelato">Gelato</button>
+            <button class="chip-btn" type="button" data-search="Amnesia Haze">Amnesia Haze</button>
+            <button class="chip-btn" type="button" data-search="White Widow">White Widow</button>
+            <button class="chip-btn" type="button" data-search="Zkittlez">Zkittlez</button>
+            <button class="chip-btn" type="button" data-search="The Plug">The Plug</button>
+            <button class="chip-btn" type="button" data-search="Family First">Family First</button>
+            <button class="chip-btn" type="button" data-search="De Pijp">De Pijp</button>
+          </div>
+        </form>
+
+        <p class="showcase-status">Menu data changes quickly. Budfinder is planning intelligence, not a stock guarantee.</p>
+      </div>
+
+      <aside class="intel-board" aria-label="Live Budfinder showcase">
+        <div class="board-head">
+          <div>
+            <span class="eyebrow">Live showcase</span>
+            <h2>Fresh shops and strain leads</h2>
+            <p id="showcase-status" class="showcase-status" aria-live="polite">Loading Amsterdam menu data...</p>
+          </div>
+          <button id="shuffle-showcase-btn" class="showcase-button" type="button">Shuffle</button>
+        </div>
+
+        <div id="shop-showcase" class="showcase-grid" aria-label="Featured shops">
+          <div class="showcase-skeleton" aria-hidden="true"></div>
+          <div class="showcase-skeleton" aria-hidden="true"></div>
+        </div>
+
+        <div id="strain-showcase" class="strain-row" aria-label="Featured strains">
+          <div class="showcase-skeleton" aria-hidden="true"></div>
+          <div class="showcase-skeleton" aria-hidden="true"></div>
+          <div class="showcase-skeleton" aria-hidden="true"></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section" aria-labelledby="feature-title">
+      <span class="eyebrow">Why Budfinder</span>
+      <h2 id="feature-title" class="section-title">Built for the two Amsterdam moments that matter.</h2>
+      <p class="section-copy">Arrive with Wanted strains, or set the shop you are already sitting in as your Starting point and work out the next Destination.</p>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <strong>Find Wanted strains</strong>
+          <p>Search Gelato, Amnesia Haze, Zkittlez, hash, Cali, and more across current menu data.</p>
+        </div>
+        <div class="feature-card">
+          <strong>Explore from wherever you are</strong>
+          <p>Set a Starting point, compare nearby shops, and look for walking-time wins before you move.</p>
+        </div>
+        <div class="feature-card">
+          <strong>Compare deals with context</strong>
+          <p>Spot price hints, freshness, confidence, saved-strain matches, and shops worth the detour.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="section workflow">
+      <div>
+        <span class="eyebrow">How Budfinder works</span>
+        <h2>Search, compare, choose, navigate.</h2>
+      </div>
+      <div class="workflow-grid">
+        <div class="workflow-card">
+          <b>1. Search</b>
+          <strong>Start with a strain, shop, or area</strong>
+          <p>Use the homepage search for a quick start, the map for decisions, or the database for deeper comparison.</p>
+        </div>
+        <div class="workflow-card">
+          <b>2. Compare</b>
+          <strong>Look at usefulness, not just distance</strong>
+          <p>Cards surface price, walking time, menu freshness, confidence, and why a Destination is worth considering.</p>
+        </div>
+        <div class="workflow-card">
+          <b>3. Navigate</b>
+          <strong>Choose a Destination and move</strong>
+          <p>Add shops to Saved shops, add Destinations to your Trip plan, and open directions when the plan feels right.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section about-grid" aria-label="Budfinder data and version">
+      <div class="about-card">
+        <span class="eyebrow">Data notes</span>
+        <h2>Helpful guidance, not guaranteed stock.</h2>
+        <p>Budfinder uses menu and listing data to make Amsterdam coffeeshop exploration easier. Menus, prices, and availability can change quickly, so treat listings as planning guidance and check with the shop before travelling far. Location is only used when you choose location-based features.</p>
+      </div>
+      <div class="about-card">
+        <span class="eyebrow">Release intel</span>
+        <h2>Current build</h2>
+        <div class="version-grid">
+          <div class="version-box">
+            <span>App version</span>
+            <strong>1.13</strong>
+          </div>
+          <div class="version-box">
+            <span>Updated</span>
+            <strong>10 June 2026</strong>
+          </div>
+          <div class="version-box">
+            <span>Database snapshot</span>
+            <strong id="snapshot-date">Loading...</strong>
+          </div>
+          <div class="version-box">
+            <span>Amsterdam picks</span>
+            <strong id="database-counts">Loading...</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="note">Budfinder is for responsible planning, not a stock guarantee. Please follow local laws, respect coffeeshop rules, check before crossing town for one item, and consume responsibly.</p>
+  </main>
+
+  <script src="scripts/budfinder-theme.js"></script>
+  <script>
+    (() => {
+      const APP_VERSION = '1.13';
+      const APP_UPDATED = '10 June 2026';
+      const state = {
+        shops: [],
+        offerings: [],
+        shopLogoByKey: new Map(),
+        strainImageByKey: new Map(),
+        shopCards: [],
+        strainCards: []
+      };
+
+      const shopShowcase = document.getElementById('shop-showcase');
+      const strainShowcase = document.getElementById('strain-showcase');
+      const showcaseStatus = document.getElementById('showcase-status');
+      const shuffleBtn = document.getElementById('shuffle-showcase-btn');
+
+      function escapeHtml(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function normalise(value) {
+        return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      }
+
+      function parseCsvLine(line) {
+        const out = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i += 1) {
+          const ch = line[i];
+          if (ch === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+              cur += '"';
+              i += 1;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (ch === ',' && !inQuotes) {
+            out.push(cur);
+            cur = '';
+          } else {
+            cur += ch;
+          }
+        }
+        out.push(cur);
+        return out;
+      }
+
+      async function loadJson(path, fallback) {
+        const res = await fetch(path, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Could not load ${path}`);
+        return res.json();
+      }
+
+      async function loadText(path, fallback = '') {
+        const res = await fetch(path, { cache: 'no-store' });
+        if (!res.ok) return fallback;
+        return res.text();
+      }
+
+      function shuffle(items) {
+        const copy = items.slice();
+        for (let i = copy.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = tmp;
+        }
+        return copy;
+      }
+
+      function formatDate(value) {
+        if (!value) return '';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '';
+        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      }
+
+      function freshnessLabel(value) {
+        if (!value) return 'Freshness unknown';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return 'Freshness unknown';
+        const days = Math.max(0, Math.round((Date.now() - date.getTime()) / 86400000));
+        if (days === 0) return 'Updated today';
+        if (days === 1) return 'Updated yesterday';
+        if (days < 14) return `Updated ${days} days ago`;
+        return `Updated ${formatDate(value)}`;
+      }
+
+      function priceLabel(amount, currency, unit) {
+        const numeric = Number(amount);
+        if (!Number.isFinite(numeric) || numeric <= 0) return 'Price unknown';
+        const money = Number.isInteger(numeric) ? String(numeric) : numeric.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+        const token = currency || 'EUR';
+        const prefix = token === 'EUR' ? 'EUR ' : token;
+        return `From ${prefix}${money}/${unit || 'g'}`;
+      }
+
+      function logoSlug(value) {
+        return String(value || '')
+          .trim()
+          .toLowerCase()
+          .replace(/^cs-/, '')
+          .replace(/&/g, ' and ')
+          .replace(/[^a-z0-9]+/g, '_')
+          .replace(/^_+|_+$/g, '');
+      }
+
+      function initials(value, fallback) {
+        const parts = String(value || '').trim().split(/\s+/).filter(Boolean);
+        return (parts.slice(0, 2).map(part => part.charAt(0).toUpperCase()).join('') || fallback).slice(0, 2);
+      }
+
+      function displayName(value) {
+        const acronyms = new Set(['ak', 'amg', 'bb', 'bm', 'cbd', 'g13', 'gsc', 'mac', 'og', 'rs11', 'thc']);
+        return String(value || '')
+          .trim()
+          .split(/\s+/)
+          .map(part => {
+            if (/^[A-Z0-9]{2,}$/.test(part)) return part;
+            return part
+              .split('-')
+              .map(piece => {
+                const lower = piece.toLowerCase();
+                if (acronyms.has(lower) || (/\d/.test(piece) && piece.length <= 5)) return piece.toUpperCase();
+                return piece ? piece.charAt(0).toUpperCase() + piece.slice(1).toLowerCase() : piece;
+              })
+              .join('-');
+          })
+          .join(' ');
+      }
+
+      function isRecent(value, days) {
+        const date = new Date(value || '');
+        if (Number.isNaN(date.getTime())) return false;
+        return (Date.now() - date.getTime()) <= days * 86400000;
+      }
+
+      function shopLogoCandidates(shopKey, shopName) {
+        const explicit = state.shopLogoByKey.get(String(shopKey || '').trim());
+        const bases = explicit
+          ? [explicit]
+          : [logoSlug(shopKey), logoSlug(shopName)].filter(Boolean).flatMap(slug => [`${slug}.png`, `${slug}.jpg`, `${slug}.svg`]);
+        const paths = [];
+        bases.forEach(raw => {
+          const clean = String(raw || '').replace(/^\.?\//, '').replace(/^\/+/, '');
+          if (!clean) return;
+          const parts = clean.split('/').filter(Boolean);
+          const basename = parts[parts.length - 1] || clean;
+          if (clean.includes('/')) paths.push(clean);
+          paths.push(`images/logos/${encodeURIComponent(basename)}`);
+          paths.push(`images/logos/${basename}`);
+        });
+        return Array.from(new Set(paths));
+      }
+
+      function shopLogoHtml(shop) {
+        const candidates = shopLogoCandidates(shop.shop_key, shop.name);
+        const fallback = `<span class="shop-art-fallback">${escapeHtml(initials(shop.name, 'CS'))}</span>`;
+        if (!candidates.length) return `<span class="shop-art">${fallback}</span>`;
+        return `<span class="shop-art"><img src="${escapeHtml(candidates[0])}" alt="${escapeHtml(shop.name)} logo" data-candidates="${escapeHtml(candidates.join('|'))}" data-idx="0" loading="lazy" onerror="handleHomeShopLogoError(this)" />${fallback}</span>`;
+      }
+
+      function strainImageCandidates(name) {
+        const filename = state.strainImageByKey.get(normalise(name));
+        if (!filename) return [];
+        return Array.from(new Set([
+          `images/strains/${encodeURIComponent(filename)}`,
+          `images/strains/${filename}`
+        ]));
+      }
+
+      function strainArtHtml(name) {
+        const candidates = strainImageCandidates(name);
+        const fallback = `<span class="strain-art-fallback">${escapeHtml(initials(name, 'ST'))}</span>`;
+        if (!candidates.length) return `<span class="strain-art">${fallback}</span>`;
+        return `<span class="strain-art"><img src="${escapeHtml(candidates[0])}" alt="${escapeHtml(name)} strain art" data-candidates="${escapeHtml(candidates.join('|'))}" data-idx="0" loading="lazy" onerror="handleHomeStrainImageError(this)" />${fallback}</span>`;
+      }
+
+      window.handleHomeShopLogoError = img => {
+        const candidates = String(img.getAttribute('data-candidates') || '').split('|').filter(Boolean);
+        const nextIndex = Number(img.getAttribute('data-idx') || 0) + 1;
+        if (candidates[nextIndex]) {
+          img.setAttribute('data-idx', String(nextIndex));
+          img.src = candidates[nextIndex];
+          return;
+        }
+        img.remove();
+      };
+
+      window.handleHomeStrainImageError = window.handleHomeShopLogoError;
+
+      async function loadShopLogoMap() {
+        try {
+          const index = await loadJson('database/locations/index.json', null);
+          const files = Array.isArray(index && index.files) ? index.files : [];
+          const texts = await Promise.all(files.map(file => loadText(`database/locations/${file}`, '')));
+          texts.forEach(csvText => {
+            const lines = String(csvText || '').split(/\r?\n/).filter(line => line.trim());
+            if (lines.length < 2) return;
+            const headers = parseCsvLine(lines[0]).map(normalise);
+            const keyIndex = headers.indexOf('shop_key');
+            const logoIndex = headers.indexOf('logo');
+            if (keyIndex < 0 || logoIndex < 0) return;
+            lines.slice(1).forEach(line => {
+              const cells = parseCsvLine(line);
+              const shopKey = (cells[keyIndex] || '').trim();
+              const logo = (cells[logoIndex] || '').trim();
+              if (shopKey && logo && !state.shopLogoByKey.has(shopKey)) state.shopLogoByKey.set(shopKey, logo);
+            });
+          });
+        } catch (_err) {
+          // Logo hints are optional. Derived filenames still cover many shops.
+        }
+      }
+
+      async function loadStrainImageMap() {
+        const csv = await loadText('database/strain_image_map.csv', '');
+        const lines = String(csv || '').split(/\r?\n/).filter(line => line.trim());
+        lines.slice(1).forEach(line => {
+          const cells = parseCsvLine(line);
+          const name = (cells[0] || '').trim();
+          const image = (cells[1] || '').trim();
+          if (name && image) state.strainImageByKey.set(normalise(name), image);
+        });
+      }
+
+      function buildShowcaseData() {
+        const shopsById = new Map(state.shops.map(shop => [String(shop.shop_id), shop]));
+        const groupedByShop = new Map();
+        const groupedByStrain = new Map();
+
+        state.offerings.forEach(item => {
+          const shop = shopsById.get(String(item.shop_id)) || {
+            shop_id: item.shop_id,
+            shop_key: item.shop_key,
+            name: item.shop_name,
+            city: item.shop_city
+          };
+          const city = shop.city || item.shop_city || '';
+          if (normalise(city) !== 'amsterdam') return;
+          if (Number(shop.is_closed) === 1) return;
+
+          const shopKey = String(shop.shop_id);
+          if (!groupedByShop.has(shopKey)) groupedByShop.set(shopKey, { shop, items: [] });
+          groupedByShop.get(shopKey).items.push(item);
+
+          const strainName = (item.strain_name_normalised || item.strain_name || '').toString().trim();
+          if (!strainName) return;
+          const strainKey = normalise(strainName);
+          if (!groupedByStrain.has(strainKey)) {
+            groupedByStrain.set(strainKey, {
+              name: strainName,
+              baseType: item.base_type || '',
+              items: [],
+              shopIds: new Set()
+            });
+          }
+          const entry = groupedByStrain.get(strainKey);
+          entry.items.push(item);
+          if (item.shop_id) entry.shopIds.add(String(item.shop_id));
+        });
+
+        state.shopCards = Array.from(groupedByShop.values()).map(group => {
+          const prices = group.items.map(item => Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
+          const latest = group.items.map(item => item.updated_at || item.last_seen_at_utc || '').sort().pop() || group.shop.updated_at || group.shop.fetched_at_utc || '';
+          const cheapest = prices.length ? Math.min(...prices) : null;
+          const strains = Array.from(new Set(group.items.map(item => item.strain_name_normalised || item.strain_name).filter(Boolean)));
+          return {
+            shop: group.shop,
+            count: strains.length,
+            price: cheapest,
+            latest,
+            badges: [
+              cheapest && cheapest <= 10 ? 'Under EUR10/g' : null,
+              latest ? 'Menu intel' : null
+            ].filter(Boolean)
+          };
+        }).filter(card => card.count > 0);
+
+        state.strainCards = Array.from(groupedByStrain.values()).map(group => {
+          const prices = group.items.map(item => Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
+          const latest = group.items.map(item => item.updated_at || item.last_seen_at_utc || '').sort().pop() || '';
+          const cheapest = prices.length ? Math.min(...prices) : null;
+          return {
+            name: group.name,
+            baseType: group.baseType || 'mixed',
+            shopIds: Array.from(group.shopIds),
+            count: group.shopIds.size,
+            price: cheapest,
+            latest
+          };
+        }).filter(card => card.count > 0);
+      }
+
+      function renderShops() {
+        const recentPool = state.shopCards.filter(card => isRecent(card.latest, 100));
+        const pool = recentPool.length >= 4 ? recentPool : state.shopCards;
+        const picks = shuffle(pool).slice(0, 4);
+        if (!shopShowcase || !picks.length) return;
+        shopShowcase.innerHTML = picks.map(card => {
+          const shop = card.shop;
+          const url = new URL('map.html', window.location.href);
+          url.searchParams.set('source', 'home');
+          url.searchParams.set('shops', String(shop.shop_id || ''));
+          const price = priceLabel(card.price, 'EUR', 'g');
+          const dealClass = card.price && card.price <= 10 ? ' is-deal' : '';
+          return `
+            <a class="shop-card" href="${escapeHtml(url.pathname.split('/').pop() + url.search)}">
+              ${shopLogoHtml(shop)}
+              <span class="card-copy">
+                <strong>${escapeHtml(displayName(shop.name || 'Amsterdam coffeeshop'))}</strong>
+                <span>${escapeHtml(shop.city || 'Amsterdam')} - ${card.count} Wanted strains</span>
+                <small>${escapeHtml(freshnessLabel(card.latest))}</small>
+                <span class="mini-badges">
+                  <span class="mini-badge${dealClass}">${escapeHtml(price)}</span>
+                </span>
+              </span>
+            </a>
+          `;
+        }).join('');
+      }
+
+      function renderStrains() {
+        const knownPool = state.strainCards
+          .filter(card => state.strainImageByKey.has(normalise(card.name)) && card.count >= 2)
+          .sort((a, b) => b.count - a.count);
+        const fallbackPool = state.strainCards
+          .filter(card => card.count >= 2)
+          .sort((a, b) => b.count - a.count);
+        const pool = (knownPool.length >= 3 ? knownPool : fallbackPool).slice(0, 80);
+        const picks = shuffle(pool).slice(0, 3);
+        if (!strainShowcase || !picks.length) return;
+        strainShowcase.innerHTML = picks.map(card => {
+          const url = new URL('map.html', window.location.href);
+          url.searchParams.set('source', 'home');
+          url.searchParams.set('strain', card.name);
+          if (card.shopIds.length) url.searchParams.set('strain_shops', card.shopIds.join(','));
+          const price = priceLabel(card.price, 'EUR', 'g');
+          const dealClass = card.price && card.price <= 10 ? ' is-deal' : '';
+          return `
+            <a class="strain-card" href="${escapeHtml(url.pathname.split('/').pop() + url.search)}">
+              ${strainArtHtml(card.name)}
+              <span class="card-copy">
+              <strong>${escapeHtml(displayName(card.name))}</strong>
+                <span>${card.count} Amsterdam shop${card.count === 1 ? '' : 's'} - ${escapeHtml(card.baseType || 'mixed')}</span>
+                <small>${escapeHtml(freshnessLabel(card.latest))}</small>
+                <span class="mini-badges">
+                  <span class="mini-badge${dealClass}">${escapeHtml(price)}</span>
+                </span>
+              </span>
+            </a>
+          `;
+        }).join('');
+      }
+
+      function renderShowcase() {
+        renderShops();
+        renderStrains();
+        if (showcaseStatus) {
+          showcaseStatus.textContent = `${state.shopCards.length} Amsterdam shops and ${state.strainCards.length} current strains in the live showcase.`;
+        }
+      }
+
+      function renderFallbackShowcase() {
+        if (shopShowcase) {
+          shopShowcase.innerHTML = `
+            <a class="shop-card" href="map.html?source=home&search=Family%20First">
+              <span class="shop-art"><img src="images/logos/family_first.png" alt="Family First logo" /></span>
+              <span class="card-copy">
+                <strong>Family First</strong>
+                <span>Popular starting point</span>
+                <small>Featured search</small>
+              </span>
+            </a>
+            <a class="shop-card" href="map.html?source=home&search=The%20Plug">
+              <span class="shop-art"><img src="images/logos/Plug.png" alt="The Plug logo" /></span>
+              <span class="card-copy">
+                <strong>The Plug</strong>
+                <span>Popular starting point</span>
+                <small>Featured search</small>
+              </span>
+            </a>
+          `;
+        }
+        if (strainShowcase) {
+          strainShowcase.innerHTML = ['Gelato', 'Amnesia Haze', 'Zkittlez'].map(name => {
+            const url = new URL('map.html', window.location.href);
+            url.searchParams.set('source', 'home');
+            url.searchParams.set('strain', name);
+            return `
+              <a class="strain-card" href="${escapeHtml(url.pathname.split('/').pop() + url.search)}">
+                ${strainArtHtml(name)}
+                <span class="card-copy">
+                  <strong>${escapeHtml(name)}</strong>
+                  <span>Featured search</span>
+                </span>
+              </a>
+            `;
+          }).join('');
+        }
+      }
+
+      function updateManifest(manifest) {
+        const snapshotEl = document.getElementById('snapshot-date');
+        const countsEl = document.getElementById('database-counts');
+        if (snapshotEl) snapshotEl.textContent = formatDate(manifest && manifest.exported_at_utc) || APP_UPDATED;
+        if (countsEl) {
+          const counts = manifest && manifest.counts ? manifest.counts : {};
+          const shops = Number(counts.shops);
+          const strains = Number(counts.active_offerings);
+          countsEl.textContent = Number.isFinite(shops) && Number.isFinite(strains)
+            ? `${shops} shops - ${strains} listings`
+            : `${state.shopCards.length} shops - ${state.strainCards.length} strains`;
+        }
+      }
+
+      function openSearch(query) {
+        const q = String(query || '').replace(/\s+/g, ' ').trim();
+        const url = new URL('map.html', window.location.href);
+        url.searchParams.set('source', 'home');
+        if (q) url.searchParams.set('search', q);
+        window.location.href = url.pathname.split('/').pop() + url.search;
+      }
+
+      function bindSearch() {
+        const form = document.getElementById('home-search-form');
+        const input = document.getElementById('home-search-input');
+        if (form) {
+          form.addEventListener('submit', event => {
+            event.preventDefault();
+            openSearch(input ? input.value : '');
+          });
+        }
+        document.querySelectorAll('[data-search]').forEach(button => {
+          button.addEventListener('click', () => {
+            const query = button.getAttribute('data-search') || '';
+            if (input) input.value = query;
+            openSearch(query);
+          });
+        });
+      }
+
+      async function init() {
+        bindSearch();
+        if (shuffleBtn) shuffleBtn.addEventListener('click', renderShowcase);
+        try {
+          const [shops, offerings, manifest] = await Promise.all([
+            loadJson('database/shops.json', []),
+            loadJson('database/active_offerings.json', []),
+            loadJson('database/manifest.json', null).catch(() => null)
+          ]);
+          state.shops = Array.isArray(shops) ? shops : [];
+          state.offerings = Array.isArray(offerings) ? offerings : [];
+          buildShowcaseData();
+          renderShowcase();
+          updateManifest(manifest);
+          Promise.all([loadShopLogoMap(), loadStrainImageMap()])
+            .then(() => {
+              renderShowcase();
+            })
+            .catch(() => {
+              renderShowcase();
+            });
+        } catch (_err) {
+          renderFallbackShowcase();
+          if (showcaseStatus) {
+            showcaseStatus.textContent = 'Live data could not be previewed here, so these are featured searches.';
+          }
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
