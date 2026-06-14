@@ -533,6 +533,33 @@
       text-transform: uppercase;
     }
 
+    .field-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .text-button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 0;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: #0f5f49;
+      font: inherit;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      box-shadow: none;
+      cursor: pointer;
+    }
+
+    .text-button:focus-visible {
+      outline: 3px solid rgba(51, 133, 99, 0.28);
+      outline-offset: 3px;
+    }
+
     input,
     select {
       width: 100%;
@@ -2070,7 +2097,11 @@
 
         <div class="field">
           <label for="search">Search</label>
-          <input id="search" type="search" placeholder="Amnesia, Katsu, Amsterdam" autocomplete="off" />
+          <input id="search" type="search" placeholder="Search strains, shops, or areas..." autocomplete="off" />
+          <div class="field-note">
+            Searching for a coffeeshop?
+            <button id="search-shops-shortcut" class="text-button" type="button">Browse shop menus</button>
+          </div>
         </div>
 
         <div class="field">
@@ -2260,6 +2291,7 @@
     const els = {
       status: document.getElementById('status'),
       search: document.getElementById('search'),
+      searchShopsShortcut: document.getElementById('search-shops-shortcut'),
       city: document.getElementById('city-filter'),
       type: document.getElementById('type-filter'),
       cali: document.getElementById('cali-filter'),
@@ -2343,6 +2375,29 @@
         item.base_type,
         item.notes
       ].some(value => fieldMatchesSearch(value, query));
+    }
+
+    function shopMatchesSearch(shop, query) {
+      if (!query) return false;
+      return [
+        shop && (shop.shop_name || shop.name || shop.shopName),
+        shop && (shop.shop_city || shop.city),
+        shop && shop.shop_key,
+        shop && shop.address
+      ].some(value => fieldMatchesSearch(value, query));
+    }
+
+    function searchLooksLikeShopQuery(query) {
+      const q = normaliseSearchText(query);
+      if (!q) return false;
+      if (state.shops.some(shop => shopMatchesSearch(shop, q))) return true;
+      return state.offerings.some(item => fieldMatchesSearch(item.shop_name, q) || fieldMatchesSearch(item.shop_city, q));
+    }
+
+    function openShopSearchResults() {
+      setView('shops');
+      const target = document.getElementById('shops-view');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function escapeHtmlAttr(value) {
@@ -4377,6 +4432,19 @@
     ['input', 'change'].forEach(eventName => {
       els.search.addEventListener(eventName, renderAfterFilterChange);
     });
+    els.search.addEventListener('keydown', event => {
+      if (event.key !== 'Enter') return;
+      const query = els.search.value;
+      if (!searchLooksLikeShopQuery(query)) return;
+      event.preventDefault();
+      openShopSearchResults();
+    });
+    if (els.searchShopsShortcut) {
+      els.searchShopsShortcut.addEventListener('click', () => {
+        openShopSearchResults();
+        els.search.focus({ preventScroll: true });
+      });
+    }
     [els.city, els.type, els.cali, els.sort].forEach(el => el.addEventListener('change', renderAfterFilterChange));
     [els.priceMin, els.priceMax].forEach(el => el.addEventListener('input', renderAfterFilterChange));
 
