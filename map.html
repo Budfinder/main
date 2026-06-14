@@ -1753,7 +1753,7 @@
 
     .destination-card-list {
       display: grid;
-      gap: 10px;
+      gap: 8px;
       margin-top: 10px;
       max-height: 340px;
       overflow-y: auto;
@@ -1774,11 +1774,11 @@
 
     .destination-card {
       display: grid;
-      gap: 10px;
+      gap: 8px;
       width: 100%;
       min-height: 0;
-      padding: 12px 14px;
-      border-radius: 18px;
+      padding: 10px 12px;
+      border-radius: 14px;
       border: 1px solid rgba(92, 107, 97, 0.14) !important;
       background: rgba(255, 255, 255, 0.78) !important;
       color: var(--ink) !important;
@@ -1789,7 +1789,7 @@
 
     .destination-card-body {
       display: grid;
-      gap: 10px;
+      gap: 6px;
       width: 100%;
       min-height: 0;
       padding: 0;
@@ -1799,7 +1799,6 @@
       color: inherit !important;
       text-align: left;
       box-shadow: none !important;
-      cursor: pointer;
     }
 
     .destination-card.is-selected {
@@ -1818,7 +1817,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       min-width: 0;
     }
 
@@ -1830,7 +1829,7 @@
 
     .destination-card-name {
       display: block;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       line-height: 1.25;
       color: var(--ink);
@@ -1855,6 +1854,21 @@
       font-weight: 700;
       line-height: 1;
       white-space: nowrap;
+    }
+
+    .destination-card-matches {
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .destination-card-matches strong {
+      font-weight: 800;
+    }
+
+    .destination-card-matches span {
+      color: var(--muted);
+      font-weight: 700;
     }
 
     .destination-card-badges {
@@ -1968,30 +1982,31 @@
     }
 
     .destination-card-why {
-      display: grid;
-      gap: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
       margin: 0;
       color: var(--muted);
       font-size: 12px;
-      line-height: 1.45;
+      line-height: 1.35;
     }
 
     .destination-card-why strong {
       color: var(--ink);
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font-size: inherit;
+      letter-spacing: 0;
+      text-transform: none;
     }
 
     .destination-card-actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .destination-card-action {
-      min-height: 36px;
-      padding: 0 10px;
+      min-height: 34px;
+      padding: 0 9px;
       border-radius: 999px;
       border: 1px solid rgba(92, 107, 97, 0.12);
       background: rgba(255, 255, 255, 0.64);
@@ -2003,9 +2018,55 @@
     }
 
     .destination-card-action.is-primary {
+      width: 100%;
+      min-height: 42px;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
       color: #fffaf4;
       border-color: transparent;
+      font-size: 12px;
+    }
+
+    .destination-card-details {
+      border-top: 1px solid rgba(92, 107, 97, 0.1);
+      padding-top: 2px;
+    }
+
+    .destination-card-details summary {
+      min-height: 32px;
+      cursor: pointer;
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      list-style-position: inside;
+    }
+
+    .destination-card-detail-body {
+      display: grid;
+      gap: 8px;
+      padding: 4px 0 2px;
+    }
+
+    .destination-card-details:not([open]) .destination-card-detail-body {
+      display: none;
+    }
+
+    .destination-card-match-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .destination-card-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 700;
     }
 
     .controls label[for="destination-select"],
@@ -4177,12 +4238,17 @@
 
     body.compact-layout .destination-card-list {
       max-height: min(340px, 44dvh);
-      gap: 12px;
+      gap: 8px;
     }
 
     body.compact-layout .destination-card {
-      padding: 13px 14px;
-      gap: 10px;
+      padding: 8px 10px;
+      gap: 6px;
+      border-radius: 12px;
+    }
+
+    body.compact-layout .destination-card-body {
+      gap: 5px;
     }
 
     body.compact-layout .destination-card-name {
@@ -4197,6 +4263,21 @@
     body.compact-layout .destination-card-price {
       white-space: normal;
       text-align: right;
+    }
+
+    body.compact-layout .destination-card-matches,
+    body.compact-layout .destination-card-why {
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    body.compact-layout .destination-card-action.is-primary {
+      min-height: 40px;
+    }
+
+    body.compact-layout .destination-card-details summary {
+      min-height: 28px;
+      font-size: 11px;
     }
 
     body.compact-layout .strain-shelf-chip-btn {
@@ -9140,7 +9221,7 @@
       try {
         await loadCsvFromPath(firstCsv);
       } catch (err) {
-        setUploadPanelState('Amsterdam data could not be loaded', 'Refresh the page, or open Advanced data tools to import custom data.', true);
+        setUploadPanelState('Amsterdam menu data could not be loaded', 'Try refreshing the page, or open Advanced data tools to import custom data.', true);
       }
     }
 
@@ -10626,15 +10707,23 @@
     function buildDestinationWhyReasons(item, activeName) {
       const parts = [];
       if (activeName) {
-        parts.push(`Matches ${activeName}`);
+        if (item.isClosest) {
+          parts.push(`Closest known shop with ${activeName}.`);
+        } else if (item.priceInsight && item.priceInsight.tone === 'deal') {
+          parts.push(`Good-value lead for ${activeName} where price is known.`);
+        } else {
+          parts.push(`Strong Wanted-strain match for ${activeName}.`);
+        }
       } else if (item.savedMatches && item.savedMatches.length) {
-        parts.push(item.savedMatches.length === 1 ? 'Closest shop with 1 Wanted strain' : `Best match for ${item.savedMatches.length} Wanted strains`);
+        parts.push(item.savedMatches.length === 1
+          ? 'Nearby option with one Wanted-strain match.'
+          : `Strong Wanted-strain match with ${item.savedMatches.length} Wanted strains.`);
       } else {
-        parts.push('Useful nearby option');
+        parts.push('Useful nearby option for the current Trip plan.');
       }
       if (item.etaLabel) parts.push(`${item.etaLabel} from Starting point`);
       if (item.priceInsight && item.priceInsight.tone === 'deal') parts.push(item.priceInsight.label);
-      if (item.priceInsight && item.priceInsight.label === 'Price unknown') parts.push('Price unknown, but promising');
+      if (item.priceInsight && item.priceInsight.label === 'Price unknown') parts.push('Worth checking, but price data is incomplete');
       if (item.freshnessLabel === 'Fresh') {
         parts.push('Fresh menu data');
       } else if (item.freshnessLabel) {
@@ -11108,6 +11197,7 @@
           return;
         }
       }
+      if (e.target.closest('.destination-card-details')) return;
       const card = e.target.closest('[data-destination-card-index]');
       if (!card) return;
       const index = parseInt(card.getAttribute('data-destination-card-index') || '', 10);
@@ -11360,55 +11450,73 @@
         ? `${displayItems.length} visible Destination${displayItems.length === 1 ? '' : 's'} carrying ${activeName}, sorted by ${getDestinationSortLabel()}.`
         : `${displayItems.length} possible Destination${displayItems.length === 1 ? '' : 's'}, sorted by ${getDestinationSortLabel()}.`;
       listEl.innerHTML = displayItems.map(item => {
-        const badges = [];
-        if (item.isSelected) badges.push('<span class="destination-card-badge is-selected">Destination</span>');
-        if (item.isCheapest) badges.push('<span class="destination-card-badge is-cheapest">Cheapest nearby</span>');
-        if (item.priceInsight && item.priceInsight.tone === 'deal') badges.push(`<span class="destination-card-badge is-deal">${escapeHtml(item.priceInsight.label)}</span>`);
-        if (item.isClosest) badges.push('<span class="destination-card-badge is-closest">Closest</span>');
-        if (item.isFav) badges.push('<span class="destination-card-badge is-favourite">Saved shops</span>');
-        if (item.savedMatches.length) badges.push(`<span class="destination-card-badge is-selected">${item.savedMatches.length} Wanted strains</span>`);
-        if (item.freshnessLabel) badges.push(`<span class="destination-card-badge is-freshness-${escapeHtmlAttr(item.freshnessTone)}">${escapeHtml(item.freshnessLabel)}</span>`);
-        if (item.confidence && item.confidence.label) badges.push(`<span class="destination-card-badge is-confidence-${escapeHtmlAttr(item.confidence.tone)}">${escapeHtml(item.confidence.label)}</span>`);
-
-        const metaBits = [];
-        const wantedMatchNames = item.savedMatches && item.savedMatches.length
-          ? item.savedMatches.slice(0, 3).join(', ')
-          : '';
-        if (activeName) metaBits.push(`<span>Wanted match: <strong>${escapeHtml(activeName)}</strong></span>`);
-        if (!activeName && wantedMatchNames) metaBits.push(`<span>Wanted match: <strong>${escapeHtml(wantedMatchNames)}${item.savedMatches.length > 3 ? ' +' + (item.savedMatches.length - 3) : ''}</strong></span>`);
-        if (item.distText) metaBits.push(`<span><strong>${escapeHtml(item.distText)}</strong> away</span>`);
-        if (item.etaLabel) metaBits.push(`<span><strong>${escapeHtml(item.etaLabel)} ${escapeHtml(item.travelModeLabel.toLowerCase())}</strong></span>`);
-        if (item.strainCount) metaBits.push(`<span><strong>${item.strainCount}</strong> listed strain${item.strainCount === 1 ? '' : 's'}</span>`);
-        if (item.sourceLabel) metaBits.push(`<span>Source: ${escapeHtml(item.sourceLabel)}</span>`);
-        if (item.rating > 0) metaBits.push(`<span><strong>${escapeHtml(renderStars(item.rating))}</strong></span>`);
-        if (item.visited) metaBits.push('<span>Visited before</span>');
         const whyReasons = buildDestinationWhyReasons(item, activeName);
+        const matchNames = activeName
+          ? [activeName]
+          : (Array.isArray(item.savedMatches) ? item.savedMatches : []);
+        const visibleMatches = matchNames.slice(0, 3);
+        const extraMatchCount = Math.max(0, matchNames.length - visibleMatches.length);
+        const matchLabel = activeName || item.savedMatches.length
+          ? (item.savedMatches.length > 1 ? 'Strong match' : 'Wanted match')
+          : (item.isClosest ? 'Nearby option' : 'Possible match');
+        const distanceLabel = item.etaLabel
+          ? `${item.etaLabel} ${item.travelModeLabel.toLowerCase()}`
+          : (item.distText ? `${item.distText} away` : 'Distance unknown');
+        const compactMeta = [matchLabel, distanceLabel].filter(Boolean).join(' · ');
+        const matchesHtml = visibleMatches.length
+          ? `Matches: ${visibleMatches.map(name => `<strong>${escapeHtml(name)}</strong>`).join(', ')}${extraMatchCount ? ` <span>+${extraMatchCount} more</span>` : ''}`
+          : (item.strainCount ? `${item.strainCount} listed strain${item.strainCount === 1 ? '' : 's'} to check` : 'No Wanted strains matched yet');
+        const recommendedLine = whyReasons[0]
+          ? whyReasons[0]
+          : 'Worth checking, but menu data may have changed.';
         const priceLabel = item.priceLabel || (item.priceInsight && item.priceInsight.label) || 'Price unknown';
-        const whyHtml = whyReasons.length
-          ? `<span class="destination-card-why"><strong>Why this result?</strong><span>${escapeHtml(whyReasons.join(' · '))}</span></span>`
-          : '';
+        const priceKnown = priceLabel !== 'Price unknown';
+        const detailBadges = [
+          `<span class="destination-card-badge ${priceKnown ? 'is-deal' : 'is-confidence-unknown'}">${priceKnown ? 'Price known' : 'Price unknown'}</span>`,
+          item.freshnessLabel ? `<span class="destination-card-badge is-freshness-${escapeHtmlAttr(item.freshnessTone)}">${escapeHtml(item.freshnessLabel === 'Fresh' ? 'Fresh menu' : item.freshnessLabel)}</span>` : '<span class="destination-card-badge is-confidence-unknown">Menu freshness unknown</span>',
+          item.confidence && item.confidence.label ? `<span class="destination-card-badge is-confidence-${escapeHtmlAttr(item.confidence.tone)}">${escapeHtml(item.confidence.label)}</span>` : '<span class="destination-card-badge is-confidence-unknown">Possible match</span>',
+          '<span class="destination-card-badge is-confidence-low">Check before travelling</span>'
+        ];
+        const detailBits = [
+          priceLabel ? `<span>Price signal: <strong>${escapeHtml(priceLabel)}</strong></span>` : '',
+          item.distText ? `<span>Distance: <strong>${escapeHtml(item.distText)}</strong></span>` : '',
+          item.etaLabel ? `<span>Walking time: <strong>${escapeHtml(item.etaLabel)}</strong></span>` : '',
+          item.sourceLabel ? `<span>Source: ${escapeHtml(item.sourceLabel)}</span>` : '',
+          item.rating > 0 ? `<span>${escapeHtml(renderStars(item.rating))}</span>` : '',
+          item.isFav ? '<span>Saved shops</span>' : '',
+          item.visited ? '<span>Visited before</span>' : ''
+        ].filter(Boolean);
+        const allMatchHtml = matchNames.length
+          ? matchNames.map(name => `<span class="destination-card-chip">${escapeHtml(name)}</span>`).join('')
+          : '<span class="destination-card-chip">No Wanted strains matched yet</span>';
 
         return (
           `<article class="destination-card${item.isSelected ? ' is-selected' : ''}${item.isCheapest ? ' is-cheapest' : ''}" data-destination-card-index="${item.index}">` +
-            `<button type="button" class="destination-card-body" data-destination-card-select="${item.index}">` +
+            `<div class="destination-card-body">` +
               `<span class="destination-card-main">` +
                 `<span class="destination-card-copy">` +
                   `<span class="destination-card-name">${escapeHtml(item.name)}</span>` +
-                  `<span class="destination-card-city">${escapeHtml(item.city || 'Current map')}</span>` +
+                  `<span class="destination-card-city">${escapeHtml(compactMeta)}</span>` +
                 `</span>` +
-                `<span class="destination-card-price">${escapeHtml(priceLabel)}</span>` +
+                `<span class="destination-card-badge is-selected">${escapeHtml(matchLabel)}</span>` +
               `</span>` +
-              `${badges.length ? `<span class="destination-card-badges">${badges.join('')}</span>` : ''}` +
-              `${metaBits.length ? `<span class="destination-card-meta">${metaBits.join('')}</span>` : ''}` +
-              whyHtml +
-              `<span class="destination-card-cta">${item.isSelected ? 'Current Destination' : 'Tap to select this Destination'}</span>` +
-            `</button>` +
-            `<span class="destination-card-actions">` +
-              `<button type="button" class="destination-card-action" data-card-action="save" data-card-index="${item.index}">${item.isFav ? 'Saved shops' : 'Save to Saved shops'}</button>` +
-              `<button type="button" class="destination-card-action" data-card-action="route" data-card-index="${item.index}">Add to Trip plan</button>` +
-              `<button type="button" class="destination-card-action is-primary" data-card-action="directions" data-card-index="${item.index}">Directions</button>` +
-              `<button type="button" class="destination-card-action" data-card-action="details" data-card-index="${item.index}">View details</button>` +
-            `</span>` +
+              `<span class="destination-card-matches">${matchesHtml}</span>` +
+              `<span class="destination-card-why"><strong>Recommended because:</strong><span>${escapeHtml(recommendedLine)}</span></span>` +
+            `</div>` +
+            `<button type="button" class="destination-card-action is-primary" data-card-action="route" data-card-index="${item.index}">${item.isSelected ? 'Current Destination' : 'Set as Destination'}</button>` +
+            `<details class="destination-card-details">` +
+              `<summary>More details</summary>` +
+              `<div class="destination-card-detail-body">` +
+                `<div class="destination-card-badges">${detailBadges.join('')}</div>` +
+                `<div class="destination-card-match-list">${allMatchHtml}</div>` +
+                `${detailBits.length ? `<div class="destination-card-meta">${detailBits.join('')}</div>` : ''}` +
+                `<span class="destination-card-actions">` +
+                  `<button type="button" class="destination-card-action" data-card-action="save" data-card-index="${item.index}">${item.isFav ? 'Saved shops' : 'Save to Saved shops'}</button>` +
+                  `<button type="button" class="destination-card-action" data-card-action="directions" data-card-index="${item.index}">Directions</button>` +
+                  `<button type="button" class="destination-card-action" data-card-action="details" data-card-index="${item.index}">View on map</button>` +
+                `</span>` +
+              `</div>` +
+            `</details>` +
           `</article>`
         );
       }).join('');

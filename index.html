@@ -822,7 +822,7 @@
 
         <div class="kicker-row">
           <span class="kicker">Amsterdam coffeeshop intelligence</span>
-          <span class="version-pill">Version 1.13 - updated 10 June 2026</span>
+          <span class="version-pill">Version 4 - updated 14 June 2026</span>
         </div>
 
         <h1 id="home-title">Find your next Amsterdam coffeeshop with better information.</h1>
@@ -954,11 +954,11 @@
         <div class="version-grid">
           <div class="version-box">
             <span>App version</span>
-            <strong>1.13</strong>
+            <strong>1.14</strong>
           </div>
           <div class="version-box">
             <span>Updated</span>
-            <strong>10 June 2026</strong>
+            <strong>14 June 2026</strong>
           </div>
           <div class="version-box">
             <span>Database snapshot</span>
@@ -978,8 +978,8 @@
   <script src="scripts/budfinder-theme.js"></script>
   <script>
     (() => {
-      const APP_VERSION = '1.13';
-      const APP_UPDATED = '10 June 2026';
+      const APP_VERSION = '1.14';
+      const APP_UPDATED = '14 June 2026';
       const state = {
         shops: [],
         offerings: [],
@@ -1343,11 +1343,28 @@
         renderShops();
         renderStrains();
         if (showcaseStatus) {
-          showcaseStatus.textContent = `${state.shopCards.length} Amsterdam shops and ${state.strainCards.length} current strains in the live showcase.`;
+          const amsterdamShopCount = state.shopCards.length;
+          const listingCount = state.offerings.filter(item => normalise(item.shop_city) === 'amsterdam').length;
+          const prices = state.offerings
+            .filter(item => normalise(item.shop_city) === 'amsterdam')
+            .map(item => Number(item.price_amount))
+            .filter(value => Number.isFinite(value) && value > 0);
+          const latest = state.offerings
+            .filter(item => normalise(item.shop_city) === 'amsterdam')
+            .map(item => item.updated_at || item.last_seen_at_utc || '')
+            .filter(Boolean)
+            .sort()
+            .pop();
+          const lowest = prices.length ? priceLabel(Math.min(...prices), 'EUR', 'g') : 'Price signals loading';
+          const updated = latest ? freshnessLabel(latest) : 'Menu freshness unknown';
+          showcaseStatus.textContent = `${amsterdamShopCount.toLocaleString()} Amsterdam shops tracked · ${listingCount.toLocaleString()} listings · ${lowest} · ${updated}.`;
         }
       }
 
       function renderFallbackShowcase() {
+        if (showcaseStatus) {
+          showcaseStatus.textContent = 'Popular starting searches while Amsterdam menu data loads.';
+        }
         if (shopShowcase) {
           shopShowcase.innerHTML = `
             <a class="shop-card" href="map.html?source=home&search=Family%20First">
@@ -1450,7 +1467,7 @@
         } catch (_err) {
           renderFallbackShowcase();
           if (showcaseStatus) {
-            showcaseStatus.textContent = 'Live data could not be previewed here, so these are featured searches.';
+            showcaseStatus.textContent = 'Amsterdam menu data could not be loaded. Try refreshing the page.';
           }
         }
       }

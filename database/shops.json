@@ -1175,7 +1175,7 @@
     "shop_url": "https://www.coffeeshopmenus.org/cs-freedom.html",
     "show_in_admin": 1,
     "is_closed": 0,
-    "menu_status": "new",
+    "menu_status": "processed",
     "fetched_at_utc": "2026-06-13T10:39:11.590725+00:00",
     "image_url": "https://www.coffeeshopmenus.org/Freedom/Menus/1000067058.jpg",
     "menu_sha256": "1ab9ddd680dfe6aaa1f6991caef21dce204746a976c8bd6fc513aab7fb573eef",

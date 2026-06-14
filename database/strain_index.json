@@ -862,6 +862,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 52,
         "shop_key": "cs-bij",
         "shop_name": "Bij",
@@ -1906,6 +1912,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 140,
         "shop_key": "cs-funnypeople2",
         "shop_name": "Funny People 2",
@@ -2548,6 +2560,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 4,
         "shop_key": "cs-katsu",
         "shop_name": "Katsu",
@@ -3019,6 +3037,12 @@
         "shop_id": 41,
         "shop_key": "cs-bagheera",
         "shop_name": "Bagheera",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
         "shop_city": "Amsterdam"
       },
       {
@@ -3667,6 +3691,12 @@
         "shop_id": 38,
         "shop_key": "cs-atlas-ams",
         "shop_name": "Atlas",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
         "shop_city": "Amsterdam"
       },
       {
@@ -5092,6 +5122,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 202,
         "shop_key": "cs-kadinsky",
         "shop_name": "Kadinsky",
@@ -5422,6 +5458,12 @@
     "strain_name_display": "Cereal Milk",
     "shops": [
       {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 43,
         "shop_key": "cs-ballonnetje",
         "shop_name": "Het Ballonnetje",
@@ -5491,7 +5533,7 @@
   },
   {
     "strain_name_normalised": "cheese",
-    "strain_name_display": "Cheese",
+    "strain_name_display": "cheese",
     "shops": [
       {
         "shop_id": 85,
@@ -5515,6 +5557,12 @@
         "shop_id": 231,
         "shop_key": "cs-marssa",
         "shop_name": "El Marssa",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
         "shop_city": "Amsterdam"
       },
       {
@@ -6001,6 +6049,12 @@
         "shop_id": 2191,
         "shop_key": "cs-barneys",
         "shop_name": "Barney's",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
         "shop_city": "Amsterdam"
       },
       {
@@ -6788,6 +6842,12 @@
         "shop_key": "cs-eastwood",
         "shop_name": "Eastwood",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -6973,6 +7033,12 @@
         "shop_id": 32,
         "shop_key": "cs-amnesia",
         "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
         "shop_city": "Amsterdam"
       },
       {
@@ -7687,6 +7753,18 @@
         "shop_id": 11,
         "shop_key": "cs-spirit",
         "shop_name": "Spirit",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "frozen banana",
+    "strain_name_display": "Frozen Banana",
+    "shops": [
+      {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
         "shop_city": "Amsterdam"
       }
     ]
@@ -9336,6 +9414,18 @@
     ]
   },
   {
+    "strain_name_normalised": "gruis",
+    "strain_name_display": "Gruis",
+    "shops": [
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "gruntz",
     "strain_name_display": "Gruntz",
     "shops": [
@@ -10084,6 +10174,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 157,
         "shop_key": "cs-greenhouse-effect-1",
         "shop_name": "Greenhouse Effect",
@@ -10345,6 +10441,12 @@
         "shop_id": 32,
         "shop_key": "cs-amnesia",
         "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
         "shop_city": "Amsterdam"
       },
       {
@@ -10870,6 +10972,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 155,
         "shop_key": "cs-greenhouse-centrum",
         "shop_name": "Greenhouse Centrum",
@@ -11206,6 +11314,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 155,
         "shop_key": "cs-greenhouse-centrum",
         "shop_name": "Greenhouse Centrum",
@@ -11485,6 +11599,12 @@
         "shop_id": 9724,
         "shop_key": "cs-dolphins",
         "shop_name": "Dolphines",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
         "shop_city": "Amsterdam"
       },
       {
@@ -12079,6 +12199,12 @@
         "shop_id": 32,
         "shop_key": "cs-amnesia",
         "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
         "shop_city": "Amsterdam"
       }
     ]
@@ -12799,6 +12925,18 @@
         "shop_id": 379,
         "shop_key": "cs-tyson",
         "shop_name": "Tyson 2.0",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "mikes pie",
+    "strain_name_display": "Mikes Pie",
+    "shops": [
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
         "shop_city": "Amsterdam"
       }
     ]
@@ -13956,6 +14094,18 @@
     ]
   },
   {
+    "strain_name_normalised": "orange sherbert",
+    "strain_name_display": "Orange Sherbert",
+    "shops": [
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
     "strain_name_normalised": "orange-hill",
     "strain_name_display": "Orange-Hill",
     "shops": [
@@ -14703,6 +14853,12 @@
     "strain_name_normalised": "pineapple express",
     "strain_name_display": "Pineapple Express",
     "shops": [
+      {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
+        "shop_city": "Amsterdam"
+      },
       {
         "shop_id": 12298,
         "shop_key": "cs-bulldog-no-90",
@@ -17606,6 +17762,12 @@
         "shop_key": "cs-amnesia",
         "shop_name": "Amnesia",
         "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
+        "shop_city": "Amsterdam"
       }
     ]
   },
@@ -18016,6 +18178,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 148,
         "shop_key": "cs-get-down",
         "shop_name": "Get Down To It",
@@ -18163,6 +18331,12 @@
         "shop_id": 85,
         "shop_key": "cs-catch-33",
         "shop_name": "Catch 33",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
         "shop_city": "Amsterdam"
       }
     ]
@@ -20374,6 +20548,12 @@
         "shop_city": "Amsterdam"
       },
       {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
+        "shop_city": "Amsterdam"
+      },
+      {
         "shop_id": 92,
         "shop_key": "cs-city-hall",
         "shop_name": "City Hall",
@@ -20617,6 +20797,18 @@
         "shop_id": 147,
         "shop_key": "cs-gelderse",
         "shop_name": "het Gelderse",
+        "shop_city": "Amsterdam"
+      }
+    ]
+  },
+  {
+    "strain_name_normalised": "white gorrilla",
+    "strain_name_display": "White Gorrilla",
+    "shops": [
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
         "shop_city": "Amsterdam"
       }
     ]
@@ -21109,6 +21301,12 @@
         "shop_id": 139,
         "shop_key": "cs-free-i",
         "shop_name": "Free I",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 138,
+        "shop_key": "cs-freedom",
+        "shop_name": "Freedom",
         "shop_city": "Amsterdam"
       },
       {
@@ -22603,6 +22801,12 @@
         "shop_id": 32,
         "shop_key": "cs-amnesia",
         "shop_name": "Amnesia",
+        "shop_city": "Amsterdam"
+      },
+      {
+        "shop_id": 2191,
+        "shop_key": "cs-barneys",
+        "shop_name": "Barney's",
         "shop_city": "Amsterdam"
       }
     ]
