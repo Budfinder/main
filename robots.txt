@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://budfinder.app/sitemap.xml

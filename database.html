@@ -3,7 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Budfinder</title>
+  <title>Budfinder Database | Amsterdam coffeeshop menu search</title>
+  <meta name="description" content="Explore Amsterdam coffeeshop menu data, browse strains, compare prices, build Wanted strains, and find shops matching multiple Wanted strains." />
+  <link rel="canonical" href="https://budfinder.app/database.html" />
+  <meta property="og:title" content="Budfinder Database | Amsterdam coffeeshop menu search" />
+  <meta property="og:description" content="Browse strains, compare prices, build Wanted strains, and find Amsterdam shops matching multiple Wanted strains." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://budfinder.app/database.html" />
   <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
   <style>
     :root {
@@ -2019,9 +2025,9 @@
   <main class="page-shell">
     <header class="topbar">
       <div class="brand">
-        <span class="kicker">Strain Explorer</span>
+        <span class="kicker">Database explorer</span>
         <h1>Budfinder database</h1>
-        <p class="intro-copy">Pick Wanted strains, compare coffeeshops by match strength, price, and freshness, then send chosen Destinations straight back to the map.</p>
+        <p class="intro-copy">Use the database when you want to research strains, compare prices, or find shops that carry several Wanted strains at once.</p>
       </div>
       <div class="result-toolbar" aria-label="Database navigation">
         <span id="result-context" class="result-context">Getting matches ready...</span>
@@ -2032,7 +2038,7 @@
       </div>
     </header>
 
-    <p id="status" class="status">Getting menu listings ready...</p>
+    <p id="status" class="status">Loading Amsterdam menu intelligence...</p>
 
     <section class="workflow-strip" aria-label="Database workflow">
       <div class="workflow-step">
@@ -2057,9 +2063,9 @@
       <aside class="panel side-panel">
         <span class="filter-label">View</span>
         <div class="segmented" role="group" aria-label="View mode">
-          <button class="is-active" type="button" data-view="strains">Strains</button>
-          <button type="button" data-view="compare">Common shops</button>
-          <button type="button" data-view="shops">Shop menus</button>
+          <button class="is-active" type="button" data-view="strains">Browse strains</button>
+          <button type="button" data-view="compare">Shops matching my Wanted list</button>
+          <button type="button" data-view="shops">Browse shop menus</button>
         </div>
 
         <div class="field">
@@ -2170,19 +2176,19 @@
 
         <section class="metrics" aria-label="Explorer totals">
           <div class="metric">
-            <span id="metric-strains" class="metric-value">0</span>
+            <span id="metric-strains" class="metric-value">Loading...</span>
             <span class="metric-label">Strains</span>
           </div>
           <div class="metric">
-            <span id="metric-shops" class="metric-value">0</span>
+            <span id="metric-shops" class="metric-value">Loading...</span>
             <span class="metric-label">Shops</span>
           </div>
           <div class="metric">
-            <span id="metric-offerings" class="metric-value">0</span>
+            <span id="metric-offerings" class="metric-value">Loading...</span>
             <span class="metric-label">Listings</span>
           </div>
           <div class="metric">
-            <span id="metric-cheapest" class="metric-value">--</span>
+            <span id="metric-cheapest" class="metric-value">Loading...</span>
             <span class="metric-label">Lowest price</span>
           </div>
         </section>
@@ -2190,7 +2196,7 @@
         <section id="strains-view" class="panel">
           <div class="section-head">
             <div>
-              <h2>Strains</h2>
+              <h2>Browse strains</h2>
               <p id="strains-summary">Pick strains to build Wanted strains.</p>
             </div>
           </div>
@@ -2204,8 +2210,8 @@
         <section id="compare-view" class="panel" hidden>
           <div class="section-head">
             <div>
-              <h2>Common shops</h2>
-              <p id="compare-summary">Find shops carrying your Wanted strains.</p>
+              <h2>Shops matching my Wanted list</h2>
+              <p id="compare-summary">Find shops carrying several Wanted strains at once.</p>
             </div>
           </div>
           <div id="common-shop-board" class="common-shop-board"></div>
@@ -2216,7 +2222,7 @@
         <section id="shops-view" class="panel" hidden>
           <div class="section-head">
             <div>
-              <h2>Shop menus</h2>
+              <h2>Browse shop menus</h2>
               <p id="shops-summary">Shops are ordered A-Z by default. Choose Best deals to rank below-average prices first.</p>
             </div>
           </div>
@@ -3972,7 +3978,7 @@
 
       const rows = getCommonShopRows(stats);
       if (!rows.length) {
-        els.commonShopBoard.innerHTML = '<div class="empty">No coffeeshop carries all Wanted strains yet. Try matching fewer strains or use Shop Menus for partial matches.</div>';
+        els.commonShopBoard.innerHTML = '<div class="empty">No shops match every Wanted strain under the current filters. Try removing one strain or widening the filters.</div>';
         return;
       }
 
@@ -4359,7 +4365,7 @@
         els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.${exported}${hidden}`;
         render();
       } catch (err) {
-        els.status.innerHTML = '<span class="error">Budfinder could not get menu listings ready.</span> Refresh the page, then try again.';
+        els.status.innerHTML = '<span class="error">Amsterdam data could not be loaded.</span> Try refreshing, or check that the data files are available.';
       }
     }
 
