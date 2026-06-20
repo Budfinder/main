@@ -38,9 +38,9 @@
       --shadow: 0 14px 36px rgba(29, 42, 32, 0.14);
       --shadow-lg: 0 22px 60px rgba(29, 42, 32, 0.18);
       --shadow-md: 0 14px 36px rgba(29, 42, 32, 0.14);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
       --floating-toggle-clearance: calc(max(24px, env(safe-area-inset-top)) + 58px);
     }
 
@@ -483,8 +483,8 @@
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
-      gap: 18px;
+      grid-template-columns: minmax(250px, 314px) minmax(0, 1fr);
+      gap: 14px;
       align-items: start;
     }
 
@@ -494,14 +494,14 @@
     .shop-card,
     .comparison-card {
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 14px;
       background: rgba(255, 255, 255, 0.52);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
       backdrop-filter: blur(10px);
     }
 
     .panel {
-      padding: 18px;
+      padding: 14px;
       border-color: var(--panel-border);
       border-radius: var(--radius-xl);
       background: var(--panel);
@@ -520,8 +520,8 @@
 
     .field {
       display: grid;
-      gap: 7px;
-      margin-bottom: 14px;
+      gap: 6px;
+      margin-bottom: 11px;
     }
 
     .field label,
@@ -829,8 +829,8 @@
 
     .quick-answer {
       display: grid;
-      gap: 14px;
-      padding: 16px;
+      gap: 12px;
+      padding: 14px;
     }
 
     .quick-answer.is-empty {
@@ -841,7 +841,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 14px;
+      gap: 12px;
     }
 
     .quick-answer-kicker {
@@ -891,9 +891,9 @@
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 10px;
       align-items: center;
-      padding: 10px 12px;
+      padding: 9px 10px;
       border: 1px solid rgba(92, 107, 97, 0.1);
-      border-radius: 14px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.56);
     }
 
@@ -957,11 +957,11 @@
     .metrics {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+      gap: 10px;
     }
 
     .metric {
-      padding: 14px;
+      padding: 12px;
       box-shadow: none;
     }
 
@@ -986,8 +986,8 @@
       display: flex;
       align-items: end;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
     .section-head h2 {
@@ -1018,14 +1018,14 @@
     .strain-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 12px;
+      gap: 10px;
     }
 
     .strain-card {
       display: grid;
-      gap: 12px;
-      padding: 14px;
-      border-radius: 18px;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
       border: 1px solid rgba(92, 107, 97, 0.14);
       background: rgba(255, 255, 255, 0.78);
       box-shadow: none;
@@ -1058,16 +1058,16 @@
     .comparison-card-main {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
     }
 
     .strain-art {
       position: relative;
       flex: 0 0 auto;
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.42);
       background:
@@ -1141,6 +1141,51 @@
       border-color: rgba(188, 139, 31, 0.2);
       background: rgba(255, 240, 190, 0.78);
       color: #8b5615;
+    }
+
+    .similar-strains {
+      display: grid;
+      gap: 6px;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.34);
+    }
+
+    .similar-strains > span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .similar-strain-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 28px;
+      padding: 0 8px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.62);
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .similar-strain-row b {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .similar-strain-row span {
+      flex: 0 0 auto;
+      color: var(--accent-strong);
+      font-size: 11px;
+      font-weight: 900;
     }
 
     .card-actions {
@@ -1556,9 +1601,9 @@
 
     .shop-card {
       display: grid;
-      gap: 12px;
-      padding: 14px;
-      border-radius: 20px;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 16px;
       border: 1px solid rgba(92, 107, 97, 0.14);
       background: rgba(255, 255, 255, 0.78);
       box-shadow: none;
@@ -1572,24 +1617,24 @@
     .shop-card-head {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: 12px;
+      gap: 10px;
       align-items: start;
     }
 
     .shop-card-main {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
     }
 
     .shop-art {
       position: relative;
       flex: 0 0 auto;
-      width: 60px;
-      height: 60px;
+      width: 54px;
+      height: 54px;
       overflow: hidden;
-      border-radius: 18px;
+      border-radius: 14px;
       border: 1px solid rgba(92, 107, 97, 0.14);
       background:
         rgba(255, 255, 255, 0.82),
@@ -1641,11 +1686,11 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .shop-card-reason {
-      margin: 8px 0 0;
+      margin: 6px 0 0;
       color: var(--muted);
       font-size: 12px;
       line-height: 1.45;
@@ -2045,10 +2090,7 @@
     <a href="index.html">Home</a>
     <a href="map.html">Map</a>
     <a class="is-active" href="database.html" aria-current="page">Database</a>
-    <label class="global-vibe-control">
-      <span>Vibe</span>
-      <select data-budfinder-vibe-selector aria-label="Vibe"></select>
-    </label>
+    <a href="map.html#settings">Settings</a>
   </nav>
   <div class="atmosphere" aria-hidden="true">
     <div class="atmosphere-leaves"></div>
@@ -2118,7 +2160,7 @@
             <button type="button" data-browse-mode="available">Most stocked</button>
             <button type="button" data-browse-mode="fresh">Fresh menus</button>
             <button type="button" data-browse-mode="under10">Under €10</button>
-            <button type="button" data-browse-mode="rare">Rare finds</button>
+            <button type="button" data-browse-mode="rare">2-3 shop finds</button>
             <button type="button" data-browse-mode="cali">Cali</button>
             <button type="button" data-browse-mode="sativa">Sativa</button>
             <button type="button" data-browse-mode="hybrid">Hybrid</button>
@@ -2495,6 +2537,72 @@
       return listings.slice(0, limit);
     }
 
+    function strainSignalTokens(name) {
+      const text = normaliseSearchText(name);
+      const signals = ['gelato', 'runtz', 'zushi', 'zkittlez', 'kush', 'haze', 'amnesia', 'sherbet', 'biscotti', 'glue', 'gorilla', 'widow', 'wedding', 'cake', 'lemon', 'blue', 'rainbow', 'mac', 'diesel', 'cookies', 'gushers'];
+      return signals.filter(signal => text.includes(signal));
+    }
+
+    function similarStrainsForStat(stat, pool, limit = 4) {
+      if (!stat) return [];
+      const sourceFamilies = new Set(stat.families || []);
+      const sourceTokens = new Set(strainSignalTokens(stat.name));
+      const sourceType = stat.topType || '';
+      return (pool || [])
+        .filter(candidate => candidate && candidate.key !== stat.key && (candidate.filteredShopCount || candidate.shopCount || 0) > 0)
+        .map(candidate => {
+          const familyOverlap = (candidate.families || []).filter(key => sourceFamilies.has(key)).length;
+          const tokenOverlap = strainSignalTokens(candidate.name).filter(key => sourceTokens.has(key)).length;
+          const typeOverlap = sourceType && candidate.topType === sourceType ? 1 : 0;
+          const candidateShopCount = candidate.filteredShopCount || candidate.shopCount || 0;
+          const availability = Math.min(candidateShopCount, 8) / 8;
+          return {
+            candidate,
+            score: (familyOverlap * 3) + (tokenOverlap * 2.5) + typeOverlap + availability
+          };
+        })
+        .filter(item => item.score > 0.5)
+        .sort((a, b) => b.score - a.score || (b.candidate.filteredShopCount || b.candidate.shopCount || 0) - (a.candidate.filteredShopCount || a.candidate.shopCount || 0) || compareStrainName(a.candidate, b.candidate))
+        .slice(0, limit)
+        .map(item => item.candidate);
+    }
+
+    function alternativeStrainsForQuery(query, pool, limit = 4) {
+      const q = normaliseSearchText(query);
+      const queryTokens = new Set(q.split(' ').filter(token => token.length >= 3));
+      const querySignals = new Set(strainSignalTokens(query));
+      return (pool || [])
+        .filter(stat => stat && stat.shopCount > 0)
+        .map(stat => {
+          const name = normaliseSearchText(stat.name);
+          const nameTokens = new Set(name.split(' ').filter(token => token.length >= 3));
+          const tokenOverlap = Array.from(queryTokens).filter(token => nameTokens.has(token) || name.includes(token)).length;
+          const signalOverlap = strainSignalTokens(stat.name).filter(token => querySignals.has(token)).length;
+          const fuzzy = q && (name.includes(q) || q.includes(name)) ? 2 : 0;
+          const availability = Math.min(stat.shopCount || 0, 10) / 10;
+          return { stat, score: (tokenOverlap * 2.5) + (signalOverlap * 2) + fuzzy + availability };
+        })
+        .filter(item => item.score > 0.75)
+        .sort((a, b) => b.score - a.score || b.stat.shopCount - a.stat.shopCount || compareStrainName(a.stat, b.stat))
+        .slice(0, limit)
+        .map(item => item.stat);
+    }
+
+    function alternativeLinksHtml(items) {
+      if (!items.length) return '';
+      return `
+        <div class="similar-strains">
+          <span>Try these available alternatives</span>
+          ${items.map(item => `
+            <a class="similar-strain-row" href="database.html?strain=${encodeURIComponent(item.name)}" data-similar-strain="${escapeHtmlAttr(item.name)}">
+              <b>${escapeHtml(item.name)}</b>
+              <span>${item.shopCount} shop${item.shopCount === 1 ? '' : 's'}</span>
+            </a>
+          `).join('')}
+        </div>
+      `;
+    }
+
     function average(values) {
       const nums = values.map(Number).filter(Number.isFinite);
       if (!nums.length) return null;
@@ -2752,10 +2860,24 @@
       return price - (availability * 0.12) + Math.min(ageDays, 120) * 0.015;
     }
 
+    function weeklySeed() {
+      return Math.floor(Date.now() / (7 * 86400000));
+    }
+
+    function seededNoise(value, salt = '') {
+      const input = `${value || ''}|${salt}|${weeklySeed()}`;
+      let hash = 2166136261;
+      for (let i = 0; i < input.length; i += 1) {
+        hash ^= input.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      return ((hash >>> 0) % 10000) / 10000;
+    }
+
     function statMatchesBrowseMode(stat, mode) {
       if (!browseModeIsFilter(mode)) return true;
       if (mode === 'under10') return stat.filteredCheapest != null && Number(stat.filteredCheapest) <= 10;
-      if (mode === 'rare') return stat.filteredShopCount > 0 && stat.filteredShopCount <= 4;
+      if (mode === 'rare') return stat.filteredShopCount === 2 || stat.filteredShopCount === 3;
       if (mode === 'cali') return stat.filteredCaliCount > 0;
       if (mode === 'sativa' || mode === 'hybrid' || mode === 'indica') return statTypeCount(stat, mode) > 0;
       return true;
@@ -2781,7 +2903,11 @@
         return (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || compareStrainName(a, b);
       }
       if (mode === 'under10') return (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || b.filteredShopCount - a.filteredShopCount || compareStrainName(a, b);
-      if (mode === 'rare') return a.filteredShopCount - b.filteredShopCount || (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || compareStrainName(a, b);
+      if (mode === 'rare') {
+        const noiseDiff = seededNoise(b.name || b.key, 'rare-browser') - seededNoise(a.name || a.key, 'rare-browser');
+        if (noiseDiff !== 0) return noiseDiff;
+        return compareStrainName(a, b);
+      }
       if (mode === 'cali') return b.filteredCaliCount - a.filteredCaliCount || (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || compareStrainName(a, b);
       if (mode === 'sativa' || mode === 'hybrid' || mode === 'indica') return statTypeCount(b, mode) - statTypeCount(a, mode) || (a.filteredCheapest ?? Infinity) - (b.filteredCheapest ?? Infinity) || b.filteredShopCount - a.filteredShopCount || compareStrainName(a, b);
       return statValueScore(a) - statValueScore(b) || b.filteredShopCount - a.filteredShopCount || compareStrainName(a, b);
@@ -2801,7 +2927,7 @@
       { key: 'available', label: 'Most stocked', summary: 'most stocked' },
       { key: 'fresh', label: 'Fresh menus', summary: 'fresh menus' },
       { key: 'under10', label: 'Under €10', summary: 'under €10' },
-      { key: 'rare', label: 'Rare finds', summary: 'rare finds' },
+      { key: 'rare', label: '2-3 shop finds', summary: 'strains in 2-3 shops' },
       { key: 'cali', label: 'Cali', summary: 'cali' },
       { key: 'sativa', label: 'Sativa', summary: 'sativa' },
       { key: 'hybrid', label: 'Hybrid', summary: 'hybrid' },
@@ -3409,8 +3535,12 @@
 
       if (!stat || !filteredOfferings.length) {
         els.quickAnswer.classList.add('is-empty');
+        const alternatives = filters.q ? alternativeStrainsForQuery(els.search.value, state.strainStats, 4) : [];
         els.quickAnswer.innerHTML = filters.q
-          ? `No current listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name, a shop name, or a broader filter.`
+          ? `
+            <p>No current listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name, clear a filter, or pick an available alternative.</p>
+            ${alternativeLinksHtml(alternatives)}
+          `
           : 'Search a strain to see the best shops, prices, and freshness first.';
         return;
       }
@@ -3420,7 +3550,10 @@
       const listings = quickAnswerListingsForStat(stat, featured, 5);
       if (!featured) {
         els.quickAnswer.classList.add('is-empty');
-        els.quickAnswer.innerHTML = `No priced listings are visible for ${escapeHtml(stat.name)} yet. Try including price-unknown listings or another strain.`;
+        els.quickAnswer.innerHTML = `
+          <p>No priced listings are visible for ${escapeHtml(stat.name)} yet. Try including price-unknown listings or another strain.</p>
+          ${alternativeLinksHtml(similarStrainsForStat(stat, state.strainStats, 4))}
+        `;
         return;
       }
 
@@ -3802,6 +3935,7 @@
         const bestDealItem = bestDeal && bestDeal.item;
         const bestDealPrice = bestDealItem ? money(bestDeal.price, bestDealItem.price_currency, bestDealItem.price_unit) : '';
         const bestDealAverage = bestDealItem ? money(bestDeal.averagePrice, bestDealItem.price_currency, bestDealItem.price_unit) : '';
+        const similar = similarStrainsForStat(stat, stats, 3);
         return `
           <article class="strain-card${selected ? ' is-selected' : ''}" data-strain-card="${escapeHtml(stat.key)}" tabindex="0" aria-pressed="${selected ? 'true' : 'false'}" title="${selected ? 'Remove' : 'Add'} ${escapeHtml(stat.name)} ${selected ? 'from' : 'to'} Wanted strains">
             <div class="strain-card-main">
@@ -3826,6 +3960,17 @@
               ${bestDeal ? `<span class="chip deal-chip">${bestDeal.percentBelow}% below avg</span>` : ''}
               ${stat.caliCount ? `<span class="chip cali">${stat.caliCount} cali</span>` : ''}
             </div>
+            ${similar.length ? `
+              <div class="similar-strains" aria-label="Similar strains currently available">
+                <span>If this is not right, try</span>
+                ${similar.map(item => `
+                  <a class="similar-strain-row" href="database.html?strain=${encodeURIComponent(item.name)}" data-similar-strain="${escapeHtmlAttr(item.name)}">
+                    <b>${escapeHtml(item.name)}</b>
+                    <span>${item.filteredShopCount} shop${item.filteredShopCount === 1 ? '' : 's'}</span>
+                  </a>
+                `).join('')}
+              </div>
+            ` : ''}
             ${bestDeal && bestDealItem ? `
               <div class="shop-deals strain-deal">
                 <div class="shop-deals-head">
@@ -4432,6 +4577,24 @@
       render();
     }
 
+    function applyInitialUrlState() {
+      const params = new URLSearchParams(window.location.search || '');
+      const strain = (params.get('strain') || params.get('search') || '').trim();
+      const mode = (params.get('mode') || '').trim();
+      if (strain) {
+        els.search.value = strain;
+        state.browseMode = 'value';
+      }
+      const hasMode = mode && els.browseModeGrid && Array.from(els.browseModeGrid.querySelectorAll('[data-browse-mode]'))
+        .some(button => button.dataset.browseMode === mode);
+      if (hasMode) {
+        state.browseMode = mode;
+      }
+      if (params.get('view')) {
+        state.view = params.get('view');
+      }
+    }
+
     async function init() {
       try {
         const [offerings, shops, manifest, imageMapCsv, shopLogoMap] = await Promise.all([
@@ -4465,6 +4628,7 @@
           ? ` Hidden ${state.hiddenUnavailableListingCount.toLocaleString()} listing${state.hiddenUnavailableListingCount === 1 ? '' : 's'} from closed, archived, or inactive shops.`
           : '';
         els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.${exported}${hidden}`;
+        applyInitialUrlState();
         render();
       } catch (err) {
         els.status.innerHTML = '<span class="error">Amsterdam menu data could not be loaded.</span> Try refreshing the page.';
@@ -4550,6 +4714,17 @@
         return;
       }
 
+      const similarLink = event.target.closest('[data-similar-strain]');
+      if (similarLink) {
+        event.preventDefault();
+        els.search.value = similarLink.dataset.similarStrain || '';
+        state.browseMode = 'value';
+        resetStrainWindow();
+        render();
+        els.quickAnswer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
       const mapButton = event.target.closest('[data-map-shop]');
       if (mapButton) {
         goToMapShopIds([mapButton.dataset.mapShop], mapContextFromElement(mapButton));
@@ -4597,6 +4772,17 @@
           if (!isSelected(shopButton.dataset.focusShops)) toggleSelected(shopButton.dataset.focusShops);
           setView('shops');
           document.getElementById('shops-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+
+        const similarLink = event.target.closest('[data-similar-strain]');
+        if (similarLink) {
+          event.preventDefault();
+          els.search.value = similarLink.dataset.similarStrain || '';
+          state.browseMode = 'value';
+          resetStrainWindow();
+          render();
+          els.quickAnswer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
     }

@@ -39,10 +39,10 @@
       --accent-glow: rgba(46, 123, 89, 0.28);
       --shadow-lg: 0 22px 60px rgba(29, 42, 32, 0.18);
       --shadow-md: 0 14px 36px rgba(29, 42, 32, 0.14);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --app-controls-header-height: 92px;
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --app-controls-header-height: 86px;
       --app-viewport-height: 100vh;
       --app-controls-max-height: calc(100vh - 48px);
       --app-controls-content-max-height: calc(100vh - 118px);
@@ -900,12 +900,12 @@
     }
 
     #stash-shelf {
-      top: 24px;
-      left: 24px;
-      width: min(360px, calc(100vw - 48px));
-      max-width: min(360px, calc(100vw - 48px));
+      top: 18px;
+      left: 18px;
+      width: min(340px, calc(100vw - 36px));
+      max-width: min(340px, calc(100vw - 36px));
       max-height: var(--app-controls-max-height);
-      padding: 18px;
+      padding: 14px;
       display: none;
       overflow: hidden;
     }
@@ -952,9 +952,9 @@
     }
 
     .stash-shelf-stage {
-      margin-top: 14px;
-      padding: 16px 14px 18px;
-      border-radius: 22px;
+      margin-top: 10px;
+      padding: 12px 12px 14px;
+      border-radius: 16px;
       border: 1px solid rgba(126, 92, 44, 0.16);
       background:
         linear-gradient(180deg, rgba(255, 251, 245, 0.82), rgba(248, 240, 225, 0.66)),
@@ -973,8 +973,8 @@
     .stash-shelf-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      max-height: min(316px, calc(100vh - 320px));
+      gap: 10px;
+      max-height: min(300px, calc(100vh - 296px));
       overflow-y: auto;
       padding-right: 2px;
       scrollbar-width: thin;
@@ -998,10 +998,10 @@
       flex-direction: column;
       align-items: stretch;
       width: 100%;
-      min-height: 188px;
-      padding: 16px 12px 12px;
+      min-height: 168px;
+      padding: 14px 10px 10px;
       border: 0;
-      border-radius: 18px 18px 14px 14px;
+      border-radius: 14px 14px 12px 12px;
       text-align: left;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(242, 239, 229, 0.94));
       color: var(--ink);
@@ -1010,6 +1010,55 @@
       cursor: pointer;
       overflow: hidden;
       transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+
+    .stash-bag-main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      min-height: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .stash-bag-remove {
+      position: absolute;
+      z-index: 3;
+      top: 10px;
+      right: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      min-height: 28px;
+      padding: 0;
+      border: 1px solid rgba(88, 70, 44, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 252, 247, 0.9);
+      color: var(--ink);
+      font: inherit;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1;
+      box-shadow: 0 8px 16px rgba(69, 53, 31, 0.12);
+      cursor: pointer;
+    }
+
+    .stash-bag-remove:hover,
+    .stash-bag-remove:focus-visible {
+      background: #fff6f2;
+      color: var(--red);
+      transform: translateY(-1px);
     }
 
     .stash-bag:hover {
@@ -1352,11 +1401,11 @@
     }
 
     .controls-content {
-      padding: 0 18px max(24px, env(safe-area-inset-bottom) + 18px);
+      padding: 0 14px max(18px, env(safe-area-inset-bottom) + 14px);
       overflow-y: auto;
       max-height: var(--app-controls-content-max-height);
       scrollbar-width: thin;
-      scroll-padding-bottom: max(24px, env(safe-area-inset-bottom) + 18px);
+      scroll-padding-bottom: max(18px, env(safe-area-inset-bottom) + 14px);
       overscroll-behavior: contain;
     }
 
@@ -1386,9 +1435,9 @@
     }
 
     .panel-section {
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 18px;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 14px;
       background: rgba(255, 255, 255, 0.52);
       border: 1px solid rgba(255, 255, 255, 0.32);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -1399,8 +1448,8 @@
     }
 
     .advanced-controls {
-      margin-top: 14px;
-      border-radius: 16px;
+      margin-top: 10px;
+      border-radius: 14px;
       border: 1px solid rgba(92, 107, 97, 0.12);
       background: rgba(255, 255, 255, 0.34);
       overflow: hidden;
@@ -1421,6 +1470,73 @@
       border-radius: 0;
       box-shadow: none;
       background: rgba(255, 255, 255, 0.4);
+    }
+
+    .settings-panel {
+      scroll-margin: 18px;
+    }
+
+    .settings-panel:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .settings-panel-head h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .settings-section {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(92, 107, 97, 0.12);
+    }
+
+    .settings-section h4 {
+      margin: 0 0 8px;
+      color: var(--accent-strong);
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .settings-confirm {
+      display: none;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(176, 61, 48, 0.18);
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .settings-confirm.is-visible {
+      display: grid;
+    }
+
+    .settings-confirm p {
+      margin: 0;
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .settings-confirm-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .danger-btn {
+      background: linear-gradient(135deg, #b03d30, #7b261e) !important;
+      color: #fff9f0 !important;
+    }
+
+    #clear-saved-data-btn.is-confirming {
+      background: #b64230 !important;
+      color: #fff9f0 !important;
+      border-color: rgba(104, 37, 26, 0.24) !important;
     }
 
     .panel-kicker {
@@ -1596,6 +1712,241 @@
       font-size: 13px;
       line-height: 1.25;
       overflow-wrap: anywhere;
+    }
+
+    .journey-planner-card {
+      display: grid;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .journey-planner-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .journey-planner-head strong {
+      display: block;
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .journey-planner-head span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .journey-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .journey-summary-item {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+      padding: 9px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    .journey-summary-item span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .journey-summary-item strong {
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.15;
+    }
+
+    .journey-builder-grid,
+    .journey-save-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
+      align-items: end;
+    }
+
+    .journey-builder-grid label,
+    .journey-save-row label {
+      margin: 0;
+    }
+
+    .journey-add-row,
+    .journey-saved-actions {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .journey-saved-actions {
+      grid-template-columns: minmax(0, 1fr) auto auto;
+    }
+
+    .journey-timeline {
+      display: grid;
+      gap: 8px;
+    }
+
+    .journey-empty {
+      margin: 0;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px dashed rgba(92, 107, 97, 0.18);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.46);
+    }
+
+    .journey-stop-card {
+      display: grid;
+      gap: 9px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .journey-stop-main {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 9px;
+      align-items: start;
+    }
+
+    .journey-stop-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff9f0;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .journey-stop-number.is-start {
+      width: auto;
+      min-width: 46px;
+      padding: 0 9px;
+      background: #fff7e8;
+      color: var(--accent-strong);
+      border: 1px solid rgba(46, 123, 89, 0.18);
+    }
+
+    .journey-stop-copy {
+      min-width: 0;
+    }
+
+    .journey-stop-copy strong {
+      display: block;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .journey-stop-copy span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .journey-stop-actions,
+    .journey-strain-row,
+    .journey-strain-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .journey-stop-actions button,
+    .journey-strain-row button,
+    .journey-save-row button,
+    .journey-saved-actions button {
+      min-height: 36px;
+      padding: 0 10px;
+      font-size: 12px;
+    }
+
+    .journey-strain-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .journey-strain-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 0 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(46, 123, 89, 0.16);
+      background: rgba(234, 248, 238, 0.8);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .journey-strain-chip button {
+      min-height: 22px;
+      width: 22px;
+      padding: 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--accent-strong);
+      box-shadow: none;
+    }
+
+    .journey-map-line {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (max-width: 680px) {
+      .journey-summary-grid,
+      .journey-builder-grid,
+      .journey-save-row,
+      .journey-add-row,
+      .journey-saved-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-stop-actions,
+      .journey-strain-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .journey-stop-actions button,
+      .journey-strain-row button,
+      .journey-save-row button,
+      .journey-saved-actions button {
+        min-height: 44px;
+      }
     }
 
     .route-action-row {
@@ -2602,21 +2953,27 @@
       backdrop-filter: blur(18px);
     }
 
-    .app-mode-toggle a {
+    .app-mode-toggle a,
+    .app-mode-toggle button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-height: 38px;
       padding: 0 14px;
+      border: 0;
       border-radius: 999px;
+      background: transparent;
       color: var(--ink);
+      font: inherit;
       font-weight: 800;
       letter-spacing: 0.02em;
       text-decoration: none;
       transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+      cursor: pointer;
     }
 
-    .app-mode-toggle a:hover {
+    .app-mode-toggle a:hover,
+    .app-mode-toggle button:hover {
       transform: translateY(-1px);
     }
 
@@ -3496,7 +3853,8 @@
         right: max(12px, env(safe-area-inset-right));
       }
 
-      .app-mode-toggle a {
+      .app-mode-toggle a,
+      .app-mode-toggle button {
         min-height: 44px;
         padding: 0 12px;
         font-size: 13px;
@@ -3678,11 +4036,13 @@
 
       .route-action-row,
       .button-row,
+      .advanced-tool-row,
       .destination-card-actions {
         gap: 10px;
       }
 
       .field-grid,
+      .advanced-tool-row,
       .panel-metric {
         grid-template-columns: 1fr;
       }
@@ -3812,17 +4172,17 @@
         bottom: max(12px, env(safe-area-inset-bottom));
         width: auto;
         max-width: none;
-        max-height: min(56dvh, 460px);
-        padding: 14px;
+        max-height: min(54dvh, 430px);
+        padding: 12px;
       }
 
       .stash-shelf-stage {
-        padding: 14px 12px 16px;
+        padding: 12px 10px 14px;
       }
 
       .stash-shelf-grid {
         grid-template-columns: 1fr;
-        max-height: min(34dvh, 280px);
+        max-height: min(32dvh, 260px);
       }
 
       #strain-list-panel {
@@ -4121,12 +4481,14 @@
 
     body.compact-layout .route-action-row,
     body.compact-layout .button-row,
+    body.compact-layout .advanced-tool-row,
     body.compact-layout .destination-card-actions {
       gap: 10px;
     }
 
     body.compact-layout .field-grid,
     body.compact-layout .workflow-shortcuts,
+    body.compact-layout .advanced-tool-row,
     body.compact-layout .panel-metric {
       grid-template-columns: 1fr;
     }
@@ -4180,17 +4542,17 @@
       bottom: max(12px, env(safe-area-inset-bottom));
       width: auto;
       max-width: none;
-      max-height: min(56dvh, 460px);
-      padding: 14px;
+      max-height: min(54dvh, 430px);
+      padding: 12px;
     }
 
     body.compact-layout .stash-shelf-stage {
-      padding: 14px 12px 16px;
+      padding: 12px 10px 14px;
     }
 
     body.compact-layout .stash-shelf-grid {
       grid-template-columns: 1fr;
-      max-height: min(34dvh, 280px);
+      max-height: min(32dvh, 260px);
     }
 
     body.compact-layout #strain-list-panel {
@@ -4490,10 +4852,7 @@
     <a href="index.html">Home</a>
     <a class="is-active" href="map.html" aria-current="page">Map</a>
     <a href="database.html">Database</a>
-    <label class="global-vibe-control">
-      <span>Vibe</span>
-      <select data-budfinder-vibe-selector aria-label="Vibe"></select>
-    </label>
+    <button id="nav-settings-btn" type="button">Settings</button>
   </nav>
   <div class="atmosphere" aria-hidden="true">
     <div class="atmosphere-leaves"></div>
@@ -4563,7 +4922,7 @@
     <h3 id="upload-title">Opening the Amsterdam map</h3>
     <p id="upload-message" class="upload-hint">Loading Amsterdam menu data...</p>
     <details id="upload-advanced-tools" class="upload-advanced-tools">
-      <summary>Advanced data tools</summary>
+      <summary>Data import</summary>
       <p>Use these only if you want Budfinder to read a custom city dataset.</p>
       <button id="manual-csv-btn" type="button">Import custom data</button>
       <button id="folder-csv-btn" type="button">Import data folder</button>
@@ -4575,16 +4934,6 @@
   <div id="instructions" hidden></div>
   <div id="controls-backdrop" class="controls-backdrop"></div>
 
-  <section id="top-shelf-rail" class="overlay-card" aria-label="Wanted strains">
-    <div class="top-shelf-rail-head">
-      <button id="top-shelf-rail-toggle" class="top-shelf-rail-toggle" type="button" aria-expanded="true" aria-controls="top-shelf-rail-list">
-        <span id="top-shelf-rail-toggle-label">Wanted strains</span>
-        <span id="top-shelf-rail-toggle-icon" class="top-shelf-rail-toggle-icon" aria-hidden="true">−</span>
-      </button>
-    </div>
-    <div id="top-shelf-rail-list" class="top-shelf-rail-list"></div>
-  </section>
-
   <section id="selection-card" class="overlay-card is-empty" hidden aria-hidden="true">
     <div id="selection-card-head" class="selection-card-head" role="button" tabindex="0" aria-controls="selection-card-body" aria-expanded="true" aria-label="Toggle selected Destination card">
       <div class="selection-card-head-copy">
@@ -4595,14 +4944,14 @@
       <button id="selection-card-toggle" class="selection-card-toggle" type="button" hidden>Collapse</button>
     </div>
     <div id="selection-card-body" class="selection-card-body">
-      <p id="selected-destination-meta">Choose a shop, use Near me, or pick a Best match to start your Trip plan.</p>
+      <p id="selected-destination-meta">Choose a shop, use Near me, or pick a Best match to preview a Destination.</p>
       <div class="selection-chip-row">
         <span class="selection-chip" id="selected-destination-city">Amsterdam data is loading</span>
         <span class="selection-chip" id="selected-destination-eta">ETA --</span>
       </div>
       <div class="selection-actions">
         <button id="selection-directions-btn" type="button">Open directions</button>
-        <button id="selection-explore-btn" type="button" class="neutral-btn">Explore from here</button>
+        <button id="selection-add-stop-btn" type="button" class="neutral-btn">Add to Journey</button>
         <button id="selection-center-btn" type="button" class="ghost-btn">Focus map</button>
         <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
       </div>
@@ -4659,8 +5008,8 @@
             <span>Search Wanted strains and find the best matching coffeeshops.</span>
           </button>
           <button class="intent-card" type="button" data-map-intent="nearby">
-            <strong>Explore from here</strong>
-            <span>Use Near me or a shop as your Starting point.</span>
+            <strong>Plan a journey</strong>
+            <span>Choose a start, add coffeeshops, and estimate walk time and spend.</span>
           </button>
           <button class="intent-card" type="button" data-map-intent="value">
             <strong>Find good-value shops</strong>
@@ -4675,8 +5024,8 @@
 
       <section class="panel-section route-panel control-group">
         <div class="route-panel-topline">
-          <span class="panel-kicker">Starting point / Destination</span>
-          <p class="panel-copy">Choose where you are starting from, compare nearby options, then pick a Destination.</p>
+          <span class="panel-kicker">Journey Planner</span>
+          <p class="panel-copy">Choose your own Amsterdam coffeeshop journey. Budfinder estimates the distance, walking time, spend, and strains along the way.</p>
         </div>
         <div class="map-mode-strip" aria-live="polite">
           <span>Current mode</span>
@@ -4687,33 +5036,72 @@
           <select id="csv-switch-select"></select>
         </div>
 
-        <div class="trip-plan-card" aria-label="Trip panel">
-          <div class="trip-plan-head">
-            <strong>Trip plan</strong>
-            <span class="field-note">Check before crossing town for one specific item.</span>
+        <div class="journey-planner-card" id="journey-planner-card" aria-label="Journey Planner">
+          <div class="journey-planner-head">
+            <div>
+              <strong>Journey Planner</strong>
+              <span>Add stops in the order you want to visit them. Nothing is reordered or optimised.</span>
+            </div>
           </div>
-          <div class="trip-grid">
-            <div class="trip-field">
-              <span>Starting point</span>
-              <strong id="trip-starting-point">Choose a shop or use Near me</strong>
-            </div>
-            <div class="trip-field">
-              <span>Destination</span>
-              <strong id="trip-destination">No Destination selected</strong>
-            </div>
-            <div class="trip-field">
-              <span>Walking time</span>
-              <strong id="time-estimate">--</strong>
-            </div>
-            <div class="trip-field">
+
+          <div class="journey-summary-grid" aria-live="polite">
+            <div class="journey-summary-item">
               <span>Distance</span>
-              <strong id="distance-info">--</strong>
+              <strong id="journey-summary-distance">--</strong>
             </div>
+            <div class="journey-summary-item">
+              <span>Walking time</span>
+              <strong id="journey-summary-time">--</strong>
+            </div>
+            <div class="journey-summary-item">
+              <span>Stops</span>
+              <strong id="journey-summary-stops">0</strong>
+            </div>
+            <div class="journey-summary-item">
+              <span>Spend</span>
+              <strong id="journey-summary-spend">--</strong>
+            </div>
+            <div class="journey-summary-item">
+              <span>Avg / stop</span>
+              <strong id="journey-summary-average">--</strong>
+            </div>
+            <div class="journey-summary-item">
+              <span>Strains</span>
+              <strong id="journey-summary-strains">0</strong>
+            </div>
+          </div>
+
+          <div class="journey-builder-grid">
+            <label for="journey-start-select">Start
+              <select id="journey-start-select"></select>
+            </label>
+            <label for="journey-stop-select">Add coffeeshop
+              <select id="journey-stop-select"></select>
+            </label>
+          </div>
+          <div class="journey-add-row">
+            <div id="journey-status" class="field-note">Choose a start, then add coffeeshops to build your journey.</div>
+            <button id="journey-add-stop-btn" type="button">Add stop</button>
+          </div>
+          <div id="journey-timeline" class="journey-timeline"></div>
+
+          <div class="journey-save-row">
+            <label for="journey-name-input">Journey name
+              <input id="journey-name-input" type="text" maxlength="48" placeholder="Saturday Amsterdam" />
+            </label>
+            <button id="journey-save-btn" type="button" class="secondary-btn">Save journey</button>
+          </div>
+          <div class="journey-saved-actions">
+            <label for="journey-saved-select">Saved journeys
+              <select id="journey-saved-select"></select>
+            </label>
+            <button id="journey-load-btn" type="button" class="secondary-btn">Load</button>
+            <button id="journey-delete-btn" type="button" class="secondary-btn">Delete</button>
           </div>
         </div>
 
         <div id="destination-picker-wrap">
-          <label for="destination-select" style="margin-top:12px;">Destination</label>
+          <label for="destination-select" style="margin-top:12px;">Destination preview</label>
           <select id="destination-select"></select>
         </div>
 
@@ -4764,10 +5152,10 @@
 
         <div class="route-action-row">
           <button id="nearest-btn">Closest</button>
-          <button id="explore-from-here-btn" type="button" class="secondary-btn">Explore from here</button>
+          <button id="add-destination-stop-btn" type="button" class="secondary-btn">Add Destination to Journey</button>
           <button id="surprise-btn" type="button" class="secondary-btn">Pick a random shop</button>
           <button id="show-strain-shops-btn" type="button" class="secondary-btn" hidden>Show Wanted-strain matches</button>
-          <button id="clear-route-focus-btn" type="button" class="secondary-btn">Clear Trip plan</button>
+          <button id="clear-route-focus-btn" type="button" class="secondary-btn">Clear Destination</button>
         </div>
         <div id="route-status" class="field-note">Location is only used after you choose Closest, Near me, or directions.</div>
 
@@ -4822,40 +5210,61 @@
         </details>
       </section>
 
-      <details class="advanced-controls">
-        <summary>Settings / filters</summary>
-        <section class="panel-section">
-          <span class="panel-kicker">Category filters</span>
-          <p class="panel-copy">Narrow visible Destinations by category when you need more control.</p>
+      <section id="settings-panel" class="panel-section settings-panel control-group" aria-labelledby="settings-title" tabindex="-1">
+        <div class="settings-panel-head">
+          <span class="panel-kicker">Settings</span>
+          <h3 id="settings-title">Settings</h3>
+          <p class="panel-copy">Preferences, filters, display, and data tools live together here.</p>
+        </div>
+
+        <section class="settings-section" aria-labelledby="settings-preferences-title">
+          <h4 id="settings-preferences-title">Preferences</h4>
+          <div class="field-grid">
+            <label class="field-label" for="display-name-input">
+              Your name
+              <input id="display-name-input" type="text" maxlength="24" placeholder="Explorer" />
+            </label>
+          </div>
+        </section>
+
+        <section class="settings-section" aria-labelledby="settings-filters-title">
+          <h4 id="settings-filters-title">Filters</h4>
+          <p class="panel-copy">Choose which Destinations are visible on the map and in Best matches.</p>
           <div id="category-filters">
             <!-- Checkboxes injected here by JS -->
           </div>
+          <div class="button-row">
+            <button id="reset-filters-btn" type="button" class="secondary-btn">Reset filters</button>
+          </div>
         </section>
-      </details>
 
-      <details class="advanced-controls">
-        <summary>Settings / advanced data tools</summary>
-        <section class="panel-section">
-          <span class="panel-kicker">Advanced data tools</span>
-          <p class="panel-copy">The built-in Amsterdam data loads automatically. Use these options only when you want to bring your own city data.</p>
+        <section class="settings-section" aria-labelledby="settings-data-title">
+          <h4 id="settings-data-title">Data</h4>
+          <p class="panel-copy">The built-in Amsterdam data loads automatically. Import your own data only when you need a custom city dataset.</p>
           <a class="panel-link-button" href="database.html">Open database explorer</a>
           <div class="advanced-tool-row">
             <button id="advanced-import-data-btn" type="button">Import custom data</button>
             <button id="advanced-import-folder-btn" type="button">Import data folder</button>
           </div>
-          <div id="db-status" style="display:none; margin-top:10px; font-size:12px; color:#444;"></div>
+          <div class="button-row">
+            <button id="clear-saved-data-btn" type="button" class="secondary-btn">Clear saved data</button>
+          </div>
+          <div id="clear-saved-data-confirm" class="settings-confirm" hidden>
+            <p>This clears Saved shops, visit notes, ratings, recent Destinations, and saved Wanted strains from this device. Map data and display settings stay available.</p>
+            <div class="settings-confirm-actions">
+              <button id="confirm-clear-saved-data-btn" type="button" class="danger-btn">Clear saved data</button>
+              <button id="cancel-clear-saved-data-btn" type="button" class="secondary-btn">Cancel</button>
+            </div>
+          </div>
+          <div id="clear-saved-data-note" class="field-note">Saved shops, recent Destinations, ratings, visit notes, and saved Wanted strains stay on this device.</div>
+          <div id="db-status" class="field-note" style="display:none; margin-top:10px;"></div>
         </section>
 
-        <section class="panel-section">
-          <span class="panel-kicker">Settings</span>
-          <p class="panel-copy">Personalise the map without changing the underlying data.</p>
+        <section class="settings-section" aria-labelledby="settings-display-title">
+          <h4 id="settings-display-title">Display</h4>
           <div class="field-grid">
-            <label class="field-label" for="display-name-input">
-              Crew name
-              <input id="display-name-input" type="text" maxlength="24" placeholder="Explorer" />
-            </label>
             <label class="field-label" for="accent-select">
-              Vibe
+              Colour theme
               <select id="accent-select" data-budfinder-vibe-selector>
                 <option value="northern-lights">Northern Lights</option>
                 <option value="lemon-haze">Lemon Haze</option>
@@ -4882,10 +5291,10 @@
             </label>
           </div>
           <div class="button-row">
-            <button id="reset-personalisation-btn" type="button" class="secondary-btn">Reset look</button>
+            <button id="reset-personalisation-btn" type="button" class="secondary-btn">Reset display</button>
           </div>
         </section>
-      </details>
+      </section>
       <p class="data-disclaimer">Menus, prices, and availability can change quickly. Use Budfinder as planning guidance, not a guarantee. Check before travelling across town for one item, follow local laws and coffeeshop rules, and use location only when you choose location features.</p>
     </div>
   </div>
@@ -4926,6 +5335,12 @@
     let activePopupLocationIndex = null;
     let nearbyExploreActive = false;
     let guideVisible = false;
+    let journeyPlanner = {
+      start: { type: 'landmark', id: 'amsterdam-centraal' },
+      stops: []
+    };
+    let savedJourneys = [];
+    let journeyLayerGroup = null;
 
     // Multi-select categories: 'all', 'favourites', and CSV Y/N flags
     let selectedCategories = ['all'];
@@ -5005,6 +5420,7 @@
     const LEGACY_FAVORITES_STORAGE_KEY = 'favorites';
     const RECENT_DESTINATIONS_STORAGE_KEYS = ['budfinder_recent_destinations', 'locate3_recent_destinations'];
     const STRAIN_SHELF_STORAGE_KEYS = ['budfinder_strain_shelf', 'locate3_strain_shelf'];
+    const SAVED_JOURNEYS_STORAGE_KEYS = ['budfinder_saved_journeys'];
     const TOP_SHELF_RAIL_COLLAPSED_STORAGE_KEYS = ['budfinder_top_shelf_rail_collapsed', 'locate3_top_shelf_rail_collapsed'];
     const MAP_FOCUS_SHOPS_STORAGE_KEY = 'budfinder_map_focus_shops';
     const HOW_GUIDE_DISABLED_STORAGE_KEY = 'budfinder_how_guide_disabled';
@@ -5349,6 +5765,7 @@
     let legacyFavoriteIndices = loadStoredJson(LEGACY_FAVORITES_STORAGE_KEY, []);
     let recentDestinationKeys = loadStoredArray(RECENT_DESTINATIONS_STORAGE_KEYS, []);
     let shelfStrainNames = loadStoredArray(STRAIN_SHELF_STORAGE_KEYS, []);
+    savedJourneys = loadStoredArray(SAVED_JOURNEYS_STORAGE_KEYS, []);
     const storedTopShelfRailCollapsed = loadStoredJson(TOP_SHELF_RAIL_COLLAPSED_STORAGE_KEYS, null);
     let topShelfRailCollapsed = typeof storedTopShelfRailCollapsed === 'boolean'
       ? storedTopShelfRailCollapsed
@@ -5970,6 +6387,7 @@
         map = null;
       }
       routingControl = null;
+      journeyLayerGroup = null;
       markers = [];
       lastPosition = null;
       meLocationMarker = null;
@@ -6331,7 +6749,7 @@
         directionsDiv.hidden = !directionsVisible;
         directionsDiv.style.display = directionsVisible ? 'block' : 'none';
         if (directionsVisible) {
-          renderDirectionsPanel(latestRouteInstructions, 'Choose a Destination and show directions to build a Trip plan.');
+          renderDirectionsPanel(latestRouteInstructions, 'Choose a Destination and show directions when you are ready.');
         } else {
           directionsDiv.innerHTML = '';
         }
@@ -6699,19 +7117,22 @@
           : 'Lowest listed price appears when menu pricing is live.';
 
         return (
-          `<button type="button" class="stash-bag ${getStashBagToneClass(getStrainShelfToneSeed(name))}${artHtml ? ' has-art' : ''}${isCurrent ? ' is-current is-active-filter' : ''}" data-strain="${escapeHtmlAttr(name)}">` +
-            `<span class="stash-bag-art">` +
-              `${artHtml}` +
-              `<span class="stash-bag-ribbon">${escapeHtml(ribbon)}</span>` +
-              `<span class="stash-bag-art-title">${escapeHtml(getStrainShelfArtTitle(meta))}</span>` +
-              `<span class="stash-bag-art-sub">${escapeHtml(artSub)}</span>` +
-            `</span>` +
-            `<span class="stash-bag-name">${escapeHtml(name || 'Mystery strain')}</span>` +
-            `<span class="stash-bag-city">${escapeHtml(market.bestCityCopy || (isCurrent ? 'Current Wanted strains' : 'Wanted strains'))}</span>` +
-            `<span class="stash-bag-meta">${escapeHtml(metaBits.join(' · '))}</span>` +
-            `<span class="stash-bag-price">${escapeHtml(lowestText)}</span>` +
-            `<span class="stash-bag-footer">Tap to show the shops carrying this strain</span>` +
-          `</button>`
+          `<article class="stash-bag ${getStashBagToneClass(getStrainShelfToneSeed(name))}${artHtml ? ' has-art' : ''}${isCurrent ? ' is-current is-active-filter' : ''}" data-strain="${escapeHtmlAttr(name)}">` +
+            `<button type="button" class="stash-bag-remove" data-stash-remove="${escapeHtmlAttr(name)}" aria-label="Remove ${escapeHtmlAttr(name)} from Wanted strains">&times;</button>` +
+            `<button type="button" class="stash-bag-main" data-stash-activate="${escapeHtmlAttr(name)}">` +
+              `<span class="stash-bag-art">` +
+                `${artHtml}` +
+                `<span class="stash-bag-ribbon">${escapeHtml(ribbon)}</span>` +
+                `<span class="stash-bag-art-title">${escapeHtml(getStrainShelfArtTitle(meta))}</span>` +
+                `<span class="stash-bag-art-sub">${escapeHtml(artSub)}</span>` +
+              `</span>` +
+              `<span class="stash-bag-name">${escapeHtml(name || 'Mystery strain')}</span>` +
+              `<span class="stash-bag-city">${escapeHtml(market.bestCityCopy || (isCurrent ? 'Current Wanted strains' : 'Wanted strains'))}</span>` +
+              `<span class="stash-bag-meta">${escapeHtml(metaBits.join(' · '))}</span>` +
+              `<span class="stash-bag-price">${escapeHtml(lowestText)}</span>` +
+              `<span class="stash-bag-footer">Tap to show the shops carrying this strain</span>` +
+            `</button>` +
+          `</article>`
         );
       }).join('');
     }
@@ -6725,6 +7146,27 @@
       if (map && !options.skipMapResize) {
         window.setTimeout(() => map.invalidateSize(), 180);
       }
+    }
+
+    function removeStashShelfEntry(name) {
+      const canonical = getCanonicalStrainName(name);
+      const key = normaliseText(canonical);
+      if (!key) return;
+
+      if (isStrainShelved(canonical)) {
+        removeStrainFromShelf(canonical);
+      }
+
+      if (normaliseText(strainFilterText) === key) {
+        clearStrainFilter();
+      }
+
+      renderStrainList();
+      updateStashShelf();
+      updateControlsSummary();
+      refreshOpenPopupStrainLists();
+      syncActiveStrainShelfButton();
+      setRouteStatus(`${canonical} removed from Wanted strains.`, 'good');
     }
 
     function updateTopShelfRail() {
@@ -8590,27 +9032,10 @@
     }
 
     function clearStrainFilter() {
-      const status = document.getElementById('strain-status');
-      globalSearchAppliedStrainKey = '';
-      strainFilterText = '';
-      strainAllowedShopIds = null;
-      strainAllowedNameCityKeys = null;
-      strainPriceByShopId = null;
-      strainPriceByNameCity = null;
-      strainCheapestShopIds = null;
-      strainCheapestNameCityKeys = null;
-      strainCheapestPriceLabel = '';
-      if (status) status.textContent = 'No Wanted strains selected yet.';
+      clearActiveStrainFilterState();
       updateDestinationDropdown();
       updateDistanceInfo();
       updateMarkers();
-      if (activeStrainNames.length) {
-        renderStrainList();
-      } else {
-        updateStrainListSelection();
-      }
-      refreshOpenPopupStrainLists();
-      syncActiveStrainShelfButton();
     }
 
     async function applyExplorerStrainContextAfterCsvLoad() {
@@ -9117,11 +9542,13 @@
         updateDestinationDropdown();
         updateControlsSummary();
         refreshDestinationCards();
+        renderJourneyPlanner();
       }).catch(() => {
         // Rich menu metadata is optional; the map still works without it.
       });
       await applyExplorerStrainContextAfterCsvLoad();
       applyInitialSearchFromUrlAfterCsvLoad();
+      openSettingsFromHash();
     }
 
     async function loadCsvFromFile(file) {
@@ -9186,7 +9613,7 @@
 
       if (window.location.protocol === 'file:') {
         throw new Error(
-          'Budfinder cannot read the built-in Amsterdam data from this local file view. Open it through Budfinder, or use Advanced data tools to import custom data.'
+          'Budfinder cannot read the built-in Amsterdam data from this local file view. Open it through Budfinder, or use Settings > Data to import custom data.'
         );
       }
 
@@ -9202,7 +9629,7 @@
         if (window.location.protocol === 'file:') {
           setUploadPanelState(
             'Amsterdam data needs a little help',
-            'Budfinder cannot read the built-in city data from this view. Open Advanced data tools to import custom data.',
+            'Budfinder cannot read the built-in city data from this view. Use Settings > Data to import custom data.',
             true
           );
           return;
@@ -9210,7 +9637,7 @@
 
         setUploadPanelState(
           'Amsterdam data was not found',
-          'The built-in city data is missing. Open Advanced data tools if you want to import custom data.',
+          'The built-in city data is missing. Use Settings > Data if you want to import custom data.',
           true
         );
         return;
@@ -9221,7 +9648,7 @@
       try {
         await loadCsvFromPath(firstCsv);
       } catch (err) {
-        setUploadPanelState('Amsterdam menu data could not be loaded', 'Try refreshing the page, or open Advanced data tools to import custom data.', true);
+        setUploadPanelState('Amsterdam menu data could not be loaded', 'Try refreshing the page, or use Settings > Data to import custom data.', true);
       }
     }
 
@@ -9234,7 +9661,7 @@
       if (typeof window.showDirectoryPicker !== 'function') {
         setUploadPanelState(
           'Folder import is not available here',
-          'Use Import custom data from Advanced data tools instead.',
+          'Use Import custom data in Settings > Data instead.',
           true
         );
         return;
@@ -9252,7 +9679,7 @@
         if (err && err.name === 'AbortError') {
           setUploadPanelState(
             'City data is not ready yet',
-            'Use Advanced data tools to import a custom data file or folder.',
+            'Use Settings > Data to import a custom data file or folder.',
             true
           );
           return;
@@ -9389,6 +9816,7 @@
       updateDistanceInfo();
       updateMarkers();
       updateControlsSummary();
+      renderJourneyPlanner();
 
       // Let the desktop layout settle before the first fit so we use the
       // final map width instead of the transitional "panel just hid" state.
@@ -9872,6 +10300,123 @@
       window.setTimeout(() => fitMapToVisibleMarkers(), 80);
     }
 
+    function clearActiveStrainFilterState() {
+      const status = document.getElementById('strain-status');
+      globalSearchAppliedStrainKey = '';
+      strainFilterText = '';
+      strainAllowedShopIds = null;
+      strainAllowedNameCityKeys = null;
+      strainPriceByShopId = null;
+      strainPriceByNameCity = null;
+      strainCheapestShopIds = null;
+      strainCheapestNameCityKeys = null;
+      strainCheapestPriceLabel = '';
+      if (status) status.textContent = 'No Wanted strains selected yet.';
+      if (activeStrainNames.length) {
+        renderStrainList();
+      } else {
+        updateStrainListSelection();
+      }
+      refreshOpenPopupStrainLists();
+      syncActiveStrainShelfButton();
+    }
+
+    function resetMapFilters(options = {}) {
+      const searchInput = document.getElementById('destination-search');
+      const missionSelect = document.getElementById('mission-mode');
+      locationSearchText = '';
+      if (searchInput) searchInput.value = '';
+
+      missionMode = 'free-roam';
+      if (missionSelect) missionSelect.value = missionMode;
+
+      selectedCategories = ['all'];
+      syncCategoryCheckboxes();
+      clearExplorerFocus();
+      clearActiveStrainFilterState();
+
+      updateNearestLabel();
+      updateDestinationDropdown();
+      updateDistanceInfo();
+      updateMarkers();
+      updateSelectionCard();
+      refreshDestinationCards();
+      updateControlsSummary();
+      syncClearSelectionToggle();
+      if (!options.silent) {
+        setRouteStatus('Filters reset. Showing all available Destinations.', 'good');
+      }
+      if (map) {
+        window.setTimeout(() => fitMapToVisibleMarkers(), 80);
+      }
+    }
+
+    function getSavedDataStorageKeys() {
+      return Array.from(new Set([
+        ...normaliseStorageKeys(LOCATION_PREFERENCES_STORAGE_KEYS),
+        LEGACY_FAVORITES_STORAGE_KEY,
+        ...normaliseStorageKeys(RECENT_DESTINATIONS_STORAGE_KEYS),
+        ...normaliseStorageKeys(STRAIN_SHELF_STORAGE_KEYS),
+        ...normaliseStorageKeys(SAVED_JOURNEYS_STORAGE_KEYS),
+        MAP_FOCUS_SHOPS_STORAGE_KEY,
+        'budfinder_explorer_selected_shops'
+      ]));
+    }
+
+    function removeStorageKey(key) {
+      try {
+        localStorage.removeItem(key);
+      } catch (_err) {
+        // Storage can be blocked in private browsing or hardened browser modes.
+      }
+    }
+
+    function clearSavedDataFromBrowser() {
+      getSavedDataStorageKeys().forEach(removeStorageKey);
+
+      locationPreferences = {};
+      favorites = [];
+      legacyFavoriteIndices = [];
+      recentDestinationKeys = [];
+      shelfStrainNames = [];
+      savedJourneys = [];
+
+      locations.forEach(loc => {
+        loc.visited = false;
+        loc.rating = 0;
+      });
+
+      saveLocationPreferences();
+      persistLegacyFavorites();
+      saveRecentDestinations();
+      saveShelfStrains();
+      saveSavedJourneys();
+      resetMapFilters({ silent: true });
+      renderJourneyPlanner();
+      updateStashShelf();
+      updateDestinationDropdown();
+      updateMarkers();
+      updateControlsSummary();
+      setSavedDataConfirmationVisible(false);
+      setRouteStatus('Saved shops, ratings, visit notes, recent Destinations, and saved Wanted strains were cleared.', 'good');
+    }
+
+    function setSavedDataConfirmationVisible(confirming) {
+      const btn = document.getElementById('clear-saved-data-btn');
+      const confirmEl = document.getElementById('clear-saved-data-confirm');
+      const note = document.getElementById('clear-saved-data-note');
+      if (btn) btn.classList.toggle('is-confirming', !!confirming);
+      if (confirmEl) {
+        confirmEl.hidden = !confirming;
+        confirmEl.classList.toggle('is-visible', !!confirming);
+      }
+      if (note) {
+        note.textContent = confirming
+          ? 'Confirm below to clear saved local map data.'
+          : 'Saved shops, recent Destinations, ratings, visit notes, and saved Wanted strains stay on this device.';
+      }
+    }
+
     function locateDestinationIndex(index) {
       selectDestinationIndex(index);
     }
@@ -10043,7 +10588,8 @@
         if (minutes > 0) eta += minutes + 'm ';
         eta += seconds + 's';
 
-        document.getElementById('time-estimate').textContent = eta;
+        const etaEl = document.getElementById('time-estimate');
+        if (etaEl) etaEl.textContent = eta;
 
         latestRouteInstructions = e.routes[0].instructions || [];
         renderDirectionsPanel(latestRouteInstructions);
@@ -10060,11 +10606,25 @@
     /**
      * Build the list of category checkboxes.
      */
+    function getCategoryFilterLabel(cat) {
+      const labels = {
+        all: 'All Destinations',
+        favourites: 'Saved shops'
+      };
+      if (labels[cat]) return labels[cat];
+      return (cat || '')
+        .toString()
+        .replace(/[_-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, char => char.toUpperCase());
+    }
+
     function populateCategorySelect() {
       const container = document.getElementById('category-filters');
       if (!container) return;
 
-      container.innerHTML = '<span>Categories:</span><br>';
+      container.innerHTML = '<span>Show Destinations</span>';
 
       const cats = selectedCategories || [];
 
@@ -10084,7 +10644,7 @@
           input.checked = true;
         }
 
-        const niceName = cat.charAt(0).toUpperCase() + cat.slice(1);
+        const niceName = getCategoryFilterLabel(cat);
         labelEl.appendChild(input);
         labelEl.appendChild(document.createTextNode(' ' + niceName));
         container.appendChild(labelEl);
@@ -10191,7 +10751,7 @@
         case 'fresh-territory':
           return 'Fresh territory';
         case 'favourites-only':
-          return 'Saved shops Trip plan';
+          return 'Saved shops journey';
         case 'top-shelf':
           return 'Top shelf';
         default:
@@ -10253,7 +10813,7 @@
           return;
         case 'favourites-only':
           statusEl.textContent = visibleCount
-            ? `Saved shops Trip plan keeps ${visibleCount} Saved shops on deck.`
+            ? `Saved shops journey keeps ${visibleCount} Saved shops on deck.`
             : 'No Saved shops yet. Save a few Destinations first.';
           return;
         case 'top-shelf':
@@ -10612,7 +11172,7 @@
       if (!hasSearch) {
         if (!baseVisibleCount) {
           statusEl.textContent = hasExplorerFocus()
-            ? 'No Trip plan Destinations are visible on this map yet. Try showing all Wanted-strain matches or clearing filters.'
+            ? 'No Journey Planner Destinations are visible on this map yet. Try showing all Wanted-strain matches or clearing filters.'
           : 'No Destinations are visible yet. Clear a filter or choose another strain to widen the map.';
           return;
         }
@@ -10719,7 +11279,7 @@
           ? 'Nearby option with one Wanted-strain match.'
           : `Strong Wanted-strain match with ${item.savedMatches.length} Wanted strains.`);
       } else {
-        parts.push('Useful nearby option for the current Trip plan.');
+        parts.push('Useful nearby option for the current journey.');
       }
       if (item.etaLabel) parts.push(`${item.etaLabel} from Starting point`);
       if (item.priceInsight && item.priceInsight.tone === 'deal') parts.push(item.priceInsight.label);
@@ -10738,11 +11298,12 @@
       const destEl = document.getElementById('trip-destination');
       const selectedIndex = getSelectedDestinationIndex();
       const selected = selectedIndex !== null ? locations[selectedIndex] : null;
+      const stopCount = journeyPlanner && Array.isArray(journeyPlanner.stops) ? journeyPlanner.stops.length : 0;
 
       if (modeEl) {
-        modeEl.textContent = selected
-          ? 'Destination selected'
-          : (lastPosition ? 'Planning from Starting point' : 'Free roam');
+        modeEl.textContent = stopCount
+          ? `Journey Planner · ${stopCount} stop${stopCount === 1 ? '' : 's'}`
+          : 'Journey Planner';
       }
       if (startEl) {
         if (selected) {
@@ -11137,34 +11698,45 @@
     }
 
     document.getElementById('stash-shelf-grid').addEventListener('click', async e => {
-      const bag = e.target.closest('.stash-bag');
-      if (!bag) return;
-      const strain = (bag.getAttribute('data-strain') || '').trim();
+      const removeBtn = e.target.closest('[data-stash-remove]');
+      if (removeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        removeStashShelfEntry((removeBtn.getAttribute('data-stash-remove') || '').trim());
+        return;
+      }
+
+      const activateBtn = e.target.closest('[data-stash-activate]');
+      if (!activateBtn) return;
+      const strain = (activateBtn.getAttribute('data-stash-activate') || '').trim();
       if (!strain) return;
 
       await activateShelfStrain(strain);
     });
 
-    document.getElementById('top-shelf-rail-list').addEventListener('click', async e => {
-      const removeBtn = e.target.closest('[data-top-rail-remove]');
-      if (removeBtn) {
-        e.preventDefault();
-        e.stopPropagation();
-        const strain = (removeBtn.getAttribute('data-top-rail-remove') || '').trim();
-        if (!strain) return;
-        removeStrainFromShelf(strain);
-        renderStrainList();
-        updateControlsSummary();
-        return;
-      }
+    const topShelfRailList = document.getElementById('top-shelf-rail-list');
+    if (topShelfRailList) {
+      topShelfRailList.addEventListener('click', async e => {
+        const removeBtn = e.target.closest('[data-top-rail-remove]');
+        if (removeBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          const strain = (removeBtn.getAttribute('data-top-rail-remove') || '').trim();
+          if (!strain) return;
+          removeStrainFromShelf(strain);
+          renderStrainList();
+          updateControlsSummary();
+          return;
+        }
 
-      const chip = e.target.closest('[data-top-rail-strain]');
-      if (!chip) return;
-      e.preventDefault();
-      const strain = (chip.getAttribute('data-top-rail-strain') || '').trim();
-      if (!strain) return;
-      await activateShelfStrain(strain, { closeShelf: false });
-    });
+        const chip = e.target.closest('[data-top-rail-strain]');
+        if (!chip) return;
+        e.preventDefault();
+        const strain = (chip.getAttribute('data-top-rail-strain') || '').trim();
+        if (!strain) return;
+        await activateShelfStrain(strain, { closeShelf: false });
+      });
+    }
 
     document.getElementById('destination-card-list').addEventListener('click', e => {
       const actionBtn = e.target.closest('[data-card-action]');
@@ -11193,7 +11765,7 @@
         }
         if (action === 'route') {
           selectDestinationIndex(index);
-          setRouteStatus(`${locations[index].name} added to the Trip plan as the Destination.`, 'good');
+          setRouteStatus(`${locations[index].name} selected as the Destination preview.`, 'good');
           return;
         }
       }
@@ -11308,6 +11880,498 @@
         return minutes ? `${hours}h ${minutes}m` : `${hours}h`;
       }
       return `${roundedMinutes}m`;
+    }
+
+    const JOURNEY_START_LANDMARKS = [
+      {
+        id: 'amsterdam-centraal',
+        name: 'Amsterdam Centraal',
+        city: 'Amsterdam',
+        coords: [52.37898, 4.90031]
+      }
+    ];
+
+    function saveSavedJourneys() {
+      saveStoredJson(SAVED_JOURNEYS_STORAGE_KEYS, savedJourneys);
+    }
+
+    function getJourneyLocationRef(loc, index) {
+      if (!loc) return '';
+      if (Number.isFinite(loc.db_shop_id)) return `db:${loc.db_shop_id}`;
+      if (loc.shop_key) return `shop:${loc.shop_key}`;
+      const prefKey = getLocationPreferenceKey(loc);
+      if (prefKey) return `pref:${prefKey}`;
+      if (Array.isArray(loc.coords)) return `coords:${loc.coords[0]}:${loc.coords[1]}:${normaliseText(loc.name || '')}`;
+      return Number.isInteger(index) ? `index:${index}` : '';
+    }
+
+    function findJourneyLocationIndexByRef(ref) {
+      const value = (ref || '').toString();
+      if (!value) return null;
+      if (value.startsWith('db:')) {
+        const id = parseInt(value.slice(3), 10);
+        const index = locations.findIndex(loc => Number.isFinite(loc && loc.db_shop_id) && loc.db_shop_id === id);
+        return index >= 0 ? index : null;
+      }
+      if (value.startsWith('shop:')) {
+        const key = value.slice(5);
+        const index = locations.findIndex(loc => (loc && loc.shop_key) === key);
+        return index >= 0 ? index : null;
+      }
+      if (value.startsWith('pref:')) {
+        const key = value.slice(5);
+        const index = locations.findIndex(loc => getLocationPreferenceKey(loc) === key);
+        return index >= 0 ? index : null;
+      }
+      if (value.startsWith('coords:')) {
+        const [, latRaw, lngRaw, nameRaw = ''] = value.split(':');
+        const lat = parseFloat(latRaw);
+        const lng = parseFloat(lngRaw);
+        const nameKey = normaliseText(nameRaw);
+        const index = locations.findIndex(loc => {
+          if (!loc || !Array.isArray(loc.coords)) return false;
+          const coordsMatch = Math.abs(loc.coords[0] - lat) < 0.000001 && Math.abs(loc.coords[1] - lng) < 0.000001;
+          return coordsMatch && (!nameKey || normaliseText(loc.name || '') === nameKey);
+        });
+        return index >= 0 ? index : null;
+      }
+      if (value.startsWith('index:')) {
+        const index = parseInt(value.slice(6), 10);
+        return Number.isInteger(index) && locations[index] ? index : null;
+      }
+      return null;
+    }
+
+    function getJourneyStartPoint() {
+      const start = journeyPlanner.start || {};
+      if (start.type === 'location') {
+        const index = findJourneyLocationIndexByRef(start.ref);
+        if (index !== null && locations[index]) {
+          const loc = locations[index];
+          return {
+            type: 'location',
+            index,
+            label: loc.name || 'Starting point',
+            city: loc.city || '',
+            coords: loc.coords
+          };
+        }
+      }
+      const landmark = JOURNEY_START_LANDMARKS.find(item => item.id === start.id) || JOURNEY_START_LANDMARKS[0];
+      return {
+        type: 'landmark',
+        id: landmark.id,
+        label: landmark.name,
+        city: landmark.city,
+        coords: landmark.coords
+      };
+    }
+
+    function getJourneyStopLocation(stop) {
+      const index = findJourneyLocationIndexByRef(stop && stop.ref);
+      if (index === null || !locations[index]) return null;
+      return { index, loc: locations[index] };
+    }
+
+    function normaliseJourneyStops(stops) {
+      const seen = new Set();
+      return (Array.isArray(stops) ? stops : [])
+        .map(stop => {
+          const ref = (stop && stop.ref ? stop.ref : '').toString();
+          const index = findJourneyLocationIndexByRef(ref);
+          if (index === null || !locations[index]) return null;
+          const stableRef = getJourneyLocationRef(locations[index], index);
+          if (!stableRef || seen.has(stableRef)) return null;
+          seen.add(stableRef);
+          return {
+            ref: stableRef,
+            strains: normaliseShelfStrainNames(Array.isArray(stop.strains) ? stop.strains : []).slice(0, 12)
+          };
+        })
+        .filter(Boolean)
+        .slice(0, 12);
+    }
+
+    function getJourneyShopOptions() {
+      return locations
+        .map((loc, index) => ({ loc, index }))
+        .filter(item => isCoffeeShopLocation(item.loc) && !isClosedLocation(item.loc))
+        .sort((a, b) => compareStringsAlpha(a.loc.name, b.loc.name));
+    }
+
+    function setJourneyStatus(message, tone = '') {
+      const el = document.getElementById('journey-status');
+      if (!el) return;
+      el.textContent = message || '';
+      el.classList.remove('is-good', 'is-warn', 'is-bad');
+      if (tone) el.classList.add(`is-${tone}`);
+    }
+
+    function journeySelectValueForStart(start) {
+      if (!start || start.type !== 'location') return `landmark:${(start && start.id) || 'amsterdam-centraal'}`;
+      const index = findJourneyLocationIndexByRef(start.ref);
+      return index === null ? 'landmark:amsterdam-centraal' : `loc:${index}`;
+    }
+
+    function readJourneyPointValue(value) {
+      const raw = (value || '').toString();
+      if (raw.startsWith('landmark:')) {
+        return { type: 'landmark', id: raw.slice(9) || 'amsterdam-centraal' };
+      }
+      if (raw.startsWith('loc:')) {
+        const index = parseInt(raw.slice(4), 10);
+        if (Number.isInteger(index) && locations[index]) {
+          return { type: 'location', ref: getJourneyLocationRef(locations[index], index) };
+        }
+      }
+      return { type: 'landmark', id: 'amsterdam-centraal' };
+    }
+
+    function renderJourneySelects() {
+      const startSelect = document.getElementById('journey-start-select');
+      const stopSelect = document.getElementById('journey-stop-select');
+      if (!startSelect || !stopSelect) return;
+
+      const startValue = journeySelectValueForStart(journeyPlanner.start);
+      startSelect.innerHTML = '';
+      JOURNEY_START_LANDMARKS.forEach(point => {
+        const opt = document.createElement('option');
+        opt.value = `landmark:${point.id}`;
+        opt.textContent = point.name;
+        startSelect.appendChild(opt);
+      });
+      getJourneyShopOptions().forEach(({ loc, index }) => {
+        const opt = document.createElement('option');
+        opt.value = `loc:${index}`;
+        opt.textContent = `${loc.name}${loc.city ? ` · ${loc.city}` : ''}`;
+        startSelect.appendChild(opt);
+      });
+      startSelect.value = Array.from(startSelect.options).some(opt => opt.value === startValue)
+        ? startValue
+        : 'landmark:amsterdam-centraal';
+
+      const existingRefs = new Set(journeyPlanner.stops.map(stop => stop.ref));
+      const previousStopValue = stopSelect.value;
+      stopSelect.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = 'Choose a coffeeshop...';
+      stopSelect.appendChild(placeholder);
+      getJourneyShopOptions().forEach(({ loc, index }) => {
+        const ref = getJourneyLocationRef(loc, index);
+        if (existingRefs.has(ref)) return;
+        const opt = document.createElement('option');
+        opt.value = `loc:${index}`;
+        opt.textContent = `${loc.name}${loc.city ? ` · ${loc.city}` : ''}`;
+        stopSelect.appendChild(opt);
+      });
+      stopSelect.value = Array.from(stopSelect.options).some(opt => opt.value === previousStopValue)
+        ? previousStopValue
+        : '';
+    }
+
+    function formatJourneyDistance(meters) {
+      if (!Number.isFinite(meters) || meters <= 0) return '--';
+      return meters >= 1000 ? `${(meters / 1000).toFixed(1)} km` : `${Math.round(meters)} m`;
+    }
+
+    function formatJourneyMoney(amount) {
+      if (!Number.isFinite(amount) || amount <= 0) return '--';
+      return `€${Math.round(amount)}`;
+    }
+
+    function priceAmountFromEntries(entries) {
+      const amounts = (Array.isArray(entries) ? entries : [])
+        .map(entry => Number(entry && entry.amount))
+        .filter(value => Number.isFinite(value) && value > 0 && value <= 80)
+        .sort((a, b) => a - b);
+      return amounts.length ? amounts[0] : null;
+    }
+
+    function getShopAverageSpend(loc) {
+      const amounts = [];
+      getPopupStrainsForLocation(loc).forEach(name => {
+        const detail = getPopupStrainDetail(loc, name);
+        (detail.priceEntries || []).forEach(entry => {
+          const amount = Number(entry && entry.amount);
+          if (Number.isFinite(amount) && amount > 0 && amount <= 80) amounts.push(amount);
+        });
+      });
+      if (!amounts.length) return 12;
+      return amounts.reduce((sum, value) => sum + value, 0) / amounts.length;
+    }
+
+    function getJourneyStopSpend(stop, loc) {
+      const strains = Array.isArray(stop.strains) ? stop.strains : [];
+      if (!strains.length) return getShopAverageSpend(loc);
+      return strains.reduce((sum, strain) => {
+        const detail = getPopupStrainDetail(loc, strain);
+        const amount = priceAmountFromEntries(detail && detail.priceEntries);
+        return sum + (Number.isFinite(amount) ? amount : getShopAverageSpend(loc));
+      }, 0);
+    }
+
+    function getJourneyMetrics() {
+      const start = getJourneyStartPoint();
+      const stops = journeyPlanner.stops
+        .map(stop => ({ stop, ...getJourneyStopLocation(stop) }))
+        .filter(item => item.loc && Array.isArray(item.loc.coords));
+      const points = [start, ...stops.map(item => ({
+        type: 'stop',
+        index: item.index,
+        label: item.loc.name,
+        city: item.loc.city || '',
+        coords: item.loc.coords
+      }))].filter(point => point && Array.isArray(point.coords));
+
+      let distanceMeters = 0;
+      for (let i = 1; i < points.length; i += 1) {
+        distanceMeters += haversineDistance(points[i - 1].coords, points[i].coords);
+      }
+
+      const spend = stops.reduce((sum, item) => sum + getJourneyStopSpend(item.stop, item.loc), 0);
+      const selectedStrains = journeyPlanner.stops.reduce((sum, stop) => sum + ((stop.strains || []).length), 0);
+      const availableStrains = new Set();
+      stops.forEach(item => {
+        getPopupStrainsForLocation(item.loc).forEach(name => availableStrains.add(normaliseText(name)));
+      });
+
+      return {
+        start,
+        stops,
+        points,
+        distanceMeters,
+        walkingSeconds: estimateTravelSecondsForMode(distanceMeters, 'walking'),
+        spend,
+        averageSpend: stops.length ? spend / stops.length : 0,
+        selectedStrains,
+        availableStrainCount: availableStrains.size
+      };
+    }
+
+    function renderJourneySummary(metrics) {
+      const setText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      };
+      setText('journey-summary-distance', formatJourneyDistance(metrics.distanceMeters));
+      setText('journey-summary-time', metrics.walkingSeconds ? formatCompactDuration(metrics.walkingSeconds) : '--');
+      setText('journey-summary-stops', String(metrics.stops.length));
+      setText('journey-summary-spend', formatJourneyMoney(metrics.spend));
+      setText('journey-summary-average', formatJourneyMoney(metrics.averageSpend));
+      setText('journey-summary-strains', String(metrics.selectedStrains));
+
+      const distanceEl = document.getElementById('distance-info');
+      const timeEl = document.getElementById('time-estimate');
+      if (distanceEl) distanceEl.textContent = formatJourneyDistance(metrics.distanceMeters);
+      if (timeEl) timeEl.textContent = metrics.walkingSeconds ? formatCompactDuration(metrics.walkingSeconds) : '--';
+    }
+
+    function renderJourneyTimeline(metrics) {
+      const timeline = document.getElementById('journey-timeline');
+      if (!timeline) return;
+      const startHtml = (
+        `<article class="journey-stop-card">` +
+          `<div class="journey-stop-main">` +
+            `<span class="journey-stop-number is-start">Start</span>` +
+            `<span class="journey-stop-copy">` +
+              `<strong>${escapeHtml(metrics.start.label || 'Starting point')}</strong>` +
+              `<span>${escapeHtml(metrics.start.city || 'Amsterdam')}</span>` +
+            `</span>` +
+          `</div>` +
+        `</article>`
+      );
+      if (!metrics.stops.length) {
+        timeline.innerHTML = startHtml + '<p class="journey-empty">Add the coffeeshops you want to visit. Strains are optional.</p>';
+        return;
+      }
+
+      timeline.innerHTML = startHtml + metrics.stops.map((item, idx) => {
+        const stop = item.stop;
+        const loc = item.loc;
+        const strains = getPopupStrainsForLocation(loc);
+        const selected = Array.isArray(stop.strains) ? stop.strains : [];
+        const strainOptions = strains
+          .filter(name => !selected.some(entry => normaliseText(entry) === normaliseText(name)))
+          .map(name => `<option value="${escapeHtmlAttr(name)}">${escapeHtml(name)}</option>`)
+          .join('');
+        const chips = selected.length
+          ? selected.map(name => (
+              `<span class="journey-strain-chip">` +
+                `${escapeHtml(name)}` +
+                `<button type="button" data-journey-remove-strain="${idx}" data-strain="${escapeHtmlAttr(name)}" aria-label="Remove ${escapeHtmlAttr(name)}">×</button>` +
+              `</span>`
+            )).join('')
+          : '<span class="field-note">No strains selected for this stop.</span>';
+        return (
+          `<article class="journey-stop-card" data-journey-stop="${idx}">` +
+            `<div class="journey-stop-main">` +
+              `<span class="journey-stop-number">${idx + 1}</span>` +
+              `<span class="journey-stop-copy">` +
+                `<strong>${escapeHtml(loc.name || 'Coffeeshop')}</strong>` +
+                `<span>${escapeHtml([loc.city || 'Amsterdam', `${strains.length} strain${strains.length === 1 ? '' : 's'} available`, formatJourneyMoney(getJourneyStopSpend(stop, loc))].filter(Boolean).join(' · '))}</span>` +
+              `</span>` +
+            `</div>` +
+            `<div class="journey-stop-actions">` +
+              `<button type="button" class="secondary-btn" data-journey-move="up" data-stop-index="${idx}" ${idx === 0 ? 'disabled' : ''}>Move up</button>` +
+              `<button type="button" class="secondary-btn" data-journey-move="down" data-stop-index="${idx}" ${idx === metrics.stops.length - 1 ? 'disabled' : ''}>Move down</button>` +
+              `<button type="button" class="secondary-btn" data-journey-focus="${idx}">View</button>` +
+              `<button type="button" class="secondary-btn" data-journey-remove-stop="${idx}">Remove</button>` +
+            `</div>` +
+            `<div class="journey-strain-row">` +
+              `<select data-journey-strain-select="${idx}" ${strainOptions ? '' : 'disabled'}>` +
+                `<option value="">${strainOptions ? 'Optional strain...' : 'No menu strains found'}</option>` +
+                `${strainOptions}` +
+              `</select>` +
+              `<button type="button" class="secondary-btn" data-journey-add-strain="${idx}" ${strainOptions ? '' : 'disabled'}>Add strain</button>` +
+            `</div>` +
+            `<div class="journey-strain-chips">${chips}</div>` +
+          `</article>`
+        );
+      }).join('');
+    }
+
+    function renderSavedJourneySelect() {
+      const select = document.getElementById('journey-saved-select');
+      if (!select) return;
+      const previous = select.value;
+      select.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = savedJourneys.length ? 'Choose saved journey...' : 'No saved journeys yet';
+      select.appendChild(placeholder);
+      savedJourneys.forEach(journey => {
+        const opt = document.createElement('option');
+        opt.value = journey.id;
+        opt.textContent = journey.name || 'Saved journey';
+        select.appendChild(opt);
+      });
+      select.value = Array.from(select.options).some(opt => opt.value === previous) ? previous : '';
+    }
+
+    function updateJourneyMapOverlay(metrics = getJourneyMetrics(), options = {}) {
+      if (!map || typeof L === 'undefined') return;
+      if (journeyLayerGroup) {
+        journeyLayerGroup.remove();
+        journeyLayerGroup = null;
+      }
+      const points = metrics.points || [];
+      if (points.length < 1) return;
+      journeyLayerGroup = L.layerGroup().addTo(map);
+      const latLngs = points.map(point => L.latLng(point.coords[0], point.coords[1]));
+      if (latLngs.length > 1) {
+        L.polyline(latLngs, {
+          color: '#205b42',
+          weight: 4,
+          opacity: 0.78,
+          dashArray: '8 8',
+          className: 'journey-map-line'
+        }).addTo(journeyLayerGroup);
+      }
+      points.forEach((point, idx) => {
+        const label = idx === 0 ? 'Start' : String(idx);
+        L.circleMarker(point.coords, {
+          radius: idx === 0 ? 8 : 7,
+          color: '#205b42',
+          weight: 2,
+          fillColor: idx === 0 ? '#fff7e8' : '#2e7b59',
+          fillOpacity: 0.95
+        })
+          .bindTooltip(`${label}: ${point.label}`, { permanent: false, direction: 'top' })
+          .addTo(journeyLayerGroup);
+      });
+      if (options.fit && latLngs.length) {
+        const bounds = L.latLngBounds(latLngs);
+        if (bounds.isValid()) map.fitBounds(bounds.pad(0.18), { maxZoom: 15 });
+      }
+    }
+
+    function renderJourneyPlanner(options = {}) {
+      journeyPlanner.stops = normaliseJourneyStops(journeyPlanner.stops);
+      renderJourneySelects();
+      const metrics = getJourneyMetrics();
+      renderJourneySummary(metrics);
+      renderJourneyTimeline(metrics);
+      renderSavedJourneySelect();
+      updateJourneyMapOverlay(metrics, options);
+      updateControlsSummary();
+    }
+
+    function addJourneyStopByIndex(index) {
+      if (!Number.isInteger(index) || !locations[index]) return false;
+      if (!isCoffeeShopLocation(locations[index])) {
+        setJourneyStatus('Only coffeeshops can be added as journey stops.', 'warn');
+        return false;
+      }
+      const ref = getJourneyLocationRef(locations[index], index);
+      if (journeyPlanner.stops.some(stop => stop.ref === ref)) {
+        setJourneyStatus(`${locations[index].name} is already in this journey.`, 'warn');
+        return false;
+      }
+      journeyPlanner.stops.push({ ref, strains: [] });
+      setJourneyStatus(`${locations[index].name} added to Journey Planner.`, 'good');
+      renderJourneyPlanner({ fit: true });
+      return true;
+    }
+
+    function saveCurrentJourney() {
+      const input = document.getElementById('journey-name-input');
+      const name = ((input && input.value) || '').toString().replace(/\s+/g, ' ').trim();
+      if (!name) {
+        setJourneyStatus('Name the journey before saving it.', 'warn');
+        if (input) input.focus();
+        return;
+      }
+      if (!journeyPlanner.stops.length) {
+        setJourneyStatus('Add at least one stop before saving.', 'warn');
+        return;
+      }
+      const id = `journey-${Date.now()}`;
+      const payload = {
+        id,
+        name,
+        start: journeyPlanner.start,
+        stops: normaliseJourneyStops(journeyPlanner.stops),
+        savedAt: new Date().toISOString()
+      };
+      savedJourneys = [payload, ...savedJourneys.filter(item => item.name !== name)].slice(0, 12);
+      saveSavedJourneys();
+      renderSavedJourneySelect();
+      const select = document.getElementById('journey-saved-select');
+      if (select) select.value = id;
+      setJourneyStatus(`${name} saved on this device.`, 'good');
+    }
+
+    function loadSelectedJourney() {
+      const select = document.getElementById('journey-saved-select');
+      const id = select ? select.value : '';
+      const saved = savedJourneys.find(item => item.id === id);
+      if (!saved) {
+        setJourneyStatus('Choose a saved journey to load.', 'warn');
+        return;
+      }
+      journeyPlanner = {
+        start: saved.start || { type: 'landmark', id: 'amsterdam-centraal' },
+        stops: normaliseJourneyStops(saved.stops)
+      };
+      const input = document.getElementById('journey-name-input');
+      if (input) input.value = saved.name || '';
+      renderJourneyPlanner({ fit: true });
+      setJourneyStatus(`${saved.name || 'Saved journey'} loaded.`, 'good');
+    }
+
+    function deleteSelectedJourney() {
+      const select = document.getElementById('journey-saved-select');
+      const id = select ? select.value : '';
+      const saved = savedJourneys.find(item => item.id === id);
+      if (!saved) {
+        setJourneyStatus('Choose a saved journey to delete.', 'warn');
+        return;
+      }
+      savedJourneys = savedJourneys.filter(item => item.id !== id);
+      saveSavedJourneys();
+      renderSavedJourneySelect();
+      setJourneyStatus(`${saved.name || 'Saved journey'} deleted from this device.`, 'good');
     }
 
     function buildDestinationItems() {
@@ -11584,7 +12648,7 @@
       const i = getSelectedDestinationIndex();
       const distanceDiv = document.getElementById('distance-info');
 
-      if (lastPosition && i !== null) {
+      if (lastPosition && i !== null && distanceDiv) {
         const distText = (haversineDistance(lastPosition, locations[i].coords) / 1000).toFixed(2) + ' km';
         distanceDiv.textContent = distText;
       } else if (distanceDiv) {
@@ -11697,6 +12761,7 @@
         }
         syncMarkerPriceDisplay(i, visible);
       });
+      updateJourneyMapOverlay();
     }
 
     // =========================================================
@@ -11791,11 +12856,6 @@
     });
 
     document.getElementById('nearest-btn').addEventListener('click', async () => {
-      if (getSelectedDestinationIndex() !== null) {
-        exploreFromCurrentStop();
-        return;
-      }
-
       if (!lastPosition) {
         try {
           await requestUserLocation({ label: 'Getting your location to find the closest Destination...' });
@@ -11885,9 +12945,97 @@
       if (folderBtn) folderBtn.click();
     });
 
-    document.getElementById('explore-from-here-btn').addEventListener('click', () => {
-      exploreFromCurrentStop();
+    document.getElementById('journey-start-select').addEventListener('change', e => {
+      journeyPlanner.start = readJourneyPointValue(e.target.value);
+      renderJourneyPlanner({ fit: journeyPlanner.stops.length > 0 });
+      setJourneyStatus('Journey start updated.', 'good');
     });
+
+    document.getElementById('journey-add-stop-btn').addEventListener('click', () => {
+      const select = document.getElementById('journey-stop-select');
+      const value = select ? select.value : '';
+      if (!value.startsWith('loc:')) {
+        setJourneyStatus('Choose a coffeeshop to add as the next stop.', 'warn');
+        return;
+      }
+      const index = parseInt(value.slice(4), 10);
+      addJourneyStopByIndex(index);
+    });
+
+    document.getElementById('add-destination-stop-btn').addEventListener('click', () => {
+      const selectedIndex = getSelectedDestinationIndex();
+      if (selectedIndex === null || !locations[selectedIndex]) {
+        setJourneyStatus('Choose a Destination preview first, then add it to the journey.', 'warn');
+        return;
+      }
+      addJourneyStopByIndex(selectedIndex);
+    });
+
+    document.getElementById('journey-timeline').addEventListener('click', e => {
+      const moveBtn = e.target.closest('[data-journey-move]');
+      if (moveBtn) {
+        const idx = parseInt(moveBtn.getAttribute('data-stop-index'), 10);
+        const dir = moveBtn.getAttribute('data-journey-move');
+        const nextIdx = dir === 'up' ? idx - 1 : idx + 1;
+        if (journeyPlanner.stops[idx] && journeyPlanner.stops[nextIdx]) {
+          [journeyPlanner.stops[idx], journeyPlanner.stops[nextIdx]] = [journeyPlanner.stops[nextIdx], journeyPlanner.stops[idx]];
+          renderJourneyPlanner({ fit: true });
+          setJourneyStatus('Stop order updated.', 'good');
+        }
+        return;
+      }
+
+      const removeStopBtn = e.target.closest('[data-journey-remove-stop]');
+      if (removeStopBtn) {
+        const idx = parseInt(removeStopBtn.getAttribute('data-journey-remove-stop'), 10);
+        const item = journeyPlanner.stops[idx];
+        const location = item ? getJourneyStopLocation(item) : null;
+        journeyPlanner.stops.splice(idx, 1);
+        renderJourneyPlanner({ fit: true });
+        setJourneyStatus(`${location && location.loc ? location.loc.name : 'Stop'} removed.`, 'good');
+        return;
+      }
+
+      const focusBtn = e.target.closest('[data-journey-focus]');
+      if (focusBtn) {
+        const idx = parseInt(focusBtn.getAttribute('data-journey-focus'), 10);
+        const item = journeyPlanner.stops[idx];
+        const location = item ? getJourneyStopLocation(item) : null;
+        if (location) focusDestinationOnMap(location.index, { minZoom: 15, animate: true });
+        return;
+      }
+
+      const addStrainBtn = e.target.closest('[data-journey-add-strain]');
+      if (addStrainBtn) {
+        const idx = parseInt(addStrainBtn.getAttribute('data-journey-add-strain'), 10);
+        const select = document.querySelector(`[data-journey-strain-select="${idx}"]`);
+        const strain = select ? select.value : '';
+        if (!strain || !journeyPlanner.stops[idx]) return;
+        const selected = journeyPlanner.stops[idx].strains || [];
+        if (!selected.some(name => normaliseText(name) === normaliseText(strain))) {
+          journeyPlanner.stops[idx].strains = [...selected, getCanonicalStrainName(strain)];
+        }
+        renderJourneyPlanner();
+        setJourneyStatus(`${strain} added to stop ${idx + 1}.`, 'good');
+        return;
+      }
+
+      const removeStrainBtn = e.target.closest('[data-journey-remove-strain]');
+      if (removeStrainBtn) {
+        const idx = parseInt(removeStrainBtn.getAttribute('data-journey-remove-strain'), 10);
+        const strain = removeStrainBtn.getAttribute('data-strain') || '';
+        if (journeyPlanner.stops[idx]) {
+          journeyPlanner.stops[idx].strains = (journeyPlanner.stops[idx].strains || [])
+            .filter(name => normaliseText(name) !== normaliseText(strain));
+        }
+        renderJourneyPlanner();
+        setJourneyStatus(`${strain} removed from stop ${idx + 1}.`, 'good');
+      }
+    });
+
+    document.getElementById('journey-save-btn').addEventListener('click', saveCurrentJourney);
+    document.getElementById('journey-load-btn').addEventListener('click', loadSelectedJourney);
+    document.getElementById('journey-delete-btn').addEventListener('click', deleteSelectedJourney);
 
     document.getElementById('toggle-controls').addEventListener('click', () => {
       if (isCompactMobileLayout()) {
@@ -11910,6 +13058,31 @@
       setControlsVisible(nextVisible);
     });
 
+    function openSettingsPanel() {
+      if (directionsVisible && isCompactMobileLayout()) {
+        setDirectionsVisible(false);
+      }
+      setControlsVisible(true, { collapsed: false });
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}#settings`);
+      }
+      window.setTimeout(() => {
+        const panel = document.getElementById('settings-panel');
+        if (!panel) return;
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        panel.focus({ preventScroll: true });
+      }, 80);
+    }
+
+    function openSettingsFromHash() {
+      if ((window.location.hash || '').toLowerCase() !== '#settings') return;
+      openSettingsPanel();
+    }
+
+    document.getElementById('nav-settings-btn').addEventListener('click', openSettingsPanel);
+
+    window.addEventListener('hashchange', openSettingsFromHash);
+
     document.getElementById('toggle-directions').addEventListener('click', () => {
       setDirectionsVisible(!directionsVisible);
     });
@@ -11926,8 +13099,9 @@
           return;
         }
         if (intent === 'nearby') {
-          const nearMe = document.getElementById('center-on-me-btn');
-          if (nearMe) nearMe.click();
+          const planner = document.getElementById('journey-planner-card');
+          if (planner) planner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setJourneyStatus('Choose a start, then add coffeeshops in the order you want to visit them.', 'good');
           return;
         }
         if (intent === 'value') {
@@ -12007,8 +13181,15 @@
       });
     });
 
-    document.getElementById('selection-explore-btn').addEventListener('click', () => {
-      exploreFromCurrentStop();
+    document.getElementById('selection-add-stop-btn').addEventListener('click', () => {
+      const selectedIndex = getSelectedDestinationIndex();
+      if (selectedIndex === null || !locations[selectedIndex]) {
+        setControlsVisible(true, { collapsed: false });
+        setJourneyStatus('Choose a Destination preview first, then add it to the journey.', 'warn');
+        return;
+      }
+      addJourneyStopByIndex(selectedIndex);
+      setControlsVisible(true, { collapsed: false });
     });
 
     document.getElementById('mobile-hide-controls').addEventListener('click', e => {
@@ -12065,6 +13246,22 @@
 
     document.getElementById('reset-personalisation-btn').addEventListener('click', () => {
       resetPersonalisation();
+    });
+
+    document.getElementById('reset-filters-btn').addEventListener('click', () => {
+      resetMapFilters();
+    });
+
+    document.getElementById('clear-saved-data-btn').addEventListener('click', () => {
+      setSavedDataConfirmationVisible(true);
+    });
+
+    document.getElementById('confirm-clear-saved-data-btn').addEventListener('click', () => {
+      clearSavedDataFromBrowser();
+    });
+
+    document.getElementById('cancel-clear-saved-data-btn').addEventListener('click', () => {
+      setSavedDataConfirmationVisible(false);
     });
 
     document.addEventListener('pointerdown', e => {
@@ -12152,6 +13349,7 @@
     syncCompactLayoutState();
     syncControlsChrome();
     scheduleViewportResync([160, 420]);
+    openSettingsFromHash();
     bootstrapInitialCsvLoad();
 
     // Optional: probe DB routes early so status is visible before CSV upload.

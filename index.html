@@ -170,18 +170,18 @@
 
     .page {
       position: relative;
-      width: min(1180px, calc(100% - 36px));
+      width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 34px 0 48px;
+      padding: 28px 0 42px;
     }
 
     .hero {
       min-height: calc(100vh - 68px);
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
-      gap: 28px;
+      gap: 24px;
       align-items: center;
-      padding: 58px 0 28px;
+      padding: 48px 0 22px;
     }
 
     .brand {
@@ -204,7 +204,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 28px;
+      margin-top: 22px;
     }
 
     .kicker,
@@ -234,7 +234,7 @@
 
     h1 {
       max-width: 790px;
-      margin: 18px 0 0;
+      margin: 16px 0 0;
       font-family: Georgia, "Times New Roman", serif;
       font-size: 76px;
       line-height: 0.98;
@@ -243,7 +243,7 @@
 
     .lead {
       max-width: 690px;
-      margin: 22px 0 0;
+      margin: 18px 0 0;
       color: var(--muted);
       font-size: 20px;
       line-height: 1.5;
@@ -253,7 +253,7 @@
       display: grid;
       gap: 12px;
       max-width: 720px;
-      margin-top: 30px;
+      margin-top: 24px;
     }
 
     .search-row {
@@ -341,7 +341,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin-top: 26px;
+      margin-top: 20px;
     }
 
     .journey {
@@ -352,8 +352,8 @@
     }
 
     .intent-panel {
-      margin-top: 24px;
-      padding: 16px;
+      margin-top: 20px;
+      padding: 14px;
       border: 1px solid var(--panel-border);
       border-radius: var(--radius);
       background: var(--panel);
@@ -383,8 +383,8 @@
     .journey-card {
       display: grid;
       gap: 5px;
-      min-height: 92px;
-      padding: 13px;
+      min-height: 84px;
+      padding: 12px;
       border: 1px solid var(--panel-border);
       border-radius: var(--radius);
       background: rgba(255, 255, 255, 0.46);
@@ -424,8 +424,8 @@
 
     .intel-board {
       display: grid;
-      gap: 16px;
-      padding: 18px;
+      gap: 14px;
+      padding: 16px;
       border-radius: var(--radius);
     }
 
@@ -610,7 +610,107 @@
     }
 
     .section {
-      margin-top: 28px;
+      margin-top: 22px;
+    }
+
+    .insights-panel {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+    }
+
+    .insights-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .insights-head h2 {
+      margin: 6px 0 0;
+      color: var(--ink);
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .insights-head p {
+      max-width: 520px;
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.05fr 1.05fr;
+      gap: 10px;
+    }
+
+    .insight-panel {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.42);
+    }
+
+    .insight-panel > span {
+      display: block;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .insight-panel strong {
+      display: block;
+      margin-top: 6px;
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .insight-panel p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .insight-list {
+      display: grid;
+      gap: 7px;
+      margin-top: 9px;
+    }
+
+    .insight-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .insight-item b {
+      min-width: 0;
+      overflow: hidden;
+      font-size: 13px;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .insight-item span {
+      flex: 0 0 auto;
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 900;
     }
 
     .feature-grid {
@@ -621,7 +721,7 @@
 
     .feature-card,
     .about-card {
-      padding: 18px;
+      padding: 16px;
       border-radius: var(--radius);
     }
 
@@ -642,8 +742,8 @@
 
     .workflow {
       display: grid;
-      gap: 18px;
-      padding: 22px;
+      gap: 14px;
+      padding: 18px;
       border-radius: var(--radius);
     }
 
@@ -654,7 +754,7 @@
     }
 
     .workflow-card {
-      padding: 16px;
+      padding: 14px;
       border-radius: var(--radius);
       background: rgba(255, 255, 255, 0.36);
       border: 1px solid var(--panel-border);
@@ -781,8 +881,13 @@
       .showcase-grid,
       .strain-row,
       .version-grid,
+      .insights-grid,
       .journey {
         grid-template-columns: 1fr;
+      }
+
+      .insights-head {
+        display: grid;
       }
 
       .board-head {
@@ -806,10 +911,7 @@
     <a href="index.html" aria-current="page">Home</a>
     <a href="map.html">Map</a>
     <a href="database.html">Database</a>
-    <label class="global-vibe-control">
-      <span>Vibe</span>
-      <select data-budfinder-vibe-selector aria-label="Vibe"></select>
-    </label>
+    <a href="map.html#settings">Settings</a>
   </nav>
 
   <main class="page">
@@ -822,7 +924,7 @@
 
         <div class="kicker-row">
           <span class="kicker">Amsterdam coffeeshop intelligence</span>
-          <span class="version-pill">Version 1.14 - updated 14 June 2026</span>
+          <span class="version-pill">Version 1.15 - updated 20 June 2026</span>
         </div>
 
         <h1 id="home-title">Find your next Amsterdam coffeeshop with better information.</h1>
@@ -898,6 +1000,32 @@
       </aside>
     </section>
 
+    <section class="section insights-panel" aria-labelledby="amsterdam-insights-title">
+      <div class="insights-head">
+        <div>
+          <span class="eyebrow">Amsterdam Insights</span>
+          <h2 id="amsterdam-insights-title">Fast strain intel for today’s search.</h2>
+          <p>Compact signals from current menu data. Search stays first; these help you choose what to try next.</p>
+        </div>
+        <a class="card-link" href="database.html">Open database</a>
+      </div>
+      <div id="amsterdam-insights" class="insights-grid" aria-live="polite">
+        <article class="insight-panel">
+          <span>Price index</span>
+          <strong>Loading...</strong>
+          <p>Reading current Amsterdam listings.</p>
+        </article>
+        <article class="insight-panel">
+          <span>Most common strains</span>
+          <p>Loading top strains...</p>
+        </article>
+        <article class="insight-panel">
+          <span>Rare finds in 2-3 shops</span>
+          <p>Looking for interesting scarce strains...</p>
+        </article>
+      </div>
+    </section>
+
     <section class="section" aria-labelledby="feature-title">
       <span class="eyebrow">Why Budfinder</span>
       <h2 id="feature-title" class="section-title">Built for the two Amsterdam moments that matter.</h2>
@@ -954,11 +1082,11 @@
         <div class="version-grid">
           <div class="version-box">
             <span>App version</span>
-            <strong>1.14</strong>
+            <strong>1.15</strong>
           </div>
           <div class="version-box">
             <span>Updated</span>
-            <strong>14 June 2026</strong>
+            <strong>20 June 2026</strong>
           </div>
           <div class="version-box">
             <span>Database snapshot</span>
@@ -978,8 +1106,8 @@
   <script src="scripts/budfinder-theme.js"></script>
   <script>
     (() => {
-      const APP_VERSION = '1.14';
-      const APP_UPDATED = '14 June 2026';
+      const APP_VERSION = '1.15';
+      const APP_UPDATED = '20 June 2026';
       const state = {
         shops: [],
         offerings: [],
@@ -993,6 +1121,7 @@
       const strainShowcase = document.getElementById('strain-showcase');
       const showcaseStatus = document.getElementById('showcase-status');
       const shuffleBtn = document.getElementById('shuffle-showcase-btn');
+      const insightsEl = document.getElementById('amsterdam-insights');
 
       function escapeHtml(value) {
         return String(value == null ? '' : value)
@@ -1079,6 +1208,20 @@
         const token = currency || 'EUR';
         const prefix = token === 'EUR' ? 'EUR ' : token;
         return `From ${prefix}${money}/${unit || 'g'}`;
+      }
+
+      function plainPriceLabel(amount) {
+        const numeric = Number(amount);
+        if (!Number.isFinite(numeric) || numeric <= 0) return 'Price unknown';
+        return `€${numeric.toFixed(Number.isInteger(numeric) ? 0 : 2).replace(/0+$/, '').replace(/\.$/, '')}/g`;
+      }
+
+      function strainMapUrl(card) {
+        const url = new URL('map.html', window.location.href);
+        url.searchParams.set('source', 'home');
+        url.searchParams.set('strain', card.name);
+        if (card.shopIds && card.shopIds.length) url.searchParams.set('strain_shops', card.shopIds.join(','));
+        return url.pathname.split('/').pop() + url.search;
       }
 
       function logoSlug(value) {
@@ -1278,6 +1421,90 @@
         }).filter(card => card.count > 0);
       }
 
+      function looksLikeHouseExclusive(name) {
+        const text = normalise(name);
+        if (!text) return true;
+        return /\b(coffeeshop|shop|farm|farms|house|special|mix|menu|pre[-\s]?roll|joint|moonrock|moon rock)\b/.test(text) ||
+          /^(amsterdam|ams|cs)\b/.test(text) ||
+          text.length < 4;
+      }
+
+      function rareFindScore(card) {
+        if (!card || (card.count !== 2 && card.count !== 3) || looksLikeHouseExclusive(card.name)) return -Infinity;
+        const name = normalise(card.name);
+        const famousSignals = ['zushi', 'runtz', 'gelato', 'gelonade', 'sherbet', 'zkittlez', 'biscotti', 'mac', 'zheetos', 'gushers', 'rs11', 'blue', 'rainbow', 'wedding', 'lemon', 'cali'];
+        const fame = famousSignals.some(signal => name.includes(signal)) ? 3 : 0;
+        const recent = isRecent(card.latest, 120) ? 2 : 0;
+        const priced = Number.isFinite(Number(card.price)) ? 1 : 0;
+        return (5 - card.count) * 2 + fame + recent + priced;
+      }
+
+      function weeklySeed() {
+        return Math.floor(Date.now() / (7 * 86400000));
+      }
+
+      function seededNoise(value, salt = '') {
+        const input = `${value || ''}|${salt}|${weeklySeed()}`;
+        let hash = 2166136261;
+        for (let i = 0; i < input.length; i += 1) {
+          hash ^= input.charCodeAt(i);
+          hash = Math.imul(hash, 16777619);
+        }
+        return ((hash >>> 0) % 10000) / 10000;
+      }
+
+      function renderInsights() {
+        if (!insightsEl) return;
+        const amsterdamOfferings = state.offerings.filter(item => normalise(item.shop_city) === 'amsterdam');
+        const prices = amsterdamOfferings
+          .map(item => Number(item.price_amount))
+          .filter(value => Number.isFinite(value) && value > 0 && value <= 80);
+        const average = prices.length ? prices.reduce((sum, value) => sum + value, 0) / prices.length : null;
+        const contributingShops = new Set(amsterdamOfferings
+          .filter(item => Number.isFinite(Number(item.price_amount)) && Number(item.price_amount) > 0)
+          .map(item => String(item.shop_id || item.shop_key || ''))
+          .filter(Boolean)).size;
+        const common = state.strainCards
+          .filter(card => card.count >= 2)
+          .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+          .slice(0, 5);
+        const rare = state.strainCards
+          .map(card => ({
+            card,
+            score: rareFindScore(card),
+            noise: seededNoise(card.name, 'rare-pick')
+          }))
+          .filter(item => Number.isFinite(item.score))
+          .sort((a, b) => b.noise - a.noise || b.score - a.score || a.card.name.localeCompare(b.card.name))
+          .slice(0, 5)
+          .map(item => item.card);
+
+        const listHtml = (items, labelFn) => items.length
+          ? `<div class="insight-list">${items.map(card => `
+              <a class="insight-item" href="${escapeHtml(strainMapUrl(card))}">
+                <b>${escapeHtml(displayName(card.name))}</b>
+                <span>${escapeHtml(labelFn(card))}</span>
+              </a>
+            `).join('')}</div>`
+          : '<p>Not enough current menu data yet.</p>';
+
+        insightsEl.innerHTML = `
+          <article class="insight-panel">
+            <span>Amsterdam Price Index</span>
+            <strong>${average ? escapeHtml(plainPriceLabel(average)) : 'Loading...'}</strong>
+            <p>${contributingShops ? `${contributingShops} shops contributing current price signals.` : 'Price signals appear as menus load.'}</p>
+          </article>
+          <article class="insight-panel">
+            <span>Most Common Strains</span>
+            ${listHtml(common, card => `${card.count} shops`)}
+          </article>
+          <article class="insight-panel">
+            <span>Rare Finds In 2-3 Shops</span>
+            ${listHtml(rare, card => `${card.count} shops`)}
+          </article>
+        `;
+      }
+
       function renderShops() {
         const recentPool = state.shopCards.filter(card => isRecent(card.latest, 100));
         const pool = recentPool.length >= 4 ? recentPool : state.shopCards;
@@ -1456,16 +1683,26 @@
           state.offerings = Array.isArray(offerings) ? offerings : [];
           buildShowcaseData();
           renderShowcase();
+          renderInsights();
           updateManifest(manifest);
           Promise.all([loadShopLogoMap(), loadStrainImageMap()])
             .then(() => {
               renderShowcase();
+              renderInsights();
             })
             .catch(() => {
               renderShowcase();
+              renderInsights();
             });
         } catch (_err) {
           renderFallbackShowcase();
+          if (insightsEl) {
+            insightsEl.innerHTML = `
+              <article class="insight-panel"><span>Price index</span><strong>Unavailable</strong><p>Amsterdam menu data could not be loaded.</p></article>
+              <article class="insight-panel"><span>Most common strains</span><p>Try searching Gelato, Amnesia Haze, or Zkittlez.</p></article>
+              <article class="insight-panel"><span>Rare finds this week</span><p>Rare finds appear when current menu data is available.</p></article>
+            `;
+          }
           if (showcaseStatus) {
             showcaseStatus.textContent = 'Amsterdam menu data could not be loaded. Try refreshing the page.';
           }
