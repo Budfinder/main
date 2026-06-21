@@ -109,7 +109,7 @@
     }
 
     .atmosphere-leaves {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cg fill='%23205b42'%3E%3Cellipse cx='40' cy='18' rx='6' ry='18'/%3E%3Cellipse cx='25' cy='25' rx='5' ry='17' transform='rotate(-34 25 25)'/%3E%3Cellipse cx='55' cy='25' rx='5' ry='17' transform='rotate(34 55 25)'/%3E%3Cellipse cx='14' cy='40' rx='4' ry='14' transform='rotate(-58 14 40)'/%3E%3Cellipse cx='66' cy='40' rx='4' ry='14' transform='rotate(58 66 40)'/%3E%3Cellipse cx='27' cy='46' rx='4' ry='12' transform='rotate(-20 27 46)'/%3E%3Cellipse cx='53' cy='46' rx='4' ry='12' transform='rotate(20 53 46)'/%3E%3Crect x='38.5' y='34' width='3' height='28' rx='1.5'/%3E%3C/g%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 96 96%27%3E%3Cg fill=%27%23205b42%27%3E%3Cpath d=%27M48 8 C43 22 42 34 48 54 C54 34 53 22 48 8Z%27/%3E%3Cpath d=%27M34 16 C32 31 36 42 47 57 C49 39 44 27 34 16Z%27/%3E%3Cpath d=%27M62 16 C64 31 60 42 49 57 C47 39 52 27 62 16Z%27/%3E%3Cpath d=%27M21 29 C25 43 34 52 47 62 C43 45 34 35 21 29Z%27/%3E%3Cpath d=%27M75 29 C71 43 62 52 49 62 C53 45 62 35 75 29Z%27/%3E%3Cpath d=%27M13 48 C25 57 36 62 47 66 C38 52 27 47 13 48Z%27/%3E%3Cpath d=%27M83 48 C71 57 60 62 49 66 C58 52 69 47 83 48Z%27/%3E%3Cpath d=%27M46.5 55 H49.5 V86 H46.5Z%27/%3E%3C/g%3E%3C/svg%3E");
       background-size: 188px 188px;
       background-position: center center;
       opacity: 0.065;
@@ -370,7 +370,7 @@
       width: 14px;
       height: 14px;
       flex: 0 0 auto;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cg fill='%23205b42'%3E%3Cellipse cx='40' cy='18' rx='6' ry='18'/%3E%3Cellipse cx='25' cy='25' rx='5' ry='17' transform='rotate(-34 25 25)'/%3E%3Cellipse cx='55' cy='25' rx='5' ry='17' transform='rotate(34 55 25)'/%3E%3Cellipse cx='14' cy='40' rx='4' ry='14' transform='rotate(-58 14 40)'/%3E%3Cellipse cx='66' cy='40' rx='4' ry='14' transform='rotate(58 66 40)'/%3E%3Cellipse cx='27' cy='46' rx='4' ry='12' transform='rotate(-20 27 46)'/%3E%3Cellipse cx='53' cy='46' rx='4' ry='12' transform='rotate(20 53 46)'/%3E%3Crect x='38.5' y='34' width='3' height='28' rx='1.5'/%3E%3C/g%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 96 96%27%3E%3Cg fill=%27%23205b42%27%3E%3Cpath d=%27M48 8 C43 22 42 34 48 54 C54 34 53 22 48 8Z%27/%3E%3Cpath d=%27M34 16 C32 31 36 42 47 57 C49 39 44 27 34 16Z%27/%3E%3Cpath d=%27M62 16 C64 31 60 42 49 57 C47 39 52 27 62 16Z%27/%3E%3Cpath d=%27M21 29 C25 43 34 52 47 62 C43 45 34 35 21 29Z%27/%3E%3Cpath d=%27M75 29 C71 43 62 52 49 62 C53 45 62 35 75 29Z%27/%3E%3Cpath d=%27M13 48 C25 57 36 62 47 66 C38 52 27 47 13 48Z%27/%3E%3Cpath d=%27M83 48 C71 57 60 62 49 66 C58 52 69 47 83 48Z%27/%3E%3Cpath d=%27M46.5 55 H49.5 V86 H46.5Z%27/%3E%3C/g%3E%3C/svg%3E");
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
@@ -2090,7 +2090,7 @@
     <a href="index.html">Home</a>
     <a href="map.html">Map</a>
     <a class="is-active" href="database.html" aria-current="page">Database</a>
-    <a href="map.html#settings">Settings</a>
+    <a href="#settings" data-budfinder-settings-toggle>Settings</a>
   </nav>
   <div class="atmosphere" aria-hidden="true">
     <div class="atmosphere-leaves"></div>
@@ -2315,6 +2315,7 @@
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
   <script src="scripts/budfinder-theme.js"></script>
+  <script src="scripts/budfinder-page-settings.js"></script>
   <script>
     const state = {
       offerings: [],
