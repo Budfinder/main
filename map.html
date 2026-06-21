@@ -1612,6 +1612,18 @@
       box-shadow: none;
     }
 
+    .intent-card.is-primary {
+      grid-column: 1 / -1;
+      min-height: 82px;
+      background:
+        linear-gradient(135deg, rgba(255, 247, 232, 0.9), rgba(222, 239, 218, 0.72));
+      border-color: rgba(46, 123, 89, 0.2);
+    }
+
+    .intent-card.is-primary strong {
+      font-size: 15px;
+    }
+
     .intent-card strong,
     .intent-link strong {
       font-size: 13px;
@@ -5407,21 +5419,21 @@
     <div class="controls-content">
       <section class="panel-section search-wanted-panel control-group" aria-labelledby="map-intent-title">
         <div class="intent-head">
-          <strong id="map-intent-title">Search / Wanted strains</strong>
-          <span>Search strains, shops, or areas. Add Wanted strains to make Best matches smarter.</span>
+          <strong id="map-intent-title">Plan, search, and explore</strong>
+          <span>Build an itinerary, search strains or places, and add useful discoveries as you go.</span>
         </div>
         <label for="destination-search">Search Budfinder</label>
         <input id="destination-search" type="search" placeholder="Try Gelato, Family First, De Pijp..." autocomplete="off" list="global-search-suggestions" />
         <datalist id="global-search-suggestions"></datalist>
         <div id="destination-search-status" class="field-note">Loading Amsterdam menu data...</div>
         <div class="workflow-shortcuts" aria-label="Quick planning shortcuts">
+          <button class="intent-card is-primary" type="button" data-map-intent="nearby">
+            <strong>Build an Amsterdam itinerary</strong>
+            <span>Choose a start, add coffeeshops and other mapped places, then estimate walking time, distance, and spend.</span>
+          </button>
           <button class="intent-card" type="button" data-map-intent="wanted">
             <strong>Build my Wanted list</strong>
             <span>Search Wanted strains and find the best matching coffeeshops.</span>
-          </button>
-          <button class="intent-card" type="button" data-map-intent="nearby">
-            <strong>Build an itinerary</strong>
-            <span>Choose a start, add any mapped place, and estimate walking time and spend.</span>
           </button>
           <button class="intent-card" type="button" data-map-intent="value">
             <strong>Find good-value shops</strong>

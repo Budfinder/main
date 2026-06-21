@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Budfinder | Amsterdam coffeeshop strain finder and map</title>
-  <meta name="description" content="Budfinder helps you search Amsterdam coffeeshop menu data, build Wanted strains, compare nearby shops, spot useful price signals, and choose your next Destination." />
+  <meta name="description" content="Budfinder helps you search Amsterdam coffeeshop menu data, build Wanted strains, compare shops, explore locations, and plan an Amsterdam itinerary." />
   <link rel="canonical" href="https://budfinder.app/" />
   <meta property="og:title" content="Budfinder | Amsterdam coffeeshop strain finder" />
-  <meta property="og:description" content="Search Amsterdam coffeeshop menu data, build Wanted strains, compare nearby shops, spot price signals, and plan your next Destination." />
+  <meta property="og:description" content="Search Amsterdam coffeeshop menu data, build Wanted strains, compare shops, explore locations, and plan an Amsterdam itinerary." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://budfinder.app/" />
   <meta property="og:image" content="https://budfinder.app/images/IMG_5124.ico" />
@@ -474,7 +474,7 @@
 
     .journey {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
       margin-top: 18px;
     }
@@ -518,6 +518,36 @@
       background: rgba(255, 255, 255, 0.46);
       color: var(--ink);
       text-decoration: none;
+    }
+
+    .journey-card.is-primary {
+      grid-column: 1 / -1;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      min-height: 112px;
+      padding: 16px;
+      background:
+        linear-gradient(135deg, rgba(255, 247, 232, 0.92), rgba(221, 239, 216, 0.72));
+      border-color: rgba(46, 123, 89, 0.24);
+      box-shadow: 0 12px 26px rgba(32, 91, 66, 0.1);
+    }
+
+    .journey-card.is-primary::after {
+      content: "Open map";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff9f0;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .journey-card.is-primary strong {
+      font-size: 20px;
     }
 
     .journey-card strong {
@@ -1014,6 +1044,14 @@
         grid-template-columns: 1fr;
       }
 
+      .journey-card.is-primary {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-card.is-primary::after {
+        width: fit-content;
+      }
+
       .insights-head {
         display: grid;
       }
@@ -1062,33 +1100,35 @@
           <span class="version-pill">Version 1.16 - updated 21 June 2026</span>
         </div>
 
-        <h1 id="home-title">Find your next Amsterdam coffeeshop with better information.</h1>
-        <p class="lead">Build a Wanted strain list, compare nearby coffeeshops, spot useful price signals, and choose your next Destination before you start walking.</p>
+        <h1 id="home-title">Plan a better Amsterdam day with live coffeeshop and location intel.</h1>
+        <p class="lead">Search strains, compare shops, explore Amsterdam locations, and build an itinerary with walking time, distance, and estimated spend before you start moving.</p>
 
         <div class="actions" aria-label="Primary actions">
-          <a class="primary-btn" href="map.html">Open the map</a>
-          <a class="secondary-btn" href="#home-search-form">Search strains</a>
+          <a class="primary-btn" href="map.html?source=home&intent=itinerary">Plan on the map</a>
+          <a class="secondary-btn" href="database.html">Research strains</a>
         </div>
 
         <section class="intent-panel" aria-labelledby="intent-title">
-          <h2 id="intent-title">What are you trying to do?</h2>
-          <p>Pick the fastest route into Budfinder.</p>
+          <h2 id="intent-title">Start with the kind of day you are planning.</h2>
+          <p>Budfinder connects strain research, map exploration, nearby decisions, and saved itineraries.</p>
           <div class="journey" aria-label="Primary Budfinder journeys">
-          <a class="journey-card" href="database.html">
-            <small>I know the strains I want</small>
-            <strong>Build my Wanted list</strong>
-            <span>Build Wanted strains and find the best matching coffeeshops.</span>
-          </a>
-          <a class="journey-card" href="map.html?source=home&near=me">
-            <small>I'm already in a coffeeshop</small>
-            <strong>Explore from here</strong>
-            <span>Set this as your Starting point and compare nearby options.</span>
-          </a>
-          <a class="journey-card" href="database.html?mode=under10">
-            <small>I want a good-value stop</small>
-            <strong>Find good-value shops</strong>
-            <span>Find nearby options with useful price signals.</span>
-          </a>
+            <a class="journey-card is-primary" href="map.html?source=home&intent=itinerary">
+              <div>
+                <small>Most useful first step</small>
+                <strong>Build an Amsterdam itinerary</strong>
+                <span>Mix coffeeshops, hotels, attractions, food, and transport stops. See walking distance, time, spend, and strains along the way.</span>
+              </div>
+            </a>
+            <a class="journey-card" href="database.html">
+              <small>I know the strains I want</small>
+              <strong>Research Wanted strains</strong>
+              <span>Build Wanted strains and send the best matching shops to the map.</span>
+            </a>
+            <a class="journey-card" href="map.html?source=home&near=me">
+              <small>I am already in Amsterdam</small>
+              <strong>Explore nearby</strong>
+              <span>Search from the map, compare nearby options, and add places to your itinerary.</span>
+            </a>
           </div>
         </section>
 
@@ -1116,7 +1156,7 @@
         <div class="board-head">
           <div>
             <span class="eyebrow">Live showcase</span>
-            <h2>Fresh shops and strain leads</h2>
+            <h2>Useful leads for your next stop</h2>
             <p id="showcase-status" class="showcase-status" aria-live="polite">Loading Amsterdam menu data...</p>
           </div>
           <button id="shuffle-showcase-btn" class="showcase-button" type="button">Shuffle</button>
@@ -1139,8 +1179,8 @@
       <div class="insights-head">
         <div>
           <span class="eyebrow">Amsterdam Insights</span>
-          <h2 id="amsterdam-insights-title">Fast strain intel for today’s search.</h2>
-          <p>Compact signals from current menu data. Search stays first; these help you choose what to try next.</p>
+          <h2 id="amsterdam-insights-title">Live signals to shape the plan.</h2>
+          <p>Compact price and strain signals from current menu data. Use them to choose what to search, compare, or add to a day out.</p>
         </div>
         <a class="card-link" href="database.html">Open database</a>
       </div>
@@ -1163,20 +1203,20 @@
 
     <section class="section" aria-labelledby="feature-title">
       <span class="eyebrow">Why Budfinder</span>
-      <h2 id="feature-title" class="section-title">Built for the two Amsterdam moments that matter.</h2>
-      <p class="section-copy">Arrive with Wanted strains, or set the shop you are already sitting in as your Starting point and work out the next Destination.</p>
+      <h2 id="feature-title" class="section-title">Amsterdam discovery, connected to actual planning.</h2>
+      <p class="section-copy">Budfinder helps you move from strain research to shop comparison to a practical itinerary without losing the thread.</p>
       <div class="feature-grid">
         <div class="feature-card">
           <strong>Find Wanted strains</strong>
           <p>Search Gelato, Amnesia Haze, Zkittlez, hash, Cali, and more across current menu data.</p>
         </div>
         <div class="feature-card">
-          <strong>Explore from wherever you are</strong>
-          <p>Set a Starting point, compare nearby shops, and look for walking-time wins before you move.</p>
+          <strong>Explore Amsterdam places</strong>
+          <p>Use coffeeshops, attractions, hotels, landmarks, food, and transport stops as part of the same map workflow.</p>
         </div>
         <div class="feature-card">
-          <strong>Compare deals with context</strong>
-          <p>Spot price hints, freshness, confidence, saved-strain matches, and shops worth the detour.</p>
+          <strong>Plan the walk before you go</strong>
+          <p>Add places to an itinerary, estimate distance, walking time, spend, and see which strains fit the route.</p>
         </div>
       </div>
     </section>
@@ -1184,23 +1224,23 @@
     <section id="how-it-works" class="section workflow">
       <div>
         <span class="eyebrow">How Budfinder works</span>
-        <h2>Search, compare, choose, navigate.</h2>
+        <h2>Find, compare, add, save.</h2>
       </div>
       <div class="workflow-grid">
         <div class="workflow-card">
-          <b>1. Search</b>
-          <strong>Start with a strain, shop, or area</strong>
-          <p>Use the homepage search for a quick start, the map for decisions, or the database for deeper comparison.</p>
+          <b>1. Find</b>
+          <strong>Search a strain, shop, or place</strong>
+          <p>Start with the map for planning, or use the database when you want deeper strain and price research.</p>
         </div>
         <div class="workflow-card">
           <b>2. Compare</b>
-          <strong>Look at usefulness, not just distance</strong>
-          <p>Cards surface price, walking time, menu freshness, confidence, and why a Destination is worth considering.</p>
+          <strong>Judge usefulness, not just distance</strong>
+          <p>Cards surface price, walking time, menu freshness, confidence, and why a place is worth considering.</p>
         </div>
         <div class="workflow-card">
-          <b>3. Navigate</b>
-          <strong>Choose a Destination and move</strong>
-          <p>Add shops to Saved shops, add Destinations to your Trip plan, and open directions when the plan feels right.</p>
+          <b>3. Plan</b>
+          <strong>Add places to an itinerary</strong>
+          <p>Mix locations, optional strains, walking estimates, and saved journeys so the day feels clear before you move.</p>
         </div>
       </div>
     </section>
@@ -1318,6 +1358,8 @@
         }
         return copy;
       }
+
+      const rareVisitSeed = `${Date.now()}-${Math.random()}`;
 
       function formatDate(value) {
         if (!value) return '';
@@ -1608,9 +1650,11 @@
           .map(card => ({
             card,
             score: rareFindScore(card),
-            noise: seededNoise(card.name, 'rare-pick')
+            noise: seededNoise(card.name, `rare-pick-${rareVisitSeed}`)
           }))
           .filter(item => Number.isFinite(item.score))
+          .sort((a, b) => b.score - a.score || a.card.name.localeCompare(b.card.name))
+          .slice(0, 30)
           .sort((a, b) => b.noise - a.noise || b.score - a.score || a.card.name.localeCompare(b.card.name))
           .slice(0, 5)
           .map(item => item.card);
