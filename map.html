@@ -12427,9 +12427,19 @@
       return Number.isFinite(amount) ? amount : null;
     }
 
+    const WALKING_METERS_PER_SECOND = 1.25;
+    const WALKING_LEG_BUFFER_SECONDS = 45;
+
+    function estimateWalkingSeconds(distanceMeters, legCount = 0) {
+      if (!Number.isFinite(distanceMeters) || distanceMeters < 0) return null;
+      const movingSeconds = distanceMeters / WALKING_METERS_PER_SECOND;
+      const bufferSeconds = Math.max(0, legCount || 0) * WALKING_LEG_BUFFER_SECONDS;
+      return movingSeconds + bufferSeconds;
+    }
+
     function estimateTravelSecondsForMode(distanceMeters, mode) {
       if (!Number.isFinite(distanceMeters) || distanceMeters < 0) return null;
-      if (mode === 'walking') return distanceMeters / 1.3889;
+      if (mode === 'walking') return estimateWalkingSeconds(distanceMeters);
       if (mode === 'cycling') return distanceMeters / 4.1667;
       return distanceMeters / 9.7222;
     }
@@ -12462,9 +12472,9 @@
       if (!loc) return '';
       if (Number.isFinite(loc.db_shop_id)) return `db:${loc.db_shop_id}`;
       if (loc.shop_key) return `shop:${loc.shop_key}`;
+      if (Array.isArray(loc.coords)) return `coords:${loc.coords[0]}:${loc.coords[1]}:${normaliseText(loc.name || '')}`;
       const prefKey = getLocationPreferenceKey(loc);
       if (prefKey) return `pref:${prefKey}`;
-      if (Array.isArray(loc.coords)) return `coords:${loc.coords[0]}:${loc.coords[1]}:${normaliseText(loc.name || '')}`;
       return Number.isInteger(index) ? `index:${index}` : '';
     }
 
@@ -12603,8 +12613,31 @@
     function journeySelectValueForStart(start) {
       if (!start) return '';
       if (start.type !== 'location') return start.id ? `landmark:${start.id}` : '';
-      const index = findJourneyLocationIndexByRef(start.ref);
-      return index === null ? '' : `loc:${index}`;
+      return start.ref ? `locref:${encodeURIComponent(start.ref)}` : '';
+    }
+
+    function journeySelectValueForLocation(loc, index) {
+      const ref = getJourneyLocationRef(loc, index);
+      return ref ? `locref:${encodeURIComponent(ref)}` : `loc:${index}`;
+    }
+
+    function readJourneyLocationSelectIndex(value) {
+      const raw = (value || '').toString();
+      if (!raw) return null;
+      if (raw.startsWith('locref:')) {
+        let ref = '';
+        try {
+          ref = decodeURIComponent(raw.slice(7));
+        } catch (_err) {
+          ref = raw.slice(7);
+        }
+        return findJourneyLocationIndexByRef(ref);
+      }
+      if (raw.startsWith('loc:')) {
+        const index = parseInt(raw.slice(4), 10);
+        return Number.isInteger(index) && locations[index] ? index : null;
+      }
+      return null;
     }
 
     function readJourneyPointValue(value) {
@@ -12617,7 +12650,13 @@
           : null;
       }
       if (raw.startsWith('loc:')) {
-        const index = parseInt(raw.slice(4), 10);
+        const index = readJourneyLocationSelectIndex(raw);
+        if (Number.isInteger(index) && locations[index]) {
+          return { type: 'location', ref: getJourneyLocationRef(locations[index], index) };
+        }
+      }
+      if (raw.startsWith('locref:')) {
+        const index = readJourneyLocationSelectIndex(raw);
         if (Number.isInteger(index) && locations[index]) {
           return { type: 'location', ref: getJourneyLocationRef(locations[index], index) };
         }
@@ -12643,8 +12682,10 @@
         startSelect.appendChild(opt);
       });
       getJourneyLocationOptions().forEach(({ loc, index }) => {
+        const ref = getJourneyLocationRef(loc, index);
         const opt = document.createElement('option');
-        opt.value = `loc:${index}`;
+        opt.value = journeySelectValueForLocation(loc, index);
+        opt.dataset.locationRef = ref;
         opt.textContent = `${loc.name}${loc.city ? ` · ${loc.city}` : ''} · ${getJourneyLocationTypeLabel(loc)}`;
         startSelect.appendChild(opt);
       });
@@ -12663,7 +12704,8 @@
         const ref = getJourneyLocationRef(loc, index);
         if (existingRefs.has(ref)) return;
         const opt = document.createElement('option');
-        opt.value = `loc:${index}`;
+        opt.value = journeySelectValueForLocation(loc, index);
+        opt.dataset.locationRef = ref;
         opt.textContent = `${loc.name}${loc.city ? ` · ${loc.city}` : ''} · ${getJourneyLocationTypeLabel(loc)}`;
         stopSelect.appendChild(opt);
       });
@@ -12735,7 +12777,7 @@
       const segments = [];
       for (let i = 1; i < points.length; i += 1) {
         const segmentDistance = haversineDistance(points[i - 1].coords, points[i].coords);
-        const walkingSeconds = estimateTravelSecondsForMode(segmentDistance, 'walking');
+        const walkingSeconds = estimateWalkingSeconds(segmentDistance, 1);
         distanceMeters += segmentDistance;
         segments.push({
           from: points[i - 1],
@@ -12758,7 +12800,7 @@
         points,
         segments,
         distanceMeters,
-        walkingSeconds: estimateTravelSecondsForMode(distanceMeters, 'walking'),
+        walkingSeconds: segments.reduce((sum, segment) => sum + (segment.walkingSeconds || 0), 0),
         spend,
         averageSpend: stops.length ? spend / stops.length : 0,
         selectedStrains,
@@ -12990,13 +13032,14 @@
           if (!geometry.length || !Number.isFinite(distanceMeters)) {
             throw new Error('Route service did not return usable geometry.');
           }
+          const realisticWalkingSeconds = estimateWalkingSeconds(distanceMeters, 1);
           return {
             from: fromPoint,
             to: toPoint,
             distanceMeters,
             walkingSeconds: Number.isFinite(durationSeconds)
-              ? durationSeconds
-              : estimateTravelSecondsForMode(distanceMeters, 'walking'),
+              ? Math.max(durationSeconds, realisticWalkingSeconds)
+              : realisticWalkingSeconds,
             geometry,
             routed: true
           };
@@ -13968,12 +14011,14 @@
     document.getElementById('journey-add-stop-btn').addEventListener('click', () => {
       const select = document.getElementById('journey-stop-select');
       const value = select ? select.value : '';
-      if (!value.startsWith('loc:')) {
+      const index = readJourneyLocationSelectIndex(value);
+      if (!Number.isInteger(index) || !locations[index]) {
         setJourneyStatus('Choose a mapped place to add next.', 'warn');
         return;
       }
-      const index = parseInt(value.slice(4), 10);
-      addJourneyStopByIndex(index);
+      if (addJourneyStopByIndex(index) && select) {
+        select.value = '';
+      }
     });
 
     document.getElementById('add-destination-stop-btn').addEventListener('click', () => {
