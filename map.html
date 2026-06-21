@@ -1783,7 +1783,11 @@
     }
 
     .journey-builder-grid label,
-    .journey-save-row label {
+    .journey-save-row label,
+    .journey-saved-actions label {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
       margin: 0;
     }
 
@@ -1796,7 +1800,7 @@
     }
 
     .journey-saved-actions {
-      grid-template-columns: minmax(0, 1fr) auto auto;
+      grid-template-columns: minmax(0, 1fr) minmax(74px, auto) minmax(74px, auto);
     }
 
     .journey-timeline {
@@ -1827,7 +1831,7 @@
 
     .journey-stop-main {
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr);
+      grid-template-columns: minmax(48px, auto) minmax(0, 1fr);
       gap: 9px;
       align-items: start;
     }
@@ -1854,6 +1858,11 @@
       border: 1px solid rgba(46, 123, 89, 0.18);
     }
 
+    .journey-stop-number.is-end {
+      background: #7b261e;
+      color: #fff9f0;
+    }
+
     .journey-stop-copy {
       min-width: 0;
     }
@@ -1874,22 +1883,70 @@
       line-height: 1.35;
     }
 
+    .journey-segment {
+      display: grid;
+      grid-template-columns: minmax(48px, auto) minmax(0, 1fr);
+      gap: 9px;
+      align-items: center;
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .journey-segment-arrow {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      min-height: 30px;
+      color: var(--accent-strong);
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .journey-segment span:last-child {
+      min-width: 0;
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: rgba(46, 123, 89, 0.1);
+      overflow-wrap: anywhere;
+    }
+
     .journey-stop-actions,
     .journey-strain-row,
     .journey-strain-chips {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
       gap: 7px;
       align-items: center;
+    }
+
+    .journey-stop-actions {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .journey-strain-chips {
+      display: flex;
+      flex-wrap: wrap;
     }
 
     .journey-stop-actions button,
     .journey-strain-row button,
     .journey-save-row button,
     .journey-saved-actions button {
+      width: 100%;
+      min-width: 0;
       min-height: 36px;
       padding: 0 10px;
       font-size: 12px;
+      line-height: 1.2;
+      white-space: normal;
+    }
+
+    .journey-builder-grid select,
+    .journey-save-row input,
+    .journey-saved-actions select,
+    .journey-strain-row select {
+      width: 100%;
+      min-width: 0;
     }
 
     .journey-strain-row {
@@ -1924,6 +1981,49 @@
     .journey-map-line {
       stroke-linecap: round;
       stroke-linejoin: round;
+    }
+
+    .journey-map-marker {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 34px;
+      padding: 0 9px;
+      border: 3px solid #fffdf7;
+      border-radius: 999px;
+      background: #184e39;
+      color: #fffdf7;
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(24, 49, 40, 0.42);
+      white-space: nowrap;
+    }
+
+    .journey-map-marker.is-start {
+      background: #fff7e8;
+      color: #184e39;
+      border-color: #184e39;
+    }
+
+    .journey-map-marker.is-end {
+      background: #8d2f23;
+      color: #fffdf7;
+      border-color: #fffdf7;
+    }
+
+    .journey-map-arrow {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 2px solid #fffdf7;
+      border-radius: 999px;
+      background: #184e39;
+      color: #fffdf7;
+      font-size: 18px;
+      font-weight: 900;
+      box-shadow: 0 4px 14px rgba(24, 49, 40, 0.38);
     }
 
     @media (max-width: 680px) {
@@ -3823,7 +3923,8 @@
       width: min(352px, calc(100vw - 92px));
     }
 
-    .popup-locate-btn {
+    .popup-locate-btn,
+    .popup-journey-start-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -3841,6 +3942,14 @@
       letter-spacing: 0.01em;
       cursor: pointer;
       box-shadow: 0 10px 20px rgba(32, 91, 66, 0.16);
+    }
+
+    .popup-journey-start-btn {
+      margin-top: 0;
+      background: rgba(255, 252, 247, 0.9);
+      color: var(--accent-strong);
+      border: 1px solid rgba(32, 91, 66, 0.22);
+      box-shadow: none;
     }
 
     .leaflet-routing-container {
@@ -5009,7 +5118,7 @@
           </button>
           <button class="intent-card" type="button" data-map-intent="nearby">
             <strong>Plan a journey</strong>
-            <span>Choose a start, add coffeeshops, and estimate walk time and spend.</span>
+            <span>Choose a start, add any mapped stop, and estimate walk time and spend.</span>
           </button>
           <button class="intent-card" type="button" data-map-intent="value">
             <strong>Find good-value shops</strong>
@@ -5025,7 +5134,7 @@
       <section class="panel-section route-panel control-group">
         <div class="route-panel-topline">
           <span class="panel-kicker">Journey Planner</span>
-          <p class="panel-copy">Choose your own Amsterdam coffeeshop journey. Budfinder estimates the distance, walking time, spend, and strains along the way.</p>
+          <p class="panel-copy">Choose your own Amsterdam journey. Budfinder estimates the distance, walking time, spend, and strains along the way.</p>
         </div>
         <div class="map-mode-strip" aria-live="polite">
           <span>Current mode</span>
@@ -5075,12 +5184,12 @@
             <label for="journey-start-select">Start
               <select id="journey-start-select"></select>
             </label>
-            <label for="journey-stop-select">Add coffeeshop
+            <label for="journey-stop-select">Add location
               <select id="journey-stop-select"></select>
             </label>
           </div>
           <div class="journey-add-row">
-            <div id="journey-status" class="field-note">Choose a start, then add coffeeshops to build your journey.</div>
+            <div id="journey-status" class="field-note">Choose a start, then add mapped locations to build your journey.</div>
             <button id="journey-add-stop-btn" type="button">Add stop</button>
           </div>
           <div id="journey-timeline" class="journey-timeline"></div>
@@ -5336,11 +5445,13 @@
     let nearbyExploreActive = false;
     let guideVisible = false;
     let journeyPlanner = {
-      start: { type: 'landmark', id: 'amsterdam-centraal' },
+      start: null,
       stops: []
     };
     let savedJourneys = [];
     let journeyLayerGroup = null;
+    let journeyRouteRequestId = 0;
+    let latestJourneyRouteMetrics = null;
 
     // Multi-select categories: 'all', 'favourites', and CSV Y/N flags
     let selectedCategories = ['all'];
@@ -9777,6 +9888,7 @@
             popupStrainsHtml +
             dbMenuLinks +
             `<button type="button" class="popup-locate-btn" data-index="${i}">Locate here</button>` +
+            `<button type="button" class="popup-journey-start-btn" data-index="${i}">Set journey start</button>` +
             `<a href="${loc.website}" target="_blank">Website</a><br>` +
             `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
             `<button class="fav-btn" data-index="${i}">` +
@@ -10228,7 +10340,7 @@
       const selectedIndex = getSelectedDestinationIndex();
       if (selectedIndex === null || !locations[selectedIndex]) {
         nearbyExploreActive = true;
-        setRouteStatus('Choose a coffeeshop first, or use your location to see what is nearby.', 'warn');
+        setRouteStatus('Choose a mapped location first, or use your location to see what is nearby.', 'warn');
         if (!controlsVisible) setControlsVisible(true, { collapsed: false });
         refreshDestinationCards();
         return;
@@ -11957,7 +12069,9 @@
           };
         }
       }
-      const landmark = JOURNEY_START_LANDMARKS.find(item => item.id === start.id) || JOURNEY_START_LANDMARKS[0];
+      if (start.type !== 'landmark') return null;
+      const landmark = JOURNEY_START_LANDMARKS.find(item => item.id === start.id);
+      if (!landmark) return null;
       return {
         type: 'landmark',
         id: landmark.id,
@@ -11985,18 +12099,34 @@
           seen.add(stableRef);
           return {
             ref: stableRef,
-            strains: normaliseShelfStrainNames(Array.isArray(stop.strains) ? stop.strains : []).slice(0, 12)
+            strains: isCoffeeShopLocation(locations[index])
+              ? normaliseShelfStrainNames(Array.isArray(stop.strains) ? stop.strains : []).slice(0, 12)
+              : []
           };
         })
         .filter(Boolean)
         .slice(0, 12);
     }
 
-    function getJourneyShopOptions() {
+    function getJourneyLocationTypeLabel(loc) {
+      if (isCoffeeShopLocation(loc)) return 'Coffeeshop';
+      if (loc && loc.Hotel) return 'Hotel';
+      if (loc && loc.Attraction) return 'Attraction';
+      if (loc && loc.Bar) return 'Bar';
+      if (loc && loc.Food) return 'Food';
+      if (loc && loc.Shopping) return 'Shopping';
+      const truthyCategory = Object.keys(loc || {}).find(key => (
+        !['name', 'city', 'coords', 'website', 'shop_key', 'logo', 'visited', 'rating', 'db_shop_id'].includes(key) &&
+        loc[key] === true
+      ));
+      return truthyCategory || 'Location';
+    }
+
+    function getJourneyLocationOptions() {
       return locations
         .map((loc, index) => ({ loc, index }))
-        .filter(item => isCoffeeShopLocation(item.loc) && !isClosedLocation(item.loc))
-        .sort((a, b) => compareStringsAlpha(a.loc.name, b.loc.name));
+        .filter(item => item.loc && Array.isArray(item.loc.coords) && !isClosedLocation(item.loc))
+        .sort((a, b) => compareStringsAlpha(a.loc.name, b.loc.name) || compareStringsAlpha(getJourneyLocationTypeLabel(a.loc), getJourneyLocationTypeLabel(b.loc)));
     }
 
     function setJourneyStatus(message, tone = '') {
@@ -12008,15 +12138,20 @@
     }
 
     function journeySelectValueForStart(start) {
-      if (!start || start.type !== 'location') return `landmark:${(start && start.id) || 'amsterdam-centraal'}`;
+      if (!start) return '';
+      if (start.type !== 'location') return start.id ? `landmark:${start.id}` : '';
       const index = findJourneyLocationIndexByRef(start.ref);
-      return index === null ? 'landmark:amsterdam-centraal' : `loc:${index}`;
+      return index === null ? '' : `loc:${index}`;
     }
 
     function readJourneyPointValue(value) {
       const raw = (value || '').toString();
+      if (!raw) return null;
       if (raw.startsWith('landmark:')) {
-        return { type: 'landmark', id: raw.slice(9) || 'amsterdam-centraal' };
+        const id = raw.slice(9);
+        return JOURNEY_START_LANDMARKS.some(point => point.id === id)
+          ? { type: 'landmark', id }
+          : null;
       }
       if (raw.startsWith('loc:')) {
         const index = parseInt(raw.slice(4), 10);
@@ -12024,7 +12159,7 @@
           return { type: 'location', ref: getJourneyLocationRef(locations[index], index) };
         }
       }
-      return { type: 'landmark', id: 'amsterdam-centraal' };
+      return null;
     }
 
     function renderJourneySelects() {
@@ -12034,35 +12169,39 @@
 
       const startValue = journeySelectValueForStart(journeyPlanner.start);
       startSelect.innerHTML = '';
+      const startPlaceholder = document.createElement('option');
+      startPlaceholder.value = '';
+      startPlaceholder.textContent = 'Choose a start point...';
+      startSelect.appendChild(startPlaceholder);
       JOURNEY_START_LANDMARKS.forEach(point => {
         const opt = document.createElement('option');
         opt.value = `landmark:${point.id}`;
         opt.textContent = point.name;
         startSelect.appendChild(opt);
       });
-      getJourneyShopOptions().forEach(({ loc, index }) => {
+      getJourneyLocationOptions().forEach(({ loc, index }) => {
         const opt = document.createElement('option');
         opt.value = `loc:${index}`;
-        opt.textContent = `${loc.name}${loc.city ? ` · ${loc.city}` : ''}`;
+        opt.textContent = `${loc.name}${loc.city ? ` · ${loc.city}` : ''} · ${getJourneyLocationTypeLabel(loc)}`;
         startSelect.appendChild(opt);
       });
       startSelect.value = Array.from(startSelect.options).some(opt => opt.value === startValue)
         ? startValue
-        : 'landmark:amsterdam-centraal';
+        : '';
 
       const existingRefs = new Set(journeyPlanner.stops.map(stop => stop.ref));
       const previousStopValue = stopSelect.value;
       stopSelect.innerHTML = '';
       const placeholder = document.createElement('option');
       placeholder.value = '';
-      placeholder.textContent = 'Choose a coffeeshop...';
+      placeholder.textContent = 'Choose a mapped location...';
       stopSelect.appendChild(placeholder);
-      getJourneyShopOptions().forEach(({ loc, index }) => {
+      getJourneyLocationOptions().forEach(({ loc, index }) => {
         const ref = getJourneyLocationRef(loc, index);
         if (existingRefs.has(ref)) return;
         const opt = document.createElement('option');
         opt.value = `loc:${index}`;
-        opt.textContent = `${loc.name}${loc.city ? ` · ${loc.city}` : ''}`;
+        opt.textContent = `${loc.name}${loc.city ? ` · ${loc.city}` : ''} · ${getJourneyLocationTypeLabel(loc)}`;
         stopSelect.appendChild(opt);
       });
       stopSelect.value = Array.from(stopSelect.options).some(opt => opt.value === previousStopValue)
@@ -12089,6 +12228,7 @@
     }
 
     function getShopAverageSpend(loc) {
+      if (!isCoffeeShopLocation(loc)) return 0;
       const amounts = [];
       getPopupStrainsForLocation(loc).forEach(name => {
         const detail = getPopupStrainDetail(loc, name);
@@ -12102,6 +12242,7 @@
     }
 
     function getJourneyStopSpend(stop, loc) {
+      if (!isCoffeeShopLocation(loc)) return 0;
       const strains = Array.isArray(stop.strains) ? stop.strains : [];
       if (!strains.length) return getShopAverageSpend(loc);
       return strains.reduce((sum, strain) => {
@@ -12116,17 +12257,29 @@
       const stops = journeyPlanner.stops
         .map(stop => ({ stop, ...getJourneyStopLocation(stop) }))
         .filter(item => item.loc && Array.isArray(item.loc.coords));
-      const points = [start, ...stops.map(item => ({
+      const stopPoints = stops.map(item => ({
         type: 'stop',
         index: item.index,
         label: item.loc.name,
         city: item.loc.city || '',
         coords: item.loc.coords
-      }))].filter(point => point && Array.isArray(point.coords));
+      }));
+      const points = start && Array.isArray(start.coords)
+        ? [start, ...stopPoints].filter(point => point && Array.isArray(point.coords))
+        : [];
 
       let distanceMeters = 0;
+      const segments = [];
       for (let i = 1; i < points.length; i += 1) {
-        distanceMeters += haversineDistance(points[i - 1].coords, points[i].coords);
+        const segmentDistance = haversineDistance(points[i - 1].coords, points[i].coords);
+        const walkingSeconds = estimateTravelSecondsForMode(segmentDistance, 'walking');
+        distanceMeters += segmentDistance;
+        segments.push({
+          from: points[i - 1],
+          to: points[i],
+          distanceMeters: segmentDistance,
+          walkingSeconds
+        });
       }
 
       const spend = stops.reduce((sum, item) => sum + getJourneyStopSpend(item.stop, item.loc), 0);
@@ -12140,6 +12293,7 @@
         start,
         stops,
         points,
+        segments,
         distanceMeters,
         walkingSeconds: estimateTravelSecondsForMode(distanceMeters, 'walking'),
         spend,
@@ -12167,22 +12321,49 @@
       if (timeEl) timeEl.textContent = metrics.walkingSeconds ? formatCompactDuration(metrics.walkingSeconds) : '--';
     }
 
+    function formatJourneySegment(segment) {
+      if (!segment) return '';
+      const distance = formatJourneyDistance(segment.distanceMeters);
+      const time = segment.walkingSeconds ? formatCompactDuration(segment.walkingSeconds) : '';
+      return [distance, time].filter(Boolean).join(' • ');
+    }
+
     function renderJourneyTimeline(metrics) {
       const timeline = document.getElementById('journey-timeline');
       if (!timeline) return;
-      const startHtml = (
-        `<article class="journey-stop-card">` +
+      const hasStart = !!(metrics.start && Array.isArray(metrics.start.coords));
+      const segmentHtml = index => {
+        if (!hasStart) return '';
+        const label = formatJourneySegment((metrics.segments || [])[index]);
+        return label
+          ? `<div class="journey-segment"><span class="journey-segment-arrow">↓</span><span>${escapeHtml(label)}</span></div>`
+          : '';
+      };
+      const startHtml = hasStart
+        ? (
+          `<article class="journey-stop-card">` +
+            `<div class="journey-stop-main">` +
+              `<span class="journey-stop-number is-start">Start</span>` +
+              `<span class="journey-stop-copy">` +
+                `<strong>${escapeHtml(metrics.start.label || 'Starting point')}</strong>` +
+                `<span>${escapeHtml(metrics.start.city || 'Amsterdam')}</span>` +
+              `</span>` +
+            `</div>` +
+          `</article>`
+        )
+        : (
+          `<article class="journey-stop-card">` +
           `<div class="journey-stop-main">` +
             `<span class="journey-stop-number is-start">Start</span>` +
             `<span class="journey-stop-copy">` +
-              `<strong>${escapeHtml(metrics.start.label || 'Starting point')}</strong>` +
-              `<span>${escapeHtml(metrics.start.city || 'Amsterdam')}</span>` +
+              `<strong>Choose a start point</strong>` +
+              `<span>Select one above, or use Set journey start from a map card.</span>` +
             `</span>` +
           `</div>` +
         `</article>`
-      );
+        );
       if (!metrics.stops.length) {
-        timeline.innerHTML = startHtml + '<p class="journey-empty">Add the coffeeshops you want to visit. Strains are optional.</p>';
+        timeline.innerHTML = startHtml + '<p class="journey-empty">Add mapped locations you want to visit. Strains are optional at coffeeshop stops.</p>';
         return;
       }
 
@@ -12191,6 +12372,8 @@
         const loc = item.loc;
         const strains = getPopupStrainsForLocation(loc);
         const selected = Array.isArray(stop.strains) ? stop.strains : [];
+        const isShop = isCoffeeShopLocation(loc);
+        const isEnd = idx === metrics.stops.length - 1;
         const strainOptions = strains
           .filter(name => !selected.some(entry => normaliseText(entry) === normaliseText(name)))
           .map(name => `<option value="${escapeHtmlAttr(name)}">${escapeHtml(name)}</option>`)
@@ -12202,14 +12385,15 @@
                 `<button type="button" data-journey-remove-strain="${idx}" data-strain="${escapeHtmlAttr(name)}" aria-label="Remove ${escapeHtmlAttr(name)}">×</button>` +
               `</span>`
             )).join('')
-          : '<span class="field-note">No strains selected for this stop.</span>';
+          : `<span class="field-note">${isShop ? 'No strains selected for this stop.' : 'Strain selection is only available for matched coffeeshop menu data.'}</span>`;
         return (
+          segmentHtml(idx) +
           `<article class="journey-stop-card" data-journey-stop="${idx}">` +
             `<div class="journey-stop-main">` +
-              `<span class="journey-stop-number">${idx + 1}</span>` +
+              `<span class="journey-stop-number${isEnd ? ' is-end' : ''}">${idx + 1}</span>` +
               `<span class="journey-stop-copy">` +
-                `<strong>${escapeHtml(loc.name || 'Coffeeshop')}</strong>` +
-                `<span>${escapeHtml([loc.city || 'Amsterdam', `${strains.length} strain${strains.length === 1 ? '' : 's'} available`, formatJourneyMoney(getJourneyStopSpend(stop, loc))].filter(Boolean).join(' · '))}</span>` +
+                `<strong>Stop ${idx + 1}: ${escapeHtml(loc.name || 'Location')}</strong>` +
+                `<span>${escapeHtml([getJourneyLocationTypeLabel(loc), loc.city || 'Amsterdam', isShop ? `${strains.length} strain${strains.length === 1 ? '' : 's'} available` : '', formatJourneyMoney(getJourneyStopSpend(stop, loc))].filter(Boolean).join(' · '))}</span>` +
               `</span>` +
             `</div>` +
             `<div class="journey-stop-actions">` +
@@ -12219,11 +12403,11 @@
               `<button type="button" class="secondary-btn" data-journey-remove-stop="${idx}">Remove</button>` +
             `</div>` +
             `<div class="journey-strain-row">` +
-              `<select data-journey-strain-select="${idx}" ${strainOptions ? '' : 'disabled'}>` +
-                `<option value="">${strainOptions ? 'Optional strain...' : 'No menu strains found'}</option>` +
+              `<select data-journey-strain-select="${idx}" ${isShop && strainOptions ? '' : 'disabled'}>` +
+                `<option value="">${isShop ? (strainOptions ? 'Optional strain...' : 'No menu strains found') : 'Not a coffeeshop stop'}</option>` +
                 `${strainOptions}` +
               `</select>` +
-              `<button type="button" class="secondary-btn" data-journey-add-strain="${idx}" ${strainOptions ? '' : 'disabled'}>Add strain</button>` +
+              `<button type="button" class="secondary-btn" data-journey-add-strain="${idx}" ${isShop && strainOptions ? '' : 'disabled'}>Add strain</button>` +
             `</div>` +
             `<div class="journey-strain-chips">${chips}</div>` +
           `</article>`
@@ -12249,6 +12433,125 @@
       select.value = Array.from(select.options).some(opt => opt.value === previous) ? previous : '';
     }
 
+    function getBearingDegrees(fromCoords, toCoords) {
+      if (!Array.isArray(fromCoords) || !Array.isArray(toCoords)) return 0;
+      const lat1 = fromCoords[0] * Math.PI / 180;
+      const lat2 = toCoords[0] * Math.PI / 180;
+      const deltaLng = (toCoords[1] - fromCoords[1]) * Math.PI / 180;
+      const y = Math.sin(deltaLng) * Math.cos(lat2);
+      const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLng);
+      return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+    }
+
+    function midpointCoords(fromCoords, toCoords) {
+      return [
+        (fromCoords[0] + toCoords[0]) / 2,
+        (fromCoords[1] + toCoords[1]) / 2
+      ];
+    }
+
+    function routeGeometryMidpoint(geometry) {
+      const coords = Array.isArray(geometry) && geometry.length ? geometry : [];
+      if (!coords.length) return null;
+      return coords[Math.floor(coords.length / 2)];
+    }
+
+    function buildOsrmRouteUrl(profile, fromCoords, toCoords) {
+      const from = `${fromCoords[1]},${fromCoords[0]}`;
+      const to = `${toCoords[1]},${toCoords[0]}`;
+      return `https://router.project-osrm.org/route/v1/${profile}/${from};${to}?overview=full&geometries=geojson&alternatives=false&steps=false`;
+    }
+
+    async function fetchJourneyRouteSegment(fromPoint, toPoint) {
+      const profiles = ['foot', 'walking'];
+      let lastError = null;
+      for (const profile of profiles) {
+        try {
+          const res = await fetch(buildOsrmRouteUrl(profile, fromPoint.coords, toPoint.coords));
+          if (!res.ok) throw new Error(`Route service returned ${res.status}`);
+          const data = await res.json();
+          const route = data && Array.isArray(data.routes) ? data.routes[0] : null;
+          const rawCoords = route && route.geometry && Array.isArray(route.geometry.coordinates)
+            ? route.geometry.coordinates
+            : [];
+          const geometry = rawCoords
+            .map(coord => [Number(coord[1]), Number(coord[0])])
+            .filter(coord => Number.isFinite(coord[0]) && Number.isFinite(coord[1]));
+          const distanceMeters = Number(route && route.distance);
+          const durationSeconds = Number(route && route.duration);
+          if (!geometry.length || !Number.isFinite(distanceMeters)) {
+            throw new Error('Route service did not return usable geometry.');
+          }
+          return {
+            from: fromPoint,
+            to: toPoint,
+            distanceMeters,
+            walkingSeconds: Number.isFinite(durationSeconds)
+              ? durationSeconds
+              : estimateTravelSecondsForMode(distanceMeters, 'walking'),
+            geometry,
+            routed: true
+          };
+        } catch (err) {
+          lastError = err;
+        }
+      }
+      throw lastError || new Error('Route service unavailable.');
+    }
+
+    async function resolveJourneyRoadRoute(baseMetrics, options = {}) {
+      if (!baseMetrics || !Array.isArray(baseMetrics.points) || baseMetrics.points.length < 2) return;
+      const requestId = ++journeyRouteRequestId;
+      setJourneyStatus('Finding walking route along roads and paths...', 'warn');
+      try {
+        const routedSegments = await Promise.all((baseMetrics.segments || []).map(segment => (
+          fetchJourneyRouteSegment(segment.from, segment.to)
+        )));
+        if (requestId !== journeyRouteRequestId) return;
+        const routeLatLngs = routedSegments.flatMap((segment, index) => (
+          index === 0 ? segment.geometry : segment.geometry.slice(1)
+        ));
+        const distanceMeters = routedSegments.reduce((sum, segment) => sum + segment.distanceMeters, 0);
+        const walkingSeconds = routedSegments.reduce((sum, segment) => sum + (segment.walkingSeconds || 0), 0);
+        const routedMetrics = {
+          ...baseMetrics,
+          segments: routedSegments,
+          routeLatLngs,
+          distanceMeters,
+          walkingSeconds
+        };
+        latestJourneyRouteMetrics = routedMetrics;
+        renderJourneySummary(routedMetrics);
+        renderJourneyTimeline(routedMetrics);
+        updateJourneyMapOverlay(routedMetrics, options);
+        setJourneyStatus('Walking route follows roads and paths where route data is available.', 'good');
+      } catch (_err) {
+        if (requestId !== journeyRouteRequestId) return;
+        latestJourneyRouteMetrics = null;
+        setJourneyStatus('Could not get a walking route, so Budfinder is showing a simple visual connection.', 'warn');
+        updateJourneyMapOverlay(baseMetrics, options);
+      }
+    }
+
+    function createJourneyMarkerIcon(label, className = '') {
+      return L.divIcon({
+        className: `journey-map-marker-icon ${className}`.trim(),
+        html: `<span class="journey-map-marker ${className}">${escapeHtml(label)}</span>`,
+        iconSize: [44, 44],
+        iconAnchor: [22, 22],
+        tooltipAnchor: [0, -22]
+      });
+    }
+
+    function createJourneyArrowIcon(rotation) {
+      return L.divIcon({
+        className: 'journey-map-arrow-icon',
+        html: `<span class="journey-map-arrow" style="transform: rotate(${Math.round(rotation)}deg);">↑</span>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+    }
+
     function updateJourneyMapOverlay(metrics = getJourneyMetrics(), options = {}) {
       if (!map || typeof L === 'undefined') return;
       if (journeyLayerGroup) {
@@ -12259,30 +12562,52 @@
       if (points.length < 1) return;
       journeyLayerGroup = L.layerGroup().addTo(map);
       const latLngs = points.map(point => L.latLng(point.coords[0], point.coords[1]));
-      if (latLngs.length > 1) {
-        L.polyline(latLngs, {
-          color: '#205b42',
-          weight: 4,
-          opacity: 0.78,
-          dashArray: '8 8',
+      const routeLatLngs = (Array.isArray(metrics.routeLatLngs) && metrics.routeLatLngs.length > 1)
+        ? metrics.routeLatLngs.map(coord => L.latLng(coord[0], coord[1]))
+        : latLngs;
+      if (routeLatLngs.length > 1) {
+        L.polyline(routeLatLngs, {
+          color: '#fffdf7',
+          weight: 12,
+          opacity: 0.92,
+          className: 'journey-map-line'
+        }).addTo(journeyLayerGroup);
+        L.polyline(routeLatLngs, {
+          color: '#184e39',
+          weight: 7,
+          opacity: 0.98,
           className: 'journey-map-line'
         }).addTo(journeyLayerGroup);
       }
       points.forEach((point, idx) => {
-        const label = idx === 0 ? 'Start' : String(idx);
-        L.circleMarker(point.coords, {
-          radius: idx === 0 ? 8 : 7,
-          color: '#205b42',
-          weight: 2,
-          fillColor: idx === 0 ? '#fff7e8' : '#2e7b59',
-          fillOpacity: 0.95
+        const isStart = idx === 0;
+        const isEnd = idx === points.length - 1 && idx > 0;
+        const label = isStart ? 'Start' : String(idx);
+        L.marker(point.coords, {
+          icon: createJourneyMarkerIcon(label, isStart ? 'is-start' : (isEnd ? 'is-end' : '')),
+          zIndexOffset: 2600 + idx
         })
           .bindTooltip(`${label}: ${point.label}`, { permanent: false, direction: 'top' })
           .addTo(journeyLayerGroup);
       });
+      (metrics.segments || []).forEach(segment => {
+        if (!segment || !segment.from || !segment.to) return;
+        const geometry = Array.isArray(segment.geometry) && segment.geometry.length > 1 ? segment.geometry : null;
+        const middle = geometry ? routeGeometryMidpoint(geometry) : midpointCoords(segment.from.coords, segment.to.coords);
+        const middleIndex = geometry ? Math.max(0, Math.min(geometry.length - 2, Math.floor(geometry.length / 2))) : 0;
+        const bearing = geometry
+          ? getBearingDegrees(geometry[middleIndex], geometry[middleIndex + 1])
+          : getBearingDegrees(segment.from.coords, segment.to.coords);
+        L.marker(middle, {
+          icon: createJourneyArrowIcon(bearing),
+          interactive: false,
+          keyboard: false,
+          zIndexOffset: 2500
+        }).addTo(journeyLayerGroup);
+      });
       if (options.fit && latLngs.length) {
         const bounds = L.latLngBounds(latLngs);
-        if (bounds.isValid()) map.fitBounds(bounds.pad(0.18), { maxZoom: 15 });
+        if (bounds.isValid()) map.fitBounds(bounds.pad(0.22), { maxZoom: 15 });
       }
     }
 
@@ -12290,19 +12615,21 @@
       journeyPlanner.stops = normaliseJourneyStops(journeyPlanner.stops);
       renderJourneySelects();
       const metrics = getJourneyMetrics();
+      latestJourneyRouteMetrics = null;
       renderJourneySummary(metrics);
       renderJourneyTimeline(metrics);
       renderSavedJourneySelect();
       updateJourneyMapOverlay(metrics, options);
+      if (metrics.points.length > 1) {
+        resolveJourneyRoadRoute(metrics, options);
+      } else {
+        journeyRouteRequestId += 1;
+      }
       updateControlsSummary();
     }
 
     function addJourneyStopByIndex(index) {
       if (!Number.isInteger(index) || !locations[index]) return false;
-      if (!isCoffeeShopLocation(locations[index])) {
-        setJourneyStatus('Only coffeeshops can be added as journey stops.', 'warn');
-        return false;
-      }
       const ref = getJourneyLocationRef(locations[index], index);
       if (journeyPlanner.stops.some(stop => stop.ref === ref)) {
         setJourneyStatus(`${locations[index].name} is already in this journey.`, 'warn');
@@ -12311,6 +12638,17 @@
       journeyPlanner.stops.push({ ref, strains: [] });
       setJourneyStatus(`${locations[index].name} added to Journey Planner.`, 'good');
       renderJourneyPlanner({ fit: true });
+      return true;
+    }
+
+    function setJourneyStartFromLocationIndex(index, options = {}) {
+      if (!Number.isInteger(index) || !locations[index]) return false;
+      journeyPlanner.start = {
+        type: 'location',
+        ref: getJourneyLocationRef(locations[index], index)
+      };
+      renderJourneyPlanner({ fit: options.fit !== false && journeyPlanner.stops.length > 0 });
+      setJourneyStatus(`${locations[index].name || 'Location'} set as Journey start.`, 'good');
       return true;
     }
 
@@ -12324,6 +12662,10 @@
       }
       if (!journeyPlanner.stops.length) {
         setJourneyStatus('Add at least one stop before saving.', 'warn');
+        return;
+      }
+      if (!getJourneyStartPoint()) {
+        setJourneyStatus('Choose a start point before saving.', 'warn');
         return;
       }
       const id = `journey-${Date.now()}`;
@@ -12351,7 +12693,7 @@
         return;
       }
       journeyPlanner = {
-        start: saved.start || { type: 'landmark', id: 'amsterdam-centraal' },
+        start: saved.start || null,
         stops: normaliseJourneyStops(saved.stops)
       };
       const input = document.getElementById('journey-name-input');
@@ -12761,7 +13103,7 @@
         }
         syncMarkerPriceDisplay(i, visible);
       });
-      updateJourneyMapOverlay();
+      if (journeyLayerGroup) updateJourneyMapOverlay(latestJourneyRouteMetrics || getJourneyMetrics());
     }
 
     // =========================================================
@@ -12775,6 +13117,15 @@
         const i = parseInt(locateBtn.getAttribute('data-index'), 10);
         if (isNaN(i) || !locations[i]) return;
         locateDestinationIndex(i);
+        return;
+      }
+
+      const journeyStartBtn = e.target.closest('.popup-journey-start-btn');
+      if (journeyStartBtn) {
+        const i = parseInt(journeyStartBtn.getAttribute('data-index'), 10);
+        if (isNaN(i) || !locations[i]) return;
+        setJourneyStartFromLocationIndex(i, { fit: true });
+        setControlsVisible(true, { collapsed: false });
         return;
       }
 
@@ -12948,14 +13299,17 @@
     document.getElementById('journey-start-select').addEventListener('change', e => {
       journeyPlanner.start = readJourneyPointValue(e.target.value);
       renderJourneyPlanner({ fit: journeyPlanner.stops.length > 0 });
-      setJourneyStatus('Journey start updated.', 'good');
+      setJourneyStatus(
+        journeyPlanner.start ? 'Journey start updated.' : 'Choose a start, then add mapped locations to build your journey.',
+        journeyPlanner.start ? 'good' : ''
+      );
     });
 
     document.getElementById('journey-add-stop-btn').addEventListener('click', () => {
       const select = document.getElementById('journey-stop-select');
       const value = select ? select.value : '';
       if (!value.startsWith('loc:')) {
-        setJourneyStatus('Choose a coffeeshop to add as the next stop.', 'warn');
+        setJourneyStatus('Choose a mapped location to add as the next stop.', 'warn');
         return;
       }
       const index = parseInt(value.slice(4), 10);
