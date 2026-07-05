@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Budfinder Database | Amsterdam coffeeshop menu search</title>
-  <meta name="description" content="Explore Amsterdam coffeeshop menu data, browse strains, compare prices, build Wanted strains, and find shops matching multiple Wanted strains." />
+  <meta name="description" content="Compare Amsterdam strain prices and browse latest known coffeeshop menus with Budfinder's database." />
   <link rel="canonical" href="https://budfinder.app/database.html" />
   <meta property="og:title" content="Budfinder Database | Amsterdam coffeeshop menu search" />
-  <meta property="og:description" content="Browse strains, compare prices, build Wanted strains, and find Amsterdam shops matching multiple Wanted strains." />
+  <meta property="og:description" content="Compare Amsterdam strain prices and browse latest known coffeeshop menus with Budfinder's database." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://budfinder.app/database.html" />
   <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
@@ -21,6 +21,8 @@
       --resin-glow: rgba(222, 160, 82, 0.34);
       --accent-soft: rgba(46, 123, 89, 0.16);
       --accent-glow: rgba(46, 123, 89, 0.28);
+      --leaf-pattern-opacity: 0.065;
+      --leaf-pattern-blend: multiply;
       --panel: rgba(255, 249, 239, 0.84);
       --panel-strong: rgba(255, 252, 246, 0.94);
       --panel-border: rgba(98, 113, 95, 0.16);
@@ -112,8 +114,8 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 96 96%27%3E%3Cg fill=%27%23205b42%27%3E%3Cpath d=%27M48 8 C43 22 42 34 48 54 C54 34 53 22 48 8Z%27/%3E%3Cpath d=%27M34 16 C32 31 36 42 47 57 C49 39 44 27 34 16Z%27/%3E%3Cpath d=%27M62 16 C64 31 60 42 49 57 C47 39 52 27 62 16Z%27/%3E%3Cpath d=%27M21 29 C25 43 34 52 47 62 C43 45 34 35 21 29Z%27/%3E%3Cpath d=%27M75 29 C71 43 62 52 49 62 C53 45 62 35 75 29Z%27/%3E%3Cpath d=%27M13 48 C25 57 36 62 47 66 C38 52 27 47 13 48Z%27/%3E%3Cpath d=%27M83 48 C71 57 60 62 49 66 C58 52 69 47 83 48Z%27/%3E%3Cpath d=%27M46.5 55 H49.5 V86 H46.5Z%27/%3E%3C/g%3E%3C/svg%3E");
       background-size: 188px 188px;
       background-position: center center;
-      opacity: 0.065;
-      mix-blend-mode: multiply;
+      opacity: var(--leaf-pattern-opacity, 0.065);
+      mix-blend-mode: var(--leaf-pattern-blend, multiply);
       transform: rotate(-5deg) scale(1.08);
       animation: leafFloat 26s ease-in-out infinite alternate;
     }
@@ -220,7 +222,7 @@
       border: 0;
       border-radius: 14px;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
+      color: var(--button-text, #fff9f0);
       cursor: pointer;
       font-weight: 700;
       letter-spacing: 0.01em;
@@ -244,9 +246,9 @@
       gap: 4px;
       padding: 4px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      background: rgba(255, 250, 241, 0.9);
-      color: var(--ink);
+      border: 1px solid rgba(244, 255, 248, 0.16);
+      background: rgba(6, 14, 13, 0.88);
+      color: #f4fff8;
       font-family: "Trebuchet MS", "Gill Sans", sans-serif;
       box-shadow: var(--shadow-md);
       backdrop-filter: blur(18px);
@@ -259,21 +261,22 @@
       min-height: 38px;
       padding: 0 14px;
       border-radius: 999px;
-      color: var(--ink);
+      color: rgba(244, 255, 248, 0.82);
       font-weight: 800;
-      letter-spacing: 0.02em;
       text-decoration: none;
       transition: background 140ms ease, color 140ms ease, transform 140ms ease;
     }
 
     .app-mode-toggle a:hover {
+      background: rgba(244, 255, 248, 0.1);
+      color: #ffffff;
       transform: translateY(-1px);
     }
 
     .app-mode-toggle a.is-active {
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
-      box-shadow: 0 8px 18px rgba(32, 91, 66, 0.16);
+      background: linear-gradient(135deg, #4df49a, #f0b854);
+      color: #06100e;
+      box-shadow: 0 8px 22px rgba(77, 244, 154, 0.24);
     }
 
     .global-vibe-control {
@@ -295,8 +298,9 @@
       border: 1px solid var(--panel-border);
       border-radius: 999px;
       padding: 0 26px 0 10px;
-      color: var(--ink);
-      background: rgba(255, 255, 255, 0.58);
+      color: var(--control-text, var(--ink));
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      color-scheme: var(--control-color-scheme, light);
       font-weight: 800;
     }
 
@@ -318,7 +322,7 @@
 
     button.is-active {
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff;
+      color: var(--button-text, #fff);
     }
 
     .page-shell {
@@ -414,9 +418,9 @@
       padding: 0 14px;
       text-decoration: none;
       font-weight: 700;
-      background: rgba(255, 255, 255, 0.52);
-      color: var(--ink);
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+      color: var(--control-text, var(--ink));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       box-shadow: none;
     }
 
@@ -424,10 +428,10 @@
       min-height: 22px;
       margin: 0 0 14px;
       padding: 10px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.32);
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.32));
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.44);
-      color: var(--muted);
+      background: var(--control-bg, rgba(255, 255, 255, 0.44));
+      color: var(--control-muted, var(--muted));
       font-size: 13px;
       backdrop-filter: blur(14px);
     }
@@ -441,9 +445,9 @@
 
     .workflow-step,
     .trust-note {
-      border: 1px solid rgba(255, 255, 255, 0.34);
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.34));
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.5);
+      background: var(--control-bg, rgba(255, 255, 255, 0.5));
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
       backdrop-filter: blur(12px);
     }
@@ -526,7 +530,7 @@
 
     .field label,
     .filter-label {
-      color: #34413d;
+      color: var(--control-muted, var(--muted));
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -546,7 +550,7 @@
       border: 0;
       padding: 0;
       background: transparent;
-      color: #0f5f49;
+      color: var(--accent-strong);
       font: inherit;
       font-weight: 800;
       text-decoration: underline;
@@ -564,13 +568,19 @@
     select {
       width: 100%;
       min-height: 44px;
-      border: 1px solid rgba(92, 107, 97, 0.14);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
       border-radius: var(--radius-md);
       padding: 0 14px;
-      background: rgba(255, 255, 255, 0.66);
-      color: var(--ink);
+      background: var(--control-bg, rgba(255, 255, 255, 0.66));
+      color: var(--control-text, var(--ink));
+      color-scheme: var(--control-color-scheme, light);
       outline: none;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    input::placeholder {
+      color: var(--control-muted, var(--muted));
+      opacity: 0.82;
     }
 
     .filter-grid {
@@ -581,7 +591,7 @@
 
     .segmented {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 6px;
       margin-bottom: 14px;
     }
@@ -589,6 +599,8 @@
     .segmented button {
       padding: 0 8px;
       font-weight: 700;
+      line-height: 1.15;
+      white-space: normal;
     }
 
     .segmented button:not(.is-active),
@@ -598,9 +610,9 @@
     .strain-more-row button,
     #clear-selected,
     .selected-pill button {
-      background: rgba(255, 255, 255, 0.52);
-      color: var(--ink);
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+      color: var(--control-text, var(--ink));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       box-shadow: none;
     }
 
@@ -813,9 +825,9 @@
     .result-toolbar-actions button,
     .quick-answer-actions button,
     .quick-answer-actions a.secondary {
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.56);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.56));
+      color: var(--control-text, var(--ink));
       box-shadow: none;
     }
 
@@ -823,7 +835,7 @@
     .quick-answer-actions a:not(.secondary) {
       border: 0;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
+      color: var(--button-text, #fff9f0);
       box-shadow: 0 12px 24px rgba(32, 91, 66, 0.14);
     }
 
@@ -892,15 +904,15 @@
       gap: 10px;
       align-items: center;
       padding: 9px 10px;
-      border: 1px solid rgba(92, 107, 97, 0.1);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.1));
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.56);
+      background: var(--control-bg, rgba(255, 255, 255, 0.56));
     }
 
     button.quick-answer-row,
     button.cheapest-shop-row {
       width: 100%;
-      color: var(--ink);
+      color: var(--control-text, var(--ink));
       font-weight: inherit;
       letter-spacing: 0;
       text-align: left;
@@ -909,15 +921,15 @@
 
     button.quick-answer-row:hover,
     button.cheapest-shop-row:hover {
-      border-color: rgba(46, 123, 89, 0.28);
-      background: rgba(244, 252, 246, 0.76);
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.28));
+      background: var(--control-bg-hover, rgba(244, 252, 246, 0.76));
     }
 
     button.quick-answer-row.is-active,
     button.cheapest-shop-row.is-active {
-      border-color: rgba(46, 123, 89, 0.34);
-      background: rgba(232, 247, 235, 0.84);
-      color: var(--ink);
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.34));
+      background: var(--control-selected-bg, rgba(232, 247, 235, 0.84));
+      color: var(--control-text, var(--ink));
     }
 
     .quick-answer-row strong,
@@ -1013,6 +1025,306 @@
     .browse-summary .chip {
       background: rgba(255, 250, 239, 0.74);
       color: var(--ink);
+    }
+
+    .price-guide-panel,
+    .shop-menu-browser {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .price-guide-hero,
+    .shop-menu-hero {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.36));
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, var(--control-bg-strong, rgba(255, 255, 255, 0.74)), var(--control-bg, rgba(255, 255, 255, 0.5))),
+        var(--control-bg, rgba(255, 255, 255, 0.54));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .price-guide-head,
+    .shop-menu-hero-head,
+    .listing-card-head,
+    .menu-category-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .price-guide-head h3,
+    .shop-menu-hero-head h3,
+    .listing-section h3,
+    .menu-category-head h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      line-height: 1.05;
+    }
+
+    .price-guide-head p,
+    .shop-menu-hero-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .price-stat-grid,
+    .shop-menu-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .price-stat,
+    .shop-menu-summary-item {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: 14px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.56));
+      color: var(--control-text, var(--ink));
+    }
+
+    .price-stat span,
+    .shop-menu-summary-item span {
+      color: var(--control-muted, var(--muted));
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .price-stat strong,
+    .shop-menu-summary-item strong {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .price-stat small,
+    .shop-menu-summary-item small {
+      color: var(--control-muted, var(--muted));
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .price-guide-actions,
+    .listing-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .price-guide-actions button,
+    .listing-card-actions button,
+    .listing-card-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .price-guide-actions button,
+    .listing-card-actions button,
+    .listing-card-actions a {
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.56));
+      color: var(--control-text, var(--ink));
+      box-shadow: none;
+    }
+
+    .listing-sections {
+      display: grid;
+      gap: 12px;
+    }
+
+    .listing-section {
+      display: grid;
+      gap: 10px;
+    }
+
+    .listing-section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .listing-section-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .listing-grid,
+    .menu-listing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+    }
+
+    .listing-card,
+    .menu-listing-card {
+      display: grid;
+      gap: 9px;
+      padding: 12px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: 16px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      color: var(--control-text, var(--ink));
+      box-shadow: none;
+    }
+
+    .listing-card strong,
+    .menu-listing-card strong {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+
+    .listing-card-meta,
+    .menu-listing-meta {
+      color: var(--control-muted, var(--muted));
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .listing-card-price,
+    .menu-listing-price {
+      flex: 0 0 auto;
+      color: var(--accent-strong);
+      font-size: 15px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .listing-note {
+      margin: 0;
+      color: var(--control-muted, var(--muted));
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .age-badge,
+    .price-judgement {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.72));
+      color: var(--control-text, var(--ink));
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .age-fresh,
+    .price-great {
+      border-color: rgba(39, 126, 83, 0.2);
+      background: rgba(214, 244, 226, 0.88);
+      color: #205b42;
+    }
+
+    .age-recent,
+    .price-good {
+      border-color: rgba(64, 137, 87, 0.18);
+      background: rgba(229, 246, 219, 0.86);
+      color: #2f6c36;
+    }
+
+    .age-older,
+    .price-typical {
+      border-color: rgba(188, 139, 31, 0.2);
+      background: rgba(255, 240, 190, 0.82);
+      color: #8b5615;
+    }
+
+    .age-stale,
+    .price-high,
+    .price-premium {
+      border-color: rgba(168, 66, 53, 0.18);
+      background: rgba(245, 224, 219, 0.86);
+      color: #9b3529;
+    }
+
+    .age-unknown,
+    .price-unknown {
+      border-color: var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      color: var(--control-muted, var(--muted));
+    }
+
+    .shop-browser-controls {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.4fr) minmax(190px, 1.2fr) minmax(150px, 0.8fr) minmax(150px, 0.8fr) auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 14px;
+      padding: 12px;
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.34));
+      border-radius: 18px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.44));
+    }
+
+    .shop-browser-controls .field {
+      margin-bottom: 0;
+    }
+
+    .shop-browser-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 10px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: var(--radius-md);
+      background: var(--control-bg, rgba(255, 255, 255, 0.56));
+      color: var(--control-text, var(--ink));
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .shop-browser-check input {
+      width: 18px;
+      min-height: 18px;
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
+    .menu-category-group {
+      display: grid;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+    }
+
+    .menu-category-head span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .strain-grid {
@@ -1350,9 +1662,9 @@
       display: grid;
       gap: 9px;
       padding: 12px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.68);
+      background: var(--control-bg, rgba(255, 255, 255, 0.68));
     }
 
     .route-plan-row h4 {
@@ -1374,18 +1686,18 @@
       min-height: 34px;
       padding: 0 10px;
       border-radius: 999px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.58);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      color: var(--control-text, var(--ink));
       font-size: 12px;
       font-weight: 800;
       box-shadow: none;
     }
 
     .route-plan-option.is-active {
-      border-color: rgba(46, 123, 89, 0.36);
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.36));
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
+      color: var(--button-text, #fff9f0);
     }
 
     .common-shop-board-head {
@@ -1483,9 +1795,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.52);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+      color: var(--control-text, var(--ink));
       font-weight: 700;
       text-decoration: none;
     }
@@ -1503,9 +1815,9 @@
       display: grid;
       gap: 6px;
       padding: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.36);
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.36));
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.44);
+      background: var(--control-bg, rgba(255, 255, 255, 0.44));
     }
 
     .common-shop-group-head {
@@ -1549,15 +1861,15 @@
 
     .common-shop-list li[data-partial-shop-card]:hover,
     .common-shop-list li[data-partial-shop-card]:focus-visible {
-      border-color: rgba(46, 123, 89, 0.24);
-      background: rgba(255, 255, 255, 0.62);
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.24));
+      background: var(--control-bg-hover, rgba(255, 255, 255, 0.62));
       outline: none;
       transform: translateY(-1px);
     }
 
     .common-shop-list li.is-selected {
-      border-color: rgba(46, 123, 89, 0.32);
-      background: rgba(234, 248, 239, 0.62);
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.32));
+      background: var(--control-selected-bg, rgba(234, 248, 239, 0.62));
     }
 
     .common-shop-list strong {
@@ -1604,14 +1916,14 @@
       gap: 10px;
       padding: 12px;
       border-radius: 16px;
-      border: 1px solid rgba(92, 107, 97, 0.14);
-      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.78));
       box-shadow: none;
     }
 
     .shop-card.is-selected {
-      border-color: rgba(46, 123, 89, 0.34);
-      background: rgba(245, 255, 248, 0.84);
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.34));
+      background: var(--control-selected-bg, rgba(245, 255, 248, 0.84));
     }
 
     .shop-card-head {
@@ -1718,9 +2030,9 @@
       min-height: 34px;
       padding: 0 12px;
       border-radius: 14px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.52);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+      color: var(--control-text, var(--ink));
       font-weight: 700;
       text-decoration: none;
     }
@@ -1886,17 +2198,17 @@
     }
 
     .availability-tags .strain-menu-chip.is-active {
-      border-color: rgba(46, 123, 89, 0.36);
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.36));
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
+      color: var(--button-text, #fff9f0);
     }
 
     .empty {
       padding: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.34);
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.34));
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.54);
-      color: var(--muted);
+      background: var(--control-bg, rgba(255, 255, 255, 0.54));
+      color: var(--control-muted, var(--muted));
       text-align: center;
     }
 
@@ -1924,6 +2236,12 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .price-stat-grid,
+      .shop-menu-summary-grid,
+      .shop-browser-controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .topbar {
         align-items: stretch;
         flex-direction: column;
@@ -1934,6 +2252,24 @@
         flex-basis: auto;
         width: 100%;
       }
+    }
+
+    .database-quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .database-quick-chips button {
+      min-height: 32px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+      color: var(--control-text, var(--ink));
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: none;
     }
 
     @media (max-width: 680px) {
@@ -1972,7 +2308,12 @@
       .filter-grid,
       .card-actions,
       .browse-mode-grid,
-      .family-filter-grid {
+      .family-filter-grid,
+      .price-stat-grid,
+      .shop-menu-summary-grid,
+      .shop-browser-controls,
+      .listing-grid,
+      .menu-listing-grid {
         grid-template-columns: 1fr;
       }
 
@@ -2006,7 +2347,9 @@
       .card-actions,
       .shop-card-actions,
       .common-shop-card-actions,
-      .quick-answer-actions {
+      .quick-answer-actions,
+      .price-guide-actions,
+      .listing-card-actions {
         gap: 10px;
       }
 
@@ -2025,9 +2368,18 @@
       }
 
       .result-toolbar,
-      .quick-answer-head {
+      .quick-answer-head,
+      .price-guide-head,
+      .shop-menu-hero-head,
+      .listing-section-head,
+      .listing-card-head,
+      .menu-category-head {
         align-items: stretch;
         flex-direction: column;
+      }
+
+      .shop-browser-check {
+        justify-content: flex-start;
       }
 
       .result-context {
@@ -2101,9 +2453,9 @@
   <main class="page-shell">
     <header class="topbar">
       <div class="brand">
-        <span class="kicker">Database explorer</span>
+        <span class="kicker">Menu intelligence</span>
         <h1>Budfinder database</h1>
-        <p class="intro-copy">Research strains, compare prices, and shortlist shops before sending the best candidates to the map and itinerary builder.</p>
+        <p class="intro-copy">Compare Amsterdam strain prices or browse the latest known coffeeshop menus. Menu data changes quickly, so use prices and listings as planning guidance.</p>
       </div>
       <div class="result-toolbar" aria-label="Database navigation">
         <span id="result-context" class="result-context">Loading Amsterdam menu data...</span>
@@ -2118,38 +2470,42 @@
 
     <section class="workflow-strip" aria-label="Database workflow">
       <div class="workflow-step">
-        <span>Step 1</span>
-        <strong>Pick Wanted strains</strong>
-        <p>Search and add Wanted strains.</p>
+        <span>Mode 1</span>
+        <strong>Strain Price Guide</strong>
+        <p>Search a strain, compare typical prices, and spot good-value listings.</p>
       </div>
       <div class="workflow-step">
-        <span>Step 2</span>
-        <strong>Find matching shops</strong>
-        <p>Compare availability, best deals, city, type, menu freshness, and Wanted-strain coverage.</p>
+        <span>Mode 2</span>
+        <strong>Shop Menu Browser</strong>
+        <p>Pick a coffeeshop and scan the full known menu by category, price, and freshness.</p>
       </div>
       <div class="workflow-step">
-        <span>Step 3</span>
-        <strong>Send places to the map</strong>
-        <p>Select the shops you like and open them in Budfinder's map and itinerary workflow.</p>
+        <span>Data note</span>
+        <strong>Check before travelling</strong>
+        <p>Freshness badges show how old the latest menu signal is, using real listing dates only.</p>
       </div>
     </section>
     <p class="trust-note">Menus, prices, and availability can change quickly. Treat prices and strain listings as planning guidance, not a guarantee. Check before travelling across town for a specific item, follow local laws and coffeeshop rules, and use location only when you choose location-based map features.</p>
 
     <div class="layout">
       <aside class="panel side-panel">
-        <span class="filter-label">View</span>
+        <span class="filter-label">Database mode</span>
         <div class="segmented" role="group" aria-label="View mode">
-          <button class="is-active" type="button" data-view="strains">Browse strains</button>
-          <button type="button" data-view="compare">Match Wanted list</button>
-          <button type="button" data-view="shops">Browse shop menus</button>
+          <button class="is-active" type="button" data-view="strains">Strain Price Guide</button>
+          <button type="button" data-view="shops">Shop Menu Browser</button>
         </div>
 
         <div class="field">
-          <label for="search">Search</label>
-          <input id="search" type="search" placeholder="Search strains, shops, or areas..." autocomplete="off" />
+          <label id="search-label" for="search">Search a strain</label>
+          <input id="search" type="search" placeholder="Try Gelato, Amnesia Haze, or Zkittlez..." autocomplete="off" />
+          <div id="search-chip-row" class="database-quick-chips" aria-label="Quick searches">
+            <button type="button" data-search-chip="Gelato">Gelato</button>
+            <button type="button" data-search-chip="Amnesia Haze">Amnesia Haze</button>
+            <button type="button" data-search-chip="Zkittlez">Zkittlez</button>
+          </div>
           <div class="field-note">
             Searching for a coffeeshop?
-            <button id="search-shops-shortcut" class="text-button" type="button">Browse shop menus</button>
+            <button id="search-shops-shortcut" class="text-button" type="button">Use Shop Menu Browser</button>
           </div>
         </div>
 
@@ -2276,10 +2632,11 @@
         <section id="strains-view" class="panel">
           <div class="section-head">
             <div>
-              <h2>Browse strains</h2>
-              <p id="strains-summary">Pick strains to build Wanted strains.</p>
+              <h2>Strain Price Guide</h2>
+              <p id="strains-summary">Search a strain to compare typical prices, best value listings, and menu freshness.</p>
             </div>
           </div>
+          <div id="price-guide-panel" class="price-guide-panel" aria-live="polite"></div>
           <div id="browse-summary" class="browse-summary" aria-label="Active browse filters"></div>
           <div id="strain-grid" class="strain-grid"></div>
           <div id="strain-more-row" class="strain-more-row" hidden>
@@ -2302,10 +2659,42 @@
         <section id="shops-view" class="panel" hidden>
           <div class="section-head">
             <div>
-              <h2>Browse shop menus</h2>
-              <p id="shops-summary">Shops are ordered A-Z by default. Choose Best deals to rank below-average prices first.</p>
+              <h2>Shop Menu Browser</h2>
+              <p id="shops-summary">Select a coffeeshop to scan its latest known menu listings by category, price, and freshness.</p>
             </div>
           </div>
+          <div class="shop-browser-controls" aria-label="Shop menu browser controls">
+            <div class="field">
+              <label for="shop-browser-search">Find a coffeeshop</label>
+              <input id="shop-browser-search" type="search" placeholder="Try Terps Army, Family First, or The Plug..." autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="shop-browser-select">Selected shop</label>
+              <select id="shop-browser-select">
+                <option value="">Loading shops...</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="shop-menu-sort">Sort menu</label>
+              <select id="shop-menu-sort">
+                <option value="name">A-Z</option>
+                <option value="cheapest">Lowest price</option>
+                <option value="newest">Newest menu signal</option>
+                <option value="judgement">Best value label</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="shop-category-filter">Category</label>
+              <select id="shop-category-filter">
+                <option value="">All categories</option>
+              </select>
+            </div>
+            <label class="shop-browser-check">
+              <input id="shop-hide-unknown-prices" type="checkbox" />
+              <span>Hide price unknown</span>
+            </label>
+          </div>
+          <div id="shop-menu-browser" class="shop-menu-browser" aria-live="polite"></div>
           <div id="shop-list" class="shop-list"></div>
         </section>
       </section>
@@ -2314,8 +2703,8 @@
 
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
-  <script src="scripts/budfinder-theme.js"></script>
-  <script src="scripts/budfinder-page-settings.js"></script>
+  <script src="scripts/budfinder-theme.js?v=20260705-leaf-bg1"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260704-strain-themes1"></script>
   <script>
     const state = {
       offerings: [],
@@ -2335,12 +2724,18 @@
       browseMode: 'value',
       familyFilter: '',
       visibleStrainLimit: 36,
+      activeShopId: '',
+      shopMenuSort: 'name',
+      shopMenuCategory: '',
+      shopHideUnknownPrices: false,
       view: 'strains'
     };
 
     const els = {
       status: document.getElementById('status'),
       search: document.getElementById('search'),
+      searchLabel: document.getElementById('search-label'),
+      searchChipRow: document.getElementById('search-chip-row'),
       searchShopsShortcut: document.getElementById('search-shops-shortcut'),
       city: document.getElementById('city-filter'),
       type: document.getElementById('type-filter'),
@@ -2369,12 +2764,19 @@
       jumpResults: document.getElementById('jump-results'),
       jumpTop: document.getElementById('jump-top'),
       strainGrid: document.getElementById('strain-grid'),
+      priceGuidePanel: document.getElementById('price-guide-panel'),
       browseSummary: document.getElementById('browse-summary'),
       strainMoreRow: document.getElementById('strain-more-row'),
       loadMoreStrains: document.getElementById('load-more-strains'),
       comparisonGrid: document.getElementById('comparison-grid'),
       commonShopBoard: document.getElementById('common-shop-board'),
       routePlanBoard: document.getElementById('route-plan-board'),
+      shopBrowserSearch: document.getElementById('shop-browser-search'),
+      shopBrowserSelect: document.getElementById('shop-browser-select'),
+      shopMenuSort: document.getElementById('shop-menu-sort'),
+      shopCategoryFilter: document.getElementById('shop-category-filter'),
+      shopHideUnknownPrices: document.getElementById('shop-hide-unknown-prices'),
+      shopMenuBrowser: document.getElementById('shop-menu-browser'),
       shopList: document.getElementById('shop-list'),
       strainsSummary: document.getElementById('strains-summary'),
       compareSummary: document.getElementById('compare-summary'),
@@ -2446,6 +2848,11 @@
 
     function openShopSearchResults() {
       setView('shops');
+      if (els.shopBrowserSearch && els.search && els.search.value) {
+        els.shopBrowserSearch.value = els.search.value;
+        state.activeShopId = '';
+      }
+      render();
       const target = document.getElementById('shops-view');
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -2522,6 +2929,128 @@
       if (days <= 14) return { label: 'Fresh', className: 'is-fresh' };
       if (days <= 60) return { label: 'Likely', className: 'is-likely' };
       return { label: 'Old intel', className: 'is-old-intel' };
+    }
+
+    function listingDateValue(item) {
+      return (item && (item.updated_at || item.last_seen_at_utc)) || '';
+    }
+
+    function menuAgeInfo(value) {
+      const time = parseTime(value);
+      if (!Number.isFinite(time)) {
+        return { label: 'Unknown', className: 'age-unknown', bucket: 'unknown', days: Infinity };
+      }
+      const days = ageDaysFromTime(time);
+      if (days <= 7) return { label: 'Fresh', className: 'age-fresh', bucket: 'fresh', days };
+      if (days <= 30) return { label: 'Recent', className: 'age-recent', bucket: 'recent', days };
+      if (days <= 90) return { label: 'Older', className: 'age-older', bucket: 'older', days };
+      return { label: 'Stale', className: 'age-stale', bucket: 'stale', days };
+    }
+
+    function ageBadgeHtml(value) {
+      const age = menuAgeInfo(value);
+      const suffix = Number.isFinite(age.days)
+        ? (age.days === 0 ? 'today' : `${age.days}d`)
+        : 'no date';
+      return `<span class="age-badge ${age.className}">${escapeHtml(age.label)} · ${escapeHtml(suffix)}</span>`;
+    }
+
+    function pricePerGram(item) {
+      const amount = Number(item && item.price_amount);
+      const unit = normalise(item && item.price_unit);
+      if (!Number.isFinite(amount)) return null;
+      if (unit && !['g', 'gram', 'grams', '/g', 'per gram'].includes(unit)) return null;
+      return amount;
+    }
+
+    function sortedNumbers(values) {
+      return (Array.isArray(values) ? values : [])
+        .map(Number)
+        .filter(Number.isFinite)
+        .sort((a, b) => a - b);
+    }
+
+    function median(values) {
+      const nums = sortedNumbers(values);
+      if (!nums.length) return null;
+      const mid = Math.floor(nums.length / 2);
+      return nums.length % 2 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
+    }
+
+    function percentile(values, fraction) {
+      const nums = sortedNumbers(values);
+      if (!nums.length) return null;
+      if (nums.length === 1) return nums[0];
+      const pos = (nums.length - 1) * fraction;
+      const lower = Math.floor(pos);
+      const upper = Math.ceil(pos);
+      if (lower === upper) return nums[lower];
+      return nums[lower] + ((nums[upper] - nums[lower]) * (pos - lower));
+    }
+
+    function priceJudgementFor(price, medianPrice) {
+      const amount = Number(price);
+      const mid = Number(medianPrice);
+      if (!Number.isFinite(amount) || !Number.isFinite(mid) || mid <= 0) {
+        return { label: 'Unknown', className: 'price-unknown', rank: 5 };
+      }
+      const diff = (amount - mid) / mid;
+      if (diff <= -0.2) return { label: 'Great', className: 'price-great', rank: 0 };
+      if (diff <= -0.1) return { label: 'Good', className: 'price-good', rank: 1 };
+      if (Math.abs(diff) <= 0.1) return { label: 'Typical', className: 'price-typical', rank: 2 };
+      if (diff <= 0.25) return { label: 'High', className: 'price-high', rank: 3 };
+      return { label: 'Premium', className: 'price-premium', rank: 4 };
+    }
+
+    function priceJudgementBadgeHtml(price, medianPrice) {
+      const judgement = priceJudgementFor(price, medianPrice);
+      return `<span class="price-judgement ${judgement.className}">${escapeHtml(judgement.label)}</span>`;
+    }
+
+    function ageBreakdownForListings(listings) {
+      const buckets = { fresh: 0, recent: 0, older: 0, stale: 0, unknown: 0 };
+      (Array.isArray(listings) ? listings : []).forEach(item => {
+        const bucket = menuAgeInfo(listingDateValue(item)).bucket;
+        buckets[bucket] = (buckets[bucket] || 0) + 1;
+      });
+      return buckets;
+    }
+
+    function ageBreakdownLabel(buckets) {
+      const parts = [
+        ['Fresh', buckets.fresh],
+        ['Recent', buckets.recent],
+        ['Older', buckets.older],
+        ['Stale', buckets.stale],
+        ['Unknown', buckets.unknown]
+      ].filter(([, count]) => count > 0);
+      return parts.length ? parts.map(([label, count]) => `${label} ${count}`).join(' · ') : 'No menu dates';
+    }
+
+    function priceProfileForListings(listings) {
+      const usableListings = (Array.isArray(listings) ? listings : [])
+        .map(item => ({ item, price: pricePerGram(item) }))
+        .filter(row => Number.isFinite(row.price));
+      const prices = usableListings.map(row => row.price);
+      const newestTime = latestListingTime(listings);
+      const shopIds = shopIdsForListings(listings);
+      return {
+        listings: Array.isArray(listings) ? listings : [],
+        usableListings,
+        prices,
+        count: prices.length,
+        shopCount: shopIds.length,
+        average: average(prices),
+        median: median(prices),
+        low: prices.length ? Math.min(...prices) : null,
+        high: prices.length ? Math.max(...prices) : null,
+        q25: prices.length >= 3 ? percentile(prices, 0.25) : null,
+        q75: prices.length >= 3 ? percentile(prices, 0.75) : null,
+        newestTime,
+        newestDate: newestTime ? new Date(newestTime).toISOString() : '',
+        ageBreakdown: ageBreakdownForListings(listings),
+        shopIds
+      };
     }
 
     function sortListingsByPrice(items) {
@@ -3621,7 +4150,7 @@
     function updateResultToolbar(filteredOfferings, filteredStats) {
       if (els.resultContext) {
         const filters = currentFilters();
-        const viewName = state.view === 'shops' ? 'Browse shop menus' : state.view === 'compare' ? 'Match Wanted list' : 'Browse strains';
+        const viewName = state.view === 'shops' ? 'Shop Menu Browser' : state.view === 'compare' ? 'Match Wanted list' : 'Strain Price Guide';
         const bits = [
           `${filteredStats.length.toLocaleString()} strains`,
           `${new Set(filteredOfferings.map(item => item.shop_id)).size.toLocaleString()} shops`,
@@ -3790,9 +4319,9 @@
 
     function updateMapToggleHref() {
       if (!els.mapToggle) return;
-      els.mapToggle.href = mapUrlForShopIds(state.selectedShopIds);
+      els.mapToggle.href = 'map.html';
       els.mapToggle.title = state.selectedShopIds.length
-        ? `Show ${state.selectedShopIds.length} selected coffeeshop${state.selectedShopIds.length === 1 ? '' : 's'} on the map`
+        ? `Open the full map. Use "Show on map" to map ${state.selectedShopIds.length} shortlisted coffeeshop${state.selectedShopIds.length === 1 ? '' : 's'}.`
         : 'Show the full map';
     }
 
@@ -3910,6 +4439,343 @@
           </div>
         `;
       }).join('');
+    }
+
+    function pickPriceGuideStat(filteredStats) {
+      const q = normaliseSearchText(els.search.value);
+      if (!q) return null;
+      const pool = Array.isArray(filteredStats) && filteredStats.length ? filteredStats : state.strainStats;
+      return pool.find(stat => normaliseSearchText(stat.name) === q || normaliseSearchText(stat.key) === q) ||
+        pool.find(stat => normaliseSearchText(stat.name).startsWith(q)) ||
+        pool.find(stat => normaliseSearchText(stat.name).includes(q)) ||
+        null;
+    }
+
+    function statTileHtml(label, value, helper = '') {
+      return `
+        <div class="price-stat">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value == null || value === '' ? 'Unknown' : value)}</strong>
+          ${helper ? `<small>${escapeHtml(helper)}</small>` : ''}
+        </div>
+      `;
+    }
+
+    function listingCardHtml(item, profile, options = {}) {
+      const shopId = String(item.shop_id || '');
+      const price = pricePerGram(item);
+      const priceLabel = Number.isFinite(price)
+        ? money(price, item.price_currency, item.price_unit)
+        : 'Price unknown';
+      const meta = [
+        item.shop_city || '',
+        item.base_type || '',
+        Number(item.is_cali) === 1 ? 'Cali' : '',
+        item.grower ? `Grower: ${item.grower}` : ''
+      ].filter(Boolean).join(' · ');
+      const notes = String(item.notes || '').trim();
+      const sourceUrl = shopLinkForId(shopId);
+      return `
+        <article class="listing-card">
+          <div class="listing-card-head">
+            <div>
+              <strong>${escapeHtml(item.shop_name || 'Unknown shop')}</strong>
+              <div class="listing-card-meta">${escapeHtml(meta || 'Menu listing')}</div>
+            </div>
+            <span class="listing-card-price">${escapeHtml(priceLabel)}</span>
+          </div>
+          <div class="chip-row">
+            ${priceJudgementBadgeHtml(price, profile && profile.median)}
+            ${ageBadgeHtml(listingDateValue(item))}
+            ${item.strain_name ? `<span class="chip">${escapeHtml(item.strain_name)}</span>` : ''}
+          </div>
+          ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
+          <div class="listing-card-actions">
+            <button type="button" data-focus-shop-menu="${escapeHtmlAttr(shopId)}">View shop menu</button>
+            <button type="button" data-toggle-map-shop="${escapeHtmlAttr(shopId)}" class="${isShopSelected(shopId) ? 'is-active' : ''}">${isShopSelected(shopId) ? 'Shortlisted' : 'Shortlist'}</button>
+            <a href="${escapeHtmlAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">Source</a>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderPriceGuide(filteredStats) {
+      if (!els.priceGuidePanel) return;
+      const q = normaliseSearchText(els.search.value);
+      if (!q) {
+        els.priceGuidePanel.innerHTML = `
+          <div class="price-guide-hero">
+            <div class="price-guide-head">
+              <div>
+                <h3>Search a strain for a price profile</h3>
+                <p>Use the search box to see typical range, average, median, best value listings, and menu age signals.</p>
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const stat = pickPriceGuideStat(filteredStats);
+      if (!stat) {
+        const alternatives = alternativeStrainsForQuery(els.search.value, state.strainStats, 4);
+        els.priceGuidePanel.innerHTML = `
+          <div class="price-guide-hero">
+            <div class="price-guide-head">
+              <div>
+                <h3>No price profile found</h3>
+                <p>No current strain listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name or one of the available alternatives.</p>
+              </div>
+            </div>
+            ${alternativeLinksHtml(alternatives)}
+          </div>
+        `;
+        return;
+      }
+
+      const listings = visibleOfferingsForStat(stat);
+      const profile = priceProfileForListings(listings);
+      const newestLabel = profile.newestDate
+        ? `${menuAgeInfo(profile.newestDate).label} · ${formatDate(profile.newestDate)}`
+        : 'Unknown';
+      const typicalRange = profile.q25 == null || profile.q75 == null
+        ? 'Needs 3+ prices'
+        : `${money(profile.q25)} to ${money(profile.q75)}`;
+      const confidence = profile.count >= 3
+        ? '25th to 75th percentile'
+        : `${profile.count} usable price${profile.count === 1 ? '' : 's'}`;
+      const sortedByValue = profile.usableListings
+        .slice()
+        .sort((a, b) => a.price - b.price || menuAgeInfo(listingDateValue(a.item)).days - menuAgeInfo(listingDateValue(b.item)).days || compareShopName(a.item, b.item))
+        .map(row => row.item);
+      const bestValue = sortedByValue.slice(0, 6);
+      const allListings = listings
+        .slice()
+        .sort((a, b) => {
+          const priceDiff = (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity);
+          if (priceDiff !== 0) return priceDiff;
+          const freshnessDiff = menuAgeInfo(listingDateValue(a)).days - menuAgeInfo(listingDateValue(b)).days;
+          if (freshnessDiff !== 0) return freshnessDiff;
+          return compareShopName(a, b);
+        });
+      const hiddenAllCount = Math.max(0, allListings.length - 80);
+
+      els.priceGuidePanel.innerHTML = `
+        <div class="price-guide-hero">
+          <div class="price-guide-head">
+            <div>
+              <h3>${escapeHtml(stat.name)}</h3>
+              <p>${profile.count.toLocaleString()} usable price${profile.count === 1 ? '' : 's'} from ${profile.shopCount.toLocaleString()} shop${profile.shopCount === 1 ? '' : 's'} and ${listings.length.toLocaleString()} matching listing${listings.length === 1 ? '' : 's'}.</p>
+            </div>
+            ${ageBadgeHtml(profile.newestDate)}
+          </div>
+          <div class="price-stat-grid">
+            ${statTileHtml('Typical range', typicalRange, confidence)}
+            ${statTileHtml('Average', profile.average == null ? 'Unknown' : money(profile.average), 'Mean visible price')}
+            ${statTileHtml('Median', profile.median == null ? 'Unknown' : money(profile.median), 'Price judgement baseline')}
+            ${statTileHtml('Lowest', profile.low == null ? 'Unknown' : money(profile.low), 'Cheapest visible listing')}
+            ${statTileHtml('Highest', profile.high == null ? 'Unknown' : money(profile.high), 'Highest visible listing')}
+            ${statTileHtml('Listings', listings.length.toLocaleString(), `${profile.count.toLocaleString()} priced`)}
+            ${statTileHtml('Shop count', profile.shopCount.toLocaleString(), 'Unique browsable shops')}
+            ${statTileHtml('Newest signal', newestLabel, ageBreakdownLabel(profile.ageBreakdown))}
+          </div>
+          <div class="price-guide-actions">
+            <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Wanted' : 'Add to Wanted strains'}</button>
+          </div>
+        </div>
+        <div class="listing-sections">
+          <section class="listing-section">
+            <div class="listing-section-head">
+              <div>
+                <h3>Best value listings</h3>
+                <p>Lowest visible per-gram prices first. Labels compare each price with this strain's median.</p>
+              </div>
+            </div>
+            <div class="listing-grid">
+              ${bestValue.length ? bestValue.map(item => listingCardHtml(item, profile)).join('') : '<div class="empty">No priced listings are available for this strain yet.</div>'}
+            </div>
+          </section>
+          <section class="listing-section">
+            <div class="listing-section-head">
+              <div>
+                <h3>All matching listings</h3>
+                <p>${allListings.length.toLocaleString()} visible listing${allListings.length === 1 ? '' : 's'} sorted by price, freshness, then shop name.</p>
+              </div>
+            </div>
+            <div class="listing-grid">
+              ${allListings.slice(0, 80).map(item => listingCardHtml(item, profile)).join('')}
+            </div>
+            ${hiddenAllCount ? `<div class="empty">${hiddenAllCount.toLocaleString()} more listing${hiddenAllCount === 1 ? '' : 's'} hidden to keep the page readable. Narrow the search or filters to see them.</div>` : ''}
+          </section>
+        </div>
+      `;
+    }
+
+    function shopRowsFromOfferings(offerings) {
+      const grouped = new Map();
+      (Array.isArray(offerings) ? offerings : []).forEach(item => {
+        const shopId = String(item.shop_id || `${item.shop_name}-${item.shop_city}`);
+        const shopMeta = state.shopById.get(String(item.shop_id)) || {};
+        if (!grouped.has(shopId)) {
+          grouped.set(shopId, {
+            shopId,
+            shopName: item.shop_name || shopMeta.name || 'Unknown shop',
+            city: item.shop_city || shopMeta.city || 'Unknown city',
+            shopKey: item.shop_key || shopMeta.shop_key || '',
+            shopUrl: shopMeta.shop_url || '',
+            offerings: []
+          });
+        }
+        grouped.get(shopId).offerings.push(item);
+      });
+      return Array.from(grouped.values()).sort(compareShopName);
+    }
+
+    function shopBrowserRows() {
+      const q = normaliseSearchText(els.shopBrowserSearch ? els.shopBrowserSearch.value : '');
+      return shopRowsFromOfferings(state.offerings)
+        .filter(row => !q || fieldMatchesSearch(row.shopName, q) || fieldMatchesSearch(row.city, q) || fieldMatchesSearch(row.shopKey, q));
+    }
+
+    function syncShopBrowserOptions() {
+      if (!els.shopBrowserSelect) return [];
+      const rows = shopBrowserRows();
+      if (state.activeShopId && !rows.some(row => row.shopId === state.activeShopId)) {
+        state.activeShopId = '';
+      }
+      if (!state.activeShopId && rows.length) {
+        state.activeShopId = rows[0].shopId;
+      }
+      els.shopBrowserSelect.innerHTML = rows.length
+        ? rows.map(row => `<option value="${escapeHtmlAttr(row.shopId)}"${row.shopId === state.activeShopId ? ' selected' : ''}>${escapeHtml(row.shopName)}${row.city ? ` · ${escapeHtml(row.city)}` : ''}</option>`).join('')
+        : '<option value="">No matching shops</option>';
+      return rows;
+    }
+
+    function syncShopCategoryOptions(listings) {
+      if (!els.shopCategoryFilter) return;
+      const categories = unique((Array.isArray(listings) ? listings : []).map(item => item.base_type || 'Unknown category')).sort(compareText);
+      if (state.shopMenuCategory && !categories.includes(state.shopMenuCategory)) {
+        state.shopMenuCategory = '';
+      }
+      els.shopCategoryFilter.innerHTML = '<option value="">All categories</option>' + categories
+        .map(category => `<option value="${escapeHtmlAttr(category)}"${category === state.shopMenuCategory ? ' selected' : ''}>${escapeHtml(category)}</option>`)
+        .join('');
+    }
+
+    function menuListingCardHtml(item) {
+      const stat = getStatByKey(item.strain_name_normalised || normalise(item.strain_name));
+      const profile = priceProfileForListings(stat ? stat.offerings : [item]);
+      const price = pricePerGram(item);
+      const priceLabel = Number.isFinite(price)
+        ? money(price, item.price_currency, item.price_unit)
+        : 'Price unknown';
+      const meta = [
+        item.base_type || 'Unknown category',
+        Number(item.is_cali) === 1 ? 'Cali' : '',
+        item.grower ? `Grower: ${item.grower}` : ''
+      ].filter(Boolean).join(' · ');
+      const notes = String(item.notes || '').trim();
+      return `
+        <article class="menu-listing-card">
+          <div class="listing-card-head">
+            <div>
+              <strong>${escapeHtml(item.strain_name || 'Unknown strain')}</strong>
+              <div class="menu-listing-meta">${escapeHtml(meta)}</div>
+            </div>
+            <span class="menu-listing-price">${escapeHtml(priceLabel)}</span>
+          </div>
+          <div class="chip-row">
+            ${priceJudgementBadgeHtml(price, profile.median)}
+            ${ageBadgeHtml(listingDateValue(item))}
+          </div>
+          ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
+        </article>
+      `;
+    }
+
+    function renderShopMenuBrowser() {
+      if (!els.shopMenuBrowser) return;
+      const rows = syncShopBrowserOptions();
+      const row = rows.find(item => item.shopId === state.activeShopId) ||
+        shopRowsFromOfferings(state.offerings).find(item => item.shopId === state.activeShopId) ||
+        rows[0];
+      if (!row) {
+        syncShopCategoryOptions([]);
+        els.shopMenuBrowser.innerHTML = '<div class="empty">No coffeeshop menus match this search. Try a shorter shop name.</div>';
+        return;
+      }
+      state.activeShopId = row.shopId;
+      if (els.shopBrowserSelect) els.shopBrowserSelect.value = row.shopId;
+
+      const allListings = row.offerings.slice();
+      syncShopCategoryOptions(allListings);
+      const filtered = allListings
+        .filter(item => !state.shopMenuCategory || (item.base_type || 'Unknown category') === state.shopMenuCategory)
+        .filter(item => !state.shopHideUnknownPrices || Number.isFinite(pricePerGram(item)));
+      const sorted = filtered.slice().sort((a, b) => {
+        if (state.shopMenuSort === 'cheapest') {
+          return (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity) || compareStrainName(a, b);
+        }
+        if (state.shopMenuSort === 'newest') {
+          return (listingTime(b) || 0) - (listingTime(a) || 0) || compareStrainName(a, b);
+        }
+        if (state.shopMenuSort === 'judgement') {
+          const aStat = getStatByKey(a.strain_name_normalised || normalise(a.strain_name));
+          const bStat = getStatByKey(b.strain_name_normalised || normalise(b.strain_name));
+          const aRank = priceJudgementFor(pricePerGram(a), priceProfileForListings(aStat ? aStat.offerings : [a]).median).rank;
+          const bRank = priceJudgementFor(pricePerGram(b), priceProfileForListings(bStat ? bStat.offerings : [b]).median).rank;
+          return aRank - bRank || (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity) || compareStrainName(a, b);
+        }
+        return compareStrainName(a, b);
+      });
+
+      const prices = allListings.map(pricePerGram).filter(Number.isFinite);
+      const newestTime = latestListingTime(allListings);
+      const newestDate = newestTime ? new Date(newestTime).toISOString() : '';
+      const groups = new Map();
+      sorted.forEach(item => {
+        const category = item.base_type || 'Unknown category';
+        if (!groups.has(category)) groups.set(category, []);
+        groups.get(category).push(item);
+      });
+      const href = row.shopUrl || shopLinkForId(row.shopId);
+      const selected = isShopSelected(row.shopId);
+      els.shopMenuBrowser.innerHTML = `
+        <div class="shop-menu-hero">
+          <div class="shop-menu-hero-head">
+            <div class="shop-card-main">
+              ${getShopLogoHtml(row.shopKey, row.shopName)}
+              <div class="shop-card-copy">
+                <h3>${escapeHtml(row.shopName)}</h3>
+                <p>${escapeHtml(row.city || 'City unknown')} · ${allListings.length.toLocaleString()} known menu listing${allListings.length === 1 ? '' : 's'}.</p>
+              </div>
+            </div>
+            ${ageBadgeHtml(newestDate)}
+          </div>
+          <div class="shop-menu-summary-grid">
+            ${statTileHtml('Known listings', allListings.length.toLocaleString(), `${filtered.length.toLocaleString()} visible`)}
+            ${statTileHtml('Priced listings', prices.length.toLocaleString(), prices.length ? `Low ${money(Math.min(...prices))}` : 'No usable prices')}
+            ${statTileHtml('Average price', prices.length ? money(average(prices)) : 'Unknown', 'Visible shop menu')}
+            ${statTileHtml('Newest signal', newestDate ? formatDate(newestDate) : 'Unknown', ageBreakdownLabel(ageBreakdownForListings(allListings)))}
+          </div>
+          <div class="listing-card-actions">
+            <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${selected ? 'is-active' : ''}">${selected ? 'Shortlisted' : 'Shortlist shop'}</button>
+            <a href="${escapeHtmlAttr(href)}" target="_blank" rel="noopener noreferrer">Source menu</a>
+          </div>
+        </div>
+        ${groups.size ? Array.from(groups.entries()).map(([category, items]) => `
+          <section class="menu-category-group">
+            <div class="menu-category-head">
+              <h3>${escapeHtml(category)}</h3>
+              <span>${items.length.toLocaleString()} listing${items.length === 1 ? '' : 's'}</span>
+            </div>
+            <div class="menu-listing-grid">
+              ${items.map(menuListingCardHtml).join('')}
+            </div>
+          </section>
+        `).join('') : '<div class="empty">No menu listings match these shop menu filters.</div>'}
+      `;
     }
 
     function renderStrains(stats) {
@@ -4542,16 +5408,35 @@
     }
 
     function setView(view) {
-      state.view = view;
+      state.view = view === 'shops' ? 'shops' : view === 'compare' ? 'compare' : 'strains';
       document.querySelectorAll('[data-view]').forEach(button => {
-        button.classList.toggle('is-active', button.dataset.view === view);
+        button.classList.toggle('is-active', button.dataset.view === state.view);
       });
-      document.getElementById('strains-view').hidden = view !== 'strains';
-      document.getElementById('compare-view').hidden = view !== 'compare';
-      document.getElementById('shops-view').hidden = view !== 'shops';
+      document.getElementById('strains-view').hidden = state.view !== 'strains';
+      document.getElementById('compare-view').hidden = state.view !== 'compare';
+      document.getElementById('shops-view').hidden = state.view !== 'shops';
+      syncModeSearchCopy();
       if (state.offerings.length && state.strainStats.length) {
         const filteredStats = getFilteredStats();
         updateResultToolbar(getFilteredOfferings(filteredStats), filteredStats);
+      }
+    }
+
+    function syncModeSearchCopy() {
+      const isShopMode = state.view === 'shops';
+      if (els.searchLabel) els.searchLabel.textContent = isShopMode ? 'Find a coffeeshop' : 'Search a strain';
+      if (els.search) {
+        els.search.placeholder = isShopMode
+          ? 'Try Terps Army, Family First, or The Plug...'
+          : 'Try Gelato, Amnesia Haze, or Zkittlez...';
+      }
+      if (els.searchChipRow) {
+        const chips = isShopMode
+          ? ['Terps Army', 'Family First', 'The Plug']
+          : ['Gelato', 'Amnesia Haze', 'Zkittlez'];
+        els.searchChipRow.innerHTML = chips
+          .map(label => `<button type="button" data-search-chip="${escapeHtmlAttr(label)}">${escapeHtml(label)}</button>`)
+          .join('');
       }
     }
 
@@ -4568,8 +5453,10 @@
       renderMetrics(filteredOfferings, filteredStats);
       renderSelected();
       renderSelectedShops();
+      renderPriceGuide(filteredStats);
       renderStrains(filteredStats);
       renderCompare();
+      renderShopMenuBrowser();
       renderShops(shopSearchOfferings);
     }
 
@@ -4630,6 +5517,7 @@
           : '';
         els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.${exported}${hidden}`;
         applyInitialUrlState();
+        setView(state.view);
         render();
       } catch (err) {
         els.status.innerHTML = '<span class="error">Amsterdam menu data could not be loaded.</span> Try refreshing the page.';
@@ -4642,7 +5530,13 @@
     }
 
     ['input', 'change'].forEach(eventName => {
-      els.search.addEventListener(eventName, renderAfterFilterChange);
+      els.search.addEventListener(eventName, () => {
+        if (state.view === 'shops' && els.shopBrowserSearch) {
+          els.shopBrowserSearch.value = els.search.value;
+          state.activeShopId = '';
+        }
+        renderAfterFilterChange();
+      });
     });
     els.search.addEventListener('keydown', event => {
       if (event.key !== 'Enter') return;
@@ -4655,6 +5549,24 @@
       els.searchShopsShortcut.addEventListener('click', () => {
         openShopSearchResults();
         els.search.focus({ preventScroll: true });
+      });
+    }
+
+    if (els.searchChipRow) {
+      els.searchChipRow.addEventListener('click', event => {
+        const button = event.target.closest('[data-search-chip]');
+        if (!button) return;
+        const value = button.dataset.searchChip || '';
+        if (state.view === 'shops' && els.shopBrowserSearch) {
+          els.shopBrowserSearch.value = value;
+          els.search.value = value;
+          state.activeShopId = '';
+        } else {
+          els.search.value = value;
+          setView('strains');
+        }
+        resetStrainWindow();
+        render();
       });
     }
     [els.city, els.type, els.cali, els.sort].forEach(el => el.addEventListener('change', renderAfterFilterChange));
@@ -4692,8 +5604,42 @@
     }
 
     document.querySelectorAll('[data-view]').forEach(button => {
-      button.addEventListener('click', () => setView(button.dataset.view));
+      button.addEventListener('click', () => {
+        setView(button.dataset.view);
+        if (state.view === 'shops' && els.shopBrowserSearch && els.search.value) {
+          els.shopBrowserSearch.value = els.search.value;
+          state.activeShopId = '';
+        }
+        render();
+      });
     });
+
+    if (els.priceGuidePanel) {
+      els.priceGuidePanel.addEventListener('click', event => {
+        const focusShop = event.target.closest('[data-focus-shop-menu]');
+        if (focusShop) {
+          const shopId = String(focusShop.dataset.focusShopMenu || '').trim();
+          const meta = getShopMeta(shopId);
+          state.activeShopId = shopId;
+          if (els.shopBrowserSearch) els.shopBrowserSearch.value = meta.name || '';
+          setView('shops');
+          render();
+          document.getElementById('shops-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+
+        const toggleShopButton = event.target.closest('[data-toggle-map-shop]');
+        if (toggleShopButton) {
+          toggleSelectedShop(toggleShopButton.dataset.toggleMapShop);
+          return;
+        }
+
+        const selectButton = event.target.closest('[data-select-strain]');
+        if (selectButton) {
+          toggleSelected(selectButton.dataset.selectStrain);
+        }
+      });
+    }
 
     els.strainGrid.addEventListener('click', event => {
       const toggleShopButton = event.target.closest('[data-toggle-map-shop]');
@@ -4887,6 +5833,49 @@
       toggleSelectedShop(button.dataset.toggleMapShop);
     });
 
+    if (els.shopBrowserSearch) {
+      els.shopBrowserSearch.addEventListener('input', () => {
+        state.activeShopId = '';
+        renderShopMenuBrowser();
+      });
+    }
+
+    if (els.shopBrowserSelect) {
+      els.shopBrowserSelect.addEventListener('change', () => {
+        state.activeShopId = els.shopBrowserSelect.value;
+        renderShopMenuBrowser();
+      });
+    }
+
+    if (els.shopMenuSort) {
+      els.shopMenuSort.addEventListener('change', () => {
+        state.shopMenuSort = els.shopMenuSort.value || 'name';
+        renderShopMenuBrowser();
+      });
+    }
+
+    if (els.shopCategoryFilter) {
+      els.shopCategoryFilter.addEventListener('change', () => {
+        state.shopMenuCategory = els.shopCategoryFilter.value || '';
+        renderShopMenuBrowser();
+      });
+    }
+
+    if (els.shopHideUnknownPrices) {
+      els.shopHideUnknownPrices.addEventListener('change', () => {
+        state.shopHideUnknownPrices = els.shopHideUnknownPrices.checked;
+        renderShopMenuBrowser();
+      });
+    }
+
+    if (els.shopMenuBrowser) {
+      els.shopMenuBrowser.addEventListener('click', event => {
+        const button = event.target.closest('[data-toggle-map-shop]');
+        if (!button) return;
+        toggleSelectedShop(button.dataset.toggleMapShop);
+      });
+    }
+
     els.clearSelected.addEventListener('click', () => {
       state.selected = [];
       state.routePlanByStrain = {};
@@ -4899,12 +5888,6 @@
     }
 
     els.showSelectedShopsMap.addEventListener('click', goToMapWithSelectedShops);
-
-    if (els.mapToggle) {
-      els.mapToggle.addEventListener('click', () => {
-        prepareMapHandoff();
-      });
-    }
 
     if (els.toolbarMapLink) {
       els.toolbarMapLink.addEventListener('click', () => {

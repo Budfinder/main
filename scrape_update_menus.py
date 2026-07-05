@@ -19,6 +19,12 @@ What happens when a menu changes
 - Existing "current menu entries" are only cleared when a known previous menu hash
   is replaced by a different hash.
 
+What happens when a menu is unchanged
+-------------------------------------
+- The current menu row is touched with the latest fetched_at timestamp.
+- A menu_history row records that the same menu was seen again.
+- Active offerings for that shop get a timestamped offering_history observation.
+
 Error handling
 --------------
 - If scraping fails for a shop that already has a known menu row, we preserve that
@@ -200,7 +206,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             FOREIGN KEY(strain_id) REFERENCES strains(id) ON DELETE CASCADE
         );
 
-        -- Append-only record of every newly detected menu image.
+        -- Append-only record of menu observations, including new, unchanged and errors.
         CREATE TABLE IF NOT EXISTS menu_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             shop_id INTEGER NOT NULL,
@@ -217,7 +223,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             FOREIGN KEY(shop_id) REFERENCES shops(id) ON DELETE CASCADE
         );
 
-        -- Append-only observations of offering state as menus are replaced/processed.
+        -- Append-only observations of offering state as menus are seen/replaced/processed.
         CREATE TABLE IF NOT EXISTS offering_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             shop_id INTEGER NOT NULL,
@@ -336,6 +342,48 @@ def get_existing_menu_sha(conn: sqlite3.Connection, shop_id: int) -> Optional[st
     return str(row["sha256"] or "")
 
 
+def get_existing_menu(conn: sqlite3.Connection, shop_id: int) -> Optional[sqlite3.Row]:
+    """Return the current menu row for one shop, if present."""
+    return conn.execute(
+        """
+        SELECT status, image_url, local_path, sha256, bytes
+        FROM menus
+        WHERE shop_id = ?;
+        """,
+        (shop_id,),
+    ).fetchone()
+
+
+def touch_menu_seen(
+    conn: sqlite3.Connection,
+    shop_id: int,
+    source_page_url: str,
+    image_url: str,
+    sha256: str,
+    num_bytes: int,
+) -> str:
+    """Update fetched_at for an unchanged menu while preserving queue status."""
+    existing = get_existing_menu(conn, shop_id)
+    preserved_status = str(existing["status"] or "processed") if existing else "processed"
+    now = utc_now_iso()
+    conn.execute(
+        """
+        UPDATE menus
+        SET fetched_at_utc = ?,
+            source_page_url = ?,
+            image_url = ?,
+            sha256 = ?,
+            bytes = ?,
+            status = ?,
+            error = ''
+        WHERE shop_id = ?;
+        """,
+        (now, source_page_url, image_url, sha256, int(num_bytes), preserved_status, shop_id),
+    )
+    conn.commit()
+    return preserved_status
+
+
 def clear_menu_entries(conn: sqlite3.Connection, shop_id: int) -> None:
     """When a new menu arrives, wipe any previous current entries for that shop."""
     conn.execute("DELETE FROM menu_entries WHERE shop_id = ?;", (shop_id,))
@@ -450,11 +498,76 @@ def archive_active_offerings_for_rebuild(
     return len(rows)
 
 
+def record_current_offerings_seen(
+    conn: sqlite3.Connection,
+    shop_id: int,
+    menu_history_id: Optional[int],
+    event_type: str = "seen_on_unchanged_menu",
+) -> int:
+    """Record that active offerings were still visible when an unchanged menu was seen."""
+    now = utc_now_iso()
+    rows = conn.execute(
+        """
+        SELECT shop_id, strain_id, base_type, is_cali, grower, price_currency,
+               price_amount, price_unit, package_price_amount, package_weight_g, notes, status
+        FROM shop_offerings
+        WHERE shop_id = ?
+          AND status = 'active';
+        """,
+        (shop_id,),
+    ).fetchall()
+
+    for r in rows:
+        conn.execute(
+            """
+            INSERT INTO offering_history(
+                shop_id, strain_id, menu_history_id,
+                observed_at_utc, event_type, status,
+                base_type, is_cali, grower, price_currency, price_amount, price_unit,
+                package_price_amount, package_weight_g,
+                notes, source, created_at
+            )
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'scraper', ?);
+            """,
+            (
+                int(r["shop_id"]),
+                int(r["strain_id"]),
+                menu_history_id,
+                now,
+                event_type,
+                str(r["status"] or "active"),
+                str(r["base_type"] or ""),
+                int(r["is_cali"] or 0),
+                str(r["grower"] or ""),
+                str(r["price_currency"] or "€"),
+                float(r["price_amount"] or 0),
+                str(r["price_unit"] or "g"),
+                float(r["package_price_amount"] or r["price_amount"] or 0),
+                float(r["package_weight_g"] or 1),
+                str(r["notes"] or ""),
+                now,
+            ),
+        )
+
+    conn.execute(
+        """
+        UPDATE shop_offerings
+        SET last_seen_at_utc = ?,
+            updated_at = ?
+        WHERE shop_id = ?
+          AND status = 'active';
+        """,
+        (now, now, shop_id),
+    )
+    conn.commit()
+    return len(rows)
+
+
 def mark_menu_error(conn: sqlite3.Connection, shop_id: int, source_page_url: str, error_msg: str) -> None:
     """Record a scrape error without clobbering previously known menu metadata."""
     existing = conn.execute(
         """
-        SELECT status
+        SELECT status, image_url, local_path, sha256, bytes
         FROM menus
         WHERE shop_id = ?;
         """,
@@ -478,6 +591,18 @@ def mark_menu_error(conn: sqlite3.Connection, shop_id: int, source_page_url: str
             (now, source_page_url, preserved_status, (error_msg or "").strip(), shop_id),
         )
         conn.commit()
+        record_menu_history(
+            conn,
+            shop_id=shop_id,
+            source_page_url=source_page_url,
+            image_url=str(existing["image_url"] or ""),
+            local_path=str(existing["local_path"] or ""),
+            sha256=str(existing["sha256"] or ""),
+            num_bytes=int(existing["bytes"] or 0),
+            event_type="fetch_error",
+            status=preserved_status,
+            error=error_msg,
+        )
         return
 
     # First-ever fetch failure for this shop: create an explicit error row.
@@ -489,6 +614,18 @@ def mark_menu_error(conn: sqlite3.Connection, shop_id: int, source_page_url: str
         local_path="",
         sha256="",
         num_bytes=0,
+        status="error",
+        error=error_msg,
+    )
+    record_menu_history(
+        conn,
+        shop_id=shop_id,
+        source_page_url=source_page_url,
+        image_url="",
+        local_path="",
+        sha256="",
+        num_bytes=0,
+        event_type="fetch_error",
         status="error",
         error=error_msg,
     )
@@ -827,6 +964,7 @@ def main() -> int:
 
     new_count = 0
     unchanged = 0
+    offering_seen_count = 0
     errors = 0
     skipped = 0
 
@@ -866,10 +1004,33 @@ def main() -> int:
             had_known_previous_sha = bool(prev_sha)
 
             if prev_sha == sha:
-                # Menu unchanged; keep status as-is (do not re-trigger)
+                # Menu unchanged; preserve queue state, but still record the observation.
+                existing_menu = get_existing_menu(conn, shop_id)
+                existing_local_path = str(existing_menu["local_path"] or "") if existing_menu else ""
+                preserved_status = touch_menu_seen(
+                    conn,
+                    shop_id=shop_id,
+                    source_page_url=shop_url,
+                    image_url=menu_url,
+                    sha256=sha,
+                    num_bytes=len(data),
+                )
+                menu_history_id = record_menu_history(
+                    conn,
+                    shop_id=shop_id,
+                    source_page_url=shop_url,
+                    image_url=menu_url,
+                    local_path=existing_local_path,
+                    sha256=sha,
+                    num_bytes=len(data),
+                    event_type="menu_seen",
+                    status=preserved_status,
+                    error="",
+                )
+                seen_count = record_current_offerings_seen(conn, shop_id, menu_history_id)
+                offering_seen_count += seen_count
                 unchanged += 1
-                # Still update fetched_at and paths if you want; we keep it stable here
-                print("  [OK] Unchanged.")
+                print(f"  [OK] Unchanged; recorded menu_seen and {seen_count} active offering(s).")
                 time.sleep(SLEEP_BETWEEN_SHOPS_SEC)
                 continue
 
@@ -925,6 +1086,7 @@ def main() -> int:
     print("\n[SUMMARY]")
     print(f"  New menus:      {new_count}")
     print(f"  Unchanged:      {unchanged}")
+    print(f"  Offerings seen: {offering_seen_count}")
     print(f"  Skipped:        {skipped}")
     print(f"  Errors:         {errors}")
     print(f"  DB:             {os.path.abspath(args.db)}")

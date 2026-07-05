@@ -37,6 +37,20 @@
       --accent-strong: #205b42;
       --accent-soft: rgba(46, 123, 89, 0.16);
       --accent-glow: rgba(46, 123, 89, 0.28);
+      --leaf-pattern-opacity: 0.065;
+      --leaf-pattern-blend: multiply;
+      --category-coffeeshop: #1f9361;
+      --category-hotel: #2f6fe4;
+      --category-museum: #8658df;
+      --category-landmark: #bd721d;
+      --category-food: #d94f31;
+      --category-bar: #ba3b91;
+      --category-transport: #14899a;
+      --category-park: #54a235;
+      --category-shopping: #b58d12;
+      --category-viewpoint: #5366d8;
+      --category-area: #cc4f8f;
+      --category-other: #64766c;
       --shadow-lg: 0 22px 60px rgba(29, 42, 32, 0.18);
       --shadow-md: 0 14px 36px rgba(29, 42, 32, 0.14);
       --radius-xl: 24px;
@@ -117,8 +131,8 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 96 96%27%3E%3Cg fill=%27%23205b42%27%3E%3Cpath d=%27M48 8 C43 22 42 34 48 54 C54 34 53 22 48 8Z%27/%3E%3Cpath d=%27M34 16 C32 31 36 42 47 57 C49 39 44 27 34 16Z%27/%3E%3Cpath d=%27M62 16 C64 31 60 42 49 57 C47 39 52 27 62 16Z%27/%3E%3Cpath d=%27M21 29 C25 43 34 52 47 62 C43 45 34 35 21 29Z%27/%3E%3Cpath d=%27M75 29 C71 43 62 52 49 62 C53 45 62 35 75 29Z%27/%3E%3Cpath d=%27M13 48 C25 57 36 62 47 66 C38 52 27 47 13 48Z%27/%3E%3Cpath d=%27M83 48 C71 57 60 62 49 66 C58 52 69 47 83 48Z%27/%3E%3Cpath d=%27M46.5 55 H49.5 V86 H46.5Z%27/%3E%3C/g%3E%3C/svg%3E");
       background-size: 188px 188px;
       background-position: center center;
-      opacity: 0.065;
-      mix-blend-mode: multiply;
+      opacity: var(--leaf-pattern-opacity, 0.065);
+      mix-blend-mode: var(--leaf-pattern-blend, multiply);
       transform: rotate(-5deg) scale(1.08);
       animation: leafFloat 26s ease-in-out infinite alternate;
     }
@@ -262,8 +276,8 @@
     /* Common styles */
     #map,
     #instructions {
-      background: rgba(255, 251, 246, 0.74);
-      border: 1px solid rgba(255, 255, 255, 0.34);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
       border-radius: var(--radius-xl);
       overflow: hidden;
       box-shadow: var(--shadow-lg);
@@ -308,10 +322,10 @@
       flex: 0 0 auto;
       min-height: 36px;
       padding: 0 12px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.66);
-      color: var(--ink);
+      background: var(--control-bg, rgba(255, 255, 255, 0.66));
+      color: var(--control-text, var(--ink));
       font: inherit;
       font-size: 12px;
       font-weight: 700;
@@ -395,7 +409,7 @@
       gap: 8px;
       padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.54);
+      background: var(--control-bg, rgba(255, 255, 255, 0.54));
       color: var(--accent-strong);
       font-size: 12px;
       font-weight: 700;
@@ -428,9 +442,9 @@
       min-height: 28px;
       padding: 0 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.48);
-      border: 1px solid rgba(255, 255, 255, 0.34);
-      color: var(--muted);
+      background: var(--control-bg, rgba(255, 255, 255, 0.48));
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.34));
+      color: var(--control-muted, var(--muted));
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -468,8 +482,8 @@
     .hero-stat {
       padding: 12px 14px;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.58);
-      border: 1px solid rgba(255, 255, 255, 0.38);
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.38));
     }
 
     .hero-stat-value {
@@ -504,9 +518,9 @@
       min-height: 30px;
       padding: 0 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.62);
-      border: 1px solid rgba(255, 255, 255, 0.42);
-      color: var(--muted);
+      background: var(--control-bg, rgba(255, 255, 255, 0.62));
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.42));
+      color: var(--control-muted, var(--muted));
       font-size: 12px;
       white-space: nowrap;
       max-width: 100%;
@@ -557,9 +571,9 @@
       max-width: 100%;
       padding: 0 12px;
       border-radius: 999px;
-      border: 1px solid rgba(92, 107, 97, 0.14);
-      background: rgba(255, 255, 255, 0.86);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.86));
+      color: var(--control-text, var(--ink));
       font: inherit;
       font-size: 12px;
       font-weight: 800;
@@ -613,9 +627,9 @@
       min-width: 0;
       padding: 8px 10px 8px 8px;
       border-radius: 18px;
-      border: 1px solid rgba(92, 107, 97, 0.14);
-      background: rgba(255, 255, 255, 0.84);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.84));
+      color: var(--control-text, var(--ink));
       font: inherit;
       text-align: left;
       cursor: pointer;
@@ -623,9 +637,9 @@
     }
 
     .top-shelf-rail-chip.is-active {
-      border-color: var(--accent);
+      border-color: var(--control-selected-border, var(--accent));
       box-shadow: inset 0 0 0 1px var(--accent-strong);
-      background: rgba(255, 255, 255, 0.94);
+      background: var(--control-selected-bg, rgba(255, 255, 255, 0.94));
     }
 
     .top-shelf-rail-chip-art {
@@ -817,15 +831,27 @@
 
     .selection-actions button,
     .selection-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
       min-height: 40px;
-      padding: 0 14px;
+      min-width: 44px;
+      padding: 7px 16px;
       border-radius: 999px;
       border: 1px solid transparent;
       font: inherit;
       font-weight: 700;
+      line-height: 1.15;
+      white-space: normal;
+      overflow-wrap: anywhere;
       text-decoration: none;
       cursor: pointer;
       transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+    }
+
+    #selection-add-stop-btn {
+      min-width: min(100%, 154px);
     }
 
     .selection-actions button:hover,
@@ -836,21 +862,21 @@
     .selection-actions button,
     .selection-actions .selection-link {
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fffaf4;
+      color: var(--button-text, #fffaf4);
       box-shadow: 0 12px 24px rgba(32, 91, 66, 0.18);
     }
 
     .selection-actions .ghost-btn {
-      background: rgba(255, 255, 255, 0.54);
-      color: var(--ink);
-      border-color: rgba(99, 114, 96, 0.16);
+      background: var(--control-bg, rgba(255, 255, 255, 0.54));
+      color: var(--control-text, var(--ink));
+      border-color: var(--control-border, rgba(99, 114, 96, 0.16));
       box-shadow: none;
     }
 
     .selection-actions .neutral-btn {
-      background: rgba(255, 248, 226, 0.9);
-      color: #8b5615;
-      border-color: rgba(180, 107, 32, 0.18);
+      background: var(--control-selected-bg, rgba(255, 248, 226, 0.9));
+      color: var(--control-text, #8b5615);
+      border-color: var(--control-selected-border, rgba(180, 107, 32, 0.18));
       box-shadow: none;
     }
 
@@ -868,9 +894,9 @@
       min-height: 34px;
       padding: 0 12px;
       border-radius: 999px;
-      border: 1px solid rgba(99, 114, 96, 0.16);
-      background: rgba(255, 255, 255, 0.58);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(99, 114, 96, 0.16));
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      color: var(--control-text, var(--ink));
       font: inherit;
       font-size: 12px;
       font-weight: 700;
@@ -932,7 +958,7 @@
 
     .stash-shelf-summary {
       margin: 8px 0 0;
-      color: var(--muted);
+      color: var(--control-muted, var(--muted));
       font-size: 13px;
       line-height: 1.45;
     }
@@ -942,9 +968,9 @@
       min-height: 34px;
       padding: 0 12px;
       border-radius: 999px;
-      border: 1px solid rgba(99, 114, 96, 0.16);
-      background: rgba(255, 255, 255, 0.58);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(99, 114, 96, 0.16));
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      color: var(--control-text, var(--ink));
       font: inherit;
       font-size: 12px;
       font-weight: 700;
@@ -984,9 +1010,9 @@
       grid-column: 1 / -1;
       padding: 20px 16px;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.56);
-      border: 1px dashed rgba(99, 114, 96, 0.18);
-      color: var(--muted);
+      background: var(--control-bg, rgba(255, 255, 255, 0.56));
+      border: 1px dashed var(--control-border, rgba(99, 114, 96, 0.18));
+      color: var(--control-muted, var(--muted));
       font-size: 13px;
       line-height: 1.5;
       text-align: center;
@@ -1276,8 +1302,8 @@
       justify-content: space-between;
       gap: 12px;
       padding: 18px 18px 14px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.54), rgba(255, 255, 255, 0.18));
-      border-bottom: 1px solid rgba(92, 107, 97, 0.08);
+      background: linear-gradient(180deg, var(--control-bg, rgba(255, 255, 255, 0.54)), rgba(255, 255, 255, 0));
+      border-bottom: 1px solid var(--control-border, rgba(92, 107, 97, 0.08));
     }
 
     .controls-title {
@@ -1323,9 +1349,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.44);
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      color: var(--muted);
+      background: var(--control-bg, rgba(255, 255, 255, 0.44));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      color: var(--control-muted, var(--muted));
       font-weight: 600;
       cursor: pointer;
     }
@@ -1348,11 +1374,17 @@
       min-height: 44px;
       padding: 0 14px;
       border-radius: var(--radius-md);
-      border: 1px solid rgba(92, 107, 97, 0.14);
-      background: rgba(255, 255, 255, 0.66);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      background: var(--control-bg, rgba(255, 255, 255, 0.66));
+      color: var(--control-text, var(--ink));
+      color-scheme: var(--control-color-scheme, light);
       outline: none;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .controls input::placeholder {
+      color: var(--control-muted, var(--muted));
+      opacity: 0.82;
     }
 
     .controls button {
@@ -1361,7 +1393,7 @@
       border: 0;
       border-radius: 14px;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
+      color: var(--button-text, #fff9f0);
       font-weight: 700;
       letter-spacing: 0.01em;
       cursor: pointer;
@@ -1378,7 +1410,7 @@
       border: 0;
       border-radius: 14px;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
+      color: var(--button-text, #fff9f0);
       font: inherit;
       font-weight: 700;
       letter-spacing: 0.01em;
@@ -1438,8 +1470,8 @@
       margin-top: 10px;
       padding: 12px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.52);
-      border: 1px solid rgba(255, 255, 255, 0.32);
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.32));
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
 
@@ -1450,8 +1482,8 @@
     .advanced-controls {
       margin-top: 10px;
       border-radius: 14px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.34);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.34));
       overflow: hidden;
     }
 
@@ -1469,7 +1501,7 @@
       border-width: 1px 0 0;
       border-radius: 0;
       box-shadow: none;
-      background: rgba(255, 255, 255, 0.4);
+      background: var(--control-bg, rgba(255, 255, 255, 0.4));
     }
 
     .settings-panel {
@@ -1491,7 +1523,7 @@
     .settings-section {
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid rgba(92, 107, 97, 0.12);
+      border-top: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
     }
 
     .settings-section h4 {
@@ -1508,7 +1540,7 @@
       padding: 10px;
       border-radius: 14px;
       border: 1px solid rgba(176, 61, 48, 0.18);
-      background: rgba(255, 255, 255, 0.62);
+      background: var(--control-bg, rgba(255, 255, 255, 0.62));
     }
 
     .settings-confirm.is-visible {
@@ -1561,7 +1593,7 @@
       gap: 4px;
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid rgba(92, 107, 97, 0.12);
+      border-top: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
     }
 
     .control-divider .panel-copy {
@@ -1569,9 +1601,7 @@
     }
 
     .route-panel {
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(247, 241, 227, 0.5)),
-        rgba(255, 255, 255, 0.52);
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
     }
 
     .control-group {
@@ -1586,9 +1616,7 @@
     }
 
     .search-wanted-panel {
-      background:
-        linear-gradient(180deg, rgba(255, 251, 243, 0.82), rgba(246, 239, 221, 0.58)),
-        rgba(255, 255, 255, 0.54);
+      background: var(--control-bg, rgba(255, 255, 255, 0.54));
     }
 
     .workflow-shortcuts {
@@ -1597,16 +1625,163 @@
       gap: 8px;
     }
 
+    .map-quick-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .map-quick-chip {
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      border-radius: 999px;
+      background:
+        linear-gradient(135deg, rgba(46, 123, 89, 0.12), rgba(180, 107, 32, 0.08)),
+        var(--control-bg, rgba(255, 255, 255, 0.62));
+      color: var(--control-text, var(--ink));
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      cursor: pointer;
+    }
+
+    .map-quick-chip:hover,
+    .map-quick-chip:focus-visible {
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.28));
+      background: var(--control-bg-hover, rgba(255, 255, 255, 0.9));
+      transform: translateY(-1px);
+    }
+
+    .best-match-panel {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: 16px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+    }
+
+    .best-match-head {
+      display: grid;
+      gap: 3px;
+    }
+
+    .best-match-head strong {
+      color: var(--control-text, var(--ink));
+      font-size: 14px;
+    }
+
+    .best-match-head span,
+    .best-match-empty,
+    .best-match-reason,
+    .best-match-meta {
+      color: var(--control-muted, var(--muted));
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .best-match-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .best-match-card {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: 14px;
+      background: var(--control-bg-strong, rgba(255, 252, 246, 0.9));
+      color: var(--control-text, var(--ink));
+    }
+
+    .best-match-main {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .best-match-name {
+      color: var(--control-text, var(--ink));
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .best-match-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .best-match-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: 999px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.56));
+      color: var(--control-text, var(--ink));
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .best-match-badge.is-fresh,
+    .best-match-badge.is-deal {
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.28));
+      background: var(--control-selected-bg, rgba(46, 123, 89, 0.12));
+    }
+
+    .best-match-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+      gap: 6px;
+    }
+
+    .best-match-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      min-width: 0;
+      padding: 7px 12px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: 999px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.68));
+      color: var(--control-text, var(--ink));
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.15;
+      text-align: center;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      cursor: pointer;
+    }
+
+    .best-match-action.is-primary {
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.3));
+      background: var(--control-selected-bg, rgba(46, 123, 89, 0.14));
+    }
+
+    .best-match-action:hover,
+    .best-match-action:focus-visible {
+      background: var(--control-bg-hover, rgba(255, 255, 255, 0.94));
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.28));
+    }
+
     .intent-card,
     .intent-link {
       display: grid;
       gap: 4px;
       min-height: 64px;
       padding: 12px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.62);
-      color: var(--ink);
+      background: var(--control-bg-strong, var(--control-bg, rgba(255, 255, 255, 0.78)));
+      color: var(--control-text, var(--ink));
       text-align: left;
       text-decoration: none;
       box-shadow: none;
@@ -1616,8 +1791,12 @@
       grid-column: 1 / -1;
       min-height: 82px;
       background:
-        linear-gradient(135deg, rgba(255, 247, 232, 0.9), rgba(222, 239, 218, 0.72));
-      border-color: rgba(46, 123, 89, 0.2);
+        linear-gradient(
+          135deg,
+          var(--control-selected-bg, rgba(255, 247, 232, 0.9)),
+          var(--control-bg-strong, rgba(255, 252, 246, 0.94))
+        );
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.2));
     }
 
     .intent-card.is-primary strong {
@@ -1626,21 +1805,40 @@
 
     .intent-card strong,
     .intent-link strong {
+      color: var(--control-text, var(--ink));
       font-size: 13px;
       line-height: 1.25;
     }
 
     .intent-card span,
     .intent-link span {
-      color: var(--muted);
+      color: var(--control-muted, var(--muted));
       font-size: 12px;
       line-height: 1.35;
     }
 
+    .intent-card:hover,
+    .intent-card:focus-visible,
+    .intent-link:hover,
+    .intent-link:focus-visible {
+      background: var(--control-bg-hover, rgba(255, 255, 255, 0.94));
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.26));
+    }
+
+    .intent-card.is-primary:hover,
+    .intent-card.is-primary:focus-visible {
+      background:
+        linear-gradient(
+          135deg,
+          var(--control-selected-bg, rgba(255, 247, 232, 0.95)),
+          var(--control-bg-hover, rgba(255, 255, 255, 0.98))
+        );
+    }
+
     .detail-drawer {
       border-radius: 16px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.38);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.38));
       overflow: hidden;
     }
 
@@ -1660,9 +1858,9 @@
     .map-mode-strip,
     .trip-plan-card {
       padding: 12px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.58);
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
     }
 
     .map-mode-strip {
@@ -1707,7 +1905,7 @@
       min-width: 0;
       padding: 10px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.55);
+      background: var(--control-bg, rgba(255, 255, 255, 0.55));
     }
 
     .trip-field span {
@@ -1730,9 +1928,9 @@
       display: grid;
       gap: 10px;
       padding: 12px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.6);
+      background: var(--control-bg, rgba(255, 255, 255, 0.6));
     }
 
     .journey-planner-head {
@@ -1761,15 +1959,14 @@
       display: grid;
       gap: 10px;
       padding: 12px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.5);
+      background: var(--control-bg, rgba(255, 255, 255, 0.5));
     }
 
     .journey-section.is-primary {
-      border-color: rgba(46, 123, 89, 0.18);
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(232, 241, 232, 0.56));
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.18));
+      background: var(--control-selected-bg, rgba(255, 255, 255, 0.82));
       box-shadow: 0 12px 24px rgba(32, 91, 66, 0.08);
     }
 
@@ -1810,7 +2007,7 @@
       gap: 10px;
       padding: 10px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.52);
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
     }
 
     .journey-itinerary-title {
@@ -1842,7 +2039,7 @@
       min-width: 0;
       padding: 8px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.58);
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
     }
 
     .journey-summary-item span {
@@ -1916,12 +2113,12 @@
       margin: 0;
       padding: 12px;
       border-radius: 12px;
-      border: 1px dashed rgba(92, 107, 97, 0.18);
-      color: var(--muted);
+      border: 1px dashed var(--control-border, rgba(92, 107, 97, 0.18));
+      color: var(--control-muted, var(--muted));
       font-size: 12px;
       line-height: 1.45;
       text-align: center;
-      background: rgba(255, 255, 255, 0.46);
+      background: var(--control-bg, rgba(255, 255, 255, 0.46));
     }
 
     .journey-stop-card {
@@ -1929,8 +2126,8 @@
       gap: 9px;
       padding: 10px;
       border-radius: 14px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.68));
     }
 
     .journey-stop-main {
@@ -1948,7 +2145,7 @@
       height: 30px;
       border-radius: 999px;
       background: var(--accent);
-      color: #fff9f0;
+      color: var(--button-text, #fff9f0);
       font-size: 12px;
       font-weight: 900;
     }
@@ -1957,9 +2154,9 @@
       width: auto;
       min-width: 46px;
       padding: 0 9px;
-      background: #fff7e8;
-      color: var(--accent-strong);
-      border: 1px solid rgba(46, 123, 89, 0.18);
+      background: var(--control-bg-strong, #fff7e8);
+      color: var(--control-text, var(--accent-strong));
+      border: 1px solid var(--control-selected-border, rgba(46, 123, 89, 0.18));
     }
 
     .journey-stop-number.is-end {
@@ -1973,8 +2170,8 @@
       width: 32px;
       height: 32px;
       border-radius: 999px;
-      background: rgba(255, 252, 247, 0.92);
-      border: 1px solid rgba(92, 107, 97, 0.14);
+      background: var(--control-bg-strong, rgba(255, 252, 247, 0.92));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
       color: var(--location-accent, var(--accent-strong));
       line-height: 1;
     }
@@ -1989,17 +2186,18 @@
       fill: none;
     }
 
-    .journey-location-icon.is-coffeeshop { --location-accent: #2f7a58; }
-    .journey-location-icon.is-hotel { --location-accent: #426f9f; }
-    .journey-location-icon.is-museum { --location-accent: #7862a8; }
-    .journey-location-icon.is-landmark { --location-accent: #b06d2d; }
-    .journey-location-icon.is-food { --location-accent: #c35f39; }
-    .journey-location-icon.is-bar { --location-accent: #8d4b78; }
-    .journey-location-icon.is-transport { --location-accent: #347c88; }
-    .journey-location-icon.is-park { --location-accent: #4f8a3b; }
-    .journey-location-icon.is-shopping { --location-accent: #8b6f34; }
-    .journey-location-icon.is-viewpoint { --location-accent: #5f748a; }
-    .journey-location-icon.is-other { --location-accent: #6f7d70; }
+    .journey-location-icon.is-coffeeshop { --location-accent: var(--category-coffeeshop); }
+    .journey-location-icon.is-hotel { --location-accent: var(--category-hotel); }
+    .journey-location-icon.is-museum { --location-accent: var(--category-museum); }
+    .journey-location-icon.is-landmark { --location-accent: var(--category-landmark); }
+    .journey-location-icon.is-food { --location-accent: var(--category-food); }
+    .journey-location-icon.is-bar { --location-accent: var(--category-bar); }
+    .journey-location-icon.is-transport { --location-accent: var(--category-transport); }
+    .journey-location-icon.is-park { --location-accent: var(--category-park); }
+    .journey-location-icon.is-shopping { --location-accent: var(--category-shopping); }
+    .journey-location-icon.is-viewpoint { --location-accent: var(--category-viewpoint); }
+    .journey-location-icon.is-area { --location-accent: var(--category-area); }
+    .journey-location-icon.is-other { --location-accent: var(--category-other); }
 
     .journey-location-icon.has-logo {
       padding: 2px;
@@ -2108,7 +2306,7 @@
     }
 
     .journey-stop-actions {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
     }
 
     .journey-start-actions {
@@ -2130,13 +2328,18 @@
     .journey-strain-row button,
     .journey-save-row button,
     .journey-saved-actions button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: 100%;
       min-width: 0;
       min-height: 36px;
-      padding: 0 10px;
+      padding: 7px 12px;
       font-size: 12px;
       line-height: 1.2;
+      text-align: center;
       white-space: normal;
+      overflow-wrap: anywhere;
     }
 
     .journey-builder-grid select,
@@ -2374,9 +2577,9 @@
     }
 
     .secondary-btn {
-      background: rgba(255, 255, 255, 0.52) !important;
-      color: var(--ink) !important;
-      border: 1px solid rgba(92, 107, 97, 0.12) !important;
+      background: var(--control-bg, rgba(255, 255, 255, 0.52)) !important;
+      color: var(--control-text, var(--ink)) !important;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12)) !important;
       box-shadow: none !important;
     }
 
@@ -2390,8 +2593,8 @@
     .metric-card {
       padding: 10px 12px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.56);
-      border: 1px solid rgba(255, 255, 255, 0.42);
+      background: var(--control-bg, rgba(255, 255, 255, 0.56));
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.42));
     }
 
     .metric-label {
@@ -2417,15 +2620,15 @@
 
     .best-matches-panel,
     .directions-panel-controls {
-      background: rgba(255, 255, 255, 0.5);
+      background: var(--control-bg, rgba(255, 255, 255, 0.5));
     }
 
     .best-matches-placeholder {
       margin: 0;
       padding: 12px 14px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.52);
-      border: 1px dashed rgba(92, 107, 97, 0.16);
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+      border: 1px dashed var(--control-border, rgba(92, 107, 97, 0.16));
       color: var(--muted);
       font-size: 12px;
       line-height: 1.45;
@@ -2469,8 +2672,8 @@
       margin: 0;
       padding: 12px 14px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.54);
-      border: 1px solid rgba(255, 255, 255, 0.34);
+      background: var(--control-bg, rgba(255, 255, 255, 0.54));
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.34));
       color: var(--muted);
       font-size: 12px;
       line-height: 1.5;
@@ -2483,9 +2686,9 @@
       min-height: 0;
       padding: 10px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(92, 107, 97, 0.14) !important;
-      background: rgba(255, 255, 255, 0.78) !important;
-      color: var(--ink) !important;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14)) !important;
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.78)) !important;
+      color: var(--control-text, var(--ink)) !important;
       text-align: left;
       box-shadow: none !important;
       backdrop-filter: blur(10px);
@@ -2506,15 +2709,14 @@
     }
 
     .destination-card.is-selected {
-      border-color: rgba(32, 91, 66, 0.3) !important;
+      border-color: var(--control-selected-border, rgba(32, 91, 66, 0.3)) !important;
       box-shadow: inset 0 0 0 1px var(--accent-strong) !important;
-      background: rgba(255, 255, 255, 0.94) !important;
+      background: var(--control-selected-bg, rgba(255, 255, 255, 0.94)) !important;
     }
 
     .destination-card.is-cheapest {
-      background:
-        linear-gradient(180deg, rgba(255, 243, 198, 0.8), rgba(255, 255, 255, 0.9)) !important;
-      border-color: rgba(188, 139, 31, 0.26) !important;
+      background: var(--control-selected-bg, rgba(255, 243, 198, 0.8)) !important;
+      border-color: var(--control-selected-border, rgba(188, 139, 31, 0.26)) !important;
     }
 
     .destination-card-main {
@@ -2551,8 +2753,8 @@
       align-self: flex-start;
       padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.46);
+      background: var(--control-bg, rgba(255, 255, 255, 0.72));
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.46));
       color: var(--accent-strong);
       font-size: 12px;
       font-weight: 700;
@@ -2587,8 +2789,8 @@
       min-height: 24px;
       padding: 0 8px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.58);
-      border: 1px solid rgba(255, 255, 255, 0.42);
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.42));
       color: var(--muted);
       font-size: 10px;
       font-weight: 700;
@@ -2703,8 +2905,8 @@
     }
 
     .destination-card-actions {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
       gap: 6px;
     }
 
@@ -2713,6 +2915,7 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 6px;
       width: 100%;
+      grid-column: 1 / -1;
     }
 
     .destination-card-order[hidden] {
@@ -2720,16 +2923,24 @@
     }
 
     .destination-card-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
       min-height: 34px;
-      padding: 0 9px;
+      min-width: 0;
+      padding: 7px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.64);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.64));
+      color: var(--control-text, var(--ink));
       box-shadow: none;
       font-size: 11px;
       font-weight: 800;
-      line-height: 1.1;
+      line-height: 1.15;
+      text-align: center;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
 
     .destination-card-order .destination-card-action,
@@ -2740,16 +2951,170 @@
     }
 
     .destination-card-action.is-primary {
+      grid-column: 1 / -1;
       width: 100%;
       min-height: 42px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fffaf4;
+      background: var(--map-primary-button-bg, linear-gradient(135deg, var(--accent), var(--accent-strong)));
+      color: var(--button-text, #fffaf4);
       border-color: transparent;
       font-size: 12px;
     }
 
+    :root[data-map-theme-tone="dark"] .controls,
+    :root[data-map-theme-tone="dark"] .overlay-card,
+    :root[data-map-theme-tone="dark"] #instructions {
+      background: var(--panel-strong) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+      box-shadow: 0 22px 58px rgba(0, 0, 0, 0.46), 0 0 26px var(--accent-glow) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .controls-header {
+      background: linear-gradient(180deg, var(--control-bg-strong), var(--control-bg)) !important;
+      border-bottom-color: var(--control-border) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .controls-title,
+    :root[data-map-theme-tone="dark"] .controls label,
+    :root[data-map-theme-tone="dark"] .controls strong,
+    :root[data-map-theme-tone="dark"] .destination-card-name,
+    :root[data-map-theme-tone="dark"] .destination-card-matches,
+    :root[data-map-theme-tone="dark"] .destination-card-meta strong,
+    :root[data-map-theme-tone="dark"] .destination-card-why strong,
+    :root[data-map-theme-tone="dark"] .best-match-head strong,
+    :root[data-map-theme-tone="dark"] .best-match-name,
+    :root[data-map-theme-tone="dark"] .best-match-badge,
+    :root[data-map-theme-tone="dark"] .best-match-action,
+    :root[data-map-theme-tone="dark"] .intent-card strong,
+    :root[data-map-theme-tone="dark"] .intent-link strong {
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .controls-summary,
+    :root[data-map-theme-tone="dark"] .field-note,
+    :root[data-map-theme-tone="dark"] .panel-kicker,
+    :root[data-map-theme-tone="dark"] .panel-copy,
+    :root[data-map-theme-tone="dark"] .destination-card-city,
+    :root[data-map-theme-tone="dark"] .destination-card-meta,
+    :root[data-map-theme-tone="dark"] .destination-card-why,
+    :root[data-map-theme-tone="dark"] .destination-card-matches span,
+    :root[data-map-theme-tone="dark"] .best-match-head span,
+    :root[data-map-theme-tone="dark"] .best-match-empty,
+    :root[data-map-theme-tone="dark"] .best-match-reason,
+    :root[data-map-theme-tone="dark"] .best-match-meta,
+    :root[data-map-theme-tone="dark"] .intent-card span,
+    :root[data-map-theme-tone="dark"] .intent-link span,
+    :root[data-map-theme-tone="dark"] .metric-label {
+      color: var(--control-muted) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .route-panel,
+    :root[data-map-theme-tone="dark"] .search-wanted-panel,
+    :root[data-map-theme-tone="dark"] .intent-card,
+    :root[data-map-theme-tone="dark"] .intent-link,
+    :root[data-map-theme-tone="dark"] .detail-drawer,
+    :root[data-map-theme-tone="dark"] .map-mode-strip,
+    :root[data-map-theme-tone="dark"] .trip-plan-card,
+    :root[data-map-theme-tone="dark"] .journey-planner-card,
+    :root[data-map-theme-tone="dark"] .journey-section,
+    :root[data-map-theme-tone="dark"] .journey-itinerary-empty,
+    :root[data-map-theme-tone="dark"] .journey-stop-card,
+    :root[data-map-theme-tone="dark"] .best-match-panel,
+    :root[data-map-theme-tone="dark"] .best-match-card,
+    :root[data-map-theme-tone="dark"] .best-match-badge,
+    :root[data-map-theme-tone="dark"] .best-match-action,
+    :root[data-map-theme-tone="dark"] .map-quick-chip,
+    :root[data-map-theme-tone="dark"] #destination-card-deck,
+    :root[data-map-theme-tone="dark"] .destination-card-empty,
+    :root[data-map-theme-tone="dark"] .destination-card,
+    :root[data-map-theme-tone="dark"] .destination-card-body,
+    :root[data-map-theme-tone="dark"] .destination-card-chip,
+    :root[data-map-theme-tone="dark"] .metric-card,
+    :root[data-map-theme-tone="dark"] #strain-spotlight-card {
+      background: var(--control-bg-strong) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .intent-card.is-primary,
+    :root[data-map-theme-tone="dark"] .destination-card.is-selected,
+    :root[data-map-theme-tone="dark"] .destination-card.is-cheapest,
+    :root[data-map-theme-tone="dark"] .journey-section.is-primary {
+      background:
+        linear-gradient(135deg, var(--control-selected-bg), var(--control-bg-strong)) !important;
+      border-color: var(--control-selected-border) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .intent-card:hover,
+    :root[data-map-theme-tone="dark"] .intent-card:focus-visible,
+    :root[data-map-theme-tone="dark"] .intent-link:hover,
+    :root[data-map-theme-tone="dark"] .intent-link:focus-visible,
+    :root[data-map-theme-tone="dark"] .map-quick-chip:hover,
+    :root[data-map-theme-tone="dark"] .map-quick-chip:focus-visible,
+    :root[data-map-theme-tone="dark"] .best-match-action:hover,
+    :root[data-map-theme-tone="dark"] .best-match-action:focus-visible,
+    :root[data-map-theme-tone="dark"] .destination-card:hover,
+    :root[data-map-theme-tone="dark"] .destination-card:focus-visible {
+      background: var(--control-bg-hover) !important;
+      border-color: var(--control-selected-border) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .controls select,
+    :root[data-map-theme-tone="dark"] .controls input[type="text"],
+    :root[data-map-theme-tone="dark"] .controls input[type="search"] {
+      background: var(--control-bg-strong) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .controls input::placeholder {
+      color: var(--control-muted) !important;
+      opacity: 1;
+    }
+
+    :root[data-map-theme-tone="dark"] .secondary-btn,
+    :root[data-map-theme-tone="dark"] .controls-hide,
+    :root[data-map-theme-tone="dark"] #ui-toggles button,
+    :root[data-map-theme-tone="dark"] .selection-actions .ghost-btn,
+    :root[data-map-theme-tone="dark"] .selection-actions .neutral-btn,
+    :root[data-map-theme-tone="dark"] .destination-card-action:not(.is-primary),
+    :root[data-map-theme-tone="dark"] .popup-journey-add-btn,
+    :root[data-map-theme-tone="dark"] .popup-journey-move-btn {
+      background: var(--control-bg-strong) !important;
+      border: 1px solid var(--control-border) !important;
+      color: var(--control-text) !important;
+      box-shadow: none !important;
+    }
+
+    :root[data-map-theme-tone="dark"] #ui-toggles button:hover,
+    :root[data-map-theme-tone="dark"] #ui-toggles button:focus-visible {
+      background: var(--control-bg-hover) !important;
+      border-color: var(--control-selected-border) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .controls button:not(.secondary-btn):not(.controls-hide):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action),
+    :root[data-map-theme-tone="dark"] .controls .panel-link-button,
+    :root[data-map-theme-tone="dark"] .selection-actions button:not(.ghost-btn):not(.neutral-btn),
+    :root[data-map-theme-tone="dark"] .destination-card-action.is-primary,
+    :root[data-map-theme-tone="dark"] .popup-journey-start-btn {
+      background: var(--map-primary-button-bg, linear-gradient(135deg, var(--accent), var(--secondary-accent))) !important;
+      border-color: transparent !important;
+      color: var(--button-text, #06100e) !important;
+      box-shadow: 0 14px 30px var(--accent-glow) !important;
+      text-shadow: none !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .controls button:not(.secondary-btn):not(.controls-hide):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action):hover,
+    :root[data-map-theme-tone="dark"] .controls .panel-link-button:hover,
+    :root[data-map-theme-tone="dark"] .destination-card-action.is-primary:hover {
+      background: var(--map-primary-button-hover, var(--map-primary-button-bg)) !important;
+    }
+
     .destination-card-details {
-      border-top: 1px solid rgba(92, 107, 97, 0.1);
+      border-top: 1px solid var(--control-border, rgba(92, 107, 97, 0.1));
       padding-top: 2px;
     }
 
@@ -2784,9 +3149,9 @@
       min-height: 24px;
       padding: 0 8px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.58);
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      color: var(--ink);
+      background: var(--control-bg, rgba(255, 255, 255, 0.58));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      color: var(--control-text, var(--ink));
       font-size: 11px;
       font-weight: 700;
     }
@@ -3149,7 +3514,7 @@
       height: 34px;
       border-radius: 999px;
       background: var(--accent);
-      color: #fffaf4;
+      color: var(--button-text, #fffaf4);
       font-weight: 800;
     }
 
@@ -3175,9 +3540,9 @@
       margin-top: 18px;
       padding: 12px 14px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.62);
-      border: 1px solid rgba(92, 107, 97, 0.14);
-      color: var(--muted);
+      background: var(--control-bg, rgba(255, 255, 255, 0.62));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      color: var(--control-muted, var(--muted));
       font-size: 13px;
       font-weight: 700;
       line-height: 1.35;
@@ -3263,9 +3628,9 @@
       gap: 4px;
       padding: 4px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      background: rgba(255, 250, 241, 0.9);
-      color: var(--ink);
+      border: 1px solid rgba(244, 255, 248, 0.16);
+      background: rgba(6, 14, 13, 0.88);
+      color: #f4fff8;
       font-family: "Trebuchet MS", "Gill Sans", sans-serif;
       box-shadow: var(--shadow-md);
       backdrop-filter: blur(18px);
@@ -3281,10 +3646,9 @@
       border: 0;
       border-radius: 999px;
       background: transparent;
-      color: var(--ink);
+      color: rgba(244, 255, 248, 0.82);
       font: inherit;
       font-weight: 800;
-      letter-spacing: 0.02em;
       text-decoration: none;
       transition: background 140ms ease, color 140ms ease, transform 140ms ease;
       cursor: pointer;
@@ -3292,13 +3656,15 @@
 
     .app-mode-toggle a:hover,
     .app-mode-toggle button:hover {
+      background: rgba(244, 255, 248, 0.1);
+      color: #ffffff;
       transform: translateY(-1px);
     }
 
     .app-mode-toggle a.is-active {
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
-      box-shadow: 0 8px 18px rgba(32, 91, 66, 0.16);
+      background: linear-gradient(135deg, #4df49a, #f0b854);
+      color: #06100e;
+      box-shadow: 0 8px 22px rgba(77, 244, 154, 0.24);
     }
 
     .global-vibe-control {
@@ -3348,15 +3714,23 @@
       min-height: 46px;
       padding: 0 18px;
       border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      background: rgba(255, 250, 241, 0.88);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(255, 255, 255, 0.4));
+      background: var(--control-bg-strong, rgba(255, 250, 241, 0.88));
+      color: var(--control-text, var(--ink));
       font: inherit;
       font-weight: 700;
       letter-spacing: 0.02em;
       box-shadow: var(--shadow-md);
       backdrop-filter: blur(18px);
       cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, color 140ms ease;
+    }
+
+    #ui-toggles button:hover,
+    #ui-toggles button:focus-visible {
+      background: var(--control-bg-hover, rgba(255, 255, 255, 0.96));
+      border-color: var(--control-selected-border, var(--control-border, rgba(255, 255, 255, 0.5)));
+      transform: translateY(-1px);
     }
 
     #ui-toggles button + button {
@@ -3431,12 +3805,13 @@
       width: 100%;
       max-width: 100%;
       max-height: var(--app-strain-panel-max-height);
-      background: rgba(255, 255, 255, 0.62);
+      background: var(--control-bg, rgba(255, 255, 255, 0.62));
       margin-top: 8px;
       padding: 10px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 18px;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      color: var(--control-text, var(--ink));
       font-family: inherit;
       box-sizing: border-box;
       min-width: 0;
@@ -3460,7 +3835,7 @@
     #strain-list-status {
       margin-bottom: 6px;
       font-size: 12px;
-      color: #444;
+      color: var(--control-muted, #444);
       overflow-wrap: anywhere;
     }
 
@@ -3468,9 +3843,9 @@
       min-height: 160px;
       max-height: var(--app-strain-list-max-height);
       overflow-y: auto;
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 12px;
-      background: rgba(250, 247, 241, 0.78);
+      background: var(--control-bg-strong, rgba(250, 247, 241, 0.78));
       padding: 4px;
       min-width: 0;
       -webkit-overflow-scrolling: touch;
@@ -3491,8 +3866,9 @@
       width: 100%;
       margin: 0;
       text-align: left;
-      border: 1px solid rgba(92, 107, 97, 0.14);
-      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      background: var(--control-bg, rgba(255, 255, 255, 0.84));
+      color: var(--control-text, var(--ink));
       border-radius: 12px;
       padding: 8px 10px;
       font-size: 13px;
@@ -3577,7 +3953,7 @@
       margin-top: 3px;
       font-size: 11px;
       line-height: 1.3;
-      color: rgba(33, 54, 46, 0.74);
+      color: var(--control-muted, rgba(33, 54, 46, 0.74));
     }
 
     .strain-cali-badge {
@@ -3600,9 +3976,9 @@
       min-width: 62px;
       padding: 0 10px;
       border-radius: 12px;
-      border: 1px solid rgba(92, 107, 97, 0.16);
-      background: rgba(255, 255, 255, 0.8);
-      color: var(--ink);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.16));
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.8));
+      color: var(--control-text, var(--ink));
       font: inherit;
       font-size: 11px;
       font-weight: 700;
@@ -3612,9 +3988,9 @@
     }
 
     .strain-shelf-chip-btn.is-active {
-      background: rgba(32, 91, 66, 0.12);
-      border-color: rgba(32, 91, 66, 0.22);
-      color: var(--accent-strong);
+      background: var(--control-selected-bg, rgba(32, 91, 66, 0.12));
+      border-color: var(--control-selected-border, rgba(32, 91, 66, 0.22));
+      color: var(--control-text, var(--accent-strong));
     }
 
     .strain-cheapest-badge {
@@ -3635,7 +4011,7 @@
     .strain-empty {
       padding: 8px;
       font-size: 12px;
-      color: #666;
+      color: var(--control-muted, #666);
     }
 
     .shop-popup-card {
@@ -3933,7 +4309,7 @@
 
     .strain-spotlight-summary {
       margin: 8px 0 0;
-      color: var(--muted);
+      color: var(--control-muted, var(--muted));
       font-size: 13px;
       line-height: 1.45;
     }
@@ -3951,9 +4327,9 @@
       min-height: 28px;
       padding: 0 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.74);
-      border: 1px solid rgba(92, 107, 97, 0.14);
-      color: var(--ink);
+      background: var(--control-bg, rgba(255, 255, 255, 0.74));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      color: var(--control-text, var(--ink));
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.02em;
@@ -3961,7 +4337,7 @@
 
     .strain-spotlight-notes {
       margin: 12px 0 0;
-      color: var(--muted);
+      color: var(--control-muted, var(--muted));
       font-size: 12px;
       line-height: 1.55;
     }
@@ -3980,11 +4356,11 @@
 
     .strain-spotlight-top-head strong {
       font-size: 13px;
-      color: var(--accent-strong);
+      color: var(--control-text, var(--accent-strong));
     }
 
     .strain-spotlight-city {
-      color: var(--muted);
+      color: var(--control-muted, var(--muted));
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.02em;
@@ -4004,10 +4380,10 @@
       gap: 10px;
       padding: 10px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.82));
       text-align: left;
-      color: var(--ink);
+      color: var(--control-text, var(--ink));
       font: inherit;
       cursor: pointer;
       box-shadow: none;
@@ -4028,12 +4404,12 @@
     .strain-spotlight-shop-name {
       font-size: 13px;
       font-weight: 700;
-      color: var(--ink);
+      color: var(--control-text, var(--ink));
     }
 
     .strain-spotlight-shop-meta {
       font-size: 11px;
-      color: var(--muted);
+      color: var(--control-muted, var(--muted));
       line-height: 1.35;
     }
 
@@ -4044,11 +4420,11 @@
       min-height: 24px;
       padding: 0 8px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(92, 107, 97, 0.12);
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.9));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       font-size: 11px;
       font-weight: 700;
-      color: var(--accent-strong);
+      color: var(--control-text, var(--accent-strong));
       white-space: nowrap;
     }
 
@@ -4061,12 +4437,110 @@
     .strain-spotlight-empty {
       padding: 18px 14px;
       border-radius: 14px;
-      border: 1px dashed rgba(92, 107, 97, 0.16);
-      background: rgba(255, 255, 255, 0.52);
-      color: var(--muted);
+      border: 1px dashed var(--control-border, rgba(92, 107, 97, 0.16));
+      background: var(--control-bg, rgba(255, 255, 255, 0.52));
+      color: var(--control-muted, var(--muted));
       font-size: 12px;
       line-height: 1.45;
       text-align: center;
+    }
+
+    #strain-status {
+      color: var(--control-muted, #444) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .wanted-list-panel,
+    :root[data-map-theme-tone="dark"] #strain-list-panel,
+    :root[data-map-theme-tone="dark"] #strain-list,
+    :root[data-map-theme-tone="dark"] #strain-spotlight-card,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-shop,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-chip,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-empty,
+    :root[data-map-theme-tone="dark"] .strain-empty {
+      background: var(--control-bg-strong) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] #strain-status,
+    :root[data-map-theme-tone="dark"] #strain-list-status,
+    :root[data-map-theme-tone="dark"] .strain-item-meta,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-summary,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-notes,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-city,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-shop-meta,
+    :root[data-map-theme-tone="dark"] .stash-shelf-summary,
+    :root[data-map-theme-tone="dark"] .stash-bag-meta {
+      color: var(--control-muted) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .wanted-list-panel summary,
+    :root[data-map-theme-tone="dark"] .strain-list-head strong,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-copy h3,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-top-head strong,
+    :root[data-map-theme-tone="dark"] .strain-spotlight-shop-name,
+    :root[data-map-theme-tone="dark"] #stash-shelf h3,
+    :root[data-map-theme-tone="dark"] .stash-bag-name {
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .strain-item:not(.type-sativa):not(.type-indica):not(.type-hybrid):not(.type-hash):not(.type-kush),
+    :root[data-map-theme-tone="dark"] .strain-shelf-chip-btn {
+      background: var(--control-bg-strong) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .strain-item:not(.type-sativa):not(.type-indica):not(.type-hybrid):not(.type-hash):not(.type-kush):hover,
+    :root[data-map-theme-tone="dark"] .strain-item:not(.type-sativa):not(.type-indica):not(.type-hybrid):not(.type-hash):not(.type-kush):focus-visible,
+    :root[data-map-theme-tone="dark"] .strain-shelf-chip-btn:hover,
+    :root[data-map-theme-tone="dark"] .strain-shelf-chip-btn:focus-visible {
+      background: var(--control-bg-hover) !important;
+      border-color: var(--control-selected-border) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .strain-shelf-chip-btn.is-active {
+      background: var(--control-selected-bg) !important;
+      border-color: var(--control-selected-border) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .stash-shelf-stage {
+      background:
+        linear-gradient(180deg, var(--control-bg-strong), var(--control-bg)),
+        repeating-linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.08) 0px,
+          rgba(255, 255, 255, 0.08) 10px,
+          rgba(255, 255, 255, 0.03) 10px,
+          rgba(255, 255, 255, 0.03) 24px
+        ) !important;
+      border-color: var(--control-border) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .stash-shelf-empty,
+    :root[data-map-theme-tone="dark"] .stash-bag {
+      background: var(--control-bg-strong) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.34) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .stash-bag::before {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06)) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .stash-bag-remove,
+    :root[data-map-theme-tone="dark"] .stash-bag-price {
+      background: var(--control-bg) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .stash-bag-city,
+    :root[data-map-theme-tone="dark"] .stash-bag-footer {
+      color: var(--control-text) !important;
     }
 
     .price-label-tooltip {
@@ -4105,9 +4579,9 @@
       min-height: 44px;
       padding: 0 12px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.66);
-      border: 1px solid rgba(92, 107, 97, 0.12);
-      color: var(--ink);
+      background: var(--control-bg, rgba(255, 255, 255, 0.66));
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      color: var(--control-text, var(--ink));
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
@@ -4122,14 +4596,14 @@
 
     .leaflet-control-zoom a,
     .leaflet-bar a {
-      background: rgba(255, 249, 239, 0.94) !important;
-      color: var(--ink) !important;
-      border-color: rgba(92, 107, 97, 0.12) !important;
+      background: var(--control-bg-strong, rgba(255, 249, 239, 0.94)) !important;
+      color: var(--control-text, var(--ink)) !important;
+      border-color: var(--control-border, rgba(92, 107, 97, 0.12)) !important;
     }
 
     .leaflet-popup-content-wrapper,
     .leaflet-popup-tip {
-      background: rgba(255, 250, 243, 0.96);
+      background: var(--panel-strong, rgba(255, 250, 243, 0.96));
       color: var(--ink);
       box-shadow: var(--shadow-md);
     }
@@ -4143,38 +4617,51 @@
 
     .popup-journey-start-btn,
     .popup-journey-add-btn,
-    .popup-journey-move-btn {
+    .popup-journey-move-btn,
+    .popup-area-search-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      text-align: center;
       width: 100%;
       margin: 8px 0 6px;
       min-height: 40px;
-      padding: 0 12px;
+      padding: 8px 14px;
       border: 0;
       border-radius: 12px;
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      color: #fff9f0;
+      color: var(--button-text, #fff9f0);
       font: inherit;
       font-size: 13px;
       font-weight: 700;
+      line-height: 1.15;
       letter-spacing: 0.01em;
+      white-space: normal;
+      overflow-wrap: anywhere;
       cursor: pointer;
       box-shadow: 0 10px 20px rgba(32, 91, 66, 0.16);
+    }
+
+    .popup-area-note {
+      display: block;
+      margin: 8px 0;
+      color: var(--control-muted, var(--muted));
+      font-size: 12px;
+      line-height: 1.4;
     }
 
     .popup-journey-start-btn,
     .popup-journey-add-btn,
     .popup-journey-move-btn {
       margin-top: 0;
-      background: rgba(255, 252, 247, 0.9);
+      background: var(--control-bg-strong, rgba(255, 252, 247, 0.9));
       color: var(--accent-strong);
-      border: 1px solid rgba(32, 91, 66, 0.22);
+      border: 1px solid var(--control-selected-border, rgba(32, 91, 66, 0.22));
       box-shadow: none;
     }
 
     .popup-journey-add-btn {
-      color: var(--ink);
+      color: var(--control-text, var(--ink));
     }
 
     .popup-journey-order {
@@ -5200,17 +5687,18 @@
       stroke: none;
     }
 
-    .fallback-location-marker.is-coffeeshop { --marker-accent: #2f7a58; }
-    .fallback-location-marker.is-hotel { --marker-accent: #426f9f; }
-    .fallback-location-marker.is-museum { --marker-accent: #7862a8; }
-    .fallback-location-marker.is-landmark { --marker-accent: #b06d2d; }
-    .fallback-location-marker.is-food { --marker-accent: #c35f39; }
-    .fallback-location-marker.is-bar { --marker-accent: #8d4b78; }
-    .fallback-location-marker.is-transport { --marker-accent: #347c88; }
-    .fallback-location-marker.is-park { --marker-accent: #4f8a3b; }
-    .fallback-location-marker.is-shopping { --marker-accent: #8b6f34; }
-    .fallback-location-marker.is-viewpoint { --marker-accent: #5f748a; }
-    .fallback-location-marker.is-other { --marker-accent: #6f7d70; }
+    .fallback-location-marker.is-coffeeshop { --marker-accent: var(--category-coffeeshop); }
+    .fallback-location-marker.is-hotel { --marker-accent: var(--category-hotel); }
+    .fallback-location-marker.is-museum { --marker-accent: var(--category-museum); }
+    .fallback-location-marker.is-landmark { --marker-accent: var(--category-landmark); }
+    .fallback-location-marker.is-food { --marker-accent: var(--category-food); }
+    .fallback-location-marker.is-bar { --marker-accent: var(--category-bar); }
+    .fallback-location-marker.is-transport { --marker-accent: var(--category-transport); }
+    .fallback-location-marker.is-park { --marker-accent: var(--category-park); }
+    .fallback-location-marker.is-shopping { --marker-accent: var(--category-shopping); }
+    .fallback-location-marker.is-viewpoint { --marker-accent: var(--category-viewpoint); }
+    .fallback-location-marker.is-area { --marker-accent: var(--category-area); }
+    .fallback-location-marker.is-other { --marker-accent: var(--category-other); }
 
     .leaflet-marker-icon.is-cheapest:not(.shop-marker-icon):not(.me-marker-icon) {
       filter: drop-shadow(0 0 0.4rem rgba(125, 198, 145, 0.9)) drop-shadow(0 0 1rem rgba(18, 67, 40, 0.3));
@@ -5419,28 +5907,48 @@
     <div class="controls-content">
       <section class="panel-section search-wanted-panel control-group" aria-labelledby="map-intent-title">
         <div class="intent-head">
-          <strong id="map-intent-title">Plan, search, and explore</strong>
-          <span>Build an itinerary, search strains or places, and add useful discoveries as you go.</span>
+          <strong id="map-intent-title">Find your next stop</strong>
+          <span>Search by strain, shop, or area.</span>
         </div>
         <label for="destination-search">Search Budfinder</label>
-        <input id="destination-search" type="search" placeholder="Try Gelato, Family First, De Pijp..." autocomplete="off" list="global-search-suggestions" />
+        <input id="destination-search" type="search" placeholder="Try Gelato, The Plug, or De Pijp..." autocomplete="off" list="global-search-suggestions" />
         <datalist id="global-search-suggestions"></datalist>
         <div id="destination-search-status" class="field-note">Loading Amsterdam menu data...</div>
+        <div class="map-quick-chips" aria-label="Quick searches">
+          <button class="map-quick-chip" type="button" data-map-quick-search="Gelato">Gelato</button>
+          <button class="map-quick-chip" type="button" data-map-quick-search="Amnesia Haze">Amnesia Haze</button>
+          <button class="map-quick-chip" type="button" data-map-quick-search="White Widow">White Widow</button>
+          <button class="map-quick-chip" type="button" data-map-quick-search="Zkittlez">Zkittlez</button>
+          <button class="map-quick-chip" type="button" data-map-quick-search="The Plug">The Plug</button>
+          <button class="map-quick-chip" type="button" data-map-quick-search="Family First">Family First</button>
+          <button class="map-quick-chip" type="button" data-map-quick-search="De Pijp">De Pijp</button>
+          <button class="map-quick-chip" type="button" data-map-quick-search="Centrum">Centrum</button>
+          <button class="map-quick-chip" type="button" data-map-quick-search="Jordaan">Jordaan</button>
+        </div>
+        <div class="best-match-panel" aria-labelledby="best-match-title">
+          <div class="best-match-head">
+            <strong id="best-match-title">Best matches</strong>
+            <span id="best-match-summary">Search for a strain, shop, or area to see suggested stops.</span>
+          </div>
+          <div id="best-match-list" class="best-match-list" aria-live="polite">
+            <p class="best-match-empty">Search for a strain, shop, or area to see suggested stops.</p>
+          </div>
+        </div>
         <div class="workflow-shortcuts" aria-label="Quick planning shortcuts">
-          <button class="intent-card is-primary" type="button" data-map-intent="nearby">
-            <strong>Build an Amsterdam itinerary</strong>
-            <span>Choose a start, add coffeeshops and other mapped places, then estimate walking time, distance, and spend.</span>
-          </button>
           <button class="intent-card" type="button" data-map-intent="wanted">
-            <strong>Build my Wanted list</strong>
-            <span>Search Wanted strains and find the best matching coffeeshops.</span>
+            <strong>Wanted strains</strong>
+            <span>Save strains you want and highlight matching shops.</span>
           </button>
           <button class="intent-card" type="button" data-map-intent="value">
-            <strong>Find good-value shops</strong>
+            <strong>Good-value shops</strong>
             <span>Sort by useful price signals and nearby options.</span>
           </button>
+          <button class="intent-card is-primary" type="button" data-map-intent="nearby">
+            <strong>Build itinerary</strong>
+            <span>Add stops and estimate walking time, distance, and spend.</span>
+          </button>
           <a class="intent-link" href="database.html">
-            <strong>Research before my trip</strong>
+            <strong>Deeper research</strong>
             <span>Open the database explorer for deeper strain and shop research.</span>
           </a>
         </div>
@@ -5720,6 +6228,12 @@
             <label class="field-label" for="accent-select">
               Colour theme
               <select id="accent-select" data-budfinder-vibe-selector>
+                <option value="kings-juice">Kings Juice</option>
+                <option value="blue-zushi">Blue Zushi</option>
+                <option value="shoreline">Shoreline</option>
+                <option value="amazing-haze">Amazing Haze</option>
+                <option value="moonrocks">Moonrocks</option>
+                <option value="classic-budfinder">Classic Budfinder</option>
                 <option value="northern-lights">Northern Lights</option>
                 <option value="lemon-haze">Lemon Haze</option>
                 <option value="mimosa">Mimosa</option>
@@ -5756,7 +6270,7 @@
   <!-- Leaflet + Routing JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-  <script src="scripts/budfinder-theme.js"></script>
+  <script src="scripts/budfinder-theme.js?v=20260705-leaf-bg1"></script>
 
   <script>
     // =========================================================
@@ -5788,6 +6302,9 @@
     let missionMode = 'free-roam';
     let activePopupLocationIndex = null;
     let nearbyExploreActive = false;
+    let mapFilterHistory = [];
+    let restoringMapFilterState = false;
+    let lastDestinationSelectValue = '';
     let guideVisible = false;
     let journeyPlanner = {
       start: null,
@@ -5814,6 +6331,7 @@
       'park',
       'shopping',
       'viewpoint',
+      'area',
       'other'
     ];
     const fallbackCategoryLabels = {
@@ -5827,6 +6345,7 @@
       park: 'Park',
       shopping: 'Shopping',
       viewpoint: 'Viewpoint',
+      area: 'Area',
       other: 'Location'
     };
     const categoryIcons = {};
@@ -5852,6 +6371,7 @@
     const LOGO_MARKER_SIZE = 44;
     const POPUP_LOGO_SIZE = 76;
     const ME_MARKER_SIZE = 18;
+    const AREA_SEARCH_RADIUS_METERS = 900;
 
     // DB integration state
     let dbIntegrationReady = false;
@@ -5906,15 +6426,25 @@
     const MAP_FOCUS_SHOPS_STORAGE_KEY = 'budfinder_map_focus_shops';
     const HOW_GUIDE_DISABLED_STORAGE_KEY = 'budfinder_how_guide_disabled';
     const accentThemeAliases = {
-      amber: 'lemon-haze',
-      lagoon: 'blue-dream',
-      ember: 'cherry-gelato',
+      'neon-night': 'kings-juice',
+      'midnight-radar': 'blue-zushi',
+      'canal-glow': 'shoreline',
+      'emerald-haze': 'amazing-haze',
+      'amber-route': 'moonrocks',
+      'kings juice': 'kings-juice',
+      "king's juice": 'kings-juice',
+      'blue zushi': 'blue-zushi',
+      amazinghaze: 'amazing-haze',
+      'amazing haze': 'amazing-haze',
+      amber: 'moonrocks',
+      lagoon: 'shoreline',
+      ember: 'moonrocks',
       moss: 'northern-lights',
-      'golden-haze': 'lemon-haze',
-      'pine-resin': 'og-kush',
+      'golden-haze': 'moonrocks',
+      'pine-resin': 'amazing-haze',
       'citrus-haze': 'pineapple-express',
-      'rosewood-smoke': 'cherry-gelato',
-      'coastal-kush': 'blue-dream',
+      'rosewood-smoke': 'shoreline',
+      'coastal-kush': 'blue-zushi',
       'sour diesel': 'sour-diesel',
       'super silver haze': 'super-silver-haze',
       'tropicana cherry': 'tropicana-cherry',
@@ -6243,6 +6773,245 @@
         resinGlow: 'rgba(127, 140, 172, 0.22)'
       }
     };
+    Object.assign(accentThemes, {
+      'kings-juice': {
+        accent: '#4df49a',
+        accentStrong: '#16b76d',
+        accentSoft: 'rgba(77, 244, 154, 0.14)',
+        accentGlow: 'rgba(77, 244, 154, 0.32)',
+        bgTop: '#06100e',
+        bgMid: '#0a1918',
+        bgBottom: '#07100f',
+        panel: 'rgba(10, 22, 20, 0.76)',
+        panelStrong: 'rgba(12, 27, 24, 0.93)',
+        panelBorder: 'rgba(153, 255, 203, 0.16)',
+        sunWash: 'rgba(77, 244, 154, 0.12)',
+        mistWash: 'rgba(78, 170, 158, 0.16)',
+        resinGlow: 'rgba(240, 184, 84, 0.16)'
+      },
+      'blue-zushi': {
+        accent: '#61e8ff',
+        accentStrong: '#2aa8bd',
+        accentSoft: 'rgba(97, 232, 255, 0.14)',
+        accentGlow: 'rgba(97, 232, 255, 0.28)',
+        bgTop: '#030b13',
+        bgMid: '#071622',
+        bgBottom: '#050a12',
+        panel: 'rgba(7, 18, 29, 0.78)',
+        panelStrong: 'rgba(8, 22, 34, 0.94)',
+        panelBorder: 'rgba(97, 232, 255, 0.18)',
+        sunWash: 'rgba(97, 232, 255, 0.1)',
+        mistWash: 'rgba(164, 255, 106, 0.12)',
+        resinGlow: 'rgba(97, 232, 255, 0.16)'
+      },
+      shoreline: {
+        accent: '#5fe6b0',
+        accentStrong: '#249b79',
+        accentSoft: 'rgba(95, 230, 176, 0.14)',
+        accentGlow: 'rgba(95, 230, 176, 0.28)',
+        bgTop: '#061416',
+        bgMid: '#10241f',
+        bgBottom: '#07100f',
+        panel: 'rgba(14, 28, 25, 0.78)',
+        panelStrong: 'rgba(17, 33, 29, 0.94)',
+        panelBorder: 'rgba(246, 198, 111, 0.2)',
+        sunWash: 'rgba(95, 230, 176, 0.1)',
+        mistWash: 'rgba(246, 198, 111, 0.12)',
+        resinGlow: 'rgba(246, 198, 111, 0.16)'
+      },
+      'amazing-haze': {
+        accent: '#7df37b',
+        accentStrong: '#2aa94b',
+        accentSoft: 'rgba(125, 243, 123, 0.14)',
+        accentGlow: 'rgba(125, 243, 123, 0.28)',
+        bgTop: '#07120a',
+        bgMid: '#0d2012',
+        bgBottom: '#09100b',
+        panel: 'rgba(10, 25, 13, 0.78)',
+        panelStrong: 'rgba(13, 32, 18, 0.94)',
+        panelBorder: 'rgba(125, 243, 123, 0.18)',
+        sunWash: 'rgba(125, 243, 123, 0.1)',
+        mistWash: 'rgba(214, 232, 108, 0.12)',
+        resinGlow: 'rgba(214, 232, 108, 0.16)'
+      },
+      moonrocks: {
+        accent: '#ffbf63',
+        accentStrong: '#c97822',
+        accentSoft: 'rgba(255, 191, 99, 0.14)',
+        accentGlow: 'rgba(255, 191, 99, 0.28)',
+        bgTop: '#120d07',
+        bgMid: '#21170c',
+        bgBottom: '#0d0c09',
+        panel: 'rgba(26, 19, 11, 0.78)',
+        panelStrong: 'rgba(35, 25, 13, 0.94)',
+        panelBorder: 'rgba(255, 191, 99, 0.2)',
+        sunWash: 'rgba(255, 191, 99, 0.11)',
+        mistWash: 'rgba(85, 231, 156, 0.1)',
+        resinGlow: 'rgba(85, 231, 156, 0.15)'
+      },
+      'classic-budfinder': accentThemes['northern-lights']
+    });
+
+    const categoryColorBase = {
+      coffeeshop: { offset: 0, s: 62, l: 37 },
+      hotel: { offset: 204, s: 70, l: 45 },
+      museum: { offset: 266, s: 58, l: 49 },
+      landmark: { offset: 38, s: 68, l: 43 },
+      food: { offset: 112, s: 72, l: 46 },
+      bar: { offset: 318, s: 58, l: 45 },
+      transport: { offset: 172, s: 68, l: 39 },
+      park: { offset: 74, s: 58, l: 39 },
+      shopping: { offset: 232, s: 78, l: 42 },
+      viewpoint: { offset: 140, s: 62, l: 44 },
+      area: { offset: 324, s: 64, l: 46 },
+      other: { offset: 292, s: 28, l: 43 }
+    };
+
+    function clampNumber(value, min, max) {
+      return Math.min(max, Math.max(min, Number(value) || 0));
+    }
+
+    function normaliseHue(value) {
+      return ((Number(value) % 360) + 360) % 360;
+    }
+
+    function hexToHsl(hex) {
+      const raw = (hex || '').toString().trim().replace('#', '');
+      const full = raw.length === 3
+        ? raw.split('').map(ch => ch + ch).join('')
+        : raw;
+      if (!/^[0-9a-f]{6}$/i.test(full)) return null;
+      let r = parseInt(full.slice(0, 2), 16) / 255;
+      let g = parseInt(full.slice(2, 4), 16) / 255;
+      let b = parseInt(full.slice(4, 6), 16) / 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h = 0;
+      let s = 0;
+      const l = (max + min) / 2;
+      const d = max - min;
+      if (d !== 0) {
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        if (max === g) h = ((b - r) / d + 2) / 6;
+        if (max === b) h = ((r - g) / d + 4) / 6;
+      }
+      return { h: h * 360, s: s * 100, l: l * 100 };
+    }
+
+    function hslToHex(h, s, l) {
+      const hue = normaliseHue(h) / 360;
+      const sat = clampNumber(s, 0, 100) / 100;
+      const light = clampNumber(l, 0, 100) / 100;
+      const hueToRgb = (p, q, t) => {
+        let channel = t;
+        if (channel < 0) channel += 1;
+        if (channel > 1) channel -= 1;
+        if (channel < 1 / 6) return p + (q - p) * 6 * channel;
+        if (channel < 1 / 2) return q;
+        if (channel < 2 / 3) return p + (q - p) * (2 / 3 - channel) * 6;
+        return p;
+      };
+      let r;
+      let g;
+      let b;
+      if (sat === 0) {
+        r = light;
+        g = light;
+        b = light;
+      } else {
+        const q = light < 0.5 ? light * (1 + sat) : light + sat - light * sat;
+        const p = 2 * light - q;
+        r = hueToRgb(p, q, hue + 1 / 3);
+        g = hueToRgb(p, q, hue);
+        b = hueToRgb(p, q, hue - 1 / 3);
+      }
+      return '#' + [r, g, b].map(channel => {
+        const value = Math.round(channel * 255).toString(16);
+        return value.length === 1 ? '0' + value : value;
+      }).join('');
+    }
+
+    function hexToRgb(hex) {
+      const raw = (hex || '').toString().trim().replace('#', '');
+      const full = raw.length === 3
+        ? raw.split('').map(ch => ch + ch).join('')
+        : raw;
+      if (!/^[0-9a-f]{6}$/i.test(full)) return null;
+      return {
+        r: parseInt(full.slice(0, 2), 16),
+        g: parseInt(full.slice(2, 4), 16),
+        b: parseInt(full.slice(4, 6), 16)
+      };
+    }
+
+    function rgbaFromHex(hex, alpha) {
+      const rgb = hexToRgb(hex) || { r: 255, g: 255, b: 255 };
+      return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${clampNumber(alpha, 0, 1)})`;
+    }
+
+    function getRelativeLuminance(hex) {
+      const rgb = hexToRgb(hex);
+      if (!rgb) return 1;
+      const channels = [rgb.r, rgb.g, rgb.b].map(channel => {
+        const value = channel / 255;
+        return value <= 0.03928
+          ? value / 12.92
+          : Math.pow((value + 0.055) / 1.055, 2.4);
+      });
+      return (0.2126 * channels[0]) + (0.7152 * channels[1]) + (0.0722 * channels[2]);
+    }
+
+    function contrastRatio(firstHex, secondHex) {
+      const first = getRelativeLuminance(firstHex);
+      const second = getRelativeLuminance(secondHex);
+      const lighter = Math.max(first, second);
+      const darker = Math.min(first, second);
+      return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    function bestTextForBackground(hex) {
+      return contrastRatio(hex, '#06100e') >= contrastRatio(hex, '#ffffff')
+        ? '#06100e'
+        : '#ffffff';
+    }
+
+    const mapThemeToneOverrides = {
+      'kings-juice': { text: '#f4fff8', muted: '#c4d9cf', secondary: '#f0b854', surface: '#0a1614', surfaceStrong: '#0f2420', dark: true },
+      'blue-zushi': { text: '#eff8ff', muted: '#c2d6e1', secondary: '#a4ff6a', surface: '#071622', surfaceStrong: '#0c2232', dark: true },
+      shoreline: { text: '#fff8e8', muted: '#ded4b9', secondary: '#f6c66f', surface: '#0e1c19', surfaceStrong: '#142b26', dark: true },
+      'amazing-haze': { text: '#f4fff1', muted: '#c8dec2', secondary: '#d6e86c', surface: '#0a190d', surfaceStrong: '#102615', dark: true },
+      moonrocks: { text: '#fff7e8', muted: '#e4d1b4', secondary: '#55e79c', surface: '#1a130b', surfaceStrong: '#2a1d0f', dark: true }
+    };
+
+    function getMapThemeTone(themeKey) {
+      if (mapThemeToneOverrides[themeKey]) return mapThemeToneOverrides[themeKey];
+      return {
+        text: '#203128',
+        muted: '#5b6b61',
+        secondary: themeKey === 'lemon-haze' ? '#8a7614' : '#b46b20',
+        surface: '#ffffff',
+        surfaceStrong: '#ffffff',
+        dark: false
+      };
+    }
+
+    function applyCategoryMarkerPalette(theme) {
+      const accentHsl = hexToHsl(theme && theme.accent) || { h: 145, s: 56, l: 38 };
+      const saturationShift = (accentHsl.s - 56) * 0.14;
+      const lightnessShift = (accentHsl.l - 38) * 0.16;
+      Object.entries(categoryColorBase).forEach(([category, base]) => {
+        document.documentElement.style.setProperty(
+          `--category-${category}`,
+          hslToHex(
+            accentHsl.h + base.offset,
+            clampNumber(base.s + saturationShift, 46, 82),
+            clampNumber(base.l + lightnessShift, 34, 54)
+          )
+        );
+      });
+    }
+
     let legacyFavoriteIndices = loadStoredJson(LEGACY_FAVORITES_STORAGE_KEY, []);
     let recentDestinationKeys = loadStoredArray(RECENT_DESTINATIONS_STORAGE_KEYS, []);
     let shelfStrainNames = loadStoredArray(STRAIN_SHELF_STORAGE_KEYS, []);
@@ -6255,7 +7024,7 @@
     let favorites = [];
     let personalisation = {
       displayName: 'Explorer',
-      accent: 'northern-lights',
+      accent: 'kings-juice',
       showIntroPopupOnLoad: false
     };
 
@@ -6365,18 +7134,12 @@
         };
       }
 
-      if ((params.get('source') || '') !== 'explorer') return null;
-      const parsed = parseStoredJson(MAP_FOCUS_SHOPS_STORAGE_KEY);
-      const fromStorage = parsed && Array.isArray(parsed.shopIds)
-        ? parseShopIdList(parsed.shopIds.join(','))
-        : [];
-      const storageStrainName = (parsed && parsed.strainName ? parsed.strainName : '').toString().trim();
-      const storageStrainShopIds = parsed && Array.isArray(parsed.strainShopIds)
-        ? parseShopIdList(parsed.strainShopIds.join(','))
-        : [];
-      return (fromStorage.length || storageStrainName || storageStrainShopIds.length)
-        ? { shopIds: fromStorage, strainName: storageStrainName, strainShopIds: storageStrainShopIds }
-        : null;
+      try {
+        localStorage.removeItem(MAP_FOCUS_SHOPS_STORAGE_KEY);
+      } catch (_err) {
+        // Storage can be blocked; the important part is that no hidden focus is applied.
+      }
+      return null;
     }
 
     function getInitialSearchFromUrl() {
@@ -6523,7 +7286,8 @@
 
     function normaliseAccentThemeKey(value) {
       const raw = (value || '').toString().trim();
-      return accentThemeAliases[raw] || raw;
+      const lower = raw.toLowerCase();
+      return accentThemeAliases[raw] || accentThemeAliases[lower] || raw;
     }
 
     function getLocationPreferenceKey(loc) {
@@ -6805,6 +7569,32 @@
       root.style.setProperty('--accent-strong', theme.accentStrong);
       root.style.setProperty('--accent-soft', theme.accentSoft);
       root.style.setProperty('--accent-glow', theme.accentGlow);
+      const tone = getMapThemeTone(personalisation.accent);
+      root.setAttribute('data-map-theme', personalisation.accent);
+      root.setAttribute('data-map-theme-tone', tone.dark ? 'dark' : 'light');
+      root.style.setProperty('--ink', tone.text);
+      root.style.setProperty('--muted', tone.muted);
+      root.style.setProperty('--soft', rgbaFromHex(tone.text, tone.dark ? 0.58 : 0.62));
+      root.style.setProperty('--secondary-accent', tone.secondary);
+      root.style.setProperty('--button-text', tone.dark ? '#06100e' : bestTextForBackground(theme.accent));
+      root.style.setProperty('--map-primary-button-bg', tone.dark
+        ? `linear-gradient(135deg, ${theme.accent}, ${tone.secondary})`
+        : `linear-gradient(135deg, ${theme.accent}, ${theme.accentStrong})`);
+      root.style.setProperty('--map-primary-button-hover', tone.dark
+        ? `linear-gradient(135deg, ${tone.secondary}, ${theme.accent})`
+        : `linear-gradient(135deg, ${theme.accentStrong}, ${theme.accent})`);
+      root.style.setProperty('--control-color-scheme', tone.dark ? 'dark' : 'light');
+      root.style.setProperty('--control-bg', tone.dark ? rgbaFromHex(tone.surface, 0.94) : 'rgba(255, 255, 255, 0.72)');
+      root.style.setProperty('--control-bg-strong', tone.dark ? rgbaFromHex(tone.surfaceStrong, 0.98) : 'rgba(255, 255, 255, 0.88)');
+      root.style.setProperty('--control-bg-hover', tone.dark ? rgbaFromHex(tone.surfaceStrong, 1) : 'rgba(255, 255, 255, 0.96)');
+      root.style.setProperty('--control-border', tone.dark ? rgbaFromHex(tone.text, 0.34) : 'rgba(92, 107, 97, 0.16)');
+      root.style.setProperty('--control-text', tone.text);
+      root.style.setProperty('--control-muted', tone.muted);
+      root.style.setProperty('--control-selected-bg', tone.dark ? rgbaFromHex(theme.accent, 0.28) : rgbaFromHex(theme.accent, 0.14));
+      root.style.setProperty('--control-selected-border', rgbaFromHex(theme.accent, tone.dark ? 0.62 : 0.3));
+      root.style.setProperty('--leaf-pattern-opacity', tone.dark ? '0.035' : '0.065');
+      root.style.setProperty('--leaf-pattern-blend', tone.dark ? 'screen' : 'multiply');
+      applyCategoryMarkerPalette(theme);
 
       const kicker = document.getElementById('hero-kicker');
       const nameInput = document.getElementById('display-name-input');
@@ -6829,7 +7619,7 @@
     function resetPersonalisation() {
       personalisation = {
         displayName: 'Explorer',
-        accent: 'northern-lights',
+        accent: 'kings-juice',
         showIntroPopupOnLoad: false
       };
       savePersonalisation();
@@ -7009,6 +7799,140 @@
         hasCategoryFilter();
     }
 
+    function captureMapFilterState() {
+      return {
+        selectedDestination: getSelectedDestinationIndex(),
+        locationSearchText: (locationSearchText || '').toString(),
+        missionMode,
+        selectedCategories: Array.isArray(selectedCategories) ? selectedCategories.slice() : ['all'],
+        strainFilterText: (strainFilterText || '').toString(),
+        explorerFocusShopIds: explorerFocusShopIds instanceof Set ? Array.from(explorerFocusShopIds) : [],
+        explorerFocusStrainName: (explorerFocusStrainName || '').toString(),
+        explorerFocusStrainShopIds: explorerFocusStrainShopIds instanceof Set ? Array.from(explorerFocusStrainShopIds) : [],
+        nearbyExploreActive: !!nearbyExploreActive
+      };
+    }
+
+    function serialiseMapFilterState(state) {
+      return JSON.stringify({
+        selectedDestination: state && state.selectedDestination !== null ? String(state.selectedDestination) : '',
+        locationSearchText: (state && state.locationSearchText || '').toString(),
+        missionMode: state && state.missionMode || 'free-roam',
+        selectedCategories: Array.isArray(state && state.selectedCategories) ? state.selectedCategories.slice().sort() : ['all'],
+        strainFilterText: (state && state.strainFilterText || '').toString(),
+        explorerFocusShopIds: Array.isArray(state && state.explorerFocusShopIds) ? state.explorerFocusShopIds.map(String).sort() : [],
+        explorerFocusStrainName: (state && state.explorerFocusStrainName || '').toString(),
+        explorerFocusStrainShopIds: Array.isArray(state && state.explorerFocusStrainShopIds) ? state.explorerFocusStrainShopIds.map(String).sort() : [],
+        nearbyExploreActive: !!(state && state.nearbyExploreActive)
+      });
+    }
+
+    function pushMapFilterSnapshot(snapshot) {
+      if (restoringMapFilterState) return;
+      if (!snapshot) return;
+      const key = serialiseMapFilterState(snapshot);
+      const lastKey = mapFilterHistory.length ? serialiseMapFilterState(mapFilterHistory[mapFilterHistory.length - 1]) : '';
+      if (key === lastKey) return;
+      mapFilterHistory.push(snapshot);
+      if (mapFilterHistory.length > 24) mapFilterHistory = mapFilterHistory.slice(-24);
+    }
+
+    function rememberMapFilterState() {
+      pushMapFilterSnapshot(captureMapFilterState());
+    }
+
+    function clearMapFilterHistory() {
+      mapFilterHistory = [];
+    }
+
+    async function restoreMapFilterState(state, options = {}) {
+      if (!state) return false;
+      restoringMapFilterState = true;
+      const preserveViewport = options.preserveViewport !== false;
+      const previousView = preserveViewport && map
+        ? { center: map.getCenter(), zoom: map.getZoom() }
+        : null;
+      try {
+        const searchInput = document.getElementById('destination-search');
+        const missionSelect = document.getElementById('mission-mode');
+        const destinationSelect = document.getElementById('destination-select');
+
+        locationSearchText = (state.locationSearchText || '').toString();
+        if (searchInput) searchInput.value = locationSearchText;
+
+        missionMode = state.missionMode || 'free-roam';
+        if (missionSelect) missionSelect.value = missionMode;
+
+        selectedCategories = Array.isArray(state.selectedCategories) && state.selectedCategories.length
+          ? state.selectedCategories.slice()
+          : ['all'];
+        syncCategoryCheckboxes();
+
+        explorerFocusShopIds = Array.isArray(state.explorerFocusShopIds) && state.explorerFocusShopIds.length
+          ? new Set(state.explorerFocusShopIds.map(String))
+          : null;
+        explorerFocusStrainName = (state.explorerFocusStrainName || '').toString();
+        explorerFocusStrainShopIds = Array.isArray(state.explorerFocusStrainShopIds) && state.explorerFocusStrainShopIds.length
+          ? new Set(state.explorerFocusStrainShopIds.map(String))
+          : null;
+        syncExplorerFocusControls();
+
+        nearbyExploreActive = !!state.nearbyExploreActive;
+
+        const destinationIndex = Number.isInteger(state.selectedDestination)
+          ? state.selectedDestination
+          : parseInt(state.selectedDestination, 10);
+        if (destinationSelect) {
+          destinationSelect.value = Number.isInteger(destinationIndex) && locations[destinationIndex]
+            ? String(destinationIndex)
+            : '';
+          lastDestinationSelectValue = String(destinationSelect.value || '');
+        }
+        activePopupLocationIndex = null;
+        if (map) map.closePopup();
+
+        clearActiveStrainFilterState();
+        const restoredStrain = (state.strainFilterText || '').toString().trim();
+        if (restoredStrain) {
+          await applyStrainFilter(restoredStrain);
+        }
+
+        if (destinationSelect && destinationSelect.value) {
+          const selectedIndex = getSelectedDestinationIndex();
+          if (selectedIndex !== null) {
+            rememberRecentDestination(selectedIndex);
+            if (lastPosition) {
+              findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
+            } else {
+              clearRouteUi();
+            }
+            if (!preserveViewport) {
+              focusDestinationOnMap(selectedIndex);
+            }
+          }
+        } else {
+          clearRouteUi();
+        }
+
+        updateNearestLabel();
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+        updateSelectionCard();
+        refreshDestinationCards();
+        updateControlsSummary();
+        syncClearSelectionToggle();
+        if (previousView && map) {
+          map.setView(previousView.center, previousView.zoom, { animate: false });
+        } else if (!preserveViewport) {
+          window.setTimeout(() => fitMapToVisibleMarkers(), 80);
+        }
+        return true;
+      } finally {
+        restoringMapFilterState = false;
+      }
+    }
+
     function setHeroPopupVisible(visible, options = {}) {
       const nextVisible = !!visible;
       const changed = heroPopupVisible !== nextVisible;
@@ -7139,7 +8063,7 @@
           hideBtn.textContent = 'Close';
           hideBtn.style.display = 'inline-flex';
         } else {
-          hideBtn.textContent = 'Hide';
+          hideBtn.textContent = 'Hide map tools';
           hideBtn.style.display = 'inline-flex';
         }
       }
@@ -7809,6 +8733,8 @@
           '<path d="M6 8h12l-1 12H7Z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M9 12h.01"/><path d="M15 12h.01"/>',
         viewpoint:
           '<path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="3"/>',
+        area:
+          '<path d="M4 6.5 10 4l6 2.5 4-1.5v13.5l-4 1.5-6-2.5-6 2.5Z"/><path d="M10 4v13.5"/><path d="M16 6.5V20"/><circle cx="12" cy="11.5" r="2.2"/>',
         other:
           '<path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/>'
       };
@@ -7836,6 +8762,7 @@
       if (key === 'park' || key === 'garden') return 'park';
       if (key === 'shopping' || key === 'shop' || key === 'market') return 'shopping';
       if (key === 'viewpoint' || key === 'view point' || key === 'lookout') return 'viewpoint';
+      if (key === 'area' || key === 'district' || key === 'neighbourhood' || key === 'neighborhood') return 'area';
       return 'other';
     }
 
@@ -7911,6 +8838,7 @@
     function getLocationFallbackCategory(loc) {
       if (!loc) return 'other';
 
+      if (isAreaLocation(loc)) return 'area';
       if (hasLocationFlag(loc, ['Coffeeshop', 'Coffee shop', 'CoffeeShop'])) return 'coffeeshop';
       if (hasLocationFlag(loc, ['Hotel', 'Hotels'])) return 'hotel';
       if (hasLocationFlag(loc, ['Museum', 'Museums'])) return 'museum';
@@ -8919,6 +9847,13 @@
       return coffeeKey ? !!loc[coffeeKey] : false;
     }
 
+    function isAreaLocation(loc) {
+      if (!loc || typeof loc !== 'object') return false;
+      if (typeof loc.Area === 'boolean') return loc.Area;
+      const areaKey = Object.keys(loc).find(k => normaliseText(k) === 'area');
+      return areaKey ? !!loc[areaKey] : false;
+    }
+
     function isClosedLocation(loc) {
       if (!loc || typeof loc !== 'object') return false;
       if (typeof loc.Closed === 'boolean') return loc.Closed;
@@ -9525,9 +10460,12 @@
       }
     }
 
-    async function applyStrainFilter(queryText) {
+    async function applyStrainFilter(queryText, options = {}) {
       const status = document.getElementById('strain-status');
       const q = (typeof queryText === 'string' ? queryText : '').trim();
+      if (options.recordHistory !== false && normaliseText(q) !== normaliseText(strainFilterText)) {
+        rememberMapFilterState();
+      }
       if (!q) {
         globalSearchAppliedStrainKey = '';
         strainFilterText = '';
@@ -9621,6 +10559,7 @@
     }
 
     function clearStrainFilter() {
+      if ((strainFilterText || '').trim()) rememberMapFilterState();
       clearActiveStrainFilterState();
       updateDestinationDropdown();
       updateDistanceInfo();
@@ -10132,8 +11071,7 @@
       categoryOptions.unshift('favourites');
       categoryOptions.unshift('all');
 
-      // Default to showing all locations.
-      selectedCategories = ['all'];
+      selectedCategories = getDefaultLocationCategories();
 
       initCategoryIcons();
       populateCategorySelect();
@@ -10288,6 +11226,7 @@
         const icon = chooseMarkerIcon(loc, initialPriceLabel);
         const usesLogoIcon = logoCandidates(loc.logo).length > 0;
         const isCoffeeShop = isCoffeeShopLocation(loc);
+        const isArea = isAreaLocation(loc);
 
         // Popup logo supports multiple fallback paths.
         const logoHtml = popupLogoHtml(loc);
@@ -10309,7 +11248,41 @@
           : '';
         const popupCardClass = isCoffeeShop
           ? 'shop-popup-card is-coffeeshop is-value-unknown'
+          : isArea
+          ? 'shop-popup-card is-area-anchor'
           : 'shop-popup-card';
+        const websiteHref = (loc.website || '').toString().trim();
+        const websiteLinkHtml = websiteHref
+          ? `<a href="${escapeHtmlAttr(websiteHref)}" target="_blank">Website</a><br>`
+          : '';
+        const streetViewLinkHtml = `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>`;
+        const journeyControlsHtml = isArea
+          ? ''
+          : (
+              `<button type="button" class="popup-journey-start-btn" data-index="${i}">Set itinerary start</button>` +
+              `<button type="button" class="popup-journey-add-btn" data-index="${i}">Add to itinerary</button>` +
+              `<span class="popup-journey-order" data-popup-journey-order="${i}" hidden>` +
+                `<button type="button" class="popup-journey-move-btn" data-popup-journey-move="up" data-index="${i}" aria-label="Move ${escapeHtmlAttr(loc.name || 'place')} earlier in itinerary" title="Move earlier">−</button>` +
+                `<button type="button" class="popup-journey-move-btn" data-popup-journey-move="down" data-index="${i}" aria-label="Move ${escapeHtmlAttr(loc.name || 'place')} later in itinerary" title="Move later">+</button>` +
+              `</span>`
+            );
+        const areaControlsHtml = isArea
+          ? (
+              `<span class="popup-area-note">Area search anchor. Use this to find nearby coffeeshops and useful stops.</span>` +
+              `<button type="button" class="popup-area-search-btn" data-area-search-index="${i}">Show nearby coffeeshops</button>`
+            )
+          : '';
+        const personalControlsHtml = isArea
+          ? ''
+          : (
+              `<button class="fav-btn" data-index="${i}">` +
+                `${favorites.includes(i) ? 'Remove from Saved shops' : 'Save to Saved shops'}` +
+              `</button>` +
+              `<br>` +
+              `<label><input type="checkbox" class="visited-checkbox" data-index="${i}" ${loc.visited ? 'checked' : ''}> Visited</label><br>` +
+              `<span class="rating-label">Rating: </span>` +
+              `<span class="rating-stars" data-index="${i}" data-rating="${loc.rating}">${renderStars(loc.rating)}</span>`
+            );
 
         const marker = L.marker(loc.coords, { icon: icon, zIndexOffset: 1000 })
           .addTo(map)
@@ -10319,21 +11292,11 @@
             logoHtml +
             popupStrainsHtml +
             dbMenuLinks +
-            `<button type="button" class="popup-journey-start-btn" data-index="${i}">Set itinerary start</button>` +
-            `<button type="button" class="popup-journey-add-btn" data-index="${i}">Add to itinerary</button>` +
-            `<span class="popup-journey-order" data-popup-journey-order="${i}" hidden>` +
-              `<button type="button" class="popup-journey-move-btn" data-popup-journey-move="up" data-index="${i}" aria-label="Move ${escapeHtmlAttr(loc.name || 'place')} earlier in itinerary" title="Move earlier">−</button>` +
-              `<button type="button" class="popup-journey-move-btn" data-popup-journey-move="down" data-index="${i}" aria-label="Move ${escapeHtmlAttr(loc.name || 'place')} later in itinerary" title="Move later">+</button>` +
-            `</span>` +
-            `<a href="${loc.website}" target="_blank">Website</a><br>` +
-            `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>` +
-            `<button class="fav-btn" data-index="${i}">` +
-              `${favorites.includes(i) ? 'Remove from Saved shops' : 'Save to Saved shops'}` +
-            `</button>` +
-            `<br>` +
-            `<label><input type="checkbox" class="visited-checkbox" data-index="${i}" ${loc.visited ? 'checked' : ''}> Visited</label><br>` +
-            `<span class="rating-label">Rating: </span>` +
-            `<span class="rating-stars" data-index="${i}" data-rating="${loc.rating}">${renderStars(loc.rating)}</span>` +
+            areaControlsHtml +
+            journeyControlsHtml +
+            websiteLinkHtml +
+            streetViewLinkHtml +
+            personalControlsHtml +
             `</div>`
           )
           .on('click', function () {
@@ -10397,6 +11360,15 @@
       const destinationSelect = document.getElementById('destination-select');
       if (destinationSelect) {
         destinationSelect.onchange = () => {
+          if (!restoringMapFilterState && String(destinationSelect.value || '') !== lastDestinationSelectValue) {
+            const previousState = captureMapFilterState();
+            const previousIndex = parseInt(lastDestinationSelectValue || '', 10);
+            previousState.selectedDestination = Number.isInteger(previousIndex) && locations[previousIndex]
+              ? previousIndex
+              : null;
+            pushMapFilterSnapshot(previousState);
+          }
+          lastDestinationSelectValue = String(destinationSelect.value || '');
           const destIndex = getSelectedDestinationIndex();
           if (destIndex === null) {
             nearbyExploreActive = false;
@@ -10723,6 +11695,9 @@
       if (!destinationSelect || !Number.isInteger(safeIndex) || safeIndex < 0 || safeIndex >= locations.length) {
         return false;
       }
+      if (String(destinationSelect.value || '') !== String(safeIndex)) {
+        rememberMapFilterState();
+      }
 
       destinationSelect.value = String(safeIndex);
       destinationSelect.dispatchEvent(new Event('change', { bubbles: true }));
@@ -10790,63 +11765,83 @@
       setRouteStatus(`Exploring possible Destinations from ${locations[selectedIndex].name}.`, 'good');
     }
 
-    function clearDestinationSelection() {
+    async function clearOneActiveMapFilter() {
       const destinationSelect = document.getElementById('destination-select');
       const searchInput = document.getElementById('destination-search');
       const missionSelect = document.getElementById('mission-mode');
-      const status = document.getElementById('strain-status');
-      if (!destinationSelect || !hasAnyMapFilter()) return;
+      if (!hasAnyMapFilter()) return false;
 
-      if (getSelectedDestinationIndex() !== null) {
+      if (destinationSelect && getSelectedDestinationIndex() !== null) {
         destinationSelect.value = '';
+        lastDestinationSelectValue = '';
         if (map) {
           map.closePopup();
         }
         activePopupLocationIndex = null;
+        nearbyExploreActive = false;
+        clearRouteUi();
+        return true;
       }
-      nearbyExploreActive = false;
+
+      if (hasExplorerFocus()) {
+        clearExplorerFocus();
+        syncExplorerFocusControls();
+        return true;
+      }
+
       if (directionsVisible) {
         setDirectionsVisible(false);
       }
 
-      clearExplorerFocus();
-
-      locationSearchText = '';
-      if (searchInput) searchInput.value = '';
-
-      missionMode = 'free-roam';
-      if (missionSelect) missionSelect.value = missionMode;
-
-      selectedCategories = ['all'];
-      syncCategoryCheckboxes();
-
-      strainFilterText = '';
-      strainAllowedShopIds = null;
-      strainAllowedNameCityKeys = null;
-      strainPriceByShopId = null;
-      strainPriceByNameCity = null;
-      strainCheapestShopIds = null;
-      strainCheapestNameCityKeys = null;
-      strainCheapestPriceLabel = '';
-      if (status) status.textContent = 'No Wanted strains selected yet.';
-      if (activeStrainNames.length) {
-        renderStrainList();
-      } else {
-        updateStrainListSelection();
+      if ((strainFilterText || '').trim()) {
+        clearActiveStrainFilterState();
+        return true;
       }
-      refreshOpenPopupStrainLists();
-      syncActiveStrainShelfButton();
 
-      clearRouteUi();
-      updateNearestLabel();
-      updateDestinationDropdown();
-      updateDistanceInfo();
-      updateMarkers();
-      updateSelectionCard();
-      refreshDestinationCards();
-      updateControlsSummary();
-      syncClearSelectionToggle();
-      window.setTimeout(() => fitMapToVisibleMarkers(), 80);
+      if ((locationSearchText || '').trim()) {
+        locationSearchText = '';
+        if (searchInput) searchInput.value = '';
+        return true;
+      }
+
+      if (missionMode !== 'free-roam') {
+        missionMode = 'free-roam';
+        if (missionSelect) missionSelect.value = missionMode;
+        return true;
+      }
+
+      if (hasCategoryFilter()) {
+        selectedCategories = getDefaultLocationCategories();
+        syncCategoryCheckboxes();
+        return true;
+      }
+
+      return false;
+    }
+
+    async function clearDestinationSelection() {
+      if (!hasAnyMapFilter()) return;
+
+      const previousState = mapFilterHistory.pop();
+      if (previousState && serialiseMapFilterState(previousState) !== serialiseMapFilterState(captureMapFilterState())) {
+        await restoreMapFilterState(previousState, { preserveViewport: true });
+        setRouteStatus('Last filter cleared. Previous map view restored.', 'good');
+      } else {
+        const previousView = map ? { center: map.getCenter(), zoom: map.getZoom() } : null;
+        await clearOneActiveMapFilter();
+        updateNearestLabel();
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+        updateSelectionCard();
+        refreshDestinationCards();
+        updateControlsSummary();
+        syncClearSelectionToggle();
+        if (previousView && map) {
+          map.setView(previousView.center, previousView.zoom, { animate: false });
+        }
+        setRouteStatus('Last filter cleared.', 'good');
+      }
     }
 
     function clearActiveStrainFilterState() {
@@ -10871,6 +11866,7 @@
     }
 
     function resetMapFilters(options = {}) {
+      if (!options.preserveHistory) clearMapFilterHistory();
       const searchInput = document.getElementById('destination-search');
       const missionSelect = document.getElementById('mission-mode');
       locationSearchText = '';
@@ -11202,6 +12198,23 @@
       updateNearestLabel();
     }
 
+    function getDefaultLocationCategories() {
+      const hasRowsForCategory = category => categoryOptions.includes(category) &&
+        locations.some(loc => loc && !isClosedLocation(loc) && loc[category]);
+
+      const preferredCategories = ['Coffeeshop', 'Albert Heijn'];
+      const preferred = preferredCategories.find(hasRowsForCategory);
+      if (preferred) return [preferred];
+
+      const firstAvailable = categoryOptions.find(category =>
+        category !== 'all' &&
+        category !== 'favourites' &&
+        hasRowsForCategory(category)
+      );
+
+      return firstAvailable ? [firstAvailable] : ['all'];
+    }
+
     function syncCategoryCheckboxes() {
       document.querySelectorAll('.category-checkbox').forEach(cb => {
         cb.checked = (selectedCategories || []).includes(cb.value);
@@ -11405,20 +12418,110 @@
       });
     }
 
+    function getAreaSearchAliases(loc) {
+      const name = normaliseText(loc && loc.name);
+      const aliases = [];
+      const add = value => {
+        const key = normaliseText(value);
+        if (key && !aliases.includes(key)) aliases.push(key);
+      };
+
+      if (name.includes('de pijp')) {
+        ['pijp', 'albert cuyp', 'albert cuypmarkt', 'sarphatipark'].forEach(add);
+      }
+      if (name.includes('jordaan')) {
+        ['westerstraat', 'noordermarkt'].forEach(add);
+      }
+      if (name.includes('centrum') || name.includes('dam square')) {
+        ['centre', 'center', 'dam', 'dam square', 'central'].forEach(add);
+      }
+      if (name.includes('de wallen')) {
+        ['red light district', 'old town', 'oudezijds'].forEach(add);
+      }
+      if (name.includes('nieuwmarkt')) {
+        ['waterlooplein', 'oude schans'].forEach(add);
+      }
+      if (name.includes('leidseplein')) {
+        ['leidsestraat', 'nightlife'].forEach(add);
+      }
+      if (name.includes('museumplein')) {
+        ['museum quarter', 'rijksmuseum', 'van gogh', 'museum district'].forEach(add);
+      }
+      if (name.includes('oud-west')) {
+        ['oud west', 'kinkerstraat', 'foodhallen', 'ten kate'].forEach(add);
+      }
+      if (name.includes('amsterdam noord')) {
+        ['noord', 'north', 'ndsm'].forEach(add);
+      }
+      if (name.includes('amsterdam oost')) {
+        ['oost', 'east', 'oosterpark', 'dappermarkt'].forEach(add);
+      }
+      if (name.includes('negen straatjes')) {
+        ['nine streets', '9 streets', 'canal belt'].forEach(add);
+      }
+      if (name.includes('haarlemmerbuurt')) {
+        ['haarlemmerstraat', 'haarlemmerdijk'].forEach(add);
+      }
+      if (name.includes('plantage')) {
+        ['artis', 'hortus', 'zoo'].forEach(add);
+      }
+      if (name.includes('sloterdijk')) {
+        ['station sloterdijk'].forEach(add);
+      }
+
+      return aliases;
+    }
+
+    function getAreaSearchText(loc) {
+      return [
+        loc && loc.name,
+        ...(isAreaLocation(loc) ? getAreaSearchAliases(loc) : [])
+      ]
+        .filter(Boolean)
+        .map(normaliseText)
+        .join(' ');
+    }
+
+    function getMatchingAreaAnchors(queryText) {
+      const q = normaliseText(queryText);
+      if (!q || q.length < 3) return [];
+      return locations.filter(loc =>
+        loc &&
+        isAreaLocation(loc) &&
+        Array.isArray(loc.coords) &&
+        Number.isFinite(loc.coords[0]) &&
+        Number.isFinite(loc.coords[1]) &&
+        getAreaSearchText(loc).includes(q)
+      );
+    }
+
+    function matchesAreaSearchAnchor(loc, queryText) {
+      if (!loc || !Array.isArray(loc.coords)) return false;
+      const anchors = getMatchingAreaAnchors(queryText);
+      if (!anchors.length) return false;
+      return anchors.some(anchor => {
+        if (anchor === loc) return true;
+        const distance = haversineDistance(anchor.coords, loc.coords);
+        return Number.isFinite(distance) && distance <= AREA_SEARCH_RADIUS_METERS;
+      });
+    }
+
     function matchesLocationSearch(loc) {
       const q = (locationSearchText || '').toString().trim().toLowerCase();
       if (!q) return true;
+      const qNorm = normaliseText(q);
 
       const haystack = [
         loc && loc.name,
         loc && loc.city,
-        loc && loc.website
+        loc && loc.website,
+        isAreaLocation(loc) ? getAreaSearchAliases(loc).join(' ') : ''
       ]
         .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
+        .join(' ');
 
-      return haystack.includes(q);
+      if (normaliseText(haystack).includes(qNorm)) return true;
+      return matchesAreaSearchAnchor(loc, qNorm);
     }
 
     function locationMatchesStrainMatchSets(loc, ids, nameCityKeys) {
@@ -11614,6 +12717,12 @@
       const destinationSearchInput = document.getElementById('destination-search');
       const missionModeSelect = document.getElementById('mission-mode');
 
+      if (locationSearchText ||
+          missionMode !== 'free-roam' ||
+          !((selectedCategories || []).includes('all') && (selectedCategories || []).length === 1)) {
+        rememberMapFilterState();
+      }
+
       if (locationSearchText) {
         locationSearchText = '';
         changed = true;
@@ -11642,7 +12751,7 @@
       if (!query) return;
 
       resetAtlasFiltersForShelfStrain();
-      await applyStrainFilter(query);
+      await applyStrainFilter(query, { recordHistory: false });
       if (map) {
         window.setTimeout(() => {
           if (!map) return;
@@ -11949,21 +13058,41 @@
       const priceInsight = getPriceInsightForLocation(loc, priceLabel);
       const freshnessLabel = formatFreshnessLabel(getPopupMenuUpdatedAt(loc)) || 'freshness unknown';
       const confidence = getConfidenceInfo(loc);
+      const isArea = isAreaLocation(loc);
 
       if (nameEl) nameEl.textContent = loc.name || 'Destination';
       if (summaryEl) {
-        summaryEl.textContent = [
-          loc.city || inferCityFromCsvPath(currentCsvPath) || 'Current city',
-          etaLabel ? `${etaLabel} ${modeText.toLowerCase()}` : (distanceText || 'distance unknown')
-        ].filter(Boolean).join(' · ');
+        summaryEl.textContent = isArea
+          ? [
+              'Area search anchor',
+              etaLabel ? `${etaLabel} ${modeText.toLowerCase()}` : (distanceText || 'distance unknown')
+            ].filter(Boolean).join(' · ')
+          : [
+              loc.city || inferCityFromCsvPath(currentCsvPath) || 'Current city',
+              etaLabel ? `${etaLabel} ${modeText.toLowerCase()}` : (distanceText || 'distance unknown')
+            ].filter(Boolean).join(' · ');
       }
       if (metaEl) {
-        const nearbyCopy = savedMatches.length
+        const nearbyCoffeeShopCount = isArea
+          ? locations.filter(candidate =>
+              candidate &&
+              candidate !== loc &&
+              isCoffeeShopLocation(candidate) &&
+              !isClosedLocation(candidate) &&
+              Array.isArray(candidate.coords) &&
+              haversineDistance(loc.coords, candidate.coords) <= AREA_SEARCH_RADIUS_METERS
+            ).length
+          : 0;
+        const nearbyCopy = isArea
+          ? `${nearbyCoffeeShopCount} coffeeshop${nearbyCoffeeShopCount === 1 ? '' : 's'} near this area anchor. Use search to narrow nearby stops.`
+          : savedMatches.length
           ? `${savedMatches.length} Wanted strains matched here.`
           : strains.length
           ? `${strains.length} listed strain${strains.length === 1 ? '' : 's'} in the current menu data.`
           : 'Menu matches are still loading for this shop.';
-        metaEl.textContent = `${nearbyCopy} ${priceInsight.text} Menu ${freshnessLabel}. ${confidence.label}.`;
+        metaEl.textContent = isArea
+          ? nearbyCopy
+          : `${nearbyCopy} ${priceInsight.text} Menu ${freshnessLabel}. ${confidence.label}.`;
       }
       if (cityEl) cityEl.textContent = loc.city || inferCityFromCsvPath(currentCsvPath) || 'Amsterdam';
       if (etaEl) etaEl.textContent = etaLabel
@@ -11982,17 +13111,18 @@
       const stopIndex = getJourneyStopIndexByLocationIndex(selectedIndex);
       const inItinerary = stopIndex >= 0;
       if (addStopBtn) {
+        addStopBtn.hidden = isArea;
         addStopBtn.textContent = inItinerary ? 'Remove from itinerary' : 'Add to itinerary';
         addStopBtn.classList.toggle('is-remove', inItinerary);
         addStopBtn.setAttribute('aria-pressed', inItinerary ? 'true' : 'false');
       }
       if (moveUpBtn) {
-        moveUpBtn.hidden = !inItinerary;
-        moveUpBtn.disabled = !inItinerary || stopIndex <= 0;
+        moveUpBtn.hidden = isArea || !inItinerary;
+        moveUpBtn.disabled = isArea || !inItinerary || stopIndex <= 0;
       }
       if (moveDownBtn) {
-        moveDownBtn.hidden = !inItinerary;
-        moveDownBtn.disabled = !inItinerary || stopIndex >= journeyPlanner.stops.length - 1;
+        moveDownBtn.hidden = isArea || !inItinerary;
+        moveDownBtn.disabled = isArea || !inItinerary || stopIndex >= journeyPlanner.stops.length - 1;
       }
 
       syncSelectionCardChrome();
@@ -12144,6 +13274,7 @@
     // Handle changes to category checkboxes (multi-select categories)
     document.getElementById('category-filters').addEventListener('change', e => {
       if (!e.target.classList.contains('category-checkbox')) return;
+      rememberMapFilterState();
 
       const cat = e.target.value;
       const checked = e.target.checked;
@@ -12203,6 +13334,9 @@
     if (destinationSearchInput) {
       const handleDestinationSearch = () => {
         const rawQuery = (destinationSearchInput.value || '').toString().replace(/\s+/g, ' ').trim();
+        if (rawQuery !== locationSearchText) {
+          rememberMapFilterState();
+        }
         if (clearGlobalSearchAppliedStrainIfNeeded(rawQuery)) {
           // clearStrainFilter refreshes the UI; continue with the new search below.
         }
@@ -12218,10 +13352,25 @@
       destinationSearchInput.addEventListener('search', handleDestinationSearch);
     }
 
+    document.querySelectorAll('[data-map-quick-search]').forEach(button => {
+      button.addEventListener('click', () => {
+        const query = (button.getAttribute('data-map-quick-search') || '').toString().replace(/\s+/g, ' ').trim();
+        const searchInput = document.getElementById('destination-search');
+        if (!query || !searchInput) return;
+        searchInput.value = query;
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        searchInput.focus();
+      });
+    });
+
     const missionModeSelect = document.getElementById('mission-mode');
     if (missionModeSelect) {
       missionModeSelect.addEventListener('change', e => {
-        missionMode = (e.target.value || 'free-roam').toString();
+        const nextMissionMode = (e.target.value || 'free-roam').toString();
+        if (nextMissionMode !== missionMode) {
+          rememberMapFilterState();
+        }
+        missionMode = nextMissionMode;
         updateNearestLabel();
         updateDestinationDropdown();
         updateDistanceInfo();
@@ -12351,6 +13500,41 @@
       if (!Number.isInteger(index) || !locations[index]) return;
       selectDestinationIndex(index);
     });
+
+    const bestMatchList = document.getElementById('best-match-list');
+    if (bestMatchList) {
+      bestMatchList.addEventListener('click', e => {
+        const actionBtn = e.target.closest('[data-best-match-action]');
+        if (actionBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          const index = parseInt(actionBtn.getAttribute('data-best-match-index') || '', 10);
+          if (!Number.isInteger(index) || !locations[index]) return;
+          const action = actionBtn.getAttribute('data-best-match-action');
+          if (action === 'itinerary') {
+            toggleJourneyStopByIndex(index);
+            return;
+          }
+          if (action === 'directions') {
+            openDirectionsForDestinationIndex(index);
+            return;
+          }
+          selectDestinationIndex(index);
+          focusDestinationOnMap(index, {
+            minZoom: isCompactMobileLayout() ? 15 : 16,
+            animate: true,
+            duration: 0.45
+          });
+          return;
+        }
+
+        const card = e.target.closest('[data-best-match-index]');
+        if (!card) return;
+        const index = parseInt(card.getAttribute('data-best-match-index') || '', 10);
+        if (!Number.isInteger(index) || !locations[index]) return;
+        selectDestinationIndex(index);
+      });
+    }
 
     document.getElementById('strain-spotlight-top-shops').addEventListener('click', e => {
       const shopBtn = e.target.closest('.strain-spotlight-shop');
@@ -13621,6 +14805,110 @@
       }).join('');
     }
 
+    function hasBestMatchContext() {
+      const hasCategoryFilter = Array.isArray(selectedCategories) &&
+        !((selectedCategories || []).includes('all') && selectedCategories.length === 1);
+      return !!(
+        (locationSearchText || '').trim() ||
+        (strainFilterText || '').trim() ||
+        hasExplorerFocus() ||
+        nearbyExploreActive ||
+        missionMode !== 'free-roam' ||
+        hasCategoryFilter ||
+        getSelectedDestinationIndex() !== null
+      );
+    }
+
+    function getBestMatchSummary(items) {
+      const count = Array.isArray(items) ? items.length : 0;
+      if (!hasBestMatchContext()) {
+        return 'Search for a strain, shop, or area to see suggested stops.';
+      }
+      if (!count) {
+        return 'No visible stops match the current search or filters.';
+      }
+      if ((strainFilterText || '').trim()) {
+        return `${count} visible stop${count === 1 ? '' : 's'} match ${strainFilterText}.`;
+      }
+      if ((locationSearchText || '').trim()) {
+        return `${count} visible stop${count === 1 ? '' : 's'} match "${locationSearchText}".`;
+      }
+      return `${count} visible stop${count === 1 ? '' : 's'} match the current filters.`;
+    }
+
+    function buildBestMatchReason(item) {
+      const activeName = getCanonicalStrainName(strainFilterText) || strainFilterText;
+      if (activeName) {
+        if (item.isCheapest && item.priceLabel) return `Good price signal for ${activeName}: ${item.priceLabel}.`;
+        if (item.priceLabel) return `Matches ${activeName}; last seen at ${item.priceLabel}.`;
+        return `Matches ${activeName}; check before travelling.`;
+      }
+      if ((locationSearchText || '').trim()) {
+        return `Matches your search for "${locationSearchText}".`;
+      }
+      if (item.savedMatches && item.savedMatches.length) {
+        return `Matches ${item.savedMatches.slice(0, 2).join(', ')} from Wanted strains.`;
+      }
+      if (item.isClosest && item.distText) {
+        return `Closest visible option at ${item.distText}.`;
+      }
+      if (item.priceInsight && item.priceInsight.tone === 'deal') {
+        return item.priceInsight.text || 'Useful price signal where data is available.';
+      }
+      return 'Useful visible stop from the current map filters.';
+    }
+
+    function renderBestMatches(items) {
+      const listEl = document.getElementById('best-match-list');
+      const summaryEl = document.getElementById('best-match-summary');
+      if (!listEl || !summaryEl) return;
+
+      const coffeeItems = (Array.isArray(items) ? items : [])
+        .filter(item => item && locations[item.index] && isCoffeeShopLocation(locations[item.index]));
+      const displayItems = coffeeItems
+        .slice(0, 3);
+      summaryEl.textContent = getBestMatchSummary(coffeeItems);
+
+      if (!hasBestMatchContext()) {
+        listEl.innerHTML = '<p class="best-match-empty">Search for a strain, shop, or area to see suggested stops.</p>';
+        return;
+      }
+
+      if (!displayItems.length) {
+        listEl.innerHTML = '<p class="best-match-empty">Try a broader search or clear one filter to widen the map.</p>';
+        return;
+      }
+
+      listEl.innerHTML = displayItems.map(item => {
+        const locationLabel = item.city || inferCityFromCsvPath(currentCsvPath) || '';
+        const priceLabel = item.priceLabel || (item.priceInsight && item.priceInsight.label) || '';
+        const freshnessLabel = item.freshnessLabel || '';
+        const distanceLabel = item.etaLabel || item.distText || '';
+        const reason = buildBestMatchReason(item);
+        const badges = [
+          locationLabel ? `<span class="best-match-badge">${escapeHtml(locationLabel)}</span>` : '',
+          priceLabel ? `<span class="best-match-badge${item.priceInsight && item.priceInsight.tone === 'deal' ? ' is-deal' : ''}">${escapeHtml(priceLabel)}</span>` : '',
+          distanceLabel ? `<span class="best-match-badge">${escapeHtml(distanceLabel)}</span>` : '',
+          freshnessLabel ? `<span class="best-match-badge is-fresh">${escapeHtml(freshnessLabel === 'Fresh' ? 'Fresh menu' : freshnessLabel)}</span>` : ''
+        ].filter(Boolean).join('');
+        const inItinerary = !!item.inItinerary;
+        return (
+          `<article class="best-match-card" data-best-match-index="${item.index}">` +
+            `<div class="best-match-main">` +
+              `<span class="best-match-name">${escapeHtml(item.name)}</span>` +
+              `<span class="best-match-reason">${escapeHtml(reason)}</span>` +
+              (badges ? `<span class="best-match-meta">${badges}</span>` : '') +
+            `</div>` +
+            `<div class="best-match-actions">` +
+              `<button type="button" class="best-match-action is-primary" data-best-match-action="details" data-best-match-index="${item.index}">View</button>` +
+              `<button type="button" class="best-match-action${inItinerary ? ' is-primary' : ''}" data-best-match-action="itinerary" data-best-match-index="${item.index}" aria-pressed="${inItinerary ? 'true' : 'false'}">${inItinerary ? 'Added' : 'Add'}</button>` +
+              `<button type="button" class="best-match-action" data-best-match-action="directions" data-best-match-index="${item.index}">Route</button>` +
+            `</div>` +
+          `</article>`
+        );
+      }).join('');
+    }
+
     function refreshDestinationCards(items = null) {
       const preparedItems = sortDestinationItems(items || buildDestinationItems()).map(item => ({
         ...item,
@@ -13629,6 +14917,7 @@
         itineraryStopIndex: getJourneyStopIndexByLocationIndex(item.index)
       }));
       renderDestinationCards(preparedItems);
+      renderBestMatches(preparedItems);
     }
 
     /**
@@ -13854,6 +15143,30 @@
         return;
       }
 
+      const areaSearchBtn = e.target.closest('[data-area-search-index]');
+      if (areaSearchBtn) {
+        const i = parseInt(areaSearchBtn.getAttribute('data-area-search-index'), 10);
+        if (isNaN(i) || !locations[i]) return;
+        rememberMapFilterState();
+        locationSearchText = (locations[i].name || '').toString().trim();
+        const searchInput = document.getElementById('destination-search');
+        if (searchInput) searchInput.value = locationSearchText;
+        if (categoryOptions.includes('Coffeeshop')) {
+          selectedCategories = ['Coffeeshop'];
+          syncCategoryCheckboxes();
+        }
+        if (map) map.closePopup();
+        updateNearestLabel();
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
+        updateSelectionCard();
+        updateControlsSummary();
+        setControlsVisible(true, { collapsed: false });
+        window.setTimeout(() => fitMapToVisibleMarkers(), 80);
+        return;
+      }
+
       if (e.target.classList.contains('fav-btn')) {
         const i = parseInt(e.target.getAttribute('data-index'));
         const idx = favorites.indexOf(i);
@@ -13979,7 +15292,9 @@
     document.getElementById('clear-route-focus-btn').addEventListener('click', () => {
       const destSelect = document.getElementById('destination-select');
       if (!destSelect || getSelectedDestinationIndex() === null) return;
+      rememberMapFilterState();
       destSelect.value = '';
+      lastDestinationSelectValue = '';
       if (map) map.closePopup();
       activePopupLocationIndex = null;
       clearRouteUi();
@@ -14331,6 +15646,11 @@
       applyPersonalisation();
       updateControlsSummary();
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      applyPersonalisation();
+      updateControlsSummary();
+    }, { once: true });
 
     document.getElementById('reset-personalisation-btn').addEventListener('click', () => {
       resetPersonalisation();

@@ -16,7 +16,7 @@
   ];
   const DEFAULT_PERSONALISATION = {
     displayName: 'Explorer',
-    accent: 'northern-lights',
+    accent: 'kings-juice',
     showIntroPopupOnLoad: false
   };
 
@@ -135,14 +135,20 @@
       .site-settings-field input,
       .site-settings-field select {
         min-height: 42px;
-        border: 1px solid var(--panel-border, rgba(32, 91, 66, 0.18));
+        border: 1px solid var(--control-border, var(--panel-border, rgba(32, 91, 66, 0.18)));
         border-radius: 12px;
         padding: 0 12px;
-        background: rgba(255, 255, 255, 0.72);
-        color: var(--ink, #233126);
+        background: var(--control-bg, rgba(255, 255, 255, 0.72));
+        color: var(--control-text, var(--ink, #233126));
+        color-scheme: var(--control-color-scheme, light);
         font: inherit;
         font-weight: 800;
         text-transform: none;
+      }
+
+      .site-settings-field input::placeholder {
+        color: var(--control-muted, var(--muted, #667567));
+        opacity: 0.82;
       }
 
       .site-settings-actions,
@@ -159,11 +165,11 @@
         align-items: center;
         justify-content: center;
         min-height: 40px;
-        border: 1px solid var(--panel-border, rgba(32, 91, 66, 0.18));
+        border: 1px solid var(--control-border, var(--panel-border, rgba(32, 91, 66, 0.18)));
         border-radius: 999px;
         padding: 0 14px;
-        background: rgba(255, 255, 255, 0.66);
-        color: var(--ink, #233126);
+        background: var(--control-bg, rgba(255, 255, 255, 0.66));
+        color: var(--control-text, var(--ink, #233126));
         font: inherit;
         font-weight: 900;
         text-decoration: none;
@@ -174,7 +180,7 @@
       .site-settings-link.primary {
         border-color: transparent;
         background: linear-gradient(135deg, var(--accent, #2e7b59), var(--accent-strong, #205b42));
-        color: #fff9f0;
+        color: var(--button-text, #fff9f0);
       }
 
       .site-settings-button.danger {
@@ -303,7 +309,7 @@
       const personalisation = readPersonalisation();
       if (nameInput) nameInput.value = personalisation.displayName || '';
       if (window.BudfinderTheme) {
-        window.BudfinderTheme.applyTheme(personalisation.accent || 'northern-lights', { save: false, dispatch: false });
+        window.BudfinderTheme.applyTheme(personalisation.accent || 'kings-juice', { save: false, dispatch: false });
       }
     }
 
@@ -407,6 +413,8 @@
     window.addEventListener('hashchange', () => {
       if ((window.location.hash || '').toLowerCase() === '#settings') openPanel();
     });
+
+    syncForm();
 
     if ((window.location.hash || '').toLowerCase() === '#settings') openPanel();
   }
