@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Budfinder Database | Amsterdam coffeeshop menu search</title>
-  <meta name="description" content="Compare Amsterdam strain prices and browse latest known coffeeshop menus with Budfinder's database." />
+  <title>Budfinder Price &amp; Menus | Amsterdam coffeeshop menu research</title>
+  <meta name="description" content="Compare Amsterdam strain prices and browse full known coffeeshop menus with Budfinder Price &amp; Menus." />
   <link rel="canonical" href="https://budfinder.app/database.html" />
-  <meta property="og:title" content="Budfinder Database | Amsterdam coffeeshop menu search" />
-  <meta property="og:description" content="Compare Amsterdam strain prices and browse latest known coffeeshop menus with Budfinder's database." />
+  <meta property="og:title" content="Budfinder Price &amp; Menus | Amsterdam coffeeshop menu research" />
+  <meta property="og:description" content="Compare Amsterdam strain prices and browse full known coffeeshop menus with Budfinder Price &amp; Menus." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://budfinder.app/database.html" />
   <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
@@ -426,7 +426,7 @@
 
     .status {
       min-height: 22px;
-      margin: 0 0 14px;
+      margin: 18px 0 14px;
       padding: 10px 14px;
       border: 1px solid var(--control-border, rgba(255, 255, 255, 0.32));
       border-radius: 18px;
@@ -434,6 +434,78 @@
       color: var(--control-muted, var(--muted));
       font-size: 13px;
       backdrop-filter: blur(14px);
+    }
+
+    .database-search-panel {
+      display: grid;
+      gap: 12px;
+      margin: 0 0 14px;
+      padding: 16px;
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-xl);
+      background: var(--panel);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+    }
+
+    .database-search-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .database-search-title {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .database-search-title strong {
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .database-search-title span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .database-search-field {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .database-search-field label {
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .database-search-field input {
+      min-height: 58px;
+      border-width: 2px;
+      border-color: rgba(77, 244, 154, 0.34);
+      border-radius: 16px;
+      padding-inline: 18px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.78));
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.54),
+        0 0 0 4px rgba(77, 244, 154, 0.08);
+    }
+
+    .database-search-field input:focus {
+      border-color: var(--accent);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.54),
+        0 0 0 4px rgba(77, 244, 154, 0.18);
     }
 
     .workflow-strip {
@@ -781,19 +853,21 @@
       justify-content: space-between;
       gap: 12px;
       min-width: min(100%, 360px);
-      margin-bottom: 0;
-      padding: 10px 12px;
-      border: 1px solid var(--panel-border);
-      border-radius: 18px;
-      background: rgba(255, 252, 246, 0.88);
+      margin: 18px 0 12px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
       box-shadow: none;
-      backdrop-filter: blur(16px);
+      backdrop-filter: none;
     }
 
     .result-context {
       min-width: 0;
-      color: var(--muted);
-      font-size: 13px;
+      color: var(--control-muted, var(--muted));
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
       line-height: 1.35;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1199,6 +1273,34 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       line-height: 1.2;
+    }
+
+    .listing-map-link,
+    .shop-menu-map-link,
+    .shop-logo-map-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      color: var(--control-text, var(--ink));
+      text-decoration: none;
+      border-radius: 14px;
+    }
+
+    .listing-map-link:hover,
+    .listing-map-link:focus-visible,
+    .shop-menu-map-link:hover,
+    .shop-menu-map-link:focus-visible,
+    .shop-logo-map-link:hover,
+    .shop-logo-map-link:focus-visible {
+      color: var(--accent-strong);
+      outline: 3px solid rgba(51, 133, 99, 0.24);
+      outline-offset: 3px;
+    }
+
+    .shop-logo-map-link {
+      flex: 0 0 auto;
+      border-radius: 14px;
     }
 
     .listing-card-meta,
@@ -1946,12 +2048,15 @@
       width: 54px;
       height: 54px;
       overflow: hidden;
+      display: block;
       border-radius: 14px;
       border: 1px solid rgba(92, 107, 97, 0.14);
       background:
         rgba(255, 255, 255, 0.82),
         radial-gradient(circle at 30% 24%, rgba(255, 243, 210, 0.9), transparent 38%),
         linear-gradient(145deg, rgba(46, 123, 89, 0.16), rgba(222, 160, 82, 0.16));
+      color: transparent;
+      font-size: 0;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
 
@@ -1964,17 +2069,6 @@
       display: block;
       object-fit: contain;
       filter: drop-shadow(0 1px 1px rgba(31, 42, 36, 0.16));
-    }
-
-    .shop-art-fallback {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      color: var(--accent-strong);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 21px;
-      line-height: 1;
     }
 
     .shop-card-copy {
@@ -2228,8 +2322,13 @@
 
       .side-panel {
         position: static;
+        order: 2;
         max-height: none;
         overflow: visible;
+      }
+
+      .main-stack {
+        order: 1;
       }
 
       .metrics {
@@ -2293,7 +2392,7 @@
       .topbar {
         align-items: stretch;
         flex-direction: column;
-        padding: 18px 16px;
+        padding: 14px 16px;
       }
 
       .nav-actions {
@@ -2302,7 +2401,24 @@
       }
 
       h1 {
-        font-size: 34px;
+        margin-bottom: 0;
+        font-size: 32px;
+      }
+
+      .topbar .intro-copy {
+        display: none;
+      }
+
+      .database-search-panel {
+        padding: 14px;
+      }
+
+      .database-search-title strong {
+        font-size: 17px;
+      }
+
+      .database-search-title span {
+        font-size: 12px;
       }
 
       .filter-grid,
@@ -2441,7 +2557,7 @@
   <nav class="app-mode-toggle" aria-label="Switch app view">
     <a href="index.html">Home</a>
     <a href="map.html">Map</a>
-    <a class="is-active" href="database.html" aria-current="page">Database</a>
+    <a class="is-active" href="database.html" aria-current="page">Price &amp; Menus</a>
     <a href="#settings" data-budfinder-settings-toggle>Settings</a>
   </nav>
   <div class="atmosphere" aria-hidden="true">
@@ -2454,38 +2570,31 @@
     <header class="topbar">
       <div class="brand">
         <span class="kicker">Menu intelligence</span>
-        <h1>Budfinder database</h1>
-        <p class="intro-copy">Compare Amsterdam strain prices or browse the latest known coffeeshop menus. Menu data changes quickly, so use prices and listings as planning guidance.</p>
-      </div>
-      <div class="result-toolbar" aria-label="Database navigation">
-        <span id="result-context" class="result-context">Loading Amsterdam menu data...</span>
-        <div class="result-toolbar-actions">
-          <button id="jump-filters" type="button">Filters</button>
-          <button id="jump-results" type="button">Results</button>
-        </div>
+        <h1>Budfinder Price &amp; Menus</h1>
+        <p class="intro-copy">Compare Amsterdam strain prices or browse full known coffeeshop menus. Menu data changes quickly, so Budfinder shows price and menu signals as planning guidance, not stock guarantees.</p>
       </div>
     </header>
 
-    <p id="status" class="status">Loading Amsterdam menu data...</p>
-
-    <section class="workflow-strip" aria-label="Database workflow">
-      <div class="workflow-step">
-        <span>Mode 1</span>
-        <strong>Strain Price Guide</strong>
-        <p>Search a strain, compare typical prices, and spot good-value listings.</p>
+    <section class="database-search-panel" aria-labelledby="database-search-title">
+      <div class="database-search-head">
+        <div class="database-search-title">
+          <strong id="database-search-title">Search strains or coffeeshops</strong>
+          <span>Type a strain for price guide results, or a shop name to open its menu browser.</span>
+        </div>
       </div>
-      <div class="workflow-step">
-        <span>Mode 2</span>
-        <strong>Shop Menu Browser</strong>
-        <p>Pick a coffeeshop and scan the full known menu by category, price, and freshness.</p>
-      </div>
-      <div class="workflow-step">
-        <span>Data note</span>
-        <strong>Check before travelling</strong>
-        <p>Freshness badges show how old the latest menu signal is, using real listing dates only.</p>
+      <div class="field database-search-field">
+        <label id="search-label" for="search">Search strains or coffeeshops</label>
+        <input id="search" type="search" placeholder="Try Gelato, The Plug, Family First, or Amnesia Haze..." autocomplete="off" />
+        <div id="search-chip-row" class="database-quick-chips" aria-label="Quick searches">
+          <button type="button" data-search-chip="Gelato">Gelato</button>
+          <button type="button" data-search-chip="Amnesia Haze">Amnesia Haze</button>
+          <button type="button" data-search-chip="The Plug">The Plug</button>
+          <button type="button" data-search-chip="Family First">Family First</button>
+          <button type="button" data-search-chip="Zkittlez">Zkittlez</button>
+        </div>
+        <div class="field-note">Shop names open the Shop Menu Browser automatically.</div>
       </div>
     </section>
-    <p class="trust-note">Menus, prices, and availability can change quickly. Treat prices and strain listings as planning guidance, not a guarantee. Check before travelling across town for a specific item, follow local laws and coffeeshop rules, and use location only when you choose location-based map features.</p>
 
     <div class="layout">
       <aside class="panel side-panel">
@@ -2496,25 +2605,11 @@
         </div>
 
         <div class="field">
-          <label id="search-label" for="search">Search a strain</label>
-          <input id="search" type="search" placeholder="Try Gelato, Amnesia Haze, or Zkittlez..." autocomplete="off" />
-          <div id="search-chip-row" class="database-quick-chips" aria-label="Quick searches">
-            <button type="button" data-search-chip="Gelato">Gelato</button>
-            <button type="button" data-search-chip="Amnesia Haze">Amnesia Haze</button>
-            <button type="button" data-search-chip="Zkittlez">Zkittlez</button>
-          </div>
-          <div class="field-note">
-            Searching for a coffeeshop?
-            <button id="search-shops-shortcut" class="text-button" type="button">Use Shop Menu Browser</button>
-          </div>
-        </div>
-
-        <div class="field">
           <span class="filter-label">Browse mode</span>
           <div id="browse-mode-grid" class="browse-mode-grid" role="group" aria-label="Browse mode">
             <button class="is-active" type="button" data-browse-mode="value">Best value</button>
             <button type="button" data-browse-mode="available">Most stocked</button>
-            <button type="button" data-browse-mode="fresh">Fresh menus</button>
+            <button type="button" data-browse-mode="fresh">Fresh data</button>
             <button type="button" data-browse-mode="under10">Under €10</button>
             <button type="button" data-browse-mode="rare">2-3 shop finds</button>
             <button type="button" data-browse-mode="cali">Cali</button>
@@ -2584,19 +2679,19 @@
         </div>
 
         <div class="field">
-          <label>Wanted strains</label>
+          <label>Research strains</label>
           <div id="selected-list" class="selected-list">
-            <div class="empty">Search and tap Want to build Wanted strains.</div>
+            <div class="empty">Search and tap Want to save strains for comparison.</div>
           </div>
-          <button id="show-wanted-map" type="button" disabled>Map Best matches</button>
+          <button id="show-wanted-map" type="button" disabled>View matches on map</button>
         </div>
 
-        <button id="clear-selected" type="button">Clear Wanted strains</button>
+        <button id="clear-selected" type="button">Clear research strains</button>
 
         <div class="field" style="margin-top:14px;">
-          <label>Map shortlist</label>
+          <label>Shops to view on map</label>
           <div id="selected-shop-list" class="selected-list">
-            <div class="empty">Select shops from the results, then send them to the map or itinerary builder.</div>
+            <div class="empty">Use View on map for one shop, or shortlist a few shops for a map handoff.</div>
           </div>
           <div class="side-action-row">
             <button id="show-selected-shops-map" type="button" disabled>Show on map</button>
@@ -2607,7 +2702,7 @@
 
       <section class="main-stack">
         <section id="quick-answer" class="quick-answer panel is-empty" aria-live="polite">
-          Search a strain to see the best shops, prices, and freshness first.
+          Search a strain to see the best shops, prices, and data age first.
         </section>
 
         <section class="metrics" aria-label="Explorer totals">
@@ -2633,7 +2728,7 @@
           <div class="section-head">
             <div>
               <h2>Strain Price Guide</h2>
-              <p id="strains-summary">Search a strain to compare typical prices, best value listings, and menu freshness.</p>
+              <p id="strains-summary">Search a strain to compare typical prices, best value listings, and data age.</p>
             </div>
           </div>
           <div id="price-guide-panel" class="price-guide-panel" aria-live="polite"></div>
@@ -2647,8 +2742,8 @@
         <section id="compare-view" class="panel" hidden>
           <div class="section-head">
             <div>
-              <h2>Match Wanted list</h2>
-              <p id="compare-summary">Find shops carrying several Wanted strains at once.</p>
+              <h2>Match research list</h2>
+              <p id="compare-summary">Find shops carrying several saved research strains at once.</p>
             </div>
           </div>
           <div id="common-shop-board" class="common-shop-board"></div>
@@ -2660,7 +2755,7 @@
           <div class="section-head">
             <div>
               <h2>Shop Menu Browser</h2>
-              <p id="shops-summary">Select a coffeeshop to scan its latest known menu listings by category, price, and freshness.</p>
+              <p id="shops-summary">Select a coffeeshop to scan its full known menu by category, price, and data age.</p>
             </div>
           </div>
           <div class="shop-browser-controls" aria-label="Shop menu browser controls">
@@ -2679,7 +2774,7 @@
               <select id="shop-menu-sort">
                 <option value="name">A-Z</option>
                 <option value="cheapest">Lowest price</option>
-                <option value="newest">Newest menu signal</option>
+                <option value="newest">Newest data signal</option>
                 <option value="judgement">Best value label</option>
               </select>
             </div>
@@ -2699,6 +2794,35 @@
         </section>
       </section>
     </div>
+
+    <div class="result-toolbar" aria-label="Database navigation">
+      <span id="result-context" class="result-context">Loading Amsterdam menu data...</span>
+      <div class="result-toolbar-actions">
+        <button id="jump-filters" type="button">Filters</button>
+        <button id="jump-results" type="button">Results</button>
+      </div>
+    </div>
+
+    <p id="status" class="status">Loading Amsterdam menu data...</p>
+
+    <section class="workflow-strip" aria-label="Database workflow">
+      <div class="workflow-step">
+        <span>Mode 1</span>
+        <strong>Strain Price Guide</strong>
+        <p>Search a strain, compare typical prices, and spot good-value listings.</p>
+      </div>
+      <div class="workflow-step">
+        <span>Mode 2</span>
+        <strong>Shop Menu Browser</strong>
+        <p>Pick a coffeeshop and scan the full known menu by category, price, and data age.</p>
+      </div>
+      <div class="workflow-step">
+        <span>Data note</span>
+        <strong>Check before travelling</strong>
+        <p>Data age badges show when a known listing was last seen, using real listing dates only.</p>
+      </div>
+    </section>
+    <p class="trust-note">Menus change quickly. Budfinder compares known menu listings and prices as planning guidance, not stock guarantees. Check before travelling across town for a specific item, follow local laws and coffeeshop rules, and use location only when you choose location-based map features.</p>
   </main>
 
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
@@ -2720,6 +2844,7 @@
       routePlanByStrain: {},
       priceBounds: { min: 0, max: 50 },
       snapshotTime: 0,
+      listingCheckBatch: null,
       hiddenUnavailableListingCount: 0,
       browseMode: 'value',
       familyFilter: '',
@@ -2846,6 +2971,84 @@
       return state.offerings.some(item => fieldMatchesSearch(item.shop_name, q) || fieldMatchesSearch(item.shop_city, q));
     }
 
+    function scoreShopSearchMatch(query) {
+      const q = normaliseSearchText(query);
+      if (!q) return 0;
+      const names = new Set();
+      state.shops.forEach(shop => {
+        [
+          shop && (shop.shop_name || shop.name || shop.shopName),
+          shop && shop.shop_key
+        ].forEach(value => {
+          const text = normaliseSearchText(value);
+          if (text) names.add(text);
+        });
+      });
+      state.offerings.forEach(item => {
+        [
+          item && item.shop_name,
+          item && item.shop_key
+        ].forEach(value => {
+          const text = normaliseSearchText(value);
+          if (text) names.add(text);
+        });
+      });
+      let score = 0;
+      names.forEach(name => {
+        if (name === q) score = Math.max(score, 5);
+        else if (name.startsWith(q)) score = Math.max(score, 4);
+        else if (` ${name} `.includes(` ${q} `)) score = Math.max(score, 3);
+        else if (fieldMatchesSearch(name, q)) score = Math.max(score, 2);
+      });
+      return score;
+    }
+
+    function scoreStrainSearchMatch(query) {
+      const q = normaliseSearchText(query);
+      if (!q) return 0;
+      let score = 0;
+      state.strainStats.forEach(stat => {
+        const name = normaliseSearchText(stat.name);
+        const key = normaliseSearchText(stat.key);
+        [name, key].filter(Boolean).forEach(text => {
+          if (text === q) score = Math.max(score, 5);
+          else if (text.startsWith(q)) score = Math.max(score, 4);
+          else if (` ${text} `.includes(` ${q} `)) score = Math.max(score, 3);
+          else if (fieldMatchesSearch(text, q)) score = Math.max(score, 2);
+        });
+      });
+      return score;
+    }
+
+    function universalSearchIntent(query) {
+      const q = normaliseSearchText(query);
+      if (!q) return '';
+      const shopScore = scoreShopSearchMatch(q);
+      const strainScore = scoreStrainSearchMatch(q);
+      if (shopScore >= 3 && shopScore >= strainScore) return 'shops';
+      if (strainScore >= 2) return 'strains';
+      if (shopScore >= 2) return 'shops';
+      return '';
+    }
+
+    function syncUniversalSearchMode() {
+      const query = els.search ? els.search.value : '';
+      const intent = universalSearchIntent(query);
+      if (intent === 'shops') {
+        if (state.view !== 'shops') setView('shops');
+        if (els.shopBrowserSearch) {
+          els.shopBrowserSearch.value = query;
+          state.activeShopId = '';
+        }
+        return 'shops';
+      }
+      if (intent === 'strains') {
+        if (state.view === 'shops') setView('strains');
+        return 'strains';
+      }
+      return '';
+    }
+
     function openShopSearchResults() {
       setView('shops');
       if (els.shopBrowserSearch && els.search && els.search.value) {
@@ -2886,18 +3089,45 @@
     }
 
     function freshnessReferenceTime() {
-      return Number.isFinite(state.snapshotTime) && state.snapshotTime > 0
-        ? state.snapshotTime
-        : Date.now();
+      return Date.now();
+    }
+
+    function listingDateSource(item) {
+      const row = item || {};
+      const candidates = [
+        // Prefer source/listing capture fields. In the current active_offerings export,
+        // last_seen_at_utc is the reliable per-listing "last checked" signal.
+        ['source_menu_date', row.source_menu_date],
+        ['menu_date', row.menu_date],
+        ['listing_date', row.listing_date],
+        ['last_seen_at_utc', row.last_seen_at_utc],
+        ['last_seen_at', row.last_seen_at],
+        ['source_seen_at', row.source_seen_at],
+        ['scraped_at', row.scraped_at],
+        ['fetched_at_utc', row.fetched_at_utc],
+        ['created_at', row.created_at]
+      ];
+      for (const [field, value] of candidates) {
+        if (parseTime(value) != null) return { field, value };
+      }
+      return { field: '', value: '' };
+    }
+
+    function listingDateValue(item) {
+      return listingDateSource(item).value || '';
     }
 
     function listingTime(item) {
-      return parseTime(item && (item.updated_at || item.last_seen_at_utc));
+      return parseTime(listingDateValue(item));
     }
 
     function ageDaysFromTime(time) {
       if (!Number.isFinite(time)) return Infinity;
-      return Math.max(0, Math.floor((freshnessReferenceTime() - time) / 86400000));
+      const checked = new Date(time);
+      const reference = new Date(freshnessReferenceTime());
+      const checkedDay = Date.UTC(checked.getUTCFullYear(), checked.getUTCMonth(), checked.getUTCDate());
+      const referenceDay = Date.UTC(reference.getUTCFullYear(), reference.getUTCMonth(), reference.getUTCDate());
+      return Math.max(0, Math.floor((referenceDay - checkedDay) / 86400000));
     }
 
     function formatFreshness(value) {
@@ -2905,11 +3135,11 @@
       const time = parseTime(value);
       if (!Number.isFinite(time)) return '';
       const days = ageDaysFromTime(time);
-      if (days === 0) return 'updated today';
-      if (days === 1) return 'updated yesterday';
-      if (days < 14) return `updated ${days} days ago`;
-      if (days < 60) return `updated ${Math.round(days / 7)} weeks ago`;
-      return `updated ${formatDate(value)}`;
+      if (days === 0) return 'checked today';
+      if (days === 1) return 'checked yesterday';
+      if (days < 14) return `checked ${days} days ago`;
+      if (days < 60) return `checked ${Math.round(days / 7)} weeks ago`;
+      return `checked ${formatDate(value)}`;
     }
 
     function listingPriceLabel(item) {
@@ -2919,7 +3149,7 @@
     }
 
     function listingUpdatedLabel(item) {
-      return formatFreshness((item && (item.updated_at || item.last_seen_at_utc)) || '');
+      return formatFreshness(listingDateValue(item));
     }
 
     function freshnessBadgeInfo(value) {
@@ -2931,28 +3161,22 @@
       return { label: 'Old intel', className: 'is-old-intel' };
     }
 
-    function listingDateValue(item) {
-      return (item && (item.updated_at || item.last_seen_at_utc)) || '';
-    }
-
     function menuAgeInfo(value) {
       const time = parseTime(value);
       if (!Number.isFinite(time)) {
-        return { label: 'Unknown', className: 'age-unknown', bucket: 'unknown', days: Infinity };
+        return { label: 'Unknown age', display: 'Unknown age', className: 'age-unknown', bucket: 'unknown', days: Infinity, sourceField: '' };
       }
       const days = ageDaysFromTime(time);
-      if (days <= 7) return { label: 'Fresh', className: 'age-fresh', bucket: 'fresh', days };
-      if (days <= 30) return { label: 'Recent', className: 'age-recent', bucket: 'recent', days };
-      if (days <= 90) return { label: 'Older', className: 'age-older', bucket: 'older', days };
-      return { label: 'Stale', className: 'age-stale', bucket: 'stale', days };
+      const suffix = days === 0 ? 'today' : `${days} day${days === 1 ? '' : 's'} old`;
+      if (days <= 7) return { label: 'Fresh', display: `Fresh · ${suffix}`, className: 'age-fresh', bucket: 'fresh', days, sourceField: '' };
+      if (days <= 30) return { label: 'Recent', display: `Recent · ${suffix}`, className: 'age-recent', bucket: 'recent', days, sourceField: '' };
+      if (days <= 90) return { label: 'Older', display: `Older · ${suffix}`, className: 'age-older', bucket: 'older', days, sourceField: '' };
+      return { label: 'Stale', display: `Stale · ${suffix}`, className: 'age-stale', bucket: 'stale', days, sourceField: '' };
     }
 
     function ageBadgeHtml(value) {
       const age = menuAgeInfo(value);
-      const suffix = Number.isFinite(age.days)
-        ? (age.days === 0 ? 'today' : `${age.days}d`)
-        : 'no date';
-      return `<span class="age-badge ${age.className}">${escapeHtml(age.label)} · ${escapeHtml(suffix)}</span>`;
+      return `<span class="age-badge ${age.className}">${escapeHtml(age.display)}</span>`;
     }
 
     function pricePerGram(item) {
@@ -2992,14 +3216,14 @@
       const amount = Number(price);
       const mid = Number(medianPrice);
       if (!Number.isFinite(amount) || !Number.isFinite(mid) || mid <= 0) {
-        return { label: 'Unknown', className: 'price-unknown', rank: 5 };
+        return { label: 'Price unknown', className: 'price-unknown', rank: 5 };
       }
       const diff = (amount - mid) / mid;
-      if (diff <= -0.2) return { label: 'Great', className: 'price-great', rank: 0 };
-      if (diff <= -0.1) return { label: 'Good', className: 'price-good', rank: 1 };
-      if (Math.abs(diff) <= 0.1) return { label: 'Typical', className: 'price-typical', rank: 2 };
-      if (diff <= 0.25) return { label: 'High', className: 'price-high', rank: 3 };
-      return { label: 'Premium', className: 'price-premium', rank: 4 };
+      if (diff <= -0.2) return { label: 'Great price', className: 'price-great', rank: 0 };
+      if (diff <= -0.1) return { label: 'Good price', className: 'price-good', rank: 1 };
+      if (Math.abs(diff) <= 0.1) return { label: 'Typical price', className: 'price-typical', rank: 2 };
+      if (diff <= 0.25) return { label: 'High price', className: 'price-high', rank: 3 };
+      return { label: 'Premium price', className: 'price-premium', rank: 4 };
     }
 
     function priceJudgementBadgeHtml(price, medianPrice) {
@@ -3025,6 +3249,40 @@
         ['Unknown', buckets.unknown]
       ].filter(([, count]) => count > 0);
       return parts.length ? parts.map(([label, count]) => `${label} ${count}`).join(' · ') : 'No menu dates';
+    }
+
+    function buildListingCheckBatchSignal(offerings) {
+      const latestByShop = new Map();
+      (Array.isArray(offerings) ? offerings : []).forEach(item => {
+        const shopId = String(item && item.shop_id || '').trim();
+        const time = listingTime(item);
+        if (!shopId || !Number.isFinite(time)) return;
+        latestByShop.set(shopId, Math.max(latestByShop.get(shopId) || 0, time));
+      });
+
+      const dateCounts = new Map();
+      latestByShop.forEach(time => {
+        const dateKey = new Date(time).toISOString().slice(0, 10);
+        dateCounts.set(dateKey, (dateCounts.get(dateKey) || 0) + 1);
+      });
+      const dominant = Array.from(dateCounts.entries()).sort((a, b) => b[1] - a[1])[0] || ['', 0];
+      const shopCount = latestByShop.size;
+      const ratio = shopCount ? dominant[1] / shopCount : 0;
+      return {
+        date: dominant[0],
+        count: dominant[1],
+        shopCount,
+        ratio,
+        // If almost every shop shares the same latest check date, it is more honest
+        // to present that as dataset context rather than shop-specific freshness.
+        isSharedBatch: shopCount >= 8 && ratio >= 0.8
+      };
+    }
+
+    function listingCheckBatchNote() {
+      const batch = state.listingCheckBatch;
+      if (!batch || !batch.isSharedBatch || !batch.date) return '';
+      return ` Most shop listing checks in the current dataset come from ${formatDate(batch.date)}, so shop cards do not repeat that date as if it were unique to each shop.`;
     }
 
     function priceProfileForListings(listings) {
@@ -3455,7 +3713,7 @@
     const BROWSE_MODES = [
       { key: 'value', label: 'Best value', summary: 'best value' },
       { key: 'available', label: 'Most stocked', summary: 'most stocked' },
-      { key: 'fresh', label: 'Fresh menus', summary: 'fresh menus' },
+      { key: 'fresh', label: 'Fresh data', summary: 'fresh data' },
       { key: 'under10', label: 'Under €10', summary: 'under €10' },
       { key: 'rare', label: '2-3 shop finds', summary: 'strains in 2-3 shops' },
       { key: 'cali', label: 'Cali', summary: 'cali' },
@@ -3736,14 +3994,12 @@
     }
 
     function getShopLogoHtml(shopKey, shopName) {
-      const fallback = `<span class="shop-art-fallback">${escapeHtml(shopInitials(shopName))}</span>`;
       const candidates = shopLogoFilenames(shopKey, shopName).flatMap(shopLogoCandidates);
-      if (!candidates.length) return `<span class="shop-art">${fallback}</span>`;
+      if (!candidates.length) return '<span class="shop-art" aria-hidden="true"></span>';
       return (
         `<span class="shop-art">` +
-          `<img src="${escapeHtmlAttr(candidates[0])}" alt="${escapeHtmlAttr(shopName)} logo" ` +
+          `<img src="${escapeHtmlAttr(candidates[0])}" alt="" aria-hidden="true" ` +
           `data-candidates="${escapeHtmlAttr(candidates.join('|'))}" data-idx="0">` +
-          fallback +
         `</span>`
       );
     }
@@ -4071,7 +4327,7 @@
             <p>No current listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name, clear a filter, or pick an available alternative.</p>
             ${alternativeLinksHtml(alternatives)}
           `
-          : 'Search a strain to see the best shops, prices, and freshness first.';
+          : 'Search a strain to see the best shops, prices, and data age first.';
         return;
       }
 
@@ -4113,7 +4369,7 @@
             <p class="quick-answer-copy">
               ${escapeHtml(featured.shop_name || 'Unknown shop')}${featured.shop_city ? ` · ${escapeHtml(featured.shop_city)}` : ''}
               ${featuredDealCopy ? ` · ${escapeHtml(featuredDealCopy)}` : ''}${updated ? ` · ${escapeHtml(updated)}` : ''}.
-              Map Best matches to use Starting point and itinerary tools.
+              View matching shops on the map to use Starting point and itinerary tools.
             </p>
           </div>
           <span class="quick-answer-price">${escapeHtml(priceLabel)}</span>
@@ -4141,7 +4397,7 @@
           <a href="${escapeHtmlAttr(featuredMapUrl)}" data-map-shop="${escapeHtmlAttr(featuredShopId)}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}">${featuredDeal ? 'Map deal' : 'Map cheapest'}</a>
           <a class="secondary" href="${escapeHtmlAttr(allMapUrl)}" data-map-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}">Map all ${allShopIds.length}</a>
           <a class="secondary" href="${escapeHtmlAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">Open menu</a>
-          <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Wanted' : 'Want this'}</button>
+          <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Saved' : 'Save strain'}</button>
           <button type="button" data-focus-shops="${escapeHtmlAttr(stat.key)}">Browse shops</button>
         </div>
       `;
@@ -4150,7 +4406,7 @@
     function updateResultToolbar(filteredOfferings, filteredStats) {
       if (els.resultContext) {
         const filters = currentFilters();
-        const viewName = state.view === 'shops' ? 'Shop Menu Browser' : state.view === 'compare' ? 'Match Wanted list' : 'Strain Price Guide';
+        const viewName = state.view === 'shops' ? 'Shop Menu Browser' : state.view === 'compare' ? 'Match research list' : 'Strain Price Guide';
         const bits = [
           `${filteredStats.length.toLocaleString()} strains`,
           `${new Set(filteredOfferings.map(item => item.shop_id)).size.toLocaleString()} shops`,
@@ -4162,8 +4418,8 @@
         ].filter(Boolean).join(' · ');
         const label = scope ? `${viewName} · ${scope}` : viewName;
         els.resultContext.textContent = filters.q
-          ? `${label}: ${bits.join(' · ')} for "${els.search.value}"`
-          : `${label}: ${bits.join(' · ')}`;
+          ? `Showing ${label.toLowerCase()} - ${bits.join(' · ')} for "${els.search.value}"`
+          : `Showing ${label.toLowerCase()} - ${bits.join(' · ')}`;
       }
 
       if (els.toolbarMapLink) {
@@ -4301,6 +4557,15 @@
       return `map.html?${params.toString()}`;
     }
 
+    function buildShopMapLink(shopId, context = {}) {
+      const id = String(shopId || '').trim();
+      if (!id || !isBrowsableShopId(id)) return 'map.html';
+      return mapUrlForShopIds([id], {
+        ...context,
+        strainShopIds: Array.isArray(context.strainShopIds) ? context.strainShopIds : [id]
+      }).replace('source=explorer', 'source=database');
+    }
+
     function prepareMapHandoff(context = {}) {
       const shopIds = sanitizeShopIds(Array.isArray(context.shopIds) ? context.shopIds : state.selectedShopIds);
       if (!shopIds.length) return;
@@ -4381,7 +4646,7 @@
 
     function renderSelected() {
       if (!state.selected.length) {
-        els.selectedList.innerHTML = '<div class="empty">Search and tap Want to build Wanted strains, then compare Best matches.</div>';
+        els.selectedList.innerHTML = '<div class="empty">Search and tap Want to save strains for comparison, then view matching shops on the map.</div>';
         if (els.showWantedMap) els.showWantedMap.disabled = true;
         return;
       }
@@ -4405,15 +4670,15 @@
         const matchingShopCount = sanitizeShopIds(selectedStats().flatMap(stat => shopIdsForListings(visibleOfferingsForStat(stat)))).length;
         els.showWantedMap.disabled = matchingShopCount === 0;
         els.showWantedMap.textContent = matchingShopCount
-          ? `View ${matchingShopCount} Best matches on map`
-          : 'No Best matches on map';
+          ? `View ${matchingShopCount} matches on map`
+          : 'No map matches yet';
       }
     }
 
     function renderSelectedShops() {
       updateMapToggleHref();
       if (!state.selectedShopIds.length) {
-        els.selectedShopList.innerHTML = '<div class="empty">Select shops from the results, then send them to the map or itinerary builder.</div>';
+        els.selectedShopList.innerHTML = '<div class="empty">Use View on map for one shop, or shortlist a few shops for a map handoff.</div>';
         els.showSelectedShopsMap.disabled = true;
         return;
       }
@@ -4475,14 +4740,24 @@
       ].filter(Boolean).join(' · ');
       const notes = String(item.notes || '').trim();
       const sourceUrl = shopLinkForId(shopId);
+      const mapUrl = buildShopMapLink(shopId, {
+        strainName: options.strainName || item.strain_name || '',
+        strainShopIds: profile && Array.isArray(profile.shopIds) ? profile.shopIds : [shopId]
+      });
       return `
         <article class="listing-card">
           <div class="listing-card-head">
+            <a class="listing-map-link" href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(item.shop_name || 'Unknown shop')} on map">
+              ${getShopLogoHtml(item.shop_key, item.shop_name || 'Unknown shop')}
+              <div>
+                <strong>${escapeHtml(item.shop_name || 'Unknown shop')}</strong>
+                <div class="listing-card-meta">${escapeHtml(meta || 'Known menu listing')}</div>
+              </div>
+            </a>
             <div>
-              <strong>${escapeHtml(item.shop_name || 'Unknown shop')}</strong>
-              <div class="listing-card-meta">${escapeHtml(meta || 'Menu listing')}</div>
+              <span class="listing-card-price">${escapeHtml(priceLabel)}</span>
+              <div class="listing-card-meta">${escapeHtml(item.strain_name || 'Unknown product')}</div>
             </div>
-            <span class="listing-card-price">${escapeHtml(priceLabel)}</span>
           </div>
           <div class="chip-row">
             ${priceJudgementBadgeHtml(price, profile && profile.median)}
@@ -4491,7 +4766,8 @@
           </div>
           ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
           <div class="listing-card-actions">
-            <button type="button" data-focus-shop-menu="${escapeHtmlAttr(shopId)}">View shop menu</button>
+            <button type="button" data-focus-shop-menu="${escapeHtmlAttr(shopId)}">View full menu</button>
+            <a href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(item.shop_name || 'Unknown shop')} on map">View on map</a>
             <button type="button" data-toggle-map-shop="${escapeHtmlAttr(shopId)}" class="${isShopSelected(shopId) ? 'is-active' : ''}">${isShopSelected(shopId) ? 'Shortlisted' : 'Shortlist'}</button>
             <a href="${escapeHtmlAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">Source</a>
           </div>
@@ -4508,7 +4784,7 @@
             <div class="price-guide-head">
               <div>
                 <h3>Search a strain for a price profile</h3>
-                <p>Use the search box to see typical range, average, median, best value listings, and menu age signals.</p>
+                <p>Use the search box to see typical range, average, median, best value listings, and data age signals.</p>
               </div>
             </div>
           </div>
@@ -4580,7 +4856,7 @@
             ${statTileHtml('Newest signal', newestLabel, ageBreakdownLabel(profile.ageBreakdown))}
           </div>
           <div class="price-guide-actions">
-            <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Wanted' : 'Add to Wanted strains'}</button>
+            <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Saved for research' : 'Save for research'}</button>
           </div>
         </div>
         <div class="listing-sections">
@@ -4599,7 +4875,7 @@
             <div class="listing-section-head">
               <div>
                 <h3>All matching listings</h3>
-                <p>${allListings.length.toLocaleString()} visible listing${allListings.length === 1 ? '' : 's'} sorted by price, freshness, then shop name.</p>
+                <p>${allListings.length.toLocaleString()} visible listing${allListings.length === 1 ? '' : 's'} sorted by price, data age, then shop name.</p>
               </div>
             </div>
             <div class="listing-grid">
@@ -4733,6 +5009,11 @@
       const prices = allListings.map(pricePerGram).filter(Number.isFinite);
       const newestTime = latestListingTime(allListings);
       const newestDate = newestTime ? new Date(newestTime).toISOString() : '';
+      const sharedBatch = state.listingCheckBatch && state.listingCheckBatch.isSharedBatch;
+      const newestSignalLabel = sharedBatch ? 'Dataset check' : 'Newest signal';
+      const newestSignalHelper = sharedBatch
+        ? 'Shared listing-check batch'
+        : ageBreakdownLabel(ageBreakdownForListings(allListings));
       const groups = new Map();
       sorted.forEach(item => {
         const category = item.base_type || 'Unknown category';
@@ -4741,26 +5022,28 @@
       });
       const href = row.shopUrl || shopLinkForId(row.shopId);
       const selected = isShopSelected(row.shopId);
+      const mapUrl = buildShopMapLink(row.shopId);
       els.shopMenuBrowser.innerHTML = `
         <div class="shop-menu-hero">
           <div class="shop-menu-hero-head">
-            <div class="shop-card-main">
+            <a class="shop-card-main shop-menu-map-link" href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(row.shopName)} on map">
               ${getShopLogoHtml(row.shopKey, row.shopName)}
               <div class="shop-card-copy">
                 <h3>${escapeHtml(row.shopName)}</h3>
                 <p>${escapeHtml(row.city || 'City unknown')} · ${allListings.length.toLocaleString()} known menu listing${allListings.length === 1 ? '' : 's'}.</p>
               </div>
-            </div>
+            </a>
             ${ageBadgeHtml(newestDate)}
           </div>
           <div class="shop-menu-summary-grid">
             ${statTileHtml('Known listings', allListings.length.toLocaleString(), `${filtered.length.toLocaleString()} visible`)}
             ${statTileHtml('Priced listings', prices.length.toLocaleString(), prices.length ? `Low ${money(Math.min(...prices))}` : 'No usable prices')}
             ${statTileHtml('Average price', prices.length ? money(average(prices)) : 'Unknown', 'Visible shop menu')}
-            ${statTileHtml('Newest signal', newestDate ? formatDate(newestDate) : 'Unknown', ageBreakdownLabel(ageBreakdownForListings(allListings)))}
+            ${statTileHtml(newestSignalLabel, newestDate ? formatDate(newestDate) : 'Unknown', newestSignalHelper)}
           </div>
           <div class="listing-card-actions">
             <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${selected ? 'is-active' : ''}">${selected ? 'Shortlisted' : 'Shortlist shop'}</button>
+            <a href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(row.shopName)} on map">View on map</a>
             <a href="${escapeHtmlAttr(href)}" target="_blank" rel="noopener noreferrer">Source menu</a>
           </div>
         </div>
@@ -4804,7 +5087,7 @@
         const bestDealAverage = bestDealItem ? money(bestDeal.averagePrice, bestDealItem.price_currency, bestDealItem.price_unit) : '';
         const similar = similarStrainsForStat(stat, stats, 3);
         return `
-          <article class="strain-card${selected ? ' is-selected' : ''}" data-strain-card="${escapeHtml(stat.key)}" tabindex="0" aria-pressed="${selected ? 'true' : 'false'}" title="${selected ? 'Remove' : 'Add'} ${escapeHtml(stat.name)} ${selected ? 'from' : 'to'} Wanted strains">
+          <article class="strain-card${selected ? ' is-selected' : ''}" data-strain-card="${escapeHtml(stat.key)}" tabindex="0" aria-pressed="${selected ? 'true' : 'false'}" title="${selected ? 'Remove' : 'Add'} ${escapeHtml(stat.name)} ${selected ? 'from' : 'to'} research strains">
             <div class="strain-card-main">
               ${getStrainImageHtml(stat.name)}
               <div class="strain-card-copy">
@@ -4856,7 +5139,7 @@
             <div class="cheapest-shop-list" aria-label="Cheapest shops carrying ${escapeHtmlAttr(stat.name)}">
               ${cheapestListings.map(item => {
                 const shopId = String(item.shop_id || '');
-                const freshness = freshnessBadgeInfo(item.updated_at || item.last_seen_at_utc);
+                const freshness = freshnessBadgeInfo(listingDateValue(item));
                 const meta = [
                   item.shop_city || '',
                   listingUpdatedLabel(item)
@@ -4874,7 +5157,7 @@
               }).join('')}
             </div>
             <div class="card-actions">
-              <button type="button" data-select-strain="${escapeHtml(stat.key)}" class="${selected ? 'is-active' : ''}">${selected ? 'Wanted' : 'Want'}</button>
+              <button type="button" data-select-strain="${escapeHtml(stat.key)}" class="${selected ? 'is-active' : ''}">${selected ? 'Saved' : 'Save'}</button>
               <button type="button" data-map-shop="${escapeHtmlAttr(cheapestShopId)}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}" ${cheapestShopId ? '' : 'disabled'}>Map cheapest</button>
               <button type="button" data-focus-shops="${escapeHtml(stat.key)}">Shops</button>
             </div>
@@ -4998,7 +5281,7 @@
 
     function renderRoutePlanBoard(stats) {
       if (!stats.length) {
-        els.routePlanBoard.innerHTML = '<div class="empty">Add Wanted strains to compare prices and send shops to the map itinerary workflow.</div>';
+        els.routePlanBoard.innerHTML = '<div class="empty">Save research strains to compare prices and send shops to the map itinerary workflow.</div>';
         return;
       }
 
@@ -5014,7 +5297,7 @@
         <div class="route-plan-head">
           <div>
             <h3>Build a map shortlist</h3>
-            <p>Pick one shop for each Wanted strain. The map will show those places so you can compare routes or add them to an itinerary.</p>
+            <p>Pick one shop for each research strain. The map will show those places so you can compare routes or add them to an itinerary.</p>
           </div>
           <div class="route-plan-total">
             <strong>${escapeHtml(totalLabel)}</strong>
@@ -5068,13 +5351,13 @@
 
     function renderCommonShopBoard(stats) {
       if (!stats.length) {
-        els.commonShopBoard.innerHTML = '<div class="empty">Add Wanted strains to find coffeeshops carrying the full set.</div>';
+        els.commonShopBoard.innerHTML = '<div class="empty">Save research strains to find coffeeshops carrying the full set.</div>';
         return;
       }
 
       const rows = getCommonShopRows(stats);
       if (!rows.length) {
-        els.commonShopBoard.innerHTML = '<div class="empty">No shops match every Wanted strain under the current filters. Try removing one strain or widening the filters.</div>';
+        els.commonShopBoard.innerHTML = '<div class="empty">No shops match every research strain under the current filters. Try removing one strain or widening the filters.</div>';
         return;
       }
 
@@ -5084,31 +5367,34 @@
         <div class="common-shop-board-head">
           <div>
             <h3>${rows.length} common coffeeshop${rows.length === 1 ? '' : 's'}</h3>
-            <p>${stats.length} Wanted strains matched. Select shops, then send them to the map.</p>
+            <p>${stats.length} research strain${stats.length === 1 ? '' : 's'} matched. Select shops, then send them to the map.</p>
           </div>
           <button type="button" data-select-common-shops>${selectedCount ? 'Replace with common' : 'Select common'}</button>
         </div>
         <div class="common-shop-grid">
           ${shown.map(row => {
             const selected = isShopSelected(row.shopId);
+            const mapUrl = buildShopMapLink(row.shopId);
             const totalLabel = row.total == null
               ? 'Mixed price'
               : `${money(row.total).replace(/\/g$/, '')} total`;
             const reason = row.matchCount === stats.length
-              ? `Recommended because: matches every Wanted strain in this view.`
-              : `Recommended because: matches ${row.matchCount} Wanted strain${row.matchCount === 1 ? '' : 's'} under the current filters.`;
+              ? `Recommended because: matches every research strain in this view.`
+              : `Recommended because: matches ${row.matchCount} research strain${row.matchCount === 1 ? '' : 's'} under the current filters.`;
             const listingTags = row.listings.map(item => {
               const price = Number.isFinite(Number(item.price_amount))
                 ? money(item.price_amount, item.price_currency, item.price_unit)
                 : 'Price unknown';
-              const freshness = freshnessBadgeInfo(item.updated_at || item.last_seen_at_utc);
+              const freshness = freshnessBadgeInfo(listingDateValue(item));
               return `<span class="chip">${escapeHtml(item.strain_name)} ${escapeHtml(price)}</span>${freshness ? `<span class="chip ${freshness.className}">${escapeHtml(freshness.label)}</span>` : ''}`;
             }).join('');
             return `
               <article class="common-shop-card${selected ? ' is-selected' : ''}" data-common-shop-card="${escapeHtml(row.shopId)}" tabindex="0" aria-pressed="${selected ? 'true' : 'false'}" title="${selected ? 'Remove' : 'Select'} ${escapeHtml(row.name)} for the map">
                 <div class="common-shop-card-title">
                   <div class="shop-card-main">
-                    ${getShopLogoHtml(row.shopKey, row.name)}
+                    <a class="shop-logo-map-link" href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(row.name)} on map">
+                      ${getShopLogoHtml(row.shopKey, row.name)}
+                    </a>
                     <div class="shop-card-copy">
                       <strong>${escapeHtml(row.name)}</strong>
                       <span class="common-shop-card-meta">${escapeHtml(row.city || 'Current city')}</span>
@@ -5132,7 +5418,7 @@
     function renderCommonShopsForStat(stat, allStats) {
       const otherStats = allStats.filter(other => other.key !== stat.key);
       if (!otherStats.length) {
-        return '<div class="empty">Add another item to Wanted strains to see common coffeeshops.</div>';
+        return '<div class="empty">Save another research strain to see common coffeeshops.</div>';
       }
 
       const groups = otherStats.map(other => {
@@ -5185,7 +5471,7 @@
       const stats = selectedStats();
       const commonRows = getCommonShopRows(stats);
       els.compareSummary.textContent = stats.length
-        ? `${stats.length} Wanted strains selected · ${commonRows.length} common coffeeshop${commonRows.length === 1 ? '' : 's'}.`
+        ? `${stats.length} research strain${stats.length === 1 ? '' : 's'} selected · ${commonRows.length} common coffeeshop${commonRows.length === 1 ? '' : 's'}.`
         : 'Add strains from the list to find common coffeeshops.';
       renderCommonShopBoard(stats);
       renderRoutePlanBoard(stats);
@@ -5265,7 +5551,7 @@
           bestDealPercent: belowAverageDeals[0] ? belowAverageDeals[0].percentBelow : 0,
           uniqueStrains: new Set(row.offerings.map(item => item.strain_name_normalised || normalise(item.strain_name))).size,
           menuUpdatedAt: row.offerings
-            .map(item => item.updated_at || item.last_seen_at_utc || '')
+            .map(item => listingDateValue(item))
             .filter(Boolean)
             .sort()
             .at(-1) || ''
@@ -5278,7 +5564,7 @@
       const sortSummary = filters.sort
         ? sortModeSummary(filters.sort)
         : `${browseModeIsFilter(filters.browseMode) ? 'filtered and ordered by' : 'ordered by'} ${browseModeLabel(filters.browseMode).toLowerCase()}`;
-      const wantedNote = selected.size ? ' Wanted-strain matches are highlighted.' : '';
+      const wantedNote = selected.size ? ' Saved-strain matches are highlighted.' : '';
       els.shopsSummary.textContent = `${rows.length.toLocaleString()} shops match the current filters, ${sortSummary} · ${dealTotal.toLocaleString()} below-average price${dealTotal === 1 ? '' : 's'}.${wantedNote}`;
       if (!rows.length) {
         els.shopList.innerHTML = '<div class="empty">No shops match these filters. Try clearing a filter, widening the price range, or searching a different area.</div>';
@@ -5310,7 +5596,7 @@
                 `</button>`
               );
             }
-            const freshness = freshnessBadgeInfo(item.updated_at || item.last_seen_at_utc);
+            const freshness = freshnessBadgeInfo(listingDateValue(item));
             const meta = [
               grower ? `Grower: ${grower}` : '',
               notes ? `Note: ${notes}` : '',
@@ -5334,12 +5620,13 @@
         const label = row.shopUrl ? 'Source' : 'Menu';
         const shopSelected = isShopSelected(row.shopId);
         const matchLabel = selected.size
-          ? `${row.selectedMatches.length}/${selected.size} wanted`
+          ? `${row.selectedMatches.length}/${selected.size} saved`
           : `${row.uniqueStrains} strains`;
-        const updatedLabel = formatDate(row.menuUpdatedAt);
-        const freshness = freshnessBadgeInfo(row.menuUpdatedAt);
+        const showPerShopCheckDate = !(state.listingCheckBatch && state.listingCheckBatch.isSharedBatch);
+        const updatedLabel = showPerShopCheckDate ? formatDate(row.menuUpdatedAt) : '';
+        const freshness = showPerShopCheckDate ? freshnessBadgeInfo(row.menuUpdatedAt) : null;
         const recommendation = selected.size && row.selectedMatches.length
-          ? `Recommended because: ${row.selectedMatches.length} Wanted-strain match${row.selectedMatches.length === 1 ? '' : 'es'} in this shop menu.`
+          ? `Recommended because: ${row.selectedMatches.length} saved-strain match${row.selectedMatches.length === 1 ? '' : 'es'} in this shop menu.`
           : row.belowAverageDeals.length
             ? 'Recommended because: good-value lead where price is known.'
             : row.cheapest == null
@@ -5356,14 +5643,17 @@
           );
         }).join('');
         const hiddenDealCount = Math.max(0, row.belowAverageDeals.length - 6);
+        const mapUrl = buildShopMapLink(row.shopId);
         return `
           <article class="shop-card${shopSelected ? ' is-selected' : ''}" data-shop-value-score="${escapeHtmlAttr(row.valueScore.toFixed(4))}" data-shop-strain-count="${escapeHtmlAttr(row.uniqueStrains)}">
             <div class="shop-card-head">
               <div class="shop-card-main">
-                ${getShopLogoHtml(row.shopKey, row.shopName)}
+                <a class="shop-logo-map-link" href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(row.shopName)} on map">
+                  ${getShopLogoHtml(row.shopKey, row.shopName)}
+                </a>
                 <div class="shop-card-copy">
                   <strong>${escapeHtml(row.shopName)}</strong>
-                  <div class="shop-card-meta">${escapeHtml(row.city)}${updatedLabel ? ` · Menu updated ${escapeHtml(updatedLabel)}` : ''}</div>
+                  <div class="shop-card-meta">${escapeHtml(row.city)}${updatedLabel ? ` · Last checked ${escapeHtml(updatedLabel).replace(/^checked\s+/, '')}` : ''}</div>
                   <div class="shop-card-metrics">
                     <span class="chip">${escapeHtml(matchLabel)}</span>
                     <span class="chip ${row.cheapest == null ? 'is-price-unknown' : ''}">${row.cheapest == null ? 'Price unknown' : `Lowest ${money(row.cheapest)}`}</span>
@@ -5423,17 +5713,12 @@
     }
 
     function syncModeSearchCopy() {
-      const isShopMode = state.view === 'shops';
-      if (els.searchLabel) els.searchLabel.textContent = isShopMode ? 'Find a coffeeshop' : 'Search a strain';
+      if (els.searchLabel) els.searchLabel.textContent = 'Search strains or coffeeshops';
       if (els.search) {
-        els.search.placeholder = isShopMode
-          ? 'Try Terps Army, Family First, or The Plug...'
-          : 'Try Gelato, Amnesia Haze, or Zkittlez...';
+        els.search.placeholder = 'Try Gelato, The Plug, Family First, or Amnesia Haze...';
       }
       if (els.searchChipRow) {
-        const chips = isShopMode
-          ? ['Terps Army', 'Family First', 'The Plug']
-          : ['Gelato', 'Amnesia Haze', 'Zkittlez'];
+        const chips = ['Gelato', 'Amnesia Haze', 'The Plug', 'Family First', 'Zkittlez', 'Terps Army'];
         els.searchChipRow.innerHTML = chips
           .map(label => `<button type="button" data-search-chip="${escapeHtmlAttr(label)}">${escapeHtml(label)}</button>`)
           .join('');
@@ -5443,7 +5728,7 @@
     function render() {
       const filteredStats = getFilteredStats();
       const filteredOfferings = getFilteredOfferings(filteredStats);
-      const shopSearchOfferings = searchLooksLikeShopQuery(els.search.value)
+      const shopSearchOfferings = universalSearchIntent(els.search.value) === 'shops'
         ? getShopSearchOfferings()
         : filteredOfferings;
       const familySourceStats = getFilteredStats({ ignoreFamily: true });
@@ -5469,9 +5754,26 @@
       const params = new URLSearchParams(window.location.search || '');
       const strain = (params.get('strain') || params.get('search') || '').trim();
       const mode = (params.get('mode') || '').trim();
+      const shopId = (params.get('shop_id') || params.get('shopId') || '').trim();
+      const shopQuery = (params.get('shop') || params.get('shop_name') || '').trim();
       if (strain) {
         els.search.value = strain;
         state.browseMode = 'value';
+      }
+      if (mode === 'strain' || mode === 'strains') {
+        state.view = 'strains';
+      }
+      if (mode === 'shop' || mode === 'shops' || mode === 'menu') {
+        state.view = 'shops';
+      }
+      if (shopId) {
+        state.activeShopId = shopId;
+        state.view = 'shops';
+        const meta = getShopMeta(shopId);
+        if (els.shopBrowserSearch && meta && meta.name) els.shopBrowserSearch.value = meta.name;
+      } else if (shopQuery) {
+        state.view = 'shops';
+        if (els.shopBrowserSearch) els.shopBrowserSearch.value = shopQuery;
       }
       const hasMode = mode && els.browseModeGrid && Array.from(els.browseModeGrid.querySelectorAll('[data-browse-mode]'))
         .some(button => button.dataset.browseMode === mode);
@@ -5480,6 +5782,9 @@
       }
       if (params.get('view')) {
         state.view = params.get('view');
+      }
+      if (strain && !mode && !params.get('view')) {
+        syncUniversalSearchMode();
       }
     }
 
@@ -5499,6 +5804,7 @@
         state.closedShopSourceTokens = buildClosedShopSourceTokens(state.shops);
         state.unavailableShopIds = buildUnavailableShopIds(state.shops);
         state.offerings = loadedOfferings.filter(isBrowsableOffering);
+        state.listingCheckBatch = buildListingCheckBatchSignal(state.offerings);
         state.hiddenUnavailableListingCount = Math.max(0, loadedOfferings.length - state.offerings.length);
         state.strainImageByKey = buildStrainImageMap(imageMapCsv);
         state.shopLogoByKey = shopLogoMap instanceof Map ? shopLogoMap : new Map();
@@ -5515,7 +5821,7 @@
         const hidden = state.hiddenUnavailableListingCount
           ? ` Hidden ${state.hiddenUnavailableListingCount.toLocaleString()} listing${state.hiddenUnavailableListingCount === 1 ? '' : 's'} from closed, archived, or inactive shops.`
           : '';
-        els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.${exported}${hidden}`;
+        els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.${exported}${hidden}${listingCheckBatchNote()}`;
         applyInitialUrlState();
         setView(state.view);
         render();
@@ -5531,17 +5837,14 @@
 
     ['input', 'change'].forEach(eventName => {
       els.search.addEventListener(eventName, () => {
-        if (state.view === 'shops' && els.shopBrowserSearch) {
-          els.shopBrowserSearch.value = els.search.value;
-          state.activeShopId = '';
-        }
+        syncUniversalSearchMode();
         renderAfterFilterChange();
       });
     });
     els.search.addEventListener('keydown', event => {
       if (event.key !== 'Enter') return;
       const query = els.search.value;
-      if (!searchLooksLikeShopQuery(query)) return;
+      if (universalSearchIntent(query) !== 'shops') return;
       event.preventDefault();
       openShopSearchResults();
     });
@@ -5557,14 +5860,8 @@
         const button = event.target.closest('[data-search-chip]');
         if (!button) return;
         const value = button.dataset.searchChip || '';
-        if (state.view === 'shops' && els.shopBrowserSearch) {
-          els.shopBrowserSearch.value = value;
-          els.search.value = value;
-          state.activeShopId = '';
-        } else {
-          els.search.value = value;
-          setView('strains');
-        }
+        els.search.value = value;
+        syncUniversalSearchMode();
         resetStrainWindow();
         render();
       });
@@ -5897,8 +6194,8 @@
 
     if (els.jumpFilters) {
       els.jumpFilters.addEventListener('click', () => {
-        document.querySelector('.side-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        els.search.focus({ preventScroll: true });
+        const filterPanel = document.querySelector('.side-panel');
+        if (filterPanel) filterPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
 

@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Budfinder | Amsterdam coffeeshop strain finder and map</title>
-  <meta name="description" content="Budfinder helps you search Amsterdam coffeeshop menu data, build Wanted strains, compare shops, explore locations, and plan an Amsterdam itinerary." />
+  <meta name="description" content="Budfinder helps you search Amsterdam coffeeshop menu data, save strains, compare shops, explore locations, and plan an Amsterdam itinerary." />
   <link rel="canonical" href="https://budfinder.app/" />
   <meta property="og:title" content="Budfinder | Amsterdam coffeeshop strain finder" />
-  <meta property="og:description" content="Search Amsterdam coffeeshop menu data, build Wanted strains, compare shops, explore locations, and plan an Amsterdam itinerary." />
+  <meta property="og:description" content="Search Amsterdam coffeeshop menu data, save strains, compare shops, explore locations, and plan an Amsterdam itinerary." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://budfinder.app/" />
   <meta property="og:image" content="https://budfinder.app/images/IMG_5124.ico" />
@@ -1389,7 +1389,7 @@
   <nav class="app-mode-toggle" aria-label="Main navigation">
     <a href="index.html" aria-current="page">Home</a>
     <a href="map.html">Map</a>
-    <a href="database.html">Database</a>
+    <a href="database.html">Price &amp; Menus</a>
     <a href="#settings" data-budfinder-settings-toggle>Settings</a>
   </nav>
 
@@ -1413,12 +1413,12 @@
         </div>
 
         <h1 id="home-title">Find Amsterdam coffeeshops faster.</h1>
-        <p class="lead">Search strains, compare menus, and plan your next stop with live coffeeshop map intelligence.</p>
+        <p class="lead">Search strains, compare known menu signals, and plan your next stop with coffeeshop-first map intelligence.</p>
 
         <div class="actions" aria-label="Primary actions">
           <a class="primary-btn" href="map.html?source=home&intent=coffeeshops">Find My Next Stop</a>
           <a class="secondary-btn" href="database.html">Search Strains</a>
-          <a class="tertiary-btn" href="map.html?source=home&intent=itinerary">Build an Itinerary</a>
+          <a class="tertiary-btn" href="map.html?source=home&intent=itinerary">Build a Route</a>
         </div>
 
       </div>
@@ -1446,15 +1446,15 @@
         </a>
         <a class="simple-action-card" href="database.html">
           <b>2</b>
-          <strong>Search strains</strong>
-          <p>Look up wanted strains and see which Amsterdam coffeeshops are most likely to list them.</p>
+          <strong>Research prices and menus</strong>
+          <p>Compare strain price signals and browse full known coffeeshop menus before you choose where to go.</p>
           <span>Search Strains</span>
         </a>
         <a class="simple-action-card" href="map.html?source=home&intent=itinerary">
           <b>3</b>
           <strong>Plan your route</strong>
           <p>Build a simple coffeeshop itinerary and estimate walking time, distance, and likely spend.</p>
-          <span>Build an Itinerary</span>
+          <span>Build a Route</span>
         </a>
       </div>
     </section>
@@ -1535,7 +1535,7 @@
           <h2 id="amsterdam-insights-title">Live signals to shape the plan.</h2>
           <p>Compact price and strain signals from current menu data. Use them to choose what to search, compare, or add to a day out.</p>
         </div>
-        <a class="card-link" href="database.html">Open database</a>
+        <a class="card-link" href="database.html">Open Price &amp; Menus</a>
       </div>
       <div id="amsterdam-insights" class="insights-grid" aria-live="polite">
         <article class="insight-panel">
@@ -1560,8 +1560,8 @@
       <p class="section-copy">Budfinder helps you move from coffeeshop search to strain research to a practical itinerary without losing the thread.</p>
       <div class="feature-grid">
         <div class="feature-card">
-          <strong>Find Wanted strains</strong>
-          <p>Search Gelato, Amnesia Haze, Zkittlez, hash, Cali, and more across current menu data.</p>
+          <strong>Search strains</strong>
+          <p>Search Gelato, Amnesia Haze, Zkittlez, hash, Cali, and more across known menu data.</p>
         </div>
         <div class="feature-card">
           <strong>Explore Amsterdam places</strong>
@@ -1583,12 +1583,12 @@
         <div class="workflow-card">
           <b>1. Find</b>
           <strong>Search a strain, shop, or place</strong>
-          <p>Start with the map for planning, or use the database when you want deeper strain and price research.</p>
+          <p>Start with the map for planning, or use Price & Menus when you want deeper strain and price research.</p>
         </div>
         <div class="workflow-card">
           <b>2. Compare</b>
           <strong>Judge usefulness, not just distance</strong>
-          <p>Cards surface price, walking time, menu freshness, confidence, and why a place is worth considering.</p>
+          <p>Cards surface price signals, walking time, data age, confidence, and why a place is worth considering.</p>
         </div>
         <div class="workflow-card">
           <b>3. Plan</b>
@@ -2055,7 +2055,7 @@
               ${shopLogoHtml(shop)}
               <span class="card-copy">
                 <strong>${escapeHtml(displayName(shop.name || 'Amsterdam coffeeshop'))}</strong>
-                <span>${escapeHtml(shop.city || 'Amsterdam')} - ${card.count} Wanted strains</span>
+                <span>${escapeHtml(shop.city || 'Amsterdam')} - ${card.count} listed strains</span>
                 <small>${escapeHtml(freshnessLabel(card.latest))}</small>
                 <span class="mini-badges">
                   <span class="mini-badge${dealClass}">${escapeHtml(price)}</span>
@@ -2116,7 +2116,7 @@
             .sort()
             .pop();
           const lowest = prices.length ? priceLabel(Math.min(...prices), 'EUR', 'g') : 'Price signals loading';
-          const updated = latest ? freshnessLabel(latest) : 'Menu freshness unknown';
+          const updated = latest ? freshnessLabel(latest) : 'Data age unknown';
           showcaseStatus.textContent = `${amsterdamShopCount.toLocaleString()} Amsterdam shops tracked · ${listingCount.toLocaleString()} listings · ${lowest} · ${updated}.`;
         }
       }

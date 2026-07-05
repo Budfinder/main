@@ -4,10 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Budfinder Map | Amsterdam coffeeshop menu planner</title>
-  <meta name="description" content="Use Budfinder's Amsterdam coffeeshop map to compare Wanted-strain matches, nearby shops, walking time, price signals, and directions from your Starting point." />
+  <meta name="description" content="Use Budfinder's Amsterdam coffeeshop map to compare strain matches, nearby shops, walking time, price signals, and directions from your Starting point." />
   <link rel="canonical" href="https://budfinder.app/map.html" />
   <meta property="og:title" content="Budfinder Map | Amsterdam coffeeshop menu planner" />
-  <meta property="og:description" content="Compare Wanted-strain matches, nearby coffeeshops, walking time, price signals, and directions from your Starting point." />
+  <meta property="og:description" content="Compare strain matches, nearby coffeeshops, walking time, price signals, and directions from your Starting point." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://budfinder.app/map.html" />
   <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
@@ -1601,8 +1601,23 @@
     }
 
     .route-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
       background: var(--control-bg, rgba(255, 255, 255, 0.52));
     }
+
+    .route-panel-topline { order: 0; }
+    .map-mode-strip { order: 1; }
+    #destination-picker-wrap { order: 2; }
+    .destination-matches-divider { order: 3; }
+    #destination-card-deck { order: 4; }
+    .travel-mode-divider { order: 5; }
+    .route-mode-row { order: 6; }
+    #toggle-directions { order: 7; }
+    .route-action-row { order: 8; }
+    #route-status { order: 9; }
+    #journey-planner-card { order: 10; }
 
     .control-group {
       display: grid;
@@ -2201,7 +2216,8 @@
 
     .journey-location-icon.has-logo {
       padding: 2px;
-      color: inherit;
+      color: transparent;
+      font-size: 0;
     }
 
     .journey-location-icon.has-logo img {
@@ -5559,6 +5575,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      color: transparent;
+      font-size: 0;
     }
 
     .shop-logo-icon img {
@@ -5769,7 +5787,7 @@
   <nav class="app-mode-toggle" aria-label="Switch app view">
     <a href="index.html">Home</a>
     <a class="is-active" href="map.html" aria-current="page">Map</a>
-    <a href="database.html">Database</a>
+    <a href="database.html">Price &amp; Menus</a>
     <button id="nav-settings-btn" type="button">Settings</button>
   </nav>
   <div class="atmosphere" aria-hidden="true">
@@ -5788,10 +5806,10 @@
         </div>
         <div class="landing-copy">
           <h1 id="landing-title">Find the Amsterdam coffeeshops carrying the strains you actually want.</h1>
-          <p>Search Wanted strains, compare nearby coffeeshops, spot useful prices, manage Saved shops, and plan the next Destination from your Starting point.</p>
+          <p>Search strains, shops, or areas, compare nearby coffeeshops, spot useful price signals, and plan the next Destination from your Starting point.</p>
           <div class="landing-actions">
             <button id="open-budfinder-btn" class="landing-primary" type="button">Start planning</button>
-            <a class="landing-secondary" href="database.html">Open database</a>
+            <a class="landing-secondary" href="database.html">Open Price &amp; Menus</a>
             <button id="landing-guide-btn" class="landing-secondary" type="button">How it works</button>
           </div>
         </div>
@@ -5806,8 +5824,8 @@
         <h2>Plan your next coffeeshop move</h2>
         <div class="landing-feature-grid">
           <div class="landing-feature">
-            <strong>Find Wanted strains</strong>
-            <span>Search Gelato, Amnesia Haze, Zkittlez, hash, Cali, and more across live menu listings.</span>
+            <strong>Find map matches</strong>
+            <span>Search Gelato, Amnesia Haze, Zkittlez, hash, Cali, and more across known menu listings.</span>
           </div>
           <div class="landing-feature">
             <strong>Explore from wherever you are</strong>
@@ -5815,7 +5833,7 @@
           </div>
           <div class="landing-feature">
             <strong>Compare nearby coffeeshops</strong>
-          <span>Balance distance, walking time, menu freshness, wanted-strain matches, and useful price signals.</span>
+          <span>Balance distance, walking time, data age, saved-strain matches, and useful price signals.</span>
           </div>
           <div class="landing-feature">
             <strong>Find good deals</strong>
@@ -5823,7 +5841,7 @@
           </div>
           <div class="landing-feature">
             <strong>Save strains and shops</strong>
-            <span>Build Wanted strains before your trip and keep Saved shops close to hand.</span>
+            <span>Save useful strains before your trip and keep Saved shops close to hand.</span>
           </div>
           <div class="landing-feature">
             <strong>Plan your next Destination</strong>
@@ -5867,6 +5885,7 @@
         <button id="selection-move-up-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place earlier in itinerary" title="Move earlier">−</button>
         <button id="selection-move-down-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place later in itinerary" title="Move later">+</button>
         <button id="selection-center-btn" type="button" class="ghost-btn">Focus map</button>
+        <a id="selection-price-menus-link" class="selection-link" href="database.html">Price &amp; Menus</a>
         <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
       </div>
     </div>
@@ -5875,9 +5894,9 @@
   <section id="stash-shelf" class="overlay-card">
     <div class="stash-shelf-head">
       <div class="stash-shelf-head-copy">
-        <span class="selection-eyebrow">Wanted strains</span>
-        <h3>Wanted strains</h3>
-        <p id="stash-shelf-summary" class="stash-shelf-summary">Wanted strains stay available across the map and database explorer.</p>
+        <span class="selection-eyebrow">Map matching strains</span>
+        <h3>Map matching strains</h3>
+        <p id="stash-shelf-summary" class="stash-shelf-summary">Saved strains stay available for quick map matching.</p>
       </div>
       <button id="stash-shelf-close" class="stash-shelf-close" type="button">Hide</button>
     </div>
@@ -5889,7 +5908,7 @@
   <!-- Top-level controls button -->
   <div id="ui-toggles" data-ready="false">
     <button id="toggle-controls" type="button">Map tools</button>
-    <button id="toggle-shelf" type="button">Wanted strains</button>
+    <button id="toggle-shelf" type="button">Map matches</button>
     <button id="clear-selection-toggle" type="button" hidden>Clear Destination</button>
   </div>
   <!-- Main controls panel -->
@@ -5936,8 +5955,8 @@
         </div>
         <div class="workflow-shortcuts" aria-label="Quick planning shortcuts">
           <button class="intent-card" type="button" data-map-intent="wanted">
-            <strong>Wanted strains</strong>
-            <span>Save strains you want and highlight matching shops.</span>
+            <strong>Map matching strains</strong>
+            <span>Save strains to highlight matching shops on the map.</span>
           </button>
           <button class="intent-card" type="button" data-map-intent="value">
             <strong>Good-value shops</strong>
@@ -5947,17 +5966,17 @@
             <strong>Build itinerary</strong>
             <span>Add stops and estimate walking time, distance, and spend.</span>
           </button>
-          <a class="intent-link" href="database.html">
-            <strong>Deeper research</strong>
-            <span>Open the database explorer for deeper strain and shop research.</span>
+          <a id="map-price-menus-link" class="intent-link" href="database.html">
+            <strong>Open Price &amp; Menus</strong>
+            <span>Compare average strain prices or browse full known shop menus.</span>
           </a>
         </div>
       </section>
 
       <section class="panel-section route-panel control-group">
         <div class="route-panel-topline">
-          <span class="panel-kicker">Itinerary Builder</span>
-          <p class="panel-copy">Plan an Amsterdam day out with coffeeshops, attractions, food, hotels, and transport stops in the order you choose.</p>
+          <span class="panel-kicker">Destination</span>
+          <p class="panel-copy">Compare suggested stops, pick a visible place, then add it to the itinerary or open directions.</p>
         </div>
         <div class="map-mode-strip" aria-live="polite">
           <span>Current mode</span>
@@ -6065,15 +6084,15 @@
           <select id="destination-select"></select>
         </div>
 
-        <div class="control-divider">
+        <div class="control-divider destination-matches-divider">
           <span class="panel-kicker">Best matches</span>
-          <p class="panel-copy">Ranked shops explain matches, distance, Price signals, and Menu freshness.</p>
+          <p class="panel-copy">Ranked shops explain matches, distance, price signals, and data age.</p>
         </div>
         <div id="destination-card-deck">
           <div class="destination-cards-head">
             <div class="destination-cards-copy">
               <strong id="destination-card-title">Best matches</strong>
-              <div id="destination-card-status" class="field-note">Pick from Wanted strains to unlock stronger Destination cards.</div>
+              <div id="destination-card-status" class="field-note">Pick a strain to unlock stronger Destination cards.</div>
             </div>
             <label class="destination-sort-label" for="destination-sort">
               Sort
@@ -6093,7 +6112,7 @@
           <option value="free-roam">Free roam</option>
         </select>
 
-        <div class="control-divider">
+        <div class="control-divider travel-mode-divider">
           <span class="panel-kicker">Directions / Travel mode</span>
           <p class="panel-copy">Choose how you are moving, then open directions when a Destination looks worth it.</p>
         </div>
@@ -6114,7 +6133,7 @@
           <button id="nearest-btn">Closest</button>
           <button id="add-destination-stop-btn" type="button" class="secondary-btn">Add Destination to itinerary</button>
           <button id="surprise-btn" type="button" class="secondary-btn">Pick a random shop</button>
-          <button id="show-strain-shops-btn" type="button" class="secondary-btn" hidden>Show Wanted-strain matches</button>
+          <button id="show-strain-shops-btn" type="button" class="secondary-btn" hidden>Show strain matches</button>
           <button id="clear-route-focus-btn" type="button" class="secondary-btn">Clear Destination</button>
         </div>
         <div id="route-status" class="field-note">Location is only used after you choose Closest, Near me, or directions.</div>
@@ -6122,33 +6141,33 @@
       </section>
 
       <section class="panel-section wanted-list-panel control-group">
-        <span class="panel-kicker">Wanted strains</span>
+        <span class="panel-kicker">Map matching strains</span>
         <div id="strain-list-panel">
           <div class="strain-list-head">
-            <strong>Wanted strains</strong>
+            <strong>Map matching strains</strong>
           </div>
           <input id="strain-list-search" type="text" placeholder="Filter strains..." />
-          <div id="strain-list-status">Loading Wanted-strain matches...</div>
+          <div id="strain-list-status">Loading strain matches...</div>
           <div id="strain-list"></div>
         </div>
 
         <div class="button-row">
-          <button id="toggle-current-strain-shelf-btn" type="button" class="secondary-btn" disabled>Add to Wanted strains</button>
-          <button id="clear-strain-btn" type="button" class="secondary-btn">Clear Wanted strains</button>
+          <button id="toggle-current-strain-shelf-btn" type="button" class="secondary-btn" disabled>Save strain</button>
+          <button id="clear-strain-btn" type="button" class="secondary-btn">Clear map match</button>
         </div>
-        <div id="strain-status" style="margin-top:8px; font-size:12px; color:#444;">No Wanted strains selected yet.</div>
+        <div id="strain-status" style="margin-top:8px; font-size:12px; color:#444;">No map matching strains selected yet.</div>
 
         <details class="detail-drawer">
-          <summary>Wanted strain insight</summary>
+          <summary>Map strain match preview</summary>
           <div id="strain-spotlight-card">
             <div class="strain-spotlight-hero">
               <div id="strain-spotlight-media" class="strain-spotlight-media">
                 <div class="strain-spotlight-fallback">Pick a strain to open its profile.</div>
               </div>
               <div class="strain-spotlight-copy">
-                <span class="selection-eyebrow">Wanted strains</span>
-                <h3 id="strain-spotlight-name">No Wanted strains selected</h3>
-                <p id="strain-spotlight-summary" class="strain-spotlight-summary">Choose from Wanted strains to see live pricing, notes, and Best matches carrying it.</p>
+                <span class="selection-eyebrow">Map matching strain</span>
+                <h3 id="strain-spotlight-name">No strain selected</h3>
+                <p id="strain-spotlight-summary" class="strain-spotlight-summary">Choose a strain to see map matches. For average prices and full listings, open Price &amp; Menus.</p>
                 <div class="strain-spotlight-chip-row">
                   <span id="strain-spotlight-type" class="strain-spotlight-chip">Type loads after search</span>
                   <span id="strain-spotlight-price" class="strain-spotlight-chip">Price signal pending</span>
@@ -6156,7 +6175,8 @@
                 </div>
               </div>
             </div>
-            <p id="strain-spotlight-notes" class="strain-spotlight-notes">No notes yet. Once a strain is selected, this card will pull together the best bits of the live menu data.</p>
+            <p id="strain-spotlight-notes" class="strain-spotlight-notes">No map match selected yet. Once a strain is selected, this card stays focused on useful shops to visit next.</p>
+            <a id="strain-price-guide-link" class="panel-link-button" href="database.html">Open strain price guide</a>
             <div class="strain-spotlight-top">
               <div class="strain-spotlight-top-head">
                 <strong>Top shops</strong>
@@ -6207,18 +6227,18 @@
               <select id="csv-switch-select"></select>
             </label>
           </div>
-          <a class="panel-link-button" href="database.html">Open database explorer</a>
+          <a class="panel-link-button" href="database.html">Open Price &amp; Menus</a>
           <div class="button-row">
             <button id="clear-saved-data-btn" type="button" class="secondary-btn">Clear saved data</button>
           </div>
           <div id="clear-saved-data-confirm" class="settings-confirm" hidden>
-            <p>This clears Saved shops, visit notes, ratings, recent Destinations, and saved Wanted strains from this device. Map data and display settings stay available.</p>
+            <p>This clears Saved shops, visit notes, ratings, recent Destinations, and saved strains from this device. Map data and display settings stay available.</p>
             <div class="settings-confirm-actions">
               <button id="confirm-clear-saved-data-btn" type="button" class="danger-btn">Clear saved data</button>
               <button id="cancel-clear-saved-data-btn" type="button" class="secondary-btn">Cancel</button>
             </div>
           </div>
-          <div id="clear-saved-data-note" class="field-note">Saved shops, recent Destinations, ratings, visit notes, and saved Wanted strains stay on this device.</div>
+          <div id="clear-saved-data-note" class="field-note">Saved shops, recent Destinations, ratings, visit notes, and saved strains stay on this device.</div>
           <div id="db-status" class="field-note" style="display:none; margin-top:10px;"></div>
         </section>
 
@@ -6383,7 +6403,7 @@
     let dbByUniqueName = new Map(); // "name" -> shop_id when unique
     let dbShopMetaById = new Map(); // shop_id -> { name, city, shop_url }
     let dbUnavailableShopIds = new Set(); // shop ids hidden from current browsing
-    let explorerFocusShopIds = null; // Set<string> | null, from database explorer handoff
+    let explorerFocusShopIds = null; // Set<string> | null, from Price & Menus handoff
     let explorerFocusStrainName = '';
     let explorerFocusStrainShopIds = null; // Set<string> | null, all shops carrying handoff strain
 
@@ -7121,6 +7141,30 @@
         });
     }
 
+    function priceMenusUrl(context = {}) {
+      const params = new URLSearchParams();
+      const strain = (context.strain || '').toString().trim();
+      const shopId = Number.isFinite(Number(context.shopId)) ? String(Number(context.shopId)) : '';
+      if (shopId) {
+        params.set('mode', 'shop');
+        params.set('view', 'shops');
+        params.set('shop_id', shopId);
+      } else if (strain) {
+        params.set('mode', 'strain');
+        params.set('strain', strain);
+      }
+      const query = params.toString();
+      return query ? `database.html?${query}` : 'database.html';
+    }
+
+    function syncPriceMenusLinks() {
+      const mapResearchLink = document.getElementById('map-price-menus-link');
+      if (!mapResearchLink) return;
+
+      const activeName = getCanonicalStrainName(strainFilterText);
+      mapResearchLink.href = activeName ? priceMenusUrl({ strain: activeName }) : 'database.html';
+    }
+
     function loadExplorerFocusContext() {
       const params = new URLSearchParams(window.location.search || '');
       const fromUrl = parseShopIdList(params.get('shops') || params.get('shop_ids') || '');
@@ -7382,14 +7426,14 @@
 
       if (!strainFilterText) {
         btn.disabled = true;
-        btn.textContent = 'Add to Wanted strains';
+        btn.textContent = 'Save strain';
         return;
       }
 
       btn.disabled = false;
       btn.textContent = isStrainShelved(strainFilterText)
-        ? 'Remove from Wanted strains'
-        : 'Add to Wanted strains';
+        ? 'Remove saved strain'
+        : 'Save strain';
     }
 
     function toggleShelfMembershipForStrain(name, options = {}) {
@@ -8400,7 +8444,7 @@
     }
 
     function getSavedToggleHtml(entries, isOpen) {
-      const label = isOpen ? 'Hide Wanted strains' : 'Wanted strains';
+      const label = isOpen ? 'Hide map matches' : 'Map matches';
       const visibleEntries = (entries || []).slice(0, 3);
       if (!visibleEntries.length) {
         return `<span class="saved-toggle-content"><span class="saved-toggle-label">${escapeHtml(label)}</span></span>`;
@@ -8483,11 +8527,11 @@
 
       if (summary) {
         if (!locations.length) {
-          summary.textContent = 'Once the Amsterdam data is ready, Wanted strains will stay available across pages.';
+          summary.textContent = 'Once the Amsterdam data is ready, saved strains will stay available for quick map matching.';
         } else {
           summary.textContent = entries.length
-            ? `${entries.length} Wanted strains. Select one to show shops carrying it.`
-            : 'No Wanted strains yet. Pick a strain from the radar or explorer to add it here.';
+            ? `${entries.length} saved strain${entries.length === 1 ? '' : 's'}. Select one to show matching shops.`
+            : 'No saved strains yet. Pick a strain from the map or Price & Menus to add it here.';
         }
       }
 
@@ -8517,7 +8561,7 @@
 
         return (
           `<article class="stash-bag ${getStashBagToneClass(getStrainShelfToneSeed(name))}${artHtml ? ' has-art' : ''}${isCurrent ? ' is-current is-active-filter' : ''}" data-strain="${escapeHtmlAttr(name)}">` +
-            `<button type="button" class="stash-bag-remove" data-stash-remove="${escapeHtmlAttr(name)}" aria-label="Remove ${escapeHtmlAttr(name)} from Wanted strains">&times;</button>` +
+            `<button type="button" class="stash-bag-remove" data-stash-remove="${escapeHtmlAttr(name)}" aria-label="Remove ${escapeHtmlAttr(name)} from saved strains">&times;</button>` +
             `<button type="button" class="stash-bag-main" data-stash-activate="${escapeHtmlAttr(name)}">` +
               `<span class="stash-bag-art">` +
                 `${artHtml}` +
@@ -8526,7 +8570,7 @@
                 `<span class="stash-bag-art-sub">${escapeHtml(artSub)}</span>` +
               `</span>` +
               `<span class="stash-bag-name">${escapeHtml(name || 'Mystery strain')}</span>` +
-              `<span class="stash-bag-city">${escapeHtml(market.bestCityCopy || (isCurrent ? 'Current Wanted strains' : 'Wanted strains'))}</span>` +
+              `<span class="stash-bag-city">${escapeHtml(market.bestCityCopy || (isCurrent ? 'Current map match' : 'Saved strain'))}</span>` +
               `<span class="stash-bag-meta">${escapeHtml(metaBits.join(' · '))}</span>` +
               `<span class="stash-bag-price">${escapeHtml(lowestText)}</span>` +
               `<span class="stash-bag-footer">Tap to show the shops carrying this strain</span>` +
@@ -8565,7 +8609,7 @@
       updateControlsSummary();
       refreshOpenPopupStrainLists();
       syncActiveStrainShelfButton();
-      setRouteStatus(`${canonical} removed from Wanted strains.`, 'good');
+      setRouteStatus(`${canonical} removed from saved strains.`, 'good');
     }
 
     function updateTopShelfRail() {
@@ -8590,11 +8634,11 @@
 
       if (toggleBtn) {
         toggleBtn.setAttribute('aria-expanded', String(!topShelfRailCollapsed));
-        toggleBtn.setAttribute('aria-label', topShelfRailCollapsed ? 'Show Wanted strains' : 'Collapse Wanted strains');
-        toggleBtn.title = topShelfRailCollapsed ? 'Show Wanted strains' : 'Collapse Wanted strains';
+        toggleBtn.setAttribute('aria-label', topShelfRailCollapsed ? 'Show saved strains' : 'Collapse saved strains');
+        toggleBtn.title = topShelfRailCollapsed ? 'Show saved strains' : 'Collapse saved strains';
       }
       if (toggleLabel) {
-        toggleLabel.textContent = `Wanted · ${entries.length}`;
+        toggleLabel.textContent = `Saved · ${entries.length}`;
       }
       if (toggleIcon) {
         toggleIcon.textContent = topShelfRailCollapsed ? '▾' : '−';
@@ -8892,7 +8936,7 @@
         html:
           `<div class="shop-marker-wrap">` +
             `<div class="shop-logo-icon">` +
-              `<img src="${first}" alt="shop logo" ` +
+              `<img src="${first}" alt="" aria-hidden="true" ` +
               `data-candidates="${joined}" data-idx="0" onerror="markerLogoFallback(this)">` +
             `</div>` +
             `<span class="${badgeClass}">${safeLabel}</span>` +
@@ -8957,7 +9001,7 @@
       if (!candidates.length) return '';
       const joined = candidates.map(escapeHtmlAttr).join('|');
       const first = escapeHtmlAttr(candidates[0]);
-      return `<img src="${first}" alt="${loc.name} logo"
+      return `<img src="${first}" alt="" aria-hidden="true"
                   data-candidates="${joined}" data-idx="0"
                   onerror="popupLogoFallback(this)"
                   style="width:${POPUP_LOGO_SIZE}px;height:${POPUP_LOGO_SIZE}px;object-fit:contain;display:block;margin:8px auto;border-radius:8px;background:white;">`;
@@ -10009,7 +10053,7 @@
       if (!strains.length) {
         setPopupCardValueTone(index, {
           tone: 'unknown',
-          title: 'No matched live menu prices yet'
+          title: 'No matched menu prices yet'
         });
         liveContainer.style.display = 'block';
         liveContainer.innerHTML = '<p class="popup-strains-empty">No menu match for this shop yet. Try another Destination or check the shop directly.</p>';
@@ -10204,7 +10248,7 @@
         shelfBtn.type = 'button';
         shelfBtn.className = `strain-shelf-chip-btn${isShelved ? ' is-active' : ''}`;
         shelfBtn.setAttribute('data-strain-shelf-toggle', name);
-        shelfBtn.textContent = isShelved ? 'Wanted' : 'Want';
+        shelfBtn.textContent = isShelved ? 'Saved' : 'Save';
         row.appendChild(btn);
         row.appendChild(shelfBtn);
         frag.appendChild(row);
@@ -10236,7 +10280,7 @@
         }
       }
 
-      statusEl.textContent = `${activeStrainNames.length} wanted-strain options`;
+      statusEl.textContent = `${activeStrainNames.length} strain-match options`;
       updateGlobalSearchSuggestions();
       renderStrainList();
     }
@@ -10476,7 +10520,7 @@
         strainCheapestShopIds = null;
         strainCheapestNameCityKeys = null;
         strainCheapestPriceLabel = '';
-        if (status) status.textContent = 'No Wanted strains selected yet.';
+        if (status) status.textContent = 'No map matching strains selected yet.';
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
@@ -10534,8 +10578,8 @@
         const matchedCount = locations.filter(loc => locationMatchesStrainMatchSets(loc, strainAllowedShopIds, strainAllowedNameCityKeys)).length;
         if (status) {
           status.textContent = strainCheapestPriceLabel
-            ? `Wanted strains: "${q}" (${matchedCount} shops · cheapest ${strainCheapestPriceLabel})`
-            : `Wanted strains: "${q}" (${matchedCount} shops)`;
+            ? `Map match: "${q}" (${matchedCount} shops · cheapest ${strainCheapestPriceLabel})`
+            : `Map match: "${q}" (${matchedCount} shops)`;
         }
         updateDestinationDropdown();
         updateDistanceInfo();
@@ -11038,10 +11082,10 @@
       popupMenuUpdatedByShopId = new Map();
       popupMenuUpdatedByNameCity = new Map();
       strainAveragePricesByKey = new Map();
-      if (strainStatus) strainStatus.textContent = 'No Wanted strains selected yet.';
+      if (strainStatus) strainStatus.textContent = 'No map matching strains selected yet.';
       if (strainSearch) strainSearch.value = '';
       if (strainList) strainList.innerHTML = '';
-      if (strainListStatus) strainListStatus.textContent = 'Open strain search to browse Wanted-strain options.';
+      if (strainListStatus) strainListStatus.textContent = 'Open strain search to browse map-matching options.';
       const eta = document.getElementById('time-estimate');
       const distance = document.getElementById('distance-info');
       const destinationSearchInput = document.getElementById('destination-search');
@@ -11855,7 +11899,7 @@
       strainCheapestShopIds = null;
       strainCheapestNameCityKeys = null;
       strainCheapestPriceLabel = '';
-      if (status) status.textContent = 'No Wanted strains selected yet.';
+      if (status) status.textContent = 'No map matching strains selected yet.';
       if (activeStrainNames.length) {
         renderStrainList();
       } else {
@@ -11943,7 +11987,7 @@
       updateMarkers();
       updateControlsSummary();
       setSavedDataConfirmationVisible(false);
-      setRouteStatus('Saved shops, ratings, visit notes, recent Destinations, and saved Wanted strains were cleared.', 'good');
+      setRouteStatus('Saved shops, ratings, visit notes, recent Destinations, and saved strains were cleared.', 'good');
     }
 
     function setSavedDataConfirmationVisible(confirming) {
@@ -11958,7 +12002,7 @@
       if (note) {
         note.textContent = confirming
           ? 'Confirm below to clear saved local map data.'
-          : 'Saved shops, recent Destinations, ratings, visit notes, and saved Wanted strains stay on this device.';
+          : 'Saved shops, recent Destinations, ratings, visit notes, and saved strains stay on this device.';
       }
     }
 
@@ -12830,7 +12874,7 @@
       if (!hasSearch) {
         if (!baseVisibleCount) {
           statusEl.textContent = hasExplorerFocus()
-            ? 'No itinerary Destinations are visible on this map yet. Try showing all Wanted-strain matches or clearing filters.'
+            ? 'No itinerary Destinations are visible on this map yet. Try showing all strain matches or clearing filters.'
           : 'No Destinations are visible yet. Clear a filter or choose another strain to widen the map.';
           return;
         }
@@ -12838,7 +12882,7 @@
         statusEl.textContent = hasExplorerFocus()
           ? `Scanning ${baseVisibleCount} explorer-selected coffeeshop${baseVisibleCount === 1 ? '' : 's'}.`
           : strainFilterText
-          ? `Scanning ${baseVisibleCount} Wanted-strain Destination${baseVisibleCount === 1 ? '' : 's'}.`
+          ? `Scanning ${baseVisibleCount} strain-match Destination${baseVisibleCount === 1 ? '' : 's'}.`
           : `Scanning ${baseVisibleCount} visible Destination${baseVisibleCount === 1 ? '' : 's'}.`;
         return;
       }
@@ -12897,7 +12941,7 @@
       }
       if (strainFilterText) return { label: 'Price unknown', tone: 'unknown', text: 'Price not listed for this strain yet.' };
       const strains = getPopupStrainsForLocation(loc);
-      if (!strains.length) return { label: 'Price unknown', tone: 'unknown', text: 'No matched live menu prices yet.' };
+      if (!strains.length) return { label: 'Price unknown', tone: 'unknown', text: 'No matched menu prices yet.' };
       return { label: 'Prices in menu', tone: 'price', text: `${strains.length} menu item${strains.length === 1 ? '' : 's'} matched.` };
     }
 
@@ -12930,12 +12974,12 @@
         } else if (item.priceInsight && item.priceInsight.tone === 'deal') {
           parts.push(`Good-value lead for ${activeName} where price is known.`);
         } else {
-          parts.push(`Strong Wanted-strain match for ${activeName}.`);
+          parts.push(`Strong map match for ${activeName}.`);
         }
       } else if (item.savedMatches && item.savedMatches.length) {
         parts.push(item.savedMatches.length === 1
-          ? 'Nearby option with one Wanted-strain match.'
-          : `Strong Wanted-strain match with ${item.savedMatches.length} Wanted strains.`);
+          ? 'Nearby option with one saved-strain match.'
+          : `Strong saved-strain match with ${item.savedMatches.length} saved strains.`);
       } else {
         parts.push('Useful nearby option for the current itinerary.');
       }
@@ -12943,7 +12987,7 @@
       if (item.priceInsight && item.priceInsight.tone === 'deal') parts.push(item.priceInsight.label);
       if (item.priceInsight && item.priceInsight.label === 'Price unknown') parts.push('Worth checking, but price data is incomplete');
       if (item.freshnessLabel === 'Fresh') {
-        parts.push('Fresh menu data');
+        parts.push('Fresh data');
       } else if (item.freshnessLabel) {
         parts.push(item.freshnessLabel);
       }
@@ -13042,6 +13086,7 @@
       const cityEl = document.getElementById('selected-destination-city');
       const etaEl = document.getElementById('selected-destination-eta');
       const siteLink = document.getElementById('selection-website-link');
+      const priceMenusLink = document.getElementById('selection-price-menus-link');
       const addStopBtn = document.getElementById('selection-add-stop-btn');
       const moveUpBtn = document.getElementById('selection-move-up-btn');
       const moveDownBtn = document.getElementById('selection-move-down-btn');
@@ -13086,7 +13131,7 @@
         const nearbyCopy = isArea
           ? `${nearbyCoffeeShopCount} coffeeshop${nearbyCoffeeShopCount === 1 ? '' : 's'} near this area anchor. Use search to narrow nearby stops.`
           : savedMatches.length
-          ? `${savedMatches.length} Wanted strains matched here.`
+          ? `${savedMatches.length} saved strain${savedMatches.length === 1 ? '' : 's'} matched here.`
           : strains.length
           ? `${strains.length} listed strain${strains.length === 1 ? '' : 's'} in the current menu data.`
           : 'Menu matches are still loading for this shop.';
@@ -13106,6 +13151,18 @@
         } else {
           siteLink.hidden = true;
           siteLink.removeAttribute('href');
+        }
+      }
+      if (priceMenusLink) {
+        if (Number.isFinite(loc.db_shop_id)) {
+          priceMenusLink.hidden = false;
+          priceMenusLink.href = priceMenusUrl({ shopId: loc.db_shop_id });
+          priceMenusLink.textContent = 'Open Price & Menus';
+          priceMenusLink.setAttribute('aria-label', `Open Price & Menus for ${loc.name || 'this destination'}`);
+        } else {
+          priceMenusLink.hidden = true;
+          priceMenusLink.href = 'database.html';
+          priceMenusLink.removeAttribute('aria-label');
         }
       }
       const stopIndex = getJourneyStopIndexByLocationIndex(selectedIndex);
@@ -13140,19 +13197,24 @@
       const notesEl = document.getElementById('strain-spotlight-notes');
       const cityEl = document.getElementById('strain-spotlight-city');
       const topShopsEl = document.getElementById('strain-spotlight-top-shops');
+      const priceGuideLink = document.getElementById('strain-price-guide-link');
       if (!card || !mediaEl || !nameEl || !summaryEl || !typeEl || !priceEl || !countEl || !notesEl || !cityEl || !topShopsEl) return;
 
       const activeName = getCanonicalStrainName(strainFilterText);
       if (!activeName) {
       mediaEl.innerHTML = '<div class="strain-spotlight-fallback">Pick a strain to open its profile.</div>';
-      nameEl.textContent = 'No Wanted strains selected';
-      summaryEl.textContent = 'Choose from Wanted strains to see live pricing, notes, and Best matches carrying it.';
+      nameEl.textContent = 'No strain selected';
+      summaryEl.textContent = 'Choose a strain to see map matches. For average prices and full listings, open Price & Menus.';
         typeEl.textContent = 'Type loads after search';
         priceEl.textContent = 'Price signal pending';
         countEl.textContent = 'Matches load after search';
-        notesEl.textContent = 'Search a strain, then Budfinder will surface prices, freshness, and useful shops.';
+        notesEl.textContent = 'Search a strain, then Budfinder will surface useful shops to visit next.';
         cityEl.textContent = 'Waiting for your search';
         topShopsEl.innerHTML = '<div class="strain-spotlight-empty">Search or tap a strain to see matching shops.</div>';
+        if (priceGuideLink) {
+          priceGuideLink.href = 'database.html';
+          priceGuideLink.textContent = 'Open Price & Menus';
+        }
         return;
       }
 
@@ -13168,13 +13230,17 @@
       mediaEl.innerHTML = getStrainSpotlightMediaHtml(activeName);
       nameEl.textContent = activeName;
       summaryEl.textContent = market.cheapestShopLine
-        ? `${market.bestCityCopy}. Cheapest right now at ${market.cheapestShopLine}.`
+        ? `${market.bestCityCopy}. Cheapest visible price signal at ${market.cheapestShopLine}.`
         : `${market.bestCityCopy}.`;
       typeEl.textContent = market.typeLabel;
       priceEl.textContent = market.cheapestPriceLabel ? `Cheapest ${market.cheapestPriceLabel}` : 'Cheapest unavailable';
       countEl.textContent = market.countLabel;
       notesEl.textContent = market.notesText;
-      cityEl.textContent = market.bestCityCopy || 'Live on the current map';
+      cityEl.textContent = market.bestCityCopy || 'Current map matches';
+      if (priceGuideLink) {
+        priceGuideLink.href = priceMenusUrl({ strain: activeName });
+        priceGuideLink.textContent = `Research ${activeName} prices`;
+      }
 
       if (!market.topShops.length) {
         topShopsEl.innerHTML = '<div class="strain-spotlight-empty">No matching shops on the current map yet. Try clearing filters or broadening the strain name.</div>';
@@ -13200,9 +13266,17 @@
       }).join('');
     }
 
+    function syncRoutePanelOrder() {
+      const journeyCard = document.getElementById('journey-planner-card');
+      const routeStatus = document.getElementById('route-status');
+      if (!journeyCard || !routeStatus || routeStatus.nextElementSibling === journeyCard) return;
+      routeStatus.after(journeyCard);
+    }
+
     function updateControlsSummary() {
       const summaryEl = document.getElementById('controls-summary');
       let summaryText = '';
+      syncRoutePanelOrder();
       updateHeroStats();
       updateSelectionCard();
       updateDestinationSearchStatus();
@@ -13211,6 +13285,7 @@
       updateTopShelfRail();
       updateStrainSpotlight();
       syncActiveStrainShelfButton();
+      syncPriceMenusLinks();
       syncClearSelectionToggle();
       if (!summaryEl) return;
 
@@ -14727,7 +14802,7 @@
         const visibleMatches = matchNames.slice(0, 3);
         const extraMatchCount = Math.max(0, matchNames.length - visibleMatches.length);
         const matchLabel = activeName || item.savedMatches.length
-          ? (item.savedMatches.length > 1 ? 'Strong match' : 'Wanted match')
+          ? (item.savedMatches.length > 1 ? 'Strong match' : 'Saved match')
           : (item.isClosest ? 'Nearby option' : 'Possible match');
         const distanceLabel = item.etaLabel
           ? `${item.etaLabel} ${item.travelModeLabel.toLowerCase()}`
@@ -14735,7 +14810,7 @@
         const compactMeta = [matchLabel, distanceLabel].filter(Boolean).join(' · ');
         const matchesHtml = visibleMatches.length
           ? `Matches: ${visibleMatches.map(name => `<strong>${escapeHtml(name)}</strong>`).join(', ')}${extraMatchCount ? ` <span>+${extraMatchCount} more</span>` : ''}`
-          : (item.strainCount ? `${item.strainCount} listed strain${item.strainCount === 1 ? '' : 's'} to check` : 'No Wanted strains matched yet');
+          : (item.strainCount ? `${item.strainCount} listed strain${item.strainCount === 1 ? '' : 's'} to check` : 'No saved strains matched yet');
         const recommendedLine = whyReasons[0]
           ? whyReasons[0]
           : 'Worth checking, but menu data may have changed.';
@@ -14743,7 +14818,7 @@
         const priceKnown = priceLabel !== 'Price unknown';
         const detailBadges = [
           `<span class="destination-card-badge ${priceKnown ? 'is-deal' : 'is-confidence-unknown'}">${priceKnown ? 'Price known' : 'Price unknown'}</span>`,
-          item.freshnessLabel ? `<span class="destination-card-badge is-freshness-${escapeHtmlAttr(item.freshnessTone)}">${escapeHtml(item.freshnessLabel === 'Fresh' ? 'Fresh menu' : item.freshnessLabel)}</span>` : '<span class="destination-card-badge is-confidence-unknown">Menu freshness unknown</span>',
+          item.freshnessLabel ? `<span class="destination-card-badge is-freshness-${escapeHtmlAttr(item.freshnessTone)}">${escapeHtml(item.freshnessLabel === 'Fresh' ? 'Fresh data' : item.freshnessLabel)}</span>` : '<span class="destination-card-badge is-confidence-unknown">Data age unknown</span>',
           item.confidence && item.confidence.label ? `<span class="destination-card-badge is-confidence-${escapeHtmlAttr(item.confidence.tone)}">${escapeHtml(item.confidence.label)}</span>` : '<span class="destination-card-badge is-confidence-unknown">Possible match</span>',
           '<span class="destination-card-badge is-confidence-low">Check before travelling</span>'
         ];
@@ -14758,7 +14833,7 @@
         ].filter(Boolean);
         const allMatchHtml = matchNames.length
           ? matchNames.map(name => `<span class="destination-card-chip">${escapeHtml(name)}</span>`).join('')
-          : '<span class="destination-card-chip">No Wanted strains matched yet</span>';
+          : '<span class="destination-card-chip">No saved strains matched yet</span>';
         const inItinerary = !!item.inItinerary;
         const itineraryStopIndex = Number.isInteger(item.itineraryStopIndex) ? item.itineraryStopIndex : -1;
         const itineraryActionText = inItinerary ? 'Remove from itinerary' : 'Add to itinerary';
@@ -14847,7 +14922,7 @@
         return `Matches your search for "${locationSearchText}".`;
       }
       if (item.savedMatches && item.savedMatches.length) {
-        return `Matches ${item.savedMatches.slice(0, 2).join(', ')} from Wanted strains.`;
+        return `Matches ${item.savedMatches.slice(0, 2).join(', ')} from saved strains.`;
       }
       if (item.isClosest && item.distText) {
         return `Closest visible option at ${item.distText}.`;
@@ -14889,7 +14964,7 @@
           locationLabel ? `<span class="best-match-badge">${escapeHtml(locationLabel)}</span>` : '',
           priceLabel ? `<span class="best-match-badge${item.priceInsight && item.priceInsight.tone === 'deal' ? ' is-deal' : ''}">${escapeHtml(priceLabel)}</span>` : '',
           distanceLabel ? `<span class="best-match-badge">${escapeHtml(distanceLabel)}</span>` : '',
-          freshnessLabel ? `<span class="best-match-badge is-fresh">${escapeHtml(freshnessLabel === 'Fresh' ? 'Fresh menu' : freshnessLabel)}</span>` : ''
+          freshnessLabel ? `<span class="best-match-badge is-fresh">${escapeHtml(freshnessLabel === 'Fresh' ? 'Fresh data' : freshnessLabel)}</span>` : ''
         ].filter(Boolean).join('');
         const inItinerary = !!item.inItinerary;
         return (
@@ -15484,7 +15559,7 @@
           setStrainListVisible(true);
           const strainSearch = document.getElementById('strain-list-search');
           if (strainSearch) strainSearch.focus();
-          setRouteStatus('Add one or more Wanted strains to compare Best matches.', 'good');
+          setRouteStatus('Add one or more strains to compare Best matches.', 'good');
           return;
         }
         if (intent === 'nearby') {
