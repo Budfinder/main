@@ -1,0 +1,74 @@
+/* Shared interaction and responsive refinements for the public Budfinder pages. */
+
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent, #4df49a) 72%, white);
+  outline-offset: 3px;
+}
+
+:where(button, [role="button"]) {
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+:where(.app-mode-toggle, .actions, .button-row, .selection-actions) > * {
+  min-width: 0;
+}
+
+.app-mode-toggle {
+  max-width: calc(100vw - max(20px, env(safe-area-inset-left)) - max(20px, env(safe-area-inset-right)));
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+}
+
+.app-mode-toggle::-webkit-scrollbar {
+  display: none;
+}
+
+.app-mode-toggle.app-mode-toggle :where(a, button) {
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  text-align: center;
+}
+
+@media (max-width: 680px) {
+  .app-mode-toggle {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    overflow: visible;
+  }
+
+  .app-mode-toggle.app-mode-toggle :where(a, button) {
+    width: 100%;
+    min-height: 44px;
+    padding-inline: clamp(4px, 2.6vw, 10px);
+    font-size: clamp(11px, 3.5vw, 13px);
+    white-space: normal;
+  }
+}
+
+@media (pointer: coarse) {
+  :where(.chip-btn, .map-quick-chip, .quick-chips button) {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body.has-site-settings-open {
+  overflow: hidden;
+}

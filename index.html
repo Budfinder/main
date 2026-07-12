@@ -1421,6 +1421,15 @@
     }
 
     @media (max-width: 680px) {
+      .app-mode-toggle {
+        position: sticky;
+        top: 0;
+        right: auto;
+        width: calc(100% - 20px);
+        margin: max(8px, env(safe-area-inset-top)) auto 12px;
+        z-index: 100;
+      }
+
       .app-mode-toggle a {
         min-height: 44px;
       }
@@ -1532,6 +1541,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260712-3" />
 </head>
 <body>
   <nav class="app-mode-toggle" aria-label="Main navigation">
@@ -1760,11 +1770,11 @@
         <div class="version-grid">
           <div class="version-box">
             <span>App version</span>
-            <strong>1.18</strong>
+            <strong>1.19</strong>
           </div>
           <div class="version-box">
             <span>Updated</span>
-            <strong>4 July 2026</strong>
+            <strong>12 July 2026</strong>
           </div>
           <div class="version-box">
             <span>Database snapshot</span>
@@ -1782,11 +1792,11 @@
   </main>
 
   <script src="scripts/budfinder-theme.js?v=20260706-readable-dark1"></script>
-  <script src="scripts/budfinder-page-settings.js?v=20260704-strain-themes1"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260712-focus2"></script>
   <script>
     (() => {
-      const APP_VERSION = '1.18';
-      const APP_UPDATED = '4 July 2026';
+      const APP_VERSION = '1.19';
+      const APP_UPDATED = '12 July 2026';
       const state = {
         shops: [],
         offerings: [],

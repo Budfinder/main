@@ -2780,7 +2780,9 @@
 
     @media (max-width: 680px) {
       .app-mode-toggle {
-        position: static;
+        position: sticky;
+        top: 0;
+        z-index: 30;
         width: calc(100vw - 20px);
         margin: max(8px, env(safe-area-inset-top)) auto 0;
         overflow-x: auto;
@@ -2830,7 +2832,7 @@
 
       .database-search-panel {
         position: sticky;
-        top: 0;
+        top: 60px;
         z-index: 20;
         gap: 8px;
         margin-bottom: 8px;
@@ -3114,7 +3116,175 @@
         justify-content: stretch;
       }
     }
+    .database-detail {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .database-detail[hidden] {
+      display: none;
+    }
+
+    .detail-topbar,
+    .detail-actions,
+    .detail-meta-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .detail-topbar {
+      justify-content: space-between;
+    }
+
+    .detail-back-button,
+    .detail-actions button,
+    .detail-actions a,
+    .menu-listing-title {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      padding: 0 14px;
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.12));
+      color: var(--control-text, var(--ink));
+      font: inherit;
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .detail-back-button:hover,
+    .detail-actions button:hover,
+    .detail-actions a:hover,
+    .menu-listing-title:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .detail-eyebrow {
+      margin: 0 0 5px;
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .detail-header {
+      padding: clamp(16px, 3vw, 28px);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      background: var(--panel-alt);
+    }
+
+    .detail-header h2 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1;
+    }
+
+    .detail-header-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+
+    .detail-header-copy {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .detail-strain-art {
+      flex: 0 0 auto;
+      width: clamp(92px, 15vw, 170px);
+      aspect-ratio: 1;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      background: var(--panel-strong);
+      box-shadow: var(--shadow-md);
+    }
+
+    .detail-strain-art img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-header p {
+      max-width: 75ch;
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .detail-listing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+    }
+
+    .detail-section {
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail-section h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .menu-listing-title {
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: inherit;
+      text-align: left;
+    }
+
+    .menu-listing-title:hover {
+      color: var(--accent);
+      transform: none;
+    }
+
+    @media (max-width: 680px) {
+      .database-detail {
+        margin-top: 10px;
+      }
+
+      .detail-topbar {
+        align-items: stretch;
+      }
+
+      .detail-back-button {
+        width: 100%;
+      }
+
+      .detail-actions > * {
+        flex: 1 1 140px;
+      }
+
+      .detail-header-main {
+        gap: 14px;
+      }
+
+      .detail-strain-art {
+        width: 92px;
+        border-radius: 14px;
+      }
+    }
   </style>
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260712-3" />
 </head>
 <body>
   <nav class="app-mode-toggle" aria-label="Switch app view">
@@ -3159,7 +3329,9 @@
       </div>
     </section>
 
-    <div class="layout">
+    <section id="detail-view" class="database-detail panel" aria-live="polite" hidden></section>
+
+    <div id="database-layout" class="layout">
       <aside class="panel side-panel">
         <span class="filter-label">Research mode</span>
         <div class="segmented" role="group" aria-label="View mode">
@@ -3270,9 +3442,7 @@
       </aside>
 
       <section class="main-stack">
-        <section id="quick-answer" class="quick-answer panel is-empty" aria-live="polite">
-          Search a strain or coffeeshop to see prices, menus, and useful next actions.
-        </section>
+        <section id="quick-answer" class="quick-answer panel is-empty" aria-live="polite" hidden></section>
 
         <section class="metrics" aria-label="Explorer totals">
           <div class="metric">
@@ -3300,7 +3470,7 @@
               <p id="strains-summary">Search a strain to compare typical prices, value signals, shops, and data age.</p>
             </div>
           </div>
-          <div id="price-guide-panel" class="price-guide-panel" aria-live="polite"></div>
+          <div id="price-guide-panel" class="price-guide-panel" aria-live="polite" hidden></div>
           <div id="browse-summary" class="browse-summary" aria-label="Active browse filters"></div>
           <div id="strain-grid" class="strain-grid"></div>
           <div id="strain-more-row" class="strain-more-row" hidden>
@@ -3398,7 +3568,7 @@
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
   <script src="scripts/budfinder-theme.js?v=20260706-readable-dark1"></script>
-  <script src="scripts/budfinder-page-settings.js?v=20260704-strain-themes1"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260712-focus2"></script>
   <script>
     const state = {
       offerings: [],
@@ -3424,7 +3594,9 @@
       shopMenuSort: 'name',
       shopMenuCategory: '',
       shopHideUnknownPrices: false,
-      view: 'strains'
+      view: 'strains',
+      detail: null,
+      detailReturnSearch: ''
     };
 
     const els = {
@@ -3454,6 +3626,8 @@
       metricOfferings: document.getElementById('metric-offerings'),
       metricCheapest: document.getElementById('metric-cheapest'),
       quickAnswer: document.getElementById('quick-answer'),
+      detailView: document.getElementById('detail-view'),
+      databaseLayout: document.getElementById('database-layout'),
       resultContext: document.getElementById('result-context'),
       toolbarMapLink: document.getElementById('toolbar-map-link'),
       jumpFilters: document.getElementById('jump-filters'),
@@ -4613,12 +4787,29 @@
       );
     }
 
+    function getStrainDetailImageHtml(name) {
+      const filename = state.strainImageByKey.get(normalise(name));
+      const candidates = strainImageCandidates(filename);
+      if (!candidates.length) return '';
+      return (
+        `<figure class="detail-strain-art">` +
+          `<img src="${escapeHtmlAttr(candidates[0])}" alt="${escapeHtmlAttr(name)} strain art" ` +
+          `data-candidates="${escapeHtmlAttr(candidates.join('|'))}" data-idx="0">` +
+        `</figure>`
+      );
+    }
+
     function handleStrainImageError(img) {
       const candidates = String(img.getAttribute('data-candidates') || '').split('|').filter(Boolean);
       const nextIndex = Number(img.getAttribute('data-idx') || 0) + 1;
       if (candidates[nextIndex]) {
         img.setAttribute('data-idx', String(nextIndex));
         img.src = candidates[nextIndex];
+        return;
+      }
+      const detailFigure = img.closest('.detail-strain-art');
+      if (detailFigure) {
+        detailFigure.remove();
         return;
       }
       img.remove();
@@ -5078,6 +5269,7 @@
           <a href="${escapeHtmlAttr(featuredMapUrl)}" data-map-shop="${escapeHtmlAttr(featuredShopId)}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}">${featuredDeal ? 'Map deal' : 'Map cheapest'}</a>
           <a class="secondary" href="${escapeHtmlAttr(allMapUrl)}" data-map-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}">Map all ${allShopIds.length}</a>
           <a class="secondary" href="${escapeHtmlAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">Open menu</a>
+          <button type="button" data-open-strain-detail="${escapeHtmlAttr(stat.key)}">Full profile</button>
           <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Saved' : 'Save strain'}</button>
           <button type="button" data-focus-shops="${escapeHtmlAttr(stat.key)}">Browse shops</button>
         </div>
@@ -5537,6 +5729,7 @@
             ${statTileHtml('Newest signal', newestLabel, ageBreakdownLabel(profile.ageBreakdown))}
           </div>
           <div class="price-guide-actions">
+            <button type="button" data-open-strain-detail="${escapeHtmlAttr(stat.key)}">Open full profile</button>
             <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Saved for research' : 'Save for research'}</button>
           </div>
         </div>
@@ -5637,7 +5830,7 @@
         <article class="menu-listing-card">
           <div class="listing-card-head">
             <div>
-              <strong>${escapeHtml(item.strain_name || 'Unknown strain')}</strong>
+              <button type="button" class="menu-listing-title" data-open-strain-detail="${escapeHtmlAttr(item.strain_name_normalised || normalise(item.strain_name))}">${escapeHtml(item.strain_name || 'Unknown strain')}</button>
               <div class="menu-listing-meta">${escapeHtml(meta)}</div>
             </div>
             <span class="menu-listing-price">${escapeHtml(priceLabel)}</span>
@@ -5749,6 +5942,186 @@
       `;
     }
 
+    function detailUrl(params = {}) {
+      const url = new URL(window.location.href);
+      url.search = '';
+      Object.entries(params).forEach(([key, value]) => {
+        if (value) url.searchParams.set(key, value);
+      });
+      return `${url.pathname}${url.search}`;
+    }
+
+    function focusDetail() {
+      window.setTimeout(() => {
+        if (els.detailView) els.detailView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 0);
+    }
+
+    function openStrainDetail(key) {
+      const stat = getStatByKey(key);
+      if (!stat) return;
+      state.detailReturnSearch = els.search.value;
+      state.detail = { type: 'strain', key: stat.key };
+      state.view = 'strains';
+      els.search.value = stat.name;
+      if (window.history && window.history.pushState) {
+        window.history.pushState({ detail: 'strain', strain: stat.name }, '', detailUrl({ detail: 'strain', strain: stat.name }));
+      }
+      render();
+      focusDetail();
+    }
+
+    function openShopDetail(shopId) {
+      const row = shopRowsFromOfferings(state.offerings).find(item => item.shopId === String(shopId));
+      if (!row) return;
+      state.detailReturnSearch = els.search.value;
+      state.detail = { type: 'shop', shopId: row.shopId };
+      state.view = 'shops';
+      state.activeShopId = row.shopId;
+      state.shopMenuExpanded = true;
+      els.search.value = row.shopName;
+      if (els.shopBrowserSearch) els.shopBrowserSearch.value = row.shopName;
+      if (window.history && window.history.pushState) {
+        window.history.pushState({ detail: 'shop', shopId: row.shopId }, '', detailUrl({ detail: 'shop', shop_id: row.shopId }));
+      }
+      render();
+      focusDetail();
+    }
+
+    function closeDetail() {
+      const returnSearch = state.detailReturnSearch || '';
+      state.detail = null;
+      state.detailReturnSearch = '';
+      els.search.value = returnSearch;
+      if (window.history && window.history.pushState) {
+        window.history.pushState({}, '', detailUrl(returnSearch ? { search: returnSearch } : {}));
+      }
+      syncUniversalSearchMode();
+      render();
+      window.setTimeout(() => {
+        const target = document.querySelector('.database-search-panel');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 0);
+    }
+
+    function renderDetail() {
+      if (!els.detailView || !els.databaseLayout) return;
+      const detail = state.detail;
+      els.detailView.hidden = !detail;
+      els.databaseLayout.hidden = Boolean(detail);
+      if (!detail) {
+        els.detailView.innerHTML = '';
+        return;
+      }
+
+      if (detail.type === 'strain') {
+        const stat = getStatByKey(detail.key);
+        if (!stat) {
+          els.detailView.innerHTML = '<div class="empty">This strain is no longer in the current dataset.</div>';
+          return;
+        }
+        const listings = (stat.offerings || []).slice().sort((a, b) => {
+          const priceDiff = (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity);
+          return priceDiff || compareShopName(a, b);
+        });
+        const profile = priceProfileForListings(listings);
+        const shopIds = shopIdsForListings(listings);
+        const mapUrl = mapUrlForShopIds(shopIds, { strainName: stat.name, strainShopIds: shopIds });
+        const cities = (stat.cities || []).join(', ') || 'City unknown';
+        els.detailView.innerHTML = `
+          <div class="detail-topbar">
+            <button type="button" class="detail-back-button" data-close-detail>← Back to results</button>
+            <span class="chip">${shopIds.length.toLocaleString()} shops</span>
+          </div>
+          <header class="detail-header">
+            <div class="detail-header-main">
+              ${getStrainDetailImageHtml(stat.name)}
+              <div class="detail-header-copy">
+                <p class="detail-eyebrow">Strain profile</p>
+                <h2>${escapeHtml(stat.name)}</h2>
+                <p>${escapeHtml(cities)} · every current menu listing for this strain, ordered from the lowest visible price.</p>
+                <div class="detail-meta-row">
+                  ${stat.topType ? `<span class="chip type-${escapeHtml(stat.topType)}">${escapeHtml(stat.topType)}</span>` : ''}
+                  ${stat.caliCount ? `<span class="chip cali">${stat.caliCount} cali listing${stat.caliCount === 1 ? '' : 's'}</span>` : ''}
+                  ${ageBadgeHtml(profile.newestDate)}
+                </div>
+              </div>
+            </div>
+            <div class="shop-menu-summary-grid">
+              ${statTileHtml('Average price', profile.average == null ? 'Unknown' : money(profile.average), 'Across priced listings')}
+              ${statTileHtml('Lowest price', profile.low == null ? 'Unknown' : money(profile.low), 'Current visible listing')}
+              ${statTileHtml('Highest price', profile.high == null ? 'Unknown' : money(profile.high), 'Current visible listing')}
+              ${statTileHtml('Known listings', listings.length.toLocaleString(), `${profile.count.toLocaleString()} priced`)}
+            </div>
+            <div class="detail-actions">
+              <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Saved for research' : 'Save for research'}</button>
+              <a href="${escapeHtmlAttr(mapUrl)}" data-map-strain-shops="${escapeHtmlAttr(shopIds.join(','))}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(shopIds.join(','))}">View all on map</a>
+            </div>
+          </header>
+          <section class="detail-section">
+            <div>
+              <h3>Where to find it</h3>
+              <p class="muted">${listings.length.toLocaleString()} current listing${listings.length === 1 ? '' : 's'} across ${shopIds.length.toLocaleString()} shop${shopIds.length === 1 ? '' : 's'}. Select a shop to see its full known menu.</p>
+            </div>
+            <div class="detail-listing-grid">
+              ${listings.length ? listings.map(item => listingCardHtml(item, profile, { strainName: stat.name })).join('') : '<div class="empty">No current listings are available for this strain.</div>'}
+            </div>
+          </section>
+        `;
+        return;
+      }
+
+      const row = shopRowsFromOfferings(state.offerings).find(item => item.shopId === String(detail.shopId));
+      if (!row) {
+        els.detailView.innerHTML = '<div class="empty">This shop is no longer in the current dataset.</div>';
+        return;
+      }
+      const listings = row.offerings.slice().sort(compareStrainName);
+      const prices = listings.map(pricePerGram).filter(Number.isFinite);
+      const newestTime = latestListingTime(listings);
+      const newestDate = newestTime ? new Date(newestTime).toISOString() : '';
+      const mapUrl = buildShopMapLink(row.shopId);
+      const categories = new Map();
+      listings.forEach(item => {
+        const category = item.base_type || 'Other';
+        if (!categories.has(category)) categories.set(category, []);
+        categories.get(category).push(item);
+      });
+      els.detailView.innerHTML = `
+        <div class="detail-topbar">
+          <button type="button" class="detail-back-button" data-close-detail>← Back to shop results</button>
+          ${ageBadgeHtml(newestDate)}
+        </div>
+        <header class="detail-header">
+          <p class="detail-eyebrow">Coffeeshop menu</p>
+          <h2>${escapeHtml(row.shopName)}</h2>
+          <p>${escapeHtml(row.city || 'City unknown')} · full current menu snapshot. Select any strain to open its price profile and every known stocking shop.</p>
+          <div class="shop-menu-summary-grid">
+            ${statTileHtml('Known listings', listings.length.toLocaleString(), `${categories.size.toLocaleString()} categories`)}
+            ${statTileHtml('Priced listings', prices.length.toLocaleString(), prices.length ? `Low ${money(Math.min(...prices))}` : 'No usable prices')}
+            ${statTileHtml('Average price', prices.length ? money(average(prices)) : 'Unknown', 'Visible shop menu')}
+            ${statTileHtml('Newest signal', newestDate ? formatDate(newestDate) : 'Unknown', ageBreakdownLabel(ageBreakdownForListings(listings)))}
+          </div>
+          <div class="detail-actions">
+            <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${isShopSelected(row.shopId) ? 'is-active' : ''}">${isShopSelected(row.shopId) ? 'Shortlisted' : 'Shortlist shop'}</button>
+            <a href="${escapeHtmlAttr(mapUrl)}">View on map</a>
+            <a href="${escapeHtmlAttr(row.shopUrl || shopLinkForId(row.shopId))}" target="_blank" rel="noopener noreferrer">Source menu</a>
+          </div>
+        </header>
+        ${Array.from(categories.entries()).map(([category, items]) => `
+          <section class="detail-section menu-category-group">
+            <div class="menu-category-head">
+              <h3>${escapeHtml(category)}</h3>
+              <span>${items.length.toLocaleString()} listing${items.length === 1 ? '' : 's'}</span>
+            </div>
+            <div class="detail-listing-grid">
+              ${items.map(menuListingCardHtml).join('')}
+            </div>
+          </section>
+        `).join('')}
+      `;
+    }
+
     function latestStatChangeTime(stat) {
       return (Array.isArray(stat && stat.filteredOfferings) ? stat.filteredOfferings : []).reduce((latest, item) => {
         const time = displayListingTime(item);
@@ -5835,6 +6208,7 @@
               <span>${escapeHtml(row.stat.filteredTopType || row.stat.topType || 'Known strain listing')}</span>
             </div>
             <div class="fresh-shop-actions">
+              <button type="button" data-open-strain-detail="${escapeHtmlAttr(row.stat.key)}">Profile</button>
               <button type="button" data-select-strain="${escapeHtmlAttr(row.stat.key)}" class="${selected ? 'is-active' : ''}">${selected ? 'Saved' : 'Save'}</button>
               <button type="button" data-focus-shops="${escapeHtmlAttr(row.stat.key)}">Shops</button>
               <a href="${escapeHtmlAttr(allMapUrl)}" data-map-strain-shops="${escapeHtmlAttr(row.shopIds.join(','))}" data-strain-name="${escapeHtmlAttr(row.stat.name)}" data-strain-shops="${escapeHtmlAttr(row.shopIds.join(','))}">Map</a>
@@ -5875,7 +6249,7 @@
         const bestDealAverage = bestDealItem ? money(bestDeal.averagePrice, bestDealItem.price_currency, bestDealItem.price_unit) : '';
         const similar = similarStrainsForStat(stat, stats, 3);
         return `
-          <article class="strain-card${selected ? ' is-selected' : ''}" data-strain-card="${escapeHtml(stat.key)}" tabindex="0" aria-pressed="${selected ? 'true' : 'false'}" title="${selected ? 'Remove' : 'Add'} ${escapeHtml(stat.name)} ${selected ? 'from' : 'to'} research strains">
+          <article class="strain-card${selected ? ' is-selected' : ''}" data-strain-card="${escapeHtml(stat.key)}" tabindex="0" title="Open the ${escapeHtml(stat.name)} strain profile">
             <div class="strain-card-main">
               ${getStrainImageHtml(stat.name)}
               <div class="strain-card-copy">
@@ -5945,6 +6319,7 @@
               }).join('')}
             </div>
             <div class="card-actions">
+              <button type="button" data-open-strain-detail="${escapeHtmlAttr(stat.key)}">View profile</button>
               <button type="button" data-select-strain="${escapeHtml(stat.key)}" class="${selected ? 'is-active' : ''}">${selected ? 'Saved' : 'Save'}</button>
               <button type="button" data-map-shop="${escapeHtmlAttr(cheapestShopId)}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(allShopIds.join(','))}" ${cheapestShopId ? '' : 'disabled'}>Map cheapest</button>
               <button type="button" data-focus-shops="${escapeHtml(stat.key)}">Shops</button>
@@ -6617,15 +6992,14 @@
       const familySourceStats = getFilteredStats({ ignoreFamily: true });
       updateResultToolbar(filteredOfferings, filteredStats);
       renderBrowseControls(familySourceStats, filteredStats);
-      renderQuickAnswer(filteredOfferings, filteredStats);
       renderMetrics(filteredOfferings, filteredStats);
       renderSelected();
       renderSelectedShops();
-      renderPriceGuide(filteredStats);
       renderStrains(filteredStats);
       renderCompare();
       renderShopMenuBrowser();
       renderShops(shopSearchOfferings);
+      renderDetail();
     }
 
     function renderAfterFilterChange() {
@@ -6675,9 +7049,12 @@
     function applyInitialUrlState() {
       const params = new URLSearchParams(window.location.search || '');
       const strain = (params.get('strain') || params.get('search') || '').trim();
+      const detailType = (params.get('detail') || '').trim();
       const mode = (params.get('mode') || '').trim();
       const shopId = (params.get('shop_id') || params.get('shopId') || '').trim();
       const shopQuery = (params.get('shop') || params.get('shop_name') || '').trim();
+      state.detail = null;
+      state.detailReturnSearch = '';
       if (strain) {
         els.search.value = strain;
         state.browseMode = 'value';
@@ -6708,6 +7085,14 @@
       }
       if (strain && !mode && !params.get('view')) {
         syncUniversalSearchMode();
+      }
+      if (detailType === 'strain' && strain) {
+        state.detail = { type: 'strain', key: normalise(strain) };
+        state.view = 'strains';
+      }
+      if (detailType === 'shop' && shopId) {
+        state.detail = { type: 'shop', shopId };
+        state.view = 'shops';
       }
     }
 
@@ -6849,16 +7234,14 @@
 
     if (els.priceGuidePanel) {
       els.priceGuidePanel.addEventListener('click', event => {
+        const strainDetail = event.target.closest('[data-open-strain-detail]');
+        if (strainDetail) {
+          openStrainDetail(strainDetail.dataset.openStrainDetail);
+          return;
+        }
         const focusShop = event.target.closest('[data-focus-shop-menu]');
         if (focusShop) {
-          const shopId = String(focusShop.dataset.focusShopMenu || '').trim();
-          const meta = getShopMeta(shopId);
-          state.activeShopId = shopId;
-          state.shopMenuExpanded = true;
-          if (els.shopBrowserSearch) els.shopBrowserSearch.value = meta.name || '';
-          setView('shops');
-          render();
-          document.getElementById('shops-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          openShopDetail(focusShop.dataset.focusShopMenu);
           return;
         }
 
@@ -6876,6 +7259,11 @@
     }
 
     els.strainGrid.addEventListener('click', event => {
+      const strainDetail = event.target.closest('[data-open-strain-detail]');
+      if (strainDetail) {
+        openStrainDetail(strainDetail.dataset.openStrainDetail);
+        return;
+      }
       const toggleShopButton = event.target.closest('[data-toggle-map-shop]');
       if (toggleShopButton) {
         toggleSelectedShop(toggleShopButton.dataset.toggleMapShop);
@@ -6916,12 +7304,17 @@
 
       const card = event.target.closest('[data-strain-card]');
       if (card) {
-        toggleSelected(card.dataset.strainCard);
+        openStrainDetail(card.dataset.strainCard);
       }
     });
 
     if (els.quickAnswer) {
       els.quickAnswer.addEventListener('click', event => {
+        const strainDetail = event.target.closest('[data-open-strain-detail]');
+        if (strainDetail) {
+          openStrainDetail(strainDetail.dataset.openStrainDetail);
+          return;
+        }
         const toggleShopButton = event.target.closest('[data-toggle-map-shop]');
         if (toggleShopButton) {
           toggleSelectedShop(toggleShopButton.dataset.toggleMapShop);
@@ -6974,7 +7367,7 @@
       const card = event.target.closest('[data-strain-card]');
       if (!card) return;
       event.preventDefault();
-      toggleSelected(card.dataset.strainCard);
+      openStrainDetail(card.dataset.strainCard);
     });
 
     els.selectedList.addEventListener('click', event => {
@@ -7058,14 +7451,7 @@
     els.shopList.addEventListener('click', event => {
       const openShopButton = event.target.closest('[data-open-shop-menu]');
       if (openShopButton) {
-        const shopId = String(openShopButton.dataset.openShopMenu || '').trim();
-        const meta = getShopMeta(shopId);
-        state.activeShopId = shopId;
-        state.shopMenuExpanded = true;
-        if (els.shopBrowserSearch) els.shopBrowserSearch.value = meta.name || '';
-        if (els.sort) els.sort.value = '';
-        render();
-        if (els.shopMenuBrowser) els.shopMenuBrowser.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        openShopDetail(openShopButton.dataset.openShopMenu);
         return;
       }
 
@@ -7128,9 +7514,43 @@
 
     if (els.shopMenuBrowser) {
       els.shopMenuBrowser.addEventListener('click', event => {
+        const strainDetail = event.target.closest('[data-open-strain-detail]');
+        if (strainDetail) {
+          openStrainDetail(strainDetail.dataset.openStrainDetail);
+          return;
+        }
         const button = event.target.closest('[data-toggle-map-shop]');
         if (!button) return;
         toggleSelectedShop(button.dataset.toggleMapShop);
+      });
+    }
+
+    if (els.detailView) {
+      els.detailView.addEventListener('click', event => {
+        const closeButton = event.target.closest('[data-close-detail]');
+        if (closeButton) {
+          closeDetail();
+          return;
+        }
+        const strainDetail = event.target.closest('[data-open-strain-detail]');
+        if (strainDetail) {
+          openStrainDetail(strainDetail.dataset.openStrainDetail);
+          return;
+        }
+        const shopDetail = event.target.closest('[data-focus-shop-menu]');
+        if (shopDetail) {
+          openShopDetail(shopDetail.dataset.focusShopMenu);
+          return;
+        }
+        const saveStrain = event.target.closest('[data-select-strain]');
+        if (saveStrain) {
+          toggleSelected(saveStrain.dataset.selectStrain);
+          return;
+        }
+        const shortlistShop = event.target.closest('[data-toggle-map-shop]');
+        if (shortlistShop) {
+          toggleSelectedShop(shortlistShop.dataset.toggleMapShop);
+        }
       });
     }
 
@@ -7199,6 +7619,13 @@
     window.addEventListener('pageshow', () => {
       if (!state.strainStats.length) return;
       loadSharedShelf();
+      render();
+    });
+
+    window.addEventListener('popstate', () => {
+      if (!state.strainStats.length) return;
+      applyInitialUrlState();
+      setView(state.view);
       render();
     });
 

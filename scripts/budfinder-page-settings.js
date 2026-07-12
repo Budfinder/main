@@ -237,7 +237,7 @@
             <h2 id="site-settings-title" tabindex="-1">Settings</h2>
             <p>Preferences, filters, display, and data tools in one place.</p>
           </div>
-          <button class="site-settings-button site-settings-close" type="button" data-site-settings-close aria-label="Close settings">x</button>
+          <button class="site-settings-button site-settings-close" type="button" data-site-settings-close aria-label="Close settings">&times;</button>
         </div>
 
         <section class="site-settings-section" aria-labelledby="site-settings-preferences-title">
@@ -299,6 +299,7 @@
     const vibeSelect = panel.querySelector('#site-settings-vibe');
     const status = panel.querySelector('#site-settings-status');
     const confirmWrap = panel.querySelector('#site-clear-confirm');
+    let previouslyFocusedElement = null;
 
     function setStatus(message) {
       if (!status) return;
@@ -314,8 +315,12 @@
     }
 
     function openPanel() {
+      previouslyFocusedElement = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
       syncForm();
       panel.hidden = false;
+      document.body.classList.add('has-site-settings-open');
       toggles.forEach(toggle => toggle.setAttribute('aria-expanded', 'true'));
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}#settings`);
@@ -328,12 +333,17 @@
 
     function closePanel() {
       panel.hidden = true;
+      document.body.classList.remove('has-site-settings-open');
       confirmWrap.hidden = true;
       setStatus('');
       toggles.forEach(toggle => toggle.setAttribute('aria-expanded', 'false'));
       if ((window.location.hash || '').toLowerCase() === '#settings' && window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
       }
+      if (previouslyFocusedElement && document.contains(previouslyFocusedElement)) {
+        previouslyFocusedElement.focus({ preventScroll: true });
+      }
+      previouslyFocusedElement = null;
     }
 
     toggles.forEach(toggle => {
@@ -352,7 +362,28 @@
     });
 
     document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && !panel.hidden) closePanel();
+      if (panel.hidden) return;
+      if (event.key === 'Escape') {
+        closePanel();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = Array.from(panel.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )).filter(element => !element.hidden && element.getClientRects().length > 0);
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const activeIsFocusable = focusable.includes(document.activeElement);
+      if (event.shiftKey && (document.activeElement === first || !activeIsFocusable)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !activeIsFocusable)) {
+        event.preventDefault();
+        first.focus();
+      }
     });
 
     nameInput.addEventListener('input', event => {
