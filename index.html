@@ -482,6 +482,11 @@
       backdrop-filter: blur(16px);
     }
 
+    .search-row:focus-within {
+      border-color: color-mix(in srgb, var(--accent) 68%, var(--panel-border));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent), 0 16px 34px rgba(0, 0, 0, 0.22);
+    }
+
     .search-row input {
       width: 100%;
       min-height: 48px;
@@ -514,6 +519,17 @@
       font-weight: 900;
       text-decoration: none;
       transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .primary-btn:focus-visible,
+    .secondary-btn:focus-visible,
+    .tertiary-btn:focus-visible,
+    .chip-btn:focus-visible,
+    .showcase-button:focus-visible,
+    .card-link:focus-visible,
+    .simple-action-card:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--accent) 36%, transparent);
+      outline-offset: 3px;
     }
 
     .primary-btn:hover,
@@ -1052,6 +1068,38 @@
       margin-top: 22px;
     }
 
+    .launch-detail {
+      overflow: hidden;
+    }
+
+    .launch-detail summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      padding: 0 2px 12px;
+      color: var(--ink);
+      font-weight: 900;
+      cursor: pointer;
+      list-style-position: inside;
+    }
+
+    .launch-detail summary::after {
+      content: "Show";
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 11px;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .launch-detail[open] summary::after {
+      content: "Hide";
+    }
+
     .insights-panel {
       padding: 16px;
       border: 1px solid var(--line);
@@ -1220,6 +1268,70 @@
       line-height: 1.5;
     }
 
+    /* Product polish: keep homepage panels, cards, chips, and buttons using one visual language. */
+    .floating-island,
+    .intel-board,
+    .planning-panel,
+    .insights-panel,
+    .feature-card,
+    .workflow,
+    .about-card,
+    .simple-action-card,
+    .shop-card,
+    .strain-card,
+    .insight-panel,
+    .workflow-card,
+    .journey-card {
+      border-color: color-mix(in srgb, var(--accent) 14%, var(--panel-border));
+    }
+
+    .simple-action-card,
+    .shop-card,
+    .strain-card,
+    .insight-panel,
+    .workflow-card,
+    .feature-card,
+    .about-card,
+    .journey-card {
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22), 0 0 18px rgba(77, 244, 154, 0.045);
+    }
+
+    .secondary-btn,
+    .tertiary-btn,
+    .showcase-button,
+    .card-link,
+    .chip-btn {
+      box-shadow: none;
+    }
+
+    .stat-chip,
+    .mini-badge,
+    .chip-btn {
+      min-height: 28px;
+      border-radius: 999px;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .tertiary-btn,
+    .showcase-button,
+    .card-link {
+      white-space: nowrap;
+    }
+
+    .intel-board,
+    .insights-panel {
+      margin-top: 28px;
+    }
+
+    .intel-board .board-head,
+    .insights-panel .insights-head {
+      padding-bottom: 2px;
+      border-bottom: 1px solid var(--line);
+    }
+
     .about-grid {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
@@ -1292,6 +1404,7 @@
 
       .hero {
         min-height: auto;
+        gap: 16px;
         padding-top: 24px;
       }
 
@@ -1313,11 +1426,40 @@
       }
 
       h1 {
-        font-size: 44px;
+        font-size: 38px;
       }
 
       .lead {
-        font-size: 17px;
+        font-size: 16px;
+        line-height: 1.42;
+      }
+
+      .hero {
+        gap: 14px;
+        padding-top: 14px;
+        padding-bottom: 8px;
+      }
+
+      .brand img {
+        width: 34px;
+        height: 34px;
+      }
+
+      .kicker-row {
+        margin-top: 14px;
+      }
+
+      .hero-image-card {
+        padding: 7px;
+      }
+
+      .hero-image-card img {
+        max-height: 180px;
+      }
+
+      .hero-caption {
+        margin-top: 6px;
+        font-size: 11px;
       }
 
       .theme-island {
@@ -1366,6 +1508,8 @@
 
       .actions {
         display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
       }
 
       .actions a,
@@ -1373,6 +1517,10 @@
       .secondary-btn,
       .tertiary-btn {
         width: 100%;
+      }
+
+      .actions .primary-btn {
+        grid-column: 1 / -1;
       }
 
       .hero-caption {
@@ -1436,24 +1584,24 @@
 
     <section class="section" aria-labelledby="quick-actions-title">
       <span class="eyebrow">What can I do?</span>
-      <h2 id="quick-actions-title" class="section-title">Start with the thing you need now.</h2>
+      <h2 id="quick-actions-title" class="section-title">Choose your next step.</h2>
       <div class="simple-action-grid">
         <a class="simple-action-card" href="map.html?source=home&intent=coffeeshops">
           <b>1</b>
           <strong>Find coffeeshops</strong>
-          <p>Compare nearby shops, menu signals, distance, and useful details before you move.</p>
+          <p>See nearby coffeeshops with strain, menu, distance, and route context before you move.</p>
           <span>Find My Next Stop</span>
         </a>
         <a class="simple-action-card" href="database.html">
           <b>2</b>
           <strong>Research prices and menus</strong>
-          <p>Compare strain price signals and browse full known coffeeshop menus before you choose where to go.</p>
+          <p>Compare known prices and menus when you want to research before choosing a stop.</p>
           <span>Search Strains</span>
         </a>
         <a class="simple-action-card" href="map.html?source=home&intent=itinerary">
           <b>3</b>
           <strong>Plan your route</strong>
-          <p>Build a simple coffeeshop itinerary and estimate walking time, distance, and likely spend.</p>
+          <p>Turn promising shops into a simple route with walking time, distance, and likely spend.</p>
           <span>Build a Route</span>
         </a>
       </div>
@@ -1467,13 +1615,13 @@
       <form id="home-search-form" class="home-search" action="map.html" aria-labelledby="quick-search-title">
         <div class="search-island-head">
           <span class="eyebrow">Search</span>
-          <h2 id="quick-search-title" class="search-island-title">Search Budfinder</h2>
-          <p class="search-island-copy">Search by strain, shop, or area.</p>
+          <h2 id="quick-search-title" class="search-island-title">Search once. Choose faster.</h2>
+          <p class="search-island-copy">Search a strain, shop, or area and Budfinder opens the map with useful context.</p>
         </div>
         <label class="search-input-label" for="home-search-input">Strain, shop, or area</label>
         <div class="search-row">
-          <input id="home-search-input" name="search" type="search" placeholder="Try Gelato, The Plug, or De Pijp" autocomplete="off" />
-          <button class="primary-btn" type="submit">Start Searching</button>
+          <input id="home-search-input" name="search" type="search" placeholder="Gelato, The Plug, De Pijp..." autocomplete="off" />
+          <button class="primary-btn" type="submit">Search Budfinder</button>
         </div>
         <div class="quick-chips" aria-label="Quick searches">
           <button class="chip-btn" type="button" data-search="Gelato">Gelato</button>
@@ -1506,11 +1654,12 @@
       </div>
     </section>
 
-    <section class="section intel-board" aria-label="Live Budfinder showcase">
+    <details class="section intel-board launch-detail" aria-label="Live Budfinder showcase" data-home-detail="live-data-preview">
+      <summary>Live data preview</summary>
       <div class="board-head">
         <div>
-          <span class="eyebrow">Live showcase</span>
-          <h2>Featured shops and popular strains.</h2>
+          <span class="eyebrow">Data preview</span>
+          <h2>A few live signals from the database.</h2>
           <p id="showcase-status" class="showcase-status" aria-live="polite">Loading Amsterdam menu data...</p>
         </div>
         <button id="shuffle-showcase-btn" class="showcase-button" type="button">Shuffle</button>
@@ -1526,9 +1675,10 @@
         <div class="showcase-skeleton" aria-hidden="true"></div>
         <div class="showcase-skeleton" aria-hidden="true"></div>
       </div>
-    </section>
+    </details>
 
-    <section class="section insights-panel" aria-labelledby="amsterdam-insights-title">
+    <details class="section insights-panel launch-detail" aria-labelledby="amsterdam-insights-title" data-home-detail="amsterdam-data-signals">
+      <summary>Amsterdam data signals</summary>
       <div class="insights-head">
         <div>
           <span class="eyebrow">Amsterdam Insights</span>
@@ -1552,7 +1702,7 @@
           <p>Looking for interesting scarce strains...</p>
         </article>
       </div>
-    </section>
+    </details>
 
     <section class="section" aria-labelledby="feature-title">
       <span class="eyebrow">Why Budfinder</span>
@@ -1631,7 +1781,7 @@
     <p class="note">Budfinder is for responsible planning, not a stock guarantee. Please follow local laws, respect coffeeshop rules, check before crossing town for one item, and consume responsibly.</p>
   </main>
 
-  <script src="scripts/budfinder-theme.js?v=20260705-leaf-bg1"></script>
+  <script src="scripts/budfinder-theme.js?v=20260706-readable-dark1"></script>
   <script src="scripts/budfinder-page-settings.js?v=20260704-strain-themes1"></script>
   <script>
     (() => {
@@ -1721,15 +1871,44 @@
         return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       }
 
+      function parseTime(value) {
+        const time = new Date(value || '').getTime();
+        return Number.isFinite(time) ? time : null;
+      }
+
+      function offeringDateSource(row) {
+        const source = row || {};
+        const candidates = [
+          source.source_menu_date,
+          source.menu_date,
+          source.listing_date,
+          source.menu_changed_at_utc,
+          source.checked_at,
+          source.checked_at_utc,
+          source.source_checked_at,
+          source.source_updated_at,
+          source.source_seen_at,
+          source.scraped_at,
+          source.scraped_at_utc,
+          source.fetched_at_utc,
+          source.created_at
+        ];
+        return candidates.find(value => parseTime(value) !== null) || '';
+      }
+
+      function latestTrustedDate(items) {
+        return (Array.isArray(items) ? items : [])
+          .map(offeringDateSource)
+          .filter(Boolean)
+          .sort()
+          .pop() || '';
+      }
+
       function freshnessLabel(value) {
-        if (!value) return 'Freshness unknown';
+        if (!value) return 'Menu date unknown';
         const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return 'Freshness unknown';
-        const days = Math.max(0, Math.round((Date.now() - date.getTime()) / 86400000));
-        if (days === 0) return 'Updated today';
-        if (days === 1) return 'Updated yesterday';
-        if (days < 14) return `Updated ${days} days ago`;
-        return `Updated ${formatDate(value)}`;
+        if (Number.isNaN(date.getTime())) return 'Menu date unknown';
+        return `Menu changed ${formatDate(value)}`;
       }
 
       function priceLabel(amount, currency, unit) {
@@ -1922,7 +2101,7 @@
 
         state.shopCards = Array.from(groupedByShop.values()).map(group => {
           const prices = group.items.map(item => Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
-          const latest = group.items.map(item => item.updated_at || item.last_seen_at_utc || '').sort().pop() || group.shop.updated_at || group.shop.fetched_at_utc || '';
+          const latest = latestTrustedDate(group.items);
           const cheapest = prices.length ? Math.min(...prices) : null;
           const strains = Array.from(new Set(group.items.map(item => item.strain_name_normalised || item.strain_name).filter(Boolean)));
           return {
@@ -1939,7 +2118,7 @@
 
         state.strainCards = Array.from(groupedByStrain.values()).map(group => {
           const prices = group.items.map(item => Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
-          const latest = group.items.map(item => item.updated_at || item.last_seen_at_utc || '').sort().pop() || '';
+          const latest = latestTrustedDate(group.items);
           const cheapest = prices.length ? Math.min(...prices) : null;
           return {
             name: group.name,
@@ -2109,12 +2288,7 @@
             .filter(item => normalise(item.shop_city) === 'amsterdam')
             .map(item => Number(item.price_amount))
             .filter(value => Number.isFinite(value) && value > 0);
-          const latest = state.offerings
-            .filter(item => normalise(item.shop_city) === 'amsterdam')
-            .map(item => item.updated_at || item.last_seen_at_utc || '')
-            .filter(Boolean)
-            .sort()
-            .pop();
+          const latest = latestTrustedDate(state.offerings.filter(item => normalise(item.shop_city) === 'amsterdam'));
           const lowest = prices.length ? priceLabel(Math.min(...prices), 'EUR', 'g') : 'Price signals loading';
           const updated = latest ? freshnessLabel(latest) : 'Data age unknown';
           showcaseStatus.textContent = `${amsterdamShopCount.toLocaleString()} Amsterdam shops tracked · ${listingCount.toLocaleString()} listings · ${lowest} · ${updated}.`;
@@ -2203,8 +2377,32 @@
         });
       }
 
+      function bindRememberedDetails() {
+        document.querySelectorAll('[data-home-detail]').forEach(detail => {
+          const id = detail.getAttribute('data-home-detail');
+          if (!id) return;
+          const storageKey = `budfinder.home.detail.${id}`;
+          try {
+            const stored = window.localStorage.getItem(storageKey);
+            if (stored === 'open' || stored === 'closed') {
+              detail.open = stored === 'open';
+            }
+          } catch (_err) {
+            // Disclosure memory is a convenience only; keep the page usable.
+          }
+          detail.addEventListener('toggle', () => {
+            try {
+              window.localStorage.setItem(storageKey, detail.open ? 'open' : 'closed');
+            } catch (_err) {
+              // Ignore storage failures.
+            }
+          });
+        });
+      }
+
       async function init() {
         bindSearch();
+        bindRememberedDetails();
         if (shuffleBtn) shuffleBtn.addEventListener('click', renderShowcase);
         try {
           const [shops, offerings, manifest] = await Promise.all([

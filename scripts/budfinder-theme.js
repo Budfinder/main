@@ -286,6 +286,8 @@
     const themeKey = normaliseThemeKey(value);
     const theme = themes.get(themeKey) || themes.get('kings-juice');
     const isClassic = !!theme.classic || theme.key === 'classic-budfinder';
+    document.documentElement.dataset.budfinderTheme = themeKey;
+    document.documentElement.dataset.budfinderMode = isClassic ? 'classic' : 'dark';
     setCssVar('--bg-top', theme.bgTop);
     setCssVar('--bg-mid', theme.bgMid);
     setCssVar('--bg-bottom', theme.bgBottom);

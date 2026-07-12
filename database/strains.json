@@ -396,12 +396,6 @@
     "created_at": "2026-03-07T18:40:21.042740+00:00"
   },
   {
-    "strain_id": 4347,
-    "name_display": "Bio Bud",
-    "name_normalised": "bio bud",
-    "created_at": "2026-06-03T18:53:57.471124+00:00"
-  },
-  {
     "strain_id": 462,
     "name_display": "Bio Green",
     "name_normalised": "bio green",
@@ -624,6 +618,12 @@
     "created_at": "2026-02-11T20:20:56.092137+00:00"
   },
   {
+    "strain_id": 4844,
+    "name_display": "Blue Caviar",
+    "name_normalised": "blue caviar",
+    "created_at": "2026-07-06T19:40:17.868596+00:00"
+  },
+  {
     "strain_id": 80,
     "name_display": "Blue Cheese",
     "name_normalised": "blue cheese",
@@ -646,12 +646,6 @@
     "name_display": "Blue Dream",
     "name_normalised": "blue dream",
     "created_at": "2026-02-19T21:57:05.413891+00:00"
-  },
-  {
-    "strain_id": 2788,
-    "name_display": "Blue Face",
-    "name_normalised": "blue face",
-    "created_at": "2026-03-07T18:36:34.467531+00:00"
   },
   {
     "strain_id": 721,
@@ -942,18 +936,6 @@
     "created_at": "2026-06-20T11:48:19.826586+00:00"
   },
   {
-    "strain_id": 4339,
-    "name_display": "CALI 13",
-    "name_normalised": "CALI 13",
-    "created_at": "2026-06-03T18:42:24.688051+00:00"
-  },
-  {
-    "strain_id": 4338,
-    "name_display": "CALI 14",
-    "name_normalised": "CALI 14",
-    "created_at": "2026-06-03T18:42:15.744451+00:00"
-  },
-  {
     "strain_id": 3039,
     "name_display": "CHANEL 420",
     "name_normalised": "CHANEL 420",
@@ -1018,6 +1000,12 @@
     "name_display": "Cali Weed",
     "name_normalised": "cali weed",
     "created_at": "2026-03-07T10:20:46.160856+00:00"
+  },
+  {
+    "strain_id": 2466,
+    "name_display": "California Love",
+    "name_normalised": "california love",
+    "created_at": "2026-03-07T14:51:44.220095+00:00"
   },
   {
     "strain_id": 3454,
@@ -1128,6 +1116,12 @@
     "created_at": "2026-03-07T15:09:08.650594+00:00"
   },
   {
+    "strain_id": 84,
+    "name_display": "Cap Junky",
+    "name_normalised": "cap junky",
+    "created_at": "2026-02-03T22:04:42.474462+00:00"
+  },
+  {
     "strain_id": 433,
     "name_display": "Caramel Cream",
     "name_normalised": "caramel cream",
@@ -1138,12 +1132,6 @@
     "name_display": "Caramel Monster",
     "name_normalised": "caramel monster",
     "created_at": "2026-05-02T11:31:31.919357+00:00"
-  },
-  {
-    "strain_id": 1366,
-    "name_display": "Caramel Salted Cake",
-    "name_normalised": "caramel salted cake",
-    "created_at": "2026-02-25T18:58:23.029211+00:00"
   },
   {
     "strain_id": 942,
@@ -1194,6 +1182,12 @@
     "created_at": "2026-02-20T11:29:57.492790+00:00"
   },
   {
+    "strain_id": 4881,
+    "name_display": "Cereal Killa",
+    "name_normalised": "cereal killa",
+    "created_at": "2026-07-09T19:31:58.136680+00:00"
+  },
+  {
     "strain_id": 1224,
     "name_display": "Cereal Milk",
     "name_normalised": "cereal milk",
@@ -1210,6 +1204,12 @@
     "name_display": "Cheerz",
     "name_normalised": "cheerz",
     "created_at": "2026-03-26T22:41:21.295999+00:00"
+  },
+  {
+    "strain_id": 23,
+    "name_display": "Cheese",
+    "name_normalised": "cheese",
+    "created_at": "2026-02-02T23:31:18.188719+00:00"
   },
   {
     "strain_id": 472,
@@ -1386,6 +1386,12 @@
     "created_at": "2026-02-19T17:45:49.465995+00:00"
   },
   {
+    "strain_id": 4834,
+    "name_display": "Cherry Punch",
+    "name_normalised": "cherry punch",
+    "created_at": "2026-07-06T19:38:11.897024+00:00"
+  },
+  {
     "strain_id": 4533,
     "name_display": "Cherry Runtz",
     "name_normalised": "cherry runtz",
@@ -1408,6 +1414,12 @@
     "name_display": "Cherry Warhead",
     "name_normalised": "cherry warhead",
     "created_at": "2026-05-18T18:35:45.664473+00:00"
+  },
+  {
+    "strain_id": 4847,
+    "name_display": "Cherry Zlushie",
+    "name_normalised": "cherry zlushie",
+    "created_at": "2026-07-06T19:41:12.495966+00:00"
   },
   {
     "strain_id": 2293,
@@ -1540,12 +1552,6 @@
     "name_display": "Cookies",
     "name_normalised": "cookies",
     "created_at": "2026-02-11T19:49:48.953079+00:00"
-  },
-  {
-    "strain_id": 4341,
-    "name_display": "Cookies & Cake",
-    "name_normalised": "cookies & cake",
-    "created_at": "2026-06-03T18:52:29.417634+00:00"
   },
   {
     "strain_id": 909,
@@ -1692,12 +1698,6 @@
     "created_at": "2026-02-05T06:39:39.000945+00:00"
   },
   {
-    "strain_id": 4166,
-    "name_display": "Death Row Candyz",
-    "name_normalised": "death row candyz",
-    "created_at": "2026-05-18T19:24:18.286804+00:00"
-  },
-  {
     "strain_id": 2166,
     "name_display": "Devil Haze",
     "name_normalised": "devil haze",
@@ -1740,12 +1740,6 @@
     "created_at": "2026-02-20T20:57:27.790101+00:00"
   },
   {
-    "strain_id": 4331,
-    "name_display": "Doornroosje",
-    "name_normalised": "doornroosje",
-    "created_at": "2026-06-03T18:40:53.616970+00:00"
-  },
-  {
     "strain_id": 1804,
     "name_display": "Dope Z",
     "name_normalised": "dope z",
@@ -1768,12 +1762,6 @@
     "name_display": "Dosilato",
     "name_normalised": "dosilato",
     "created_at": "2026-05-06T18:00:04.722740+00:00"
-  },
-  {
-    "strain_id": 299,
-    "name_display": "Double Lemon Cherry",
-    "name_normalised": "double lemon cherry",
-    "created_at": "2026-02-10T22:38:51.475456+00:00"
   },
   {
     "strain_id": 341,
@@ -2412,6 +2400,12 @@
     "created_at": "2026-02-20T23:23:33.122697+00:00"
   },
   {
+    "strain_id": 4896,
+    "name_display": "Gobstopper",
+    "name_normalised": "gobstopper",
+    "created_at": "2026-07-09T19:40:28.219149+00:00"
+  },
+  {
     "strain_id": 717,
     "name_display": "Godfather",
     "name_normalised": "godfather",
@@ -2772,6 +2766,12 @@
     "created_at": "2026-02-11T20:18:28.504624+00:00"
   },
   {
+    "strain_id": 4840,
+    "name_display": "Hawian Snow",
+    "name_normalised": "hawian snow",
+    "created_at": "2026-07-06T19:39:25.264542+00:00"
+  },
+  {
     "strain_id": 756,
     "name_display": "Haze",
     "name_normalised": "haze",
@@ -2836,12 +2836,6 @@
     "name_display": "Hindu Kush",
     "name_normalised": "hindu kush",
     "created_at": "2026-02-04T22:07:50.846793+00:00"
-  },
-  {
-    "strain_id": 2792,
-    "name_display": "Holy Grail",
-    "name_normalised": "holy grail",
-    "created_at": "2026-03-07T18:37:08.511183+00:00"
   },
   {
     "strain_id": 673,
@@ -3000,12 +2994,6 @@
     "created_at": "2026-04-10T14:34:27.636994+00:00"
   },
   {
-    "strain_id": 3607,
-    "name_display": "Jelousy",
-    "name_normalised": "jelousy",
-    "created_at": "2026-05-02T11:56:58.749052+00:00"
-  },
-  {
     "strain_id": 3371,
     "name_display": "Jelousy Cake",
     "name_normalised": "jelousy cake",
@@ -3162,12 +3150,6 @@
     "created_at": "2026-02-28T19:53:05.251688+00:00"
   },
   {
-    "strain_id": 1378,
-    "name_display": "Kill The CEO",
-    "name_normalised": "kill the ceo",
-    "created_at": "2026-02-25T19:00:58.996856+00:00"
-  },
-  {
     "strain_id": 4037,
     "name_display": "Kinder Bueno",
     "name_normalised": "kinder bueno",
@@ -3258,12 +3240,6 @@
     "created_at": "2026-02-03T23:18:32.908466+00:00"
   },
   {
-    "strain_id": 4342,
-    "name_display": "Kush Family",
-    "name_normalised": "kush family",
-    "created_at": "2026-06-03T18:52:59.382096+00:00"
-  },
-  {
     "strain_id": 407,
     "name_display": "Kush Mintz",
     "name_normalised": "kush mintz",
@@ -3294,12 +3270,6 @@
     "created_at": "2026-05-18T19:06:59.211718+00:00"
   },
   {
-    "strain_id": 4176,
-    "name_display": "LA OG",
-    "name_normalised": "la og",
-    "created_at": "2026-05-18T19:26:06.701534+00:00"
-  },
-  {
     "strain_id": 519,
     "name_display": "LC 11",
     "name_normalised": "LC 11",
@@ -3310,6 +3280,12 @@
     "name_display": "LCG",
     "name_normalised": "lcg",
     "created_at": "2026-03-15T19:52:58.232732+00:00"
+  },
+  {
+    "strain_id": 4893,
+    "name_display": "LCG Excotics",
+    "name_normalised": "lcg excotics",
+    "created_at": "2026-07-09T19:39:54.779024+00:00"
   },
   {
     "strain_id": 659,
@@ -3334,12 +3310,6 @@
     "name_display": "LPC",
     "name_normalised": "lpc",
     "created_at": "2026-04-10T16:06:57.900143+00:00"
-  },
-  {
-    "strain_id": 4333,
-    "name_display": "LUCKY 7",
-    "name_normalised": "LUCKY 7",
-    "created_at": "2026-06-03T18:41:12.757015+00:00"
   },
   {
     "strain_id": 528,
@@ -3612,6 +3582,12 @@
     "created_at": "2026-02-19T18:51:34.257077+00:00"
   },
   {
+    "strain_id": 4872,
+    "name_display": "Magic OG Kush",
+    "name_normalised": "magic og kush",
+    "created_at": "2026-07-09T17:39:41.289319+00:00"
+  },
+  {
     "strain_id": 4264,
     "name_display": "Maison Lemongiela",
     "name_normalised": "maison lemongiela",
@@ -3712,12 +3688,6 @@
     "name_display": "Maui Haze",
     "name_normalised": "maui haze",
     "created_at": "2026-04-14T17:40:16.260617+00:00"
-  },
-  {
-    "strain_id": 4334,
-    "name_display": "Maui Wowie",
-    "name_normalised": "maui wowie",
-    "created_at": "2026-06-03T18:41:23.291697+00:00"
   },
   {
     "strain_id": 3962,
@@ -4194,22 +4164,16 @@
     "created_at": "2026-05-02T09:59:07.803135+00:00"
   },
   {
-    "strain_id": 306,
-    "name_display": "Oreo (HG)",
-    "name_normalised": "oreo (hg)",
-    "created_at": "2026-02-10T23:34:29.097552+00:00"
+    "strain_id": 4894,
+    "name_display": "Oreo Blizzard",
+    "name_normalised": "oreo blizzard",
+    "created_at": "2026-07-09T19:40:11.729871+00:00"
   },
   {
     "strain_id": 1250,
     "name_display": "Oreo Blizzy",
     "name_normalised": "oreo blizzy",
     "created_at": "2026-02-20T22:44:45.311265+00:00"
-  },
-  {
-    "strain_id": 800,
-    "name_display": "Oreo Cookies",
-    "name_normalised": "oreo cookies",
-    "created_at": "2026-02-19T23:08:49.613596+00:00"
   },
   {
     "strain_id": 1179,
@@ -4248,6 +4212,12 @@
     "created_at": "2026-03-01T10:01:19.926575+00:00"
   },
   {
+    "strain_id": 260,
+    "name_display": "Orignal Z",
+    "name_normalised": "orignal z",
+    "created_at": "2026-02-10T22:16:36.702640+00:00"
+  },
+  {
     "strain_id": 2464,
     "name_display": "Oyster",
     "name_normalised": "oyster",
@@ -4258,12 +4228,6 @@
     "name_display": "Ozark",
     "name_normalised": "ozark",
     "created_at": "2026-02-11T19:55:03.444190+00:00"
-  },
-  {
-    "strain_id": 4317,
-    "name_display": "P.LO. Style",
-    "name_normalised": "p.lo. style",
-    "created_at": "2026-06-03T17:48:06.083947+00:00"
   },
   {
     "strain_id": 977,
@@ -4614,12 +4578,6 @@
     "created_at": "2026-02-10T22:24:30.159349+00:00"
   },
   {
-    "strain_id": 2167,
-    "name_display": "Power",
-    "name_normalised": "power",
-    "created_at": "2026-03-07T12:12:01.839345+00:00"
-  },
-  {
     "strain_id": 549,
     "name_display": "Power Plant",
     "name_normalised": "power plant",
@@ -4734,10 +4692,10 @@
     "created_at": "2026-02-19T14:18:41.381009+00:00"
   },
   {
-    "strain_id": 1153,
-    "name_display": "Purple Kosher",
-    "name_normalised": "purple kosher",
-    "created_at": "2026-02-20T20:24:42.712172+00:00"
+    "strain_id": 367,
+    "name_display": "Purple Kosher Kush",
+    "name_normalised": "purple kosher kush",
+    "created_at": "2026-02-11T19:19:53.874111+00:00"
   },
   {
     "strain_id": 125,
@@ -5208,12 +5166,6 @@
     "created_at": "2026-02-19T14:14:04.716028+00:00"
   },
   {
-    "strain_id": 797,
-    "name_display": "Sherbert",
-    "name_normalised": "sherbert",
-    "created_at": "2026-02-19T23:08:10.259647+00:00"
-  },
-  {
     "strain_id": 2663,
     "name_display": "Sherbert Zkittlez",
     "name_normalised": "sherbert zkittlez",
@@ -5380,12 +5332,6 @@
     "name_display": "Slaps",
     "name_normalised": "slaps",
     "created_at": "2026-05-17T17:08:31.571232+00:00"
-  },
-  {
-    "strain_id": 1367,
-    "name_display": "Slurricane",
-    "name_normalised": "slurricane",
-    "created_at": "2026-02-25T18:58:33.213140+00:00"
   },
   {
     "strain_id": 44,
@@ -6024,6 +5970,12 @@
     "created_at": "2026-02-11T20:43:27.113328+00:00"
   },
   {
+    "strain_id": 4876,
+    "name_display": "Tiger Mints",
+    "name_normalised": "tiger mints",
+    "created_at": "2026-07-09T19:30:43.607483+00:00"
+  },
+  {
     "strain_id": 3794,
     "name_display": "Tiger's Milk",
     "name_normalised": "tiger's milk",
@@ -6222,6 +6174,12 @@
     "created_at": "2026-02-19T17:45:29.051608+00:00"
   },
   {
+    "strain_id": 4874,
+    "name_display": "Uncle Snoop's Choice",
+    "name_normalised": "uncle snoop's choice",
+    "created_at": "2026-07-09T19:30:18.466463+00:00"
+  },
+  {
     "strain_id": 684,
     "name_display": "Unknown",
     "name_normalised": "unknown",
@@ -6286,12 +6244,6 @@
     "name_display": "Warheads",
     "name_normalised": "warheads",
     "created_at": "2026-04-10T14:34:17.377505+00:00"
-  },
-  {
-    "strain_id": 4320,
-    "name_display": "Watermelon Ice",
-    "name_normalised": "watermelon ice",
-    "created_at": "2026-06-03T17:49:03.482366+00:00"
   },
   {
     "strain_id": 4581,
@@ -6412,12 +6364,6 @@
     "name_display": "White Grape",
     "name_normalised": "white grape",
     "created_at": "2026-02-20T23:58:33.034061+00:00"
-  },
-  {
-    "strain_id": 2473,
-    "name_display": "White Gummies",
-    "name_normalised": "white gummies",
-    "created_at": "2026-03-07T14:53:12.669025+00:00"
   },
   {
     "strain_id": 181,
@@ -6558,22 +6504,10 @@
     "created_at": "2026-05-02T11:33:30.448494+00:00"
   },
   {
-    "strain_id": 1376,
-    "name_display": "Wocky Slush",
-    "name_normalised": "wocky slush",
-    "created_at": "2026-02-25T19:00:29.168987+00:00"
-  },
-  {
     "strain_id": 3288,
     "name_display": "Yellow Cab",
     "name_normalised": "yellow cab",
     "created_at": "2026-04-10T15:56:52.487578+00:00"
-  },
-  {
-    "strain_id": 303,
-    "name_display": "Yellow Runtz",
-    "name_normalised": "yellow runtz",
-    "created_at": "2026-02-10T23:31:11.014423+00:00"
   },
   {
     "strain_id": 4216,
@@ -6928,11 +6862,5 @@
     "name_display": "Zutopia 2.0",
     "name_normalised": "zutopia 2.0",
     "created_at": "2026-03-26T22:40:58.632912+00:00"
-  },
-  {
-    "strain_id": 23,
-    "name_display": "cheese",
-    "name_normalised": "cheese",
-    "created_at": "2026-02-02T23:31:18.188719+00:00"
   }
 ]

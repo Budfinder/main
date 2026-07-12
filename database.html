@@ -43,6 +43,17 @@
       --radius-xl: 22px;
       --radius-lg: 16px;
       --radius-md: 12px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 24px;
+      --card-radius: 16px;
+      --card-padding: 16px;
+      --card-bg: rgba(255, 255, 255, 0.64);
+      --card-border: rgba(92, 107, 97, 0.1);
+      --card-shadow: 0 14px 34px rgba(29, 42, 32, 0.08);
+      --glass-panel: rgba(255, 249, 239, 0.72);
       --floating-toggle-clearance: calc(max(24px, env(safe-area-inset-top)) + 58px);
     }
 
@@ -342,8 +353,8 @@
       padding: 20px 212px 20px 22px;
       border: 1px solid var(--panel-border);
       border-radius: var(--radius-xl);
-      background: var(--panel);
-      box-shadow: var(--shadow-md);
+      background: var(--glass-panel);
+      box-shadow: 0 16px 40px rgba(29, 42, 32, 0.1);
       backdrop-filter: blur(18px);
     }
 
@@ -439,12 +450,12 @@
     .database-search-panel {
       display: grid;
       gap: 12px;
-      margin: 0 0 14px;
-      padding: 16px;
+      margin: 0 0 var(--space-3);
+      padding: var(--space-4);
       border: 1px solid var(--panel-border);
       border-radius: var(--radius-xl);
-      background: var(--panel);
-      box-shadow: var(--shadow-lg);
+      background: var(--glass-panel);
+      box-shadow: var(--card-shadow);
       backdrop-filter: blur(20px);
     }
 
@@ -508,26 +519,31 @@
         0 0 0 4px rgba(77, 244, 154, 0.18);
     }
 
+    .database-search-field input::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-cancel-button {
+      cursor: pointer;
+    }
+
     .workflow-strip {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin: 0 0 18px;
+      gap: var(--space-3);
+      margin: var(--space-5) 0 var(--space-4);
     }
 
     .workflow-step,
     .trust-note {
       border: 1px solid var(--control-border, rgba(255, 255, 255, 0.34));
-      border-radius: 18px;
-      background: var(--control-bg, rgba(255, 255, 255, 0.5));
+      border-radius: var(--card-radius);
+      background: rgba(255, 255, 255, 0.42);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
       backdrop-filter: blur(12px);
     }
 
     .workflow-step {
       display: grid;
-      gap: 6px;
-      padding: 14px;
+      gap: var(--space-2);
+      padding: var(--space-4);
     }
 
     .workflow-step span {
@@ -553,14 +569,14 @@
     }
 
     .trust-note {
-      margin: -4px 0 18px;
-      padding: 12px 14px;
+      margin: 0 0 var(--space-5);
+      padding: var(--space-3) var(--space-4);
     }
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(250px, 314px) minmax(0, 1fr);
-      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 314px);
+      gap: var(--space-4);
       align-items: start;
     }
 
@@ -570,22 +586,23 @@
     .shop-card,
     .comparison-card {
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.52);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      border-radius: var(--card-radius);
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow);
       backdrop-filter: blur(10px);
     }
 
     .panel {
-      padding: 14px;
+      padding: var(--card-padding);
       border-color: var(--panel-border);
       border-radius: var(--radius-xl);
-      background: var(--panel);
-      box-shadow: var(--shadow-lg);
+      background: var(--glass-panel);
+      box-shadow: var(--card-shadow);
       backdrop-filter: blur(20px);
     }
 
     .side-panel {
+      order: 2;
       position: sticky;
       top: 16px;
       max-height: calc(100vh - 32px);
@@ -594,10 +611,53 @@
       scrollbar-gutter: stable;
     }
 
+    .research-disclosure,
+    .saved-disclosure,
+    .launch-notes {
+      margin-top: var(--space-3);
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: var(--card-radius);
+      background: rgba(255, 255, 255, 0.32);
+      overflow: hidden;
+    }
+
+    .research-disclosure summary,
+    .saved-disclosure summary,
+    .launch-notes summary {
+      min-height: 44px;
+      padding: var(--space-3) var(--space-4);
+      color: var(--control-text, var(--ink));
+      font-weight: 900;
+      cursor: pointer;
+      list-style-position: inside;
+    }
+
+    .research-disclosure > .field,
+    .research-disclosure > .filter-grid,
+    .research-disclosure > .price-band,
+    .saved-disclosure > .field,
+    .saved-disclosure > button,
+    .launch-notes > .workflow-step,
+    .launch-notes > .trust-note {
+      margin-inline: var(--space-3);
+    }
+
+    .research-disclosure > .field:first-of-type,
+    .saved-disclosure > .field:first-of-type,
+    .launch-notes > .workflow-step:first-of-type {
+      margin-top: var(--space-2);
+    }
+
+    .research-disclosure > .price-band,
+    .saved-disclosure > .field:last-of-type,
+    .launch-notes > .trust-note {
+      margin-bottom: var(--space-3);
+    }
+
     .field {
       display: grid;
-      gap: 6px;
-      margin-bottom: 11px;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
     }
 
     .field label,
@@ -658,14 +718,14 @@
     .filter-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: var(--space-3);
     }
 
     .segmented {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
-      margin-bottom: 14px;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
     }
 
     .segmented button {
@@ -691,7 +751,7 @@
     .browse-mode-grid,
     .family-filter-grid {
       display: grid;
-      gap: 8px;
+      gap: var(--space-2);
     }
 
     .browse-mode-grid {
@@ -791,8 +851,8 @@
     .side-action-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 8px;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
     }
 
     .side-action-row button {
@@ -805,8 +865,8 @@
     }
 
     .price-band {
-      margin: 2px 0 14px;
-      padding: 12px;
+      margin: var(--space-1) 0 var(--space-4);
+      padding: var(--space-3);
       border: 1px solid rgba(255, 255, 255, 0.32);
       border-radius: 18px;
       background: rgba(255, 255, 255, 0.42);
@@ -843,7 +903,8 @@
 
     .main-stack {
       display: grid;
-      gap: 18px;
+      gap: var(--space-4);
+      order: 1;
     }
 
     .result-toolbar {
@@ -853,7 +914,7 @@
       justify-content: space-between;
       gap: 12px;
       min-width: min(100%, 360px);
-      margin: 18px 0 12px;
+      margin: var(--space-5) 0 var(--space-3);
       padding: 0;
       border: 0;
       border-radius: 0;
@@ -876,7 +937,7 @@
 
     .result-toolbar-actions {
       display: flex;
-      gap: 8px;
+      gap: var(--space-2);
       flex: 0 0 auto;
     }
 
@@ -900,8 +961,8 @@
     .quick-answer-actions button,
     .quick-answer-actions a.secondary {
       border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
-      background: var(--control-bg, rgba(255, 255, 255, 0.56));
-      color: var(--control-text, var(--ink));
+      background: rgba(255, 252, 246, 0.88);
+      color: #203128;
       box-shadow: none;
     }
 
@@ -1044,7 +1105,13 @@
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
+      order: 5;
     }
+
+    #quick-answer { order: 0; }
+    #strains-view { order: 1; }
+    #shops-view { order: 2; }
+    #compare-view { order: 3; }
 
     .metric {
       padding: 12px;
@@ -1079,14 +1146,15 @@
     .section-head h2 {
       margin-bottom: 2px;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: 26px;
+      font-size: 30px;
       line-height: 1;
     }
 
     .section-head p {
       margin-bottom: 0;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 14px;
+      line-height: 1.45;
     }
 
     .browse-summary {
@@ -1433,6 +1501,11 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 10px;
+    }
+
+    .strain-grid.is-fresh-scan {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
     }
 
     .strain-card {
@@ -2013,6 +2086,116 @@
       padding-right: 3px;
     }
 
+    .shop-list.is-fresh-scan {
+      gap: 8px;
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
+    }
+
+    .fresh-shop-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(140px, 0.6fr) minmax(180px, 0.9fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      border-radius: var(--card-radius);
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow);
+    }
+
+    .fresh-shop-row.is-selected {
+      border-color: var(--control-selected-border, rgba(46, 123, 89, 0.34));
+      background: var(--control-selected-bg, rgba(245, 255, 248, 0.84));
+    }
+
+    .fresh-shop-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .fresh-shop-copy,
+    .fresh-shop-date,
+    .fresh-shop-menu-preview {
+      min-width: 0;
+    }
+
+    .fresh-shop-name {
+      display: block;
+      overflow: hidden;
+      color: var(--control-text, var(--ink));
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fresh-shop-meta,
+    .fresh-shop-date span,
+    .fresh-shop-menu-preview span {
+      display: block;
+      overflow: hidden;
+      color: var(--control-muted, var(--muted));
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fresh-shop-date strong,
+    .fresh-shop-menu-preview strong {
+      display: block;
+      overflow: hidden;
+      color: var(--control-text, var(--ink));
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fresh-shop-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .fresh-shop-actions button,
+    .fresh-shop-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .fresh-shop-row.is-strain-row {
+      grid-template-columns: minmax(0, 1.2fr) minmax(140px, 0.56fr) minmax(220px, 1fr) auto;
+    }
+
+    @media (max-width: 920px) {
+      .fresh-shop-row {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+      }
+
+      .fresh-shop-actions {
+        justify-content: flex-start;
+      }
+    }
+
     .shop-card {
       display: grid;
       gap: 10px;
@@ -2306,6 +2489,134 @@
       text-align: center;
     }
 
+    /* Polished product hierarchy: calm surfaces, clear buttons, consistent badges. */
+    button,
+    .nav-link,
+    .quick-answer-actions a,
+    .listing-card-actions a,
+    .common-shop-card-actions a,
+    .shop-card-actions a {
+      transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, background 140ms ease, color 140ms ease;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(46, 123, 89, 0.24);
+      outline-offset: 3px;
+    }
+
+    .database-search-panel,
+    .panel,
+    .quick-answer,
+    .price-guide-hero,
+    .shop-menu-hero {
+      border-color: rgba(98, 113, 95, 0.12);
+    }
+
+    .database-search-panel:focus-within {
+      border-color: rgba(46, 123, 89, 0.32);
+      box-shadow: 0 0 0 3px rgba(46, 123, 89, 0.14), var(--card-shadow);
+    }
+
+    .metric,
+    .strain-card,
+    .comparison-card,
+    .common-shop-card,
+    .shop-card,
+    .listing-card,
+    .menu-listing-card,
+    .price-stat,
+    .shop-menu-summary-item {
+      border-radius: var(--card-radius);
+      border-color: var(--card-border);
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow);
+    }
+
+    .strain-card:hover,
+    .strain-card:focus-visible,
+    .common-shop-card:hover,
+    .common-shop-card:focus-visible,
+    .shop-card:hover,
+    .listing-card:hover,
+    .menu-listing-card:hover {
+      border-color: rgba(46, 123, 89, 0.22);
+      box-shadow: 0 16px 38px rgba(29, 42, 32, 0.1);
+      transform: translateY(-1px);
+    }
+
+    #show-wanted-map,
+    #show-selected-shops-map,
+    .quick-answer-actions a:not(.secondary),
+    .price-guide-actions button,
+    .listing-card-actions a:first-of-type,
+    .shop-card-actions a,
+    .common-shop-card-actions a {
+      border: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: var(--button-text, #fff9f0);
+      box-shadow: 0 12px 24px rgba(32, 91, 66, 0.14);
+    }
+
+    .result-toolbar-actions button,
+    .quick-answer-actions button,
+    .quick-answer-actions a.secondary,
+    .listing-card-actions button,
+    .common-shop-card-actions button,
+    .shop-card-actions button,
+    .segmented button:not(.is-active),
+    .browse-mode-grid button:not(.is-active),
+    .family-filter-grid button:not(.is-active) {
+      background: rgba(255, 252, 246, 0.88);
+      color: #203128;
+      border-color: rgba(92, 107, 97, 0.1);
+      box-shadow: none;
+    }
+
+    #clear-selected,
+    #clear-selected-shops,
+    .selected-pill button,
+    .strain-more-row button {
+      background: rgba(255, 252, 246, 0.72);
+      color: #203128;
+      border-color: rgba(92, 107, 97, 0.1);
+      box-shadow: none;
+    }
+
+    button:hover,
+    .nav-link:hover,
+    .quick-answer-actions a:hover,
+    .listing-card-actions a:hover,
+    .common-shop-card-actions a:hover,
+    .shop-card-actions a:hover {
+      transform: translateY(-1px);
+    }
+
+    .chip,
+    .age-badge,
+    .price-judgement,
+    .mini-badge {
+      min-height: 26px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border-color: rgba(92, 107, 97, 0.1);
+      font-size: 11px;
+      font-weight: 850;
+      line-height: 1.15;
+    }
+
+    .empty {
+      display: grid;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      border-radius: var(--card-radius);
+      background: rgba(255, 255, 255, 0.42);
+      text-align: left;
+      line-height: 1.45;
+    }
+
     .error {
       color: var(--red);
       font-weight: 800;
@@ -2364,35 +2675,137 @@
       padding: 0 10px;
       border-radius: 999px;
       border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
-      background: var(--control-bg, rgba(255, 255, 255, 0.52));
-      color: var(--control-text, var(--ink));
+      background: rgba(255, 252, 246, 0.86);
+      color: #203128;
       font-size: 12px;
       font-weight: 800;
       box-shadow: none;
     }
 
+    html[data-budfinder-mode="dark"] body {
+      --panel: rgba(8, 15, 14, 0.88);
+      --panel-strong: rgba(10, 19, 18, 0.96);
+      --panel-alt: rgba(255, 255, 255, 0.08);
+      --glass-panel: rgba(8, 15, 14, 0.82);
+      --card-bg: rgba(11, 20, 19, 0.92);
+      --card-border: rgba(236, 255, 244, 0.16);
+      --card-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+      --line: rgba(236, 255, 244, 0.14);
+      --ink: #f5fff8;
+      --muted: #c7d9d0;
+      --control-bg: rgb(21, 32, 30);
+      --control-bg-strong: rgb(25, 38, 35);
+      --control-bg-hover: rgb(32, 50, 46);
+      --control-border: rgba(236, 255, 244, 0.2);
+      --control-text: #f8fff9;
+      --control-muted: #c7d9d0;
+      --control-selected-bg: color-mix(in srgb, var(--accent) 24%, rgb(20, 31, 29));
+      --control-selected-border: color-mix(in srgb, var(--accent) 58%, rgba(236, 255, 244, 0.18));
+    }
+
+    html[data-budfinder-mode="dark"] .database-search-panel,
+    html[data-budfinder-mode="dark"] .panel,
+    html[data-budfinder-mode="dark"] .quick-answer,
+    html[data-budfinder-mode="dark"] .price-guide-hero,
+    html[data-budfinder-mode="dark"] .shop-menu-hero {
+      background: var(--glass-panel);
+      border-color: var(--card-border);
+      color: var(--ink);
+    }
+
+    html[data-budfinder-mode="dark"] .metric,
+    html[data-budfinder-mode="dark"] .strain-card,
+    html[data-budfinder-mode="dark"] .comparison-card,
+    html[data-budfinder-mode="dark"] .common-shop-card,
+    html[data-budfinder-mode="dark"] .shop-card,
+    html[data-budfinder-mode="dark"] .listing-card,
+    html[data-budfinder-mode="dark"] .menu-listing-card,
+    html[data-budfinder-mode="dark"] .price-stat,
+    html[data-budfinder-mode="dark"] .shop-menu-summary-item,
+    html[data-budfinder-mode="dark"] .fresh-shop-row,
+    html[data-budfinder-mode="dark"] .empty {
+      background: var(--card-bg);
+      border-color: var(--card-border);
+      color: var(--ink);
+    }
+
+    html[data-budfinder-mode="dark"] input,
+    html[data-budfinder-mode="dark"] select,
+    html[data-budfinder-mode="dark"] .database-quick-chips button,
+    html[data-budfinder-mode="dark"] .result-toolbar-actions button,
+    html[data-budfinder-mode="dark"] .quick-answer-actions button,
+    html[data-budfinder-mode="dark"] .quick-answer-actions a.secondary,
+    html[data-budfinder-mode="dark"] .listing-card-actions button,
+    html[data-budfinder-mode="dark"] .common-shop-card-actions button,
+    html[data-budfinder-mode="dark"] .shop-card-actions button,
+    html[data-budfinder-mode="dark"] .fresh-shop-actions button,
+    html[data-budfinder-mode="dark"] .segmented button:not(.is-active),
+    html[data-budfinder-mode="dark"] .browse-mode-grid button:not(.is-active),
+    html[data-budfinder-mode="dark"] .family-filter-grid button:not(.is-active),
+    html[data-budfinder-mode="dark"] #clear-selected,
+    html[data-budfinder-mode="dark"] #clear-selected-shops,
+    html[data-budfinder-mode="dark"] .selected-pill button,
+    html[data-budfinder-mode="dark"] .strain-more-row button {
+      background: var(--control-bg-strong);
+      border-color: var(--control-border);
+      color: var(--control-text);
+    }
+
+    html[data-budfinder-mode="dark"] input::placeholder {
+      color: color-mix(in srgb, var(--control-muted) 78%, transparent);
+    }
+
+    html[data-budfinder-mode="dark"] .chip,
+    html[data-budfinder-mode="dark"] .age-badge,
+    html[data-budfinder-mode="dark"] .price-judgement,
+    html[data-budfinder-mode="dark"] .mini-badge,
+    html[data-budfinder-mode="dark"] .destination-card-chip {
+      background: rgba(245, 255, 248, 0.1);
+      border-color: rgba(236, 255, 244, 0.16);
+      color: var(--control-text);
+    }
+
+    html[data-budfinder-mode="dark"] .database-search-panel:focus-within,
+    html[data-budfinder-mode="dark"] .strain-card:hover,
+    html[data-budfinder-mode="dark"] .strain-card:focus-visible,
+    html[data-budfinder-mode="dark"] .common-shop-card:hover,
+    html[data-budfinder-mode="dark"] .common-shop-card:focus-visible,
+    html[data-budfinder-mode="dark"] .shop-card:hover,
+    html[data-budfinder-mode="dark"] .listing-card:hover,
+    html[data-budfinder-mode="dark"] .menu-listing-card:hover,
+    html[data-budfinder-mode="dark"] .fresh-shop-row:hover {
+      border-color: var(--control-selected-border);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34);
+    }
+
     @media (max-width: 680px) {
       .app-mode-toggle {
         position: static;
-        width: fit-content;
-        margin: max(10px, env(safe-area-inset-top)) 10px 0 auto;
+        width: calc(100vw - 20px);
+        margin: max(8px, env(safe-area-inset-top)) auto 0;
+        overflow-x: auto;
+        justify-content: flex-start;
       }
 
       .app-mode-toggle a {
         min-height: 44px;
-        padding: 0 12px;
+        padding: 0 10px;
         font-size: 13px;
+        white-space: nowrap;
       }
 
       .page-shell {
-        width: min(100vw - 20px, 1440px);
-        padding-top: 10px;
+        width: min(100vw - 14px, 1440px);
+        padding-top: 8px;
       }
 
       .topbar {
         align-items: stretch;
         flex-direction: column;
-        padding: 14px 16px;
+        gap: 6px;
+        margin-bottom: 8px;
+        padding: 10px 12px;
+        border-radius: 14px;
       }
 
       .nav-actions {
@@ -2401,8 +2814,14 @@
       }
 
       h1 {
+        margin: 0;
         margin-bottom: 0;
-        font-size: 32px;
+        font-size: 24px;
+        line-height: 1.08;
+      }
+
+      .kicker {
+        display: none;
       }
 
       .topbar .intro-copy {
@@ -2410,15 +2829,57 @@
       }
 
       .database-search-panel {
-        padding: 14px;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding: 10px;
+        border-radius: 14px;
       }
 
       .database-search-title strong {
-        font-size: 17px;
+        font-size: 15px;
+      }
+
+      .database-search-title {
+        display: none;
       }
 
       .database-search-title span {
-        font-size: 12px;
+        display: none;
+      }
+
+      .database-search-field {
+        gap: 6px;
+      }
+
+      .database-search-field label,
+      .field-note {
+        display: none;
+      }
+
+      .database-search-field input {
+        min-height: 46px;
+        border-radius: 12px;
+        padding-inline: 12px;
+        font-size: 16px;
+      }
+
+      .database-quick-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+
+      .database-quick-chips::-webkit-scrollbar {
+        display: none;
+      }
+
+      .database-quick-chips button {
+        min-height: 36px;
+        flex: 0 0 auto;
       }
 
       .filter-grid,
@@ -2431,6 +2892,101 @@
       .listing-grid,
       .menu-listing-grid {
         grid-template-columns: 1fr;
+      }
+
+      .layout,
+      .main-stack {
+        gap: 10px;
+      }
+
+      .panel {
+        padding: 10px;
+        border-radius: 14px;
+      }
+
+      .metrics {
+        display: none;
+      }
+
+      .section-head {
+        margin-bottom: 8px;
+      }
+
+      .section-head h2 {
+        font-size: 22px;
+      }
+
+      .section-head p {
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .price-guide-panel,
+      .shop-menu-browser {
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .price-guide-hero,
+      .shop-menu-hero {
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 14px;
+      }
+
+      .price-guide-hero .price-stat-grid {
+        display: none;
+      }
+
+      .shop-menu-hero .shop-menu-summary-grid {
+        display: none;
+      }
+
+      #shops-view:not([hidden]) {
+        display: grid;
+        gap: 8px;
+      }
+
+      #shops-view .section-head {
+        order: 0;
+      }
+
+      #shop-menu-browser {
+        order: 1;
+      }
+
+      #shop-list {
+        order: 2;
+      }
+
+      .shop-browser-controls {
+        order: 3;
+      }
+
+      .price-guide-head,
+      .shop-menu-hero-head,
+      .listing-section-head {
+        gap: 6px;
+      }
+
+      .price-guide-head h3,
+      .shop-menu-hero-head h3,
+      .listing-section-head h3 {
+        margin-bottom: 0;
+        font-size: 18px;
+        line-height: 1.1;
+      }
+
+      .price-guide-head p,
+      .shop-menu-hero-head p,
+      .listing-section-head p,
+      .price-guide-actions {
+        display: none;
+      }
+
+      .browse-summary {
+        gap: 6px;
+        margin-bottom: 8px;
       }
 
       input,
@@ -2529,16 +3085,23 @@
         padding: 5px 10px;
       }
 
+      .strain-grid {
+        gap: 8px;
+      }
+
+      .strain-card,
+      .fresh-shop-row,
+      .listing-card,
+      .menu-listing-card {
+        padding: 10px;
+      }
+
       .availability-tags {
         gap: 8px;
       }
 
       .availability-tags .strain-menu-chip.has-detail {
         min-height: 46px;
-      }
-
-      .metrics {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .shop-card-head {
@@ -2569,22 +3132,22 @@
   <main class="page-shell">
     <header class="topbar">
       <div class="brand">
-        <span class="kicker">Menu intelligence</span>
+        <span class="kicker">Research prices</span>
         <h1>Budfinder Price &amp; Menus</h1>
-        <p class="intro-copy">Compare Amsterdam strain prices or browse full known coffeeshop menus. Menu data changes quickly, so Budfinder shows price and menu signals as planning guidance, not stock guarantees.</p>
+        <p class="intro-copy">Compare Amsterdam strain prices, check known menus, and decide which shops are worth opening on the map. Budfinder shows planning intelligence, not stock guarantees.</p>
       </div>
     </header>
 
     <section class="database-search-panel" aria-labelledby="database-search-title">
       <div class="database-search-head">
         <div class="database-search-title">
-          <strong id="database-search-title">Search strains or coffeeshops</strong>
-          <span>Type a strain for price guide results, or a shop name to open its menu browser.</span>
+          <strong id="database-search-title">What does the data tell me?</strong>
+          <span>Search a strain for price signals, or a shop name to inspect its known menu.</span>
         </div>
       </div>
       <div class="field database-search-field">
         <label id="search-label" for="search">Search strains or coffeeshops</label>
-        <input id="search" type="search" placeholder="Try Gelato, The Plug, Family First, or Amnesia Haze..." autocomplete="off" />
+        <input id="search" type="search" placeholder="Gelato, The Plug, Family First..." autocomplete="off" />
         <div id="search-chip-row" class="database-quick-chips" aria-label="Quick searches">
           <button type="button" data-search-chip="Gelato">Gelato</button>
           <button type="button" data-search-chip="Amnesia Haze">Amnesia Haze</button>
@@ -2592,20 +3155,22 @@
           <button type="button" data-search-chip="Family First">Family First</button>
           <button type="button" data-search-chip="Zkittlez">Zkittlez</button>
         </div>
-        <div class="field-note">Shop names open the Shop Menu Browser automatically.</div>
+        <div class="field-note">Shop names open the menu browser automatically.</div>
       </div>
     </section>
 
     <div class="layout">
       <aside class="panel side-panel">
-        <span class="filter-label">Database mode</span>
+        <span class="filter-label">Research mode</span>
         <div class="segmented" role="group" aria-label="View mode">
           <button class="is-active" type="button" data-view="strains">Strain Price Guide</button>
           <button type="button" data-view="shops">Shop Menu Browser</button>
         </div>
 
+        <details class="research-disclosure">
+          <summary>Refine results</summary>
         <div class="field">
-          <span class="filter-label">Browse mode</span>
+          <span class="filter-label">Quick filters</span>
           <div id="browse-mode-grid" class="browse-mode-grid" role="group" aria-label="Browse mode">
             <button class="is-active" type="button" data-browse-mode="value">Best value</button>
             <button type="button" data-browse-mode="available">Most stocked</button>
@@ -2677,32 +3242,36 @@
             <input id="price-max" type="range" min="0" max="50" step="0.5" value="50" aria-label="Maximum price" />
           </div>
         </div>
+        </details>
 
+        <details class="saved-disclosure">
+          <summary>Saved research and map handoff</summary>
         <div class="field">
-          <label>Research strains</label>
+          <label>Saved research</label>
           <div id="selected-list" class="selected-list">
-            <div class="empty">Search and tap Want to save strains for comparison.</div>
+            <div class="empty">No research strains saved yet. Search a strain, then save it for comparison.</div>
           </div>
-          <button id="show-wanted-map" type="button" disabled>View matches on map</button>
+          <button id="show-wanted-map" type="button" disabled>View on Map</button>
         </div>
 
-        <button id="clear-selected" type="button">Clear research strains</button>
+        <button id="clear-selected" type="button">Clear</button>
 
         <div class="field" style="margin-top:14px;">
-          <label>Shops to view on map</label>
+          <label>Map handoff</label>
           <div id="selected-shop-list" class="selected-list">
-            <div class="empty">Use View on map for one shop, or shortlist a few shops for a map handoff.</div>
+            <div class="empty">No shops shortlisted yet. Use View on map or select shops from the results.</div>
           </div>
           <div class="side-action-row">
-            <button id="show-selected-shops-map" type="button" disabled>Show on map</button>
-            <button id="clear-selected-shops" type="button">Clear shortlist</button>
+            <button id="show-selected-shops-map" type="button" disabled>View on Map</button>
+            <button id="clear-selected-shops" type="button">Clear</button>
           </div>
         </div>
+        </details>
       </aside>
 
       <section class="main-stack">
         <section id="quick-answer" class="quick-answer panel is-empty" aria-live="polite">
-          Search a strain to see the best shops, prices, and data age first.
+          Search a strain or coffeeshop to see prices, menus, and useful next actions.
         </section>
 
         <section class="metrics" aria-label="Explorer totals">
@@ -2728,7 +3297,7 @@
           <div class="section-head">
             <div>
               <h2>Strain Price Guide</h2>
-              <p id="strains-summary">Search a strain to compare typical prices, best value listings, and data age.</p>
+              <p id="strains-summary">Search a strain to compare typical prices, value signals, shops, and data age.</p>
             </div>
           </div>
           <div id="price-guide-panel" class="price-guide-panel" aria-live="polite"></div>
@@ -2755,7 +3324,7 @@
           <div class="section-head">
             <div>
               <h2>Shop Menu Browser</h2>
-              <p id="shops-summary">Select a coffeeshop to scan its full known menu by category, price, and data age.</p>
+              <p id="shops-summary">Select a coffeeshop to scan its known menu by category, price, and data age.</p>
             </div>
           </div>
           <div class="shop-browser-controls" aria-label="Shop menu browser controls">
@@ -2805,7 +3374,8 @@
 
     <p id="status" class="status">Loading Amsterdam menu data...</p>
 
-    <section class="workflow-strip" aria-label="Database workflow">
+    <details class="workflow-strip launch-notes" aria-label="Database workflow">
+      <summary>Data notes</summary>
       <div class="workflow-step">
         <span>Mode 1</span>
         <strong>Strain Price Guide</strong>
@@ -2821,13 +3391,13 @@
         <strong>Check before travelling</strong>
         <p>Data age badges show when a known listing was last seen, using real listing dates only.</p>
       </div>
-    </section>
-    <p class="trust-note">Menus change quickly. Budfinder compares known menu listings and prices as planning guidance, not stock guarantees. Check before travelling across town for a specific item, follow local laws and coffeeshop rules, and use location only when you choose location-based map features.</p>
+      <p class="trust-note">Menus change quickly. Budfinder compares known menu listings and prices as planning guidance, not stock guarantees. Check before travelling across town for a specific item, follow local laws and coffeeshop rules, and use location only when you choose location-based map features.</p>
+    </details>
   </main>
 
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
-  <script src="scripts/budfinder-theme.js?v=20260705-leaf-bg1"></script>
+  <script src="scripts/budfinder-theme.js?v=20260706-readable-dark1"></script>
   <script src="scripts/budfinder-page-settings.js?v=20260704-strain-themes1"></script>
   <script>
     const state = {
@@ -2850,6 +3420,7 @@
       familyFilter: '',
       visibleStrainLimit: 36,
       activeShopId: '',
+      shopMenuExpanded: false,
       shopMenuSort: 'name',
       shopMenuCategory: '',
       shopHideUnknownPrices: false,
@@ -2967,8 +3538,25 @@
     function searchLooksLikeShopQuery(query) {
       const q = normaliseSearchText(query);
       if (!q) return false;
+      if (scoreShopSearchMatch(q) >= 3) return true;
       if (state.shops.some(shop => shopMatchesSearch(shop, q))) return true;
       return state.offerings.some(item => fieldMatchesSearch(item.shop_name, q) || fieldMatchesSearch(item.shop_city, q));
+    }
+
+    function scoreShopNameTextMatch(value, query) {
+      const text = normaliseSearchText(value);
+      const q = normaliseSearchText(query);
+      if (!q || !text) return 0;
+      const words = text.split(' ').filter(Boolean);
+      const queryParts = q.split(' ').filter(Boolean);
+      if (text === q) return 7;
+      if (text.startsWith(`${q} `)) return 6;
+      if (words.some(word => word === q)) return 5;
+      if (queryParts.length > 1 && queryParts.every(part => words.some(word => word.startsWith(part)))) return 5;
+      if (words.some(word => word.startsWith(q))) return 4;
+      if (` ${text} `.includes(` ${q} `)) return 3;
+      if (fieldMatchesSearch(text, q)) return 2;
+      return 0;
     }
 
     function scoreShopSearchMatch(query) {
@@ -2995,12 +3583,23 @@
       });
       let score = 0;
       names.forEach(name => {
-        if (name === q) score = Math.max(score, 5);
-        else if (name.startsWith(q)) score = Math.max(score, 4);
-        else if (` ${name} `.includes(` ${q} `)) score = Math.max(score, 3);
-        else if (fieldMatchesSearch(name, q)) score = Math.max(score, 2);
+        score = Math.max(score, scoreShopNameTextMatch(name, q));
       });
       return score;
+    }
+
+    function scoreShopRowSearchMatch(row, query) {
+      if (!row || !query) return 0;
+      return Math.max(
+        scoreShopNameTextMatch(row.shopName, query),
+        scoreShopNameTextMatch(row.shopKey, query),
+        scoreShopNameTextMatch(row.city, query)
+      );
+    }
+
+    function compareShopRowsForSearch(a, b, query, filters) {
+      return scoreShopRowSearchMatch(b, query) - scoreShopRowSearchMatch(a, query) ||
+        compareShopRowsForSort(a, b, filters.sort, filters.browseMode);
     }
 
     function scoreStrainSearchMatch(query) {
@@ -3039,11 +3638,13 @@
         if (els.shopBrowserSearch) {
           els.shopBrowserSearch.value = query;
           state.activeShopId = '';
+          state.shopMenuExpanded = false;
         }
         return 'shops';
       }
       if (intent === 'strains') {
         if (state.view === 'shops') setView('strains');
+        state.shopMenuExpanded = false;
         return 'strains';
       }
       return '';
@@ -3054,6 +3655,7 @@
       if (els.shopBrowserSearch && els.search && els.search.value) {
         els.shopBrowserSearch.value = els.search.value;
         state.activeShopId = '';
+        state.shopMenuExpanded = false;
       }
       render();
       const target = document.getElementById('shops-view');
@@ -3092,20 +3694,35 @@
       return Date.now();
     }
 
-    function listingDateSource(item) {
+    const BATCH_FRESHNESS_FIELDS = new Set(['menu_checked_at_utc', 'last_seen_at_utc', 'last_seen_at', 'updated_at']);
+    const SHARED_BATCH_CLUSTER_GAP_MS = 10 * 60 * 1000;
+
+    function listingDateSource(item, options = {}) {
       const row = item || {};
+      const includeBatchFields = options.includeBatchFields !== false;
       const candidates = [
-        // Prefer source/listing capture fields. In the current active_offerings export,
-        // last_seen_at_utc is the reliable per-listing "last checked" signal.
+        // Prefer explicit source/listing capture fields. Batch refresh timestamps are
+        // treated as fallback context so a whole-file export does not make every shop
+        // look freshly checked.
         ['source_menu_date', row.source_menu_date],
         ['menu_date', row.menu_date],
         ['listing_date', row.listing_date],
-        ['last_seen_at_utc', row.last_seen_at_utc],
-        ['last_seen_at', row.last_seen_at],
+        ['menu_changed_at_utc', row.menu_changed_at_utc],
+        ['checked_at', row.checked_at],
+        ['checked_at_utc', row.checked_at_utc],
+        ['source_checked_at', row.source_checked_at],
+        ['source_updated_at', row.source_updated_at],
         ['source_seen_at', row.source_seen_at],
         ['scraped_at', row.scraped_at],
+        ['scraped_at_utc', row.scraped_at_utc],
         ['fetched_at_utc', row.fetched_at_utc],
-        ['created_at', row.created_at]
+        ['created_at', row.created_at],
+        ...(includeBatchFields ? [
+          ['menu_checked_at_utc', row.menu_checked_at_utc],
+          ['last_seen_at_utc', row.last_seen_at_utc],
+          ['last_seen_at', row.last_seen_at],
+          ['updated_at', row.updated_at]
+        ] : [])
       ];
       for (const [field, value] of candidates) {
         if (parseTime(value) != null) return { field, value };
@@ -3113,12 +3730,39 @@
       return { field: '', value: '' };
     }
 
-    function listingDateValue(item) {
-      return listingDateSource(item).value || '';
+    function listingDateValue(item, options) {
+      return listingDateSource(item, options).value || '';
     }
 
-    function listingTime(item) {
-      return parseTime(listingDateValue(item));
+    function listingTime(item, options) {
+      return parseTime(listingDateValue(item, options));
+    }
+
+    function trustedListingDateValue(item) {
+      return listingDateValue(item, { includeBatchFields: false });
+    }
+
+    function listingUsesSharedBatchDate(item) {
+      const batch = state.listingCheckBatch;
+      if (!batch || !batch.isSharedBatch || !Number.isFinite(batch.windowStart) || !Number.isFinite(batch.windowEnd)) return false;
+      const realValue = trustedListingDateValue(item);
+      if (realValue) return false;
+      const source = listingDateSource(item);
+      if (!BATCH_FRESHNESS_FIELDS.has(source.field)) return false;
+      const time = parseTime(source.value);
+      return Number.isFinite(time) && time >= batch.windowStart && time <= batch.windowEnd;
+    }
+
+    function displayListingDateValue(item) {
+      const trustedValue = trustedListingDateValue(item);
+      if (trustedValue) return trustedValue;
+      if (listingUsesSharedBatchDate(item)) return '';
+      const source = listingDateSource(item);
+      return BATCH_FRESHNESS_FIELDS.has(source.field) ? '' : source.value;
+    }
+
+    function displayListingTime(item) {
+      return parseTime(displayListingDateValue(item));
     }
 
     function ageDaysFromTime(time) {
@@ -3149,7 +3793,7 @@
     }
 
     function listingUpdatedLabel(item) {
-      return formatFreshness(listingDateValue(item));
+      return formatFreshness(displayListingDateValue(item));
     }
 
     function freshnessBadgeInfo(value) {
@@ -3234,7 +3878,7 @@
     function ageBreakdownForListings(listings) {
       const buckets = { fresh: 0, recent: 0, older: 0, stale: 0, unknown: 0 };
       (Array.isArray(listings) ? listings : []).forEach(item => {
-        const bucket = menuAgeInfo(listingDateValue(item)).bucket;
+        const bucket = menuAgeInfo(displayListingDateValue(item)).bucket;
         buckets[bucket] = (buckets[bucket] || 0) + 1;
       });
       return buckets;
@@ -3253,11 +3897,13 @@
 
     function buildListingCheckBatchSignal(offerings) {
       const latestByShop = new Map();
+      let trustedDateCount = 0;
       (Array.isArray(offerings) ? offerings : []).forEach(item => {
         const shopId = String(item && item.shop_id || '').trim();
         const time = listingTime(item);
         if (!shopId || !Number.isFinite(time)) return;
         latestByShop.set(shopId, Math.max(latestByShop.get(shopId) || 0, time));
+        if (trustedListingDateValue(item)) trustedDateCount += 1;
       });
 
       const dateCounts = new Map();
@@ -3267,12 +3913,30 @@
       });
       const dominant = Array.from(dateCounts.entries()).sort((a, b) => b[1] - a[1])[0] || ['', 0];
       const shopCount = latestByShop.size;
-      const ratio = shopCount ? dominant[1] / shopCount : 0;
+      const timesOnDominantDate = Array.from(latestByShop.values())
+        .filter(time => dominant[0] && new Date(time).toISOString().slice(0, 10) === dominant[0])
+        .sort((a, b) => a - b);
+      const clusters = [];
+      timesOnDominantDate.forEach(time => {
+        const last = clusters.at(-1);
+        if (!last || time - last.end > SHARED_BATCH_CLUSTER_GAP_MS) {
+          clusters.push({ start: time, end: time, count: 1 });
+        } else {
+          last.end = time;
+          last.count += 1;
+        }
+      });
+      const dominantCluster = clusters.sort((a, b) => b.count - a.count)[0] || { start: 0, end: 0, count: dominant[1] };
+      const batchCount = dominantCluster.count || dominant[1];
+      const ratio = shopCount ? batchCount / shopCount : 0;
       return {
         date: dominant[0],
-        count: dominant[1],
+        count: batchCount,
         shopCount,
         ratio,
+        windowStart: dominantCluster.start || 0,
+        windowEnd: dominantCluster.end || 0,
+        trustedDateCount,
         // If almost every shop shares the same latest check date, it is more honest
         // to present that as dataset context rather than shop-specific freshness.
         isSharedBatch: shopCount >= 8 && ratio >= 0.8
@@ -3282,7 +3946,10 @@
     function listingCheckBatchNote() {
       const batch = state.listingCheckBatch;
       if (!batch || !batch.isSharedBatch || !batch.date) return '';
-      return ` Most shop listing checks in the current dataset come from ${formatDate(batch.date)}, so shop cards do not repeat that date as if it were unique to each shop.`;
+      const trusted = batch.trustedDateCount
+        ? ` Listings with explicit source check dates still show their own age.`
+        : ` Rows from that shared refresh window show unknown data age until a shop has its own later check signal.`;
+      return ` Most shop listing timestamps in the current dataset come from a shared refresh on ${formatDate(batch.date)}, so the page does not label that batch as shop-specific Fresh data.${trusted}`;
     }
 
     function priceProfileForListings(listings) {
@@ -3469,13 +4136,20 @@
     }
 
     function shopValueScore(row) {
-      const price = row && row.cheapest == null ? 99 : Number(row && row.cheapest);
+      const offerings = Array.isArray(row && row.offerings) ? row.offerings : [];
+      const prices = offerings.map(item => Number(item.price_amount)).filter(Number.isFinite).sort((a, b) => a - b);
+      const menuMedian = prices.length ? median(prices) : null;
+      const menuAverage = prices.length ? average(prices) : null;
+      const price = menuMedian == null
+        ? (menuAverage == null ? (row && row.cheapest == null ? 99 : Number(row && row.cheapest)) : menuAverage)
+        : menuMedian;
       const availability = Math.min(Number(row && row.uniqueStrains) || 0, 36);
       const latest = latestListingTime(row && row.offerings);
       const ageDays = latest ? ageDaysFromTime(latest) : 120;
-      const dealDepth = Number(row && row.bestDealPercent) || 0;
       const dealVolume = Math.min(Number(row && row.belowAverageDeals && row.belowAverageDeals.length) || 0, 12);
-      return price - (availability * 0.08) + Math.min(ageDays, 120) * 0.012 - (dealDepth * 0.035) - (dealVolume * 0.04);
+      const dealCoverage = availability ? dealVolume / Math.max(availability, 1) : 0;
+      const lowPriceBonus = row && row.cheapest != null ? Math.max(0, Math.min(4, price - Number(row.cheapest))) * 0.08 : 0;
+      return price - (availability * 0.025) + Math.min(ageDays, 120) * 0.01 - (dealCoverage * 0.8) - (dealVolume * 0.015) - lowPriceBonus;
     }
 
     function compareShopRowsForBrowseMode(a, b, mode) {
@@ -3635,7 +4309,7 @@
 
     function latestListingTime(listings) {
       return (Array.isArray(listings) ? listings : []).reduce((latest, item) => {
-        const time = listingTime(item);
+        const time = displayListingTime(item);
         return Number.isFinite(time) && time > latest ? time : latest;
       }, 0);
     }
@@ -4317,6 +4991,13 @@
     function renderQuickAnswer(filteredOfferings, filteredStats) {
       if (!els.quickAnswer) return;
       const filters = currentFilters();
+      if (state.view === 'shops' || !filters.q) {
+        els.quickAnswer.hidden = true;
+        els.quickAnswer.classList.add('is-empty');
+        els.quickAnswer.innerHTML = '';
+        return;
+      }
+      els.quickAnswer.hidden = false;
       const stat = pickQuickAnswerStat(filteredStats, filters);
 
       if (!stat || !filteredOfferings.length) {
@@ -4327,7 +5008,7 @@
             <p>No current listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name, clear a filter, or pick an available alternative.</p>
             ${alternativeLinksHtml(alternatives)}
           `
-          : 'Search a strain to see the best shops, prices, and data age first.';
+          : 'Search a strain or coffeeshop to see prices, menus, and useful next actions.';
         return;
       }
 
@@ -4586,8 +5267,8 @@
       if (!els.mapToggle) return;
       els.mapToggle.href = 'map.html';
       els.mapToggle.title = state.selectedShopIds.length
-        ? `Open the full map. Use "Show on map" to map ${state.selectedShopIds.length} shortlisted coffeeshop${state.selectedShopIds.length === 1 ? '' : 's'}.`
-        : 'Show the full map';
+        ? `Open the full map. Use "View on Map" to map ${state.selectedShopIds.length} shortlisted coffeeshop${state.selectedShopIds.length === 1 ? '' : 's'}.`
+        : 'Open the full map';
     }
 
     function goToMapWithSelectedShops() {
@@ -4646,7 +5327,7 @@
 
     function renderSelected() {
       if (!state.selected.length) {
-        els.selectedList.innerHTML = '<div class="empty">Search and tap Want to save strains for comparison, then view matching shops on the map.</div>';
+        els.selectedList.innerHTML = '<div class="empty">No research strains saved yet. Search a strain, then save it for comparison.</div>';
         if (els.showWantedMap) els.showWantedMap.disabled = true;
         return;
       }
@@ -4678,7 +5359,7 @@
     function renderSelectedShops() {
       updateMapToggleHref();
       if (!state.selectedShopIds.length) {
-        els.selectedShopList.innerHTML = '<div class="empty">Use View on map for one shop, or shortlist a few shops for a map handoff.</div>';
+        els.selectedShopList.innerHTML = '<div class="empty">No shops shortlisted yet. Use View on map or select shops from the results.</div>';
         els.showSelectedShopsMap.disabled = true;
         return;
       }
@@ -4761,7 +5442,7 @@
           </div>
           <div class="chip-row">
             ${priceJudgementBadgeHtml(price, profile && profile.median)}
-            ${ageBadgeHtml(listingDateValue(item))}
+            ${ageBadgeHtml(displayListingDateValue(item))}
             ${item.strain_name ? `<span class="chip">${escapeHtml(item.strain_name)}</span>` : ''}
           </div>
           ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
@@ -4822,7 +5503,7 @@
         : `${profile.count} usable price${profile.count === 1 ? '' : 's'}`;
       const sortedByValue = profile.usableListings
         .slice()
-        .sort((a, b) => a.price - b.price || menuAgeInfo(listingDateValue(a.item)).days - menuAgeInfo(listingDateValue(b.item)).days || compareShopName(a.item, b.item))
+        .sort((a, b) => a.price - b.price || menuAgeInfo(displayListingDateValue(a.item)).days - menuAgeInfo(displayListingDateValue(b.item)).days || compareShopName(a.item, b.item))
         .map(row => row.item);
       const bestValue = sortedByValue.slice(0, 6);
       const allListings = listings
@@ -4830,7 +5511,7 @@
         .sort((a, b) => {
           const priceDiff = (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity);
           if (priceDiff !== 0) return priceDiff;
-          const freshnessDiff = menuAgeInfo(listingDateValue(a)).days - menuAgeInfo(listingDateValue(b)).days;
+          const freshnessDiff = menuAgeInfo(displayListingDateValue(a)).days - menuAgeInfo(displayListingDateValue(b)).days;
           if (freshnessDiff !== 0) return freshnessDiff;
           return compareShopName(a, b);
         });
@@ -4963,7 +5644,7 @@
           </div>
           <div class="chip-row">
             ${priceJudgementBadgeHtml(price, profile.median)}
-            ${ageBadgeHtml(listingDateValue(item))}
+            ${ageBadgeHtml(displayListingDateValue(item))}
           </div>
           ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
         </article>
@@ -4972,13 +5653,20 @@
 
     function renderShopMenuBrowser() {
       if (!els.shopMenuBrowser) return;
+      const shopBrowserQuery = normaliseSearchText(els.shopBrowserSearch ? els.shopBrowserSearch.value : '');
+      if (state.view === 'shops' && (!shopBrowserQuery || !state.shopMenuExpanded)) {
+        syncShopBrowserOptions();
+        syncShopCategoryOptions([]);
+        els.shopMenuBrowser.innerHTML = '';
+        return;
+      }
       const rows = syncShopBrowserOptions();
       const row = rows.find(item => item.shopId === state.activeShopId) ||
         shopRowsFromOfferings(state.offerings).find(item => item.shopId === state.activeShopId) ||
         rows[0];
       if (!row) {
         syncShopCategoryOptions([]);
-        els.shopMenuBrowser.innerHTML = '<div class="empty">No coffeeshop menus match this search. Try a shorter shop name.</div>';
+        els.shopMenuBrowser.innerHTML = '<div class="empty">No coffeeshop menus match this search. Try a shorter shop name or clear one filter.</div>';
         return;
       }
       state.activeShopId = row.shopId;
@@ -4994,7 +5682,7 @@
           return (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity) || compareStrainName(a, b);
         }
         if (state.shopMenuSort === 'newest') {
-          return (listingTime(b) || 0) - (listingTime(a) || 0) || compareStrainName(a, b);
+          return (displayListingTime(b) || 0) - (displayListingTime(a) || 0) || compareStrainName(a, b);
         }
         if (state.shopMenuSort === 'judgement') {
           const aStat = getStatByKey(a.strain_name_normalised || normalise(a.strain_name));
@@ -5009,9 +5697,9 @@
       const prices = allListings.map(pricePerGram).filter(Number.isFinite);
       const newestTime = latestListingTime(allListings);
       const newestDate = newestTime ? new Date(newestTime).toISOString() : '';
-      const sharedBatch = state.listingCheckBatch && state.listingCheckBatch.isSharedBatch;
-      const newestSignalLabel = sharedBatch ? 'Dataset check' : 'Newest signal';
-      const newestSignalHelper = sharedBatch
+      const batchOnlyContext = state.listingCheckBatch && state.listingCheckBatch.isSharedBatch && !newestDate;
+      const newestSignalLabel = batchOnlyContext ? 'Dataset check' : 'Newest signal';
+      const newestSignalHelper = batchOnlyContext
         ? 'Shared listing-check batch'
         : ageBreakdownLabel(ageBreakdownForListings(allListings));
       const groups = new Map();
@@ -5061,12 +5749,112 @@
       `;
     }
 
+    function latestStatChangeTime(stat) {
+      return (Array.isArray(stat && stat.filteredOfferings) ? stat.filteredOfferings : []).reduce((latest, item) => {
+        const time = displayListingTime(item);
+        return Number.isFinite(time) && time > latest ? time : latest;
+      }, 0);
+    }
+
+    function renderFreshStrainRows(stats) {
+      if (!els.strainGrid) return;
+      if (els.strainMoreRow) els.strainMoreRow.hidden = true;
+
+      const newestTime = (Array.isArray(stats) ? stats : []).reduce((latest, stat) => {
+        const time = latestStatChangeTime(stat);
+        return Number.isFinite(time) && time > latest ? time : latest;
+      }, 0);
+
+      if (!Number.isFinite(newestTime) || newestTime <= 0) {
+        els.strainsSummary.textContent = 'No strains in the current filters have a known menu-change date yet.';
+        els.strainGrid.innerHTML = '<div class="empty">Fresh-data mode only uses known menu-change dates. Try another filter, or switch to Best value to browse all known strains.</div>';
+        return;
+      }
+
+      const newestDateKey = new Date(newestTime).toISOString().slice(0, 10);
+      const rows = stats
+        .map(stat => {
+          const latestItems = (stat.filteredOfferings || [])
+            .filter(item => {
+              const time = displayListingTime(item);
+              return Number.isFinite(time) && new Date(time).toISOString().slice(0, 10) === newestDateKey;
+            })
+            .sort((a, b) => (displayListingTime(b) || 0) - (displayListingTime(a) || 0) || compareShopName(a, b));
+          if (!latestItems.length) return null;
+          const latestItem = latestItems[0];
+          const latestTime = displayListingTime(latestItem) || 0;
+          const shopIds = shopIdsForListings(latestItems);
+          const prices = latestItems.map(pricePerGram).filter(Number.isFinite);
+          return {
+            stat,
+            latestItems,
+            latestTime,
+            latestDate: new Date(latestTime).toISOString(),
+            shopIds,
+            shopCount: shopIds.length,
+            listingCount: latestItems.length,
+            low: prices.length ? Math.min(...prices) : null,
+            sampleShops: unique(latestItems.map(item => item.shop_name || '').filter(Boolean)).slice(0, 4)
+          };
+        })
+        .filter(Boolean)
+        .sort((a, b) => b.latestTime - a.latestTime || b.shopCount - a.shopCount || compareStrainName(a.stat, b.stat));
+
+      const visibleRows = rows.slice(0, 220);
+      const listingTotal = rows.reduce((sum, row) => sum + row.listingCount, 0);
+      els.strainsSummary.textContent = `${rows.length.toLocaleString()} strain${rows.length === 1 ? '' : 's'} entered in the newest data drop on ${formatDate(new Date(newestTime).toISOString())} · ${listingTotal.toLocaleString()} listing${listingTotal === 1 ? '' : 's'}.`;
+
+      if (!visibleRows.length) {
+        els.strainGrid.innerHTML = '<div class="empty">No strains match the newest data drop under these filters.</div>';
+        return;
+      }
+
+      els.strainGrid.innerHTML = visibleRows.map(row => {
+        const selected = isSelected(row.stat.key);
+        const shopsLabel = row.sampleShops.length
+          ? `${row.sampleShops.join(', ')}${row.shopCount > row.sampleShops.length ? ` +${row.shopCount - row.sampleShops.length}` : ''}`
+          : 'Shop details available';
+        const lowLabel = row.low == null ? 'Price unknown' : `Lowest ${money(row.low)}`;
+        const allMapUrl = mapUrlForShopIds(row.shopIds, { strainName: row.stat.name, strainShopIds: row.shopIds });
+        const freshness = freshnessBadgeInfo(row.latestDate);
+        return `
+          <article class="fresh-shop-row is-strain-row${selected ? ' is-selected' : ''}">
+            <div class="fresh-shop-main">
+              ${getStrainImageHtml(row.stat.name)}
+              <div class="fresh-shop-copy">
+                <strong class="fresh-shop-name">${escapeHtml(row.stat.name)}</strong>
+                <span class="fresh-shop-meta">${row.shopCount.toLocaleString()} shop${row.shopCount === 1 ? '' : 's'} · ${row.listingCount.toLocaleString()} new listing${row.listingCount === 1 ? '' : 's'} · ${escapeHtml(lowLabel)}</span>
+              </div>
+            </div>
+            <div class="fresh-shop-date">
+              <strong>${escapeHtml(formatDate(row.latestDate))}</strong>
+              <span>${freshness ? escapeHtml(freshness.label) : 'Fresh data drop'}</span>
+            </div>
+            <div class="fresh-shop-menu-preview">
+              <strong>${escapeHtml(shopsLabel)}</strong>
+              <span>${escapeHtml(row.stat.filteredTopType || row.stat.topType || 'Known strain listing')}</span>
+            </div>
+            <div class="fresh-shop-actions">
+              <button type="button" data-select-strain="${escapeHtmlAttr(row.stat.key)}" class="${selected ? 'is-active' : ''}">${selected ? 'Saved' : 'Save'}</button>
+              <button type="button" data-focus-shops="${escapeHtmlAttr(row.stat.key)}">Shops</button>
+              <a href="${escapeHtmlAttr(allMapUrl)}" data-map-strain-shops="${escapeHtmlAttr(row.shopIds.join(','))}" data-strain-name="${escapeHtmlAttr(row.stat.name)}" data-strain-shops="${escapeHtmlAttr(row.shopIds.join(','))}">Map</a>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
     function renderStrains(stats) {
-      const visibleStats = stats.slice(0, state.visibleStrainLimit);
       const filters = currentFilters();
       const mode = browseModeSummary(state.browseMode);
       const family = state.familyFilter ? ` in ${familyLabel(state.familyFilter)}` : '';
       const sortSuffix = filters.sort ? ` · ${sortModeSummary(filters.sort)}` : '';
+      if (els.strainGrid) els.strainGrid.classList.toggle('is-fresh-scan', state.browseMode === 'fresh');
+      if (state.browseMode === 'fresh') {
+        renderFreshStrainRows(stats);
+        return;
+      }
+      const visibleStats = stats.slice(0, state.visibleStrainLimit);
       els.strainsSummary.textContent = `${stats.length.toLocaleString()} ${mode} strain${stats.length === 1 ? '' : 's'}${family} match the current filters${sortSuffix}.`;
       if (!stats.length) {
         els.strainGrid.innerHTML = '<div class="empty">No strains match these filters. Try clearing one filter, widening the price range, or searching a shorter name.</div>';
@@ -5139,7 +5927,7 @@
             <div class="cheapest-shop-list" aria-label="Cheapest shops carrying ${escapeHtmlAttr(stat.name)}">
               ${cheapestListings.map(item => {
                 const shopId = String(item.shop_id || '');
-                const freshness = freshnessBadgeInfo(listingDateValue(item));
+                const freshness = freshnessBadgeInfo(displayListingDateValue(item));
                 const meta = [
                   item.shop_city || '',
                   listingUpdatedLabel(item)
@@ -5281,7 +6069,7 @@
 
     function renderRoutePlanBoard(stats) {
       if (!stats.length) {
-        els.routePlanBoard.innerHTML = '<div class="empty">Save research strains to compare prices and send shops to the map itinerary workflow.</div>';
+        els.routePlanBoard.innerHTML = '<div class="empty">Save research strains to compare prices, then send matching shops to the map.</div>';
         return;
       }
 
@@ -5385,7 +6173,7 @@
               const price = Number.isFinite(Number(item.price_amount))
                 ? money(item.price_amount, item.price_currency, item.price_unit)
                 : 'Price unknown';
-              const freshness = freshnessBadgeInfo(listingDateValue(item));
+              const freshness = freshnessBadgeInfo(displayListingDateValue(item));
               return `<span class="chip">${escapeHtml(item.strain_name)} ${escapeHtml(price)}</span>${freshness ? `<span class="chip ${freshness.className}">${escapeHtml(freshness.label)}</span>` : ''}`;
             }).join('');
             return `
@@ -5517,6 +6305,85 @@
       }).join('');
     }
 
+    function latestKnownChangeDate(rows) {
+      return (Array.isArray(rows) ? rows : [])
+        .map(row => row.menuUpdatedAt)
+        .filter(Boolean)
+        .sort()
+        .at(-1) || '';
+    }
+
+    function renderFreshShopRows(rows, mode = 'fresh', options = {}) {
+      const visibleRows = (Array.isArray(rows) ? rows : []).slice(0, 220);
+      const knownRows = visibleRows.filter(row => row.menuUpdatedAt);
+      const newestDate = latestKnownChangeDate(knownRows);
+      const newestCount = newestDate
+        ? knownRows.filter(row => row.menuUpdatedAt && row.menuUpdatedAt.slice(0, 10) === newestDate.slice(0, 10)).length
+        : 0;
+      const searchQuery = normaliseSearchText(options.searchQuery || '');
+      if (searchQuery) {
+        els.shopsSummary.textContent = `${visibleRows.length.toLocaleString()} coffeeshop match${visibleRows.length === 1 ? '' : 'es'} for "${options.searchLabel || searchQuery}". Use Inspect to open a full menu without burying the shop list.`;
+      } else if (mode === 'fresh') {
+        els.shopsSummary.textContent = `${visibleRows.length.toLocaleString()} shops ordered by latest menu change · ${knownRows.length.toLocaleString()} with known change dates${newestDate ? ` · ${newestCount.toLocaleString()} changed on ${formatDate(newestDate)}` : ''}.`;
+      } else if (mode === 'value') {
+        const valueLeadTotal = visibleRows.reduce((sum, row) => sum + row.belowAverageDeals.length, 0);
+        els.shopsSummary.textContent = `${visibleRows.length.toLocaleString()} shops ordered by menu-wide value · ${valueLeadTotal.toLocaleString()} below-average price lead${valueLeadTotal === 1 ? '' : 's'} across visible menus.`;
+      } else {
+        const label = browseModeLabel(mode).toLowerCase();
+        els.shopsSummary.textContent = `${visibleRows.length.toLocaleString()} shops ordered by ${label}. Use Inspect to open a full menu without losing the list.`;
+      }
+      if (!visibleRows.length) {
+        els.shopList.innerHTML = '<div class="empty">No shops match these filters. Try clearing a filter or searching a different coffeeshop.</div>';
+        return;
+      }
+
+      els.shopList.innerHTML = visibleRows.map(row => {
+        const shopSelected = isShopSelected(row.shopId);
+        const changedLabel = row.menuUpdatedAt ? formatDate(row.menuUpdatedAt) : 'Unknown';
+        const freshness = row.menuUpdatedAt ? freshnessBadgeInfo(row.menuUpdatedAt) : null;
+        const sampleStrains = row.offerings
+          .map(item => item.strain_name || '')
+          .filter(Boolean)
+          .slice(0, 4);
+        const extraCount = Math.max(0, row.uniqueStrains - sampleStrains.length);
+        const menuPreview = sampleStrains.length
+          ? `${sampleStrains.join(', ')}${extraCount ? ` +${extraCount}` : ''}`
+          : 'Menu details available';
+        const searchPreview = `${row.uniqueStrains.toLocaleString()} known strain${row.uniqueStrains === 1 ? '' : 's'}`;
+        const priceLabel = row.cheapest == null ? 'Price unknown' : `Lowest ${money(row.cheapest)}`;
+        const menuValueLabel = row.medianPrice == null
+          ? (row.averagePrice == null ? 'Menu value unclear' : `Avg ${money(row.averagePrice)}`)
+          : `Median ${money(row.medianPrice)}${row.averagePrice == null ? '' : ` · Avg ${money(row.averagePrice)}`}`;
+        const mapUrl = buildShopMapLink(row.shopId);
+        return `
+          <article class="fresh-shop-row${shopSelected ? ' is-selected' : ''}">
+            <div class="fresh-shop-main">
+              <a class="shop-logo-map-link" href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(row.shopName)} on map">
+                ${getShopLogoHtml(row.shopKey, row.shopName)}
+              </a>
+              <div class="fresh-shop-copy">
+                <strong class="fresh-shop-name">${escapeHtml(row.shopName)}</strong>
+                <span class="fresh-shop-meta">${escapeHtml(row.city || 'City unknown')} · ${row.uniqueStrains.toLocaleString()} strain${row.uniqueStrains === 1 ? '' : 's'} · ${escapeHtml(priceLabel)}</span>
+              </div>
+            </div>
+            <div class="fresh-shop-date">
+              <strong>${escapeHtml(changedLabel)}</strong>
+              <span>${freshness ? escapeHtml(freshness.label) : 'Change date unknown'}</span>
+            </div>
+            <div class="fresh-shop-menu-preview">
+              <strong>${escapeHtml(searchQuery ? searchPreview : (mode === 'value' ? menuValueLabel : menuPreview))}</strong>
+              <span>${searchQuery ? 'Inspect opens the full known menu' : (row.belowAverageDeals.length ? `${row.belowAverageDeals.length} value lead${row.belowAverageDeals.length === 1 ? '' : 's'}` : (mode === 'value' ? 'Mixed or average-value menu' : 'Known menu snapshot'))}</span>
+            </div>
+            <div class="fresh-shop-actions">
+              <button type="button" data-open-shop-menu="${escapeHtmlAttr(row.shopId)}">Inspect</button>
+              <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${shopSelected ? 'is-active' : ''}">${shopSelected ? 'Selected' : 'Select'}</button>
+              <a href="${escapeHtmlAttr(mapUrl)}">Map</a>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
     function renderShops(filteredOfferings) {
       const selected = new Set(state.selected);
       const filters = currentFilters();
@@ -5537,6 +6404,9 @@
         grouped.get(shopId).offerings.push(item);
       });
 
+      const shopSearchQuery = universalSearchIntent(els.search.value) === 'shops'
+        ? normaliseSearchText(els.search.value)
+        : '';
       const rows = Array.from(grouped.values()).map(row => {
         const selectedMatches = row.offerings.filter(item => selected.has(item.strain_name_normalised || normalise(item.strain_name)));
         const prices = row.offerings.map(item => Number(item.price_amount)).filter(Number.isFinite);
@@ -5547,18 +6417,31 @@
           belowAverageDeals,
           bestDeal: belowAverageDeals[0] || null,
           cheapest: prices.length ? Math.min(...prices) : null,
+          medianPrice: median(prices),
           averagePrice: average(prices),
           bestDealPercent: belowAverageDeals[0] ? belowAverageDeals[0].percentBelow : 0,
           uniqueStrains: new Set(row.offerings.map(item => item.strain_name_normalised || normalise(item.strain_name))).size,
           menuUpdatedAt: row.offerings
-            .map(item => listingDateValue(item))
+            .map(item => displayListingDateValue(item))
             .filter(Boolean)
             .sort()
             .at(-1) || ''
         };
         enrichedRow.valueScore = shopValueScore(enrichedRow);
         return enrichedRow;
-      }).sort((a, b) => compareShopRowsForSort(a, b, filters.sort, filters.browseMode));
+      }).sort((a, b) => shopSearchQuery
+        ? compareShopRowsForSearch(a, b, shopSearchQuery, filters)
+        : compareShopRowsForSort(a, b, filters.sort, filters.browseMode));
+
+      const shopScanMode = state.view === 'shops';
+      if (els.shopList) els.shopList.classList.toggle('is-fresh-scan', shopScanMode);
+      if (shopScanMode) {
+        renderFreshShopRows(rows, filters.browseMode, {
+          searchQuery: shopSearchQuery,
+          searchLabel: els.search.value
+        });
+        return;
+      }
 
       const dealTotal = rows.reduce((sum, row) => sum + row.belowAverageDeals.length, 0);
       const sortSummary = filters.sort
@@ -5596,7 +6479,7 @@
                 `</button>`
               );
             }
-            const freshness = freshnessBadgeInfo(listingDateValue(item));
+            const freshness = freshnessBadgeInfo(displayListingDateValue(item));
             const meta = [
               grower ? `Grower: ${grower}` : '',
               notes ? `Note: ${notes}` : '',
@@ -5622,7 +6505,7 @@
         const matchLabel = selected.size
           ? `${row.selectedMatches.length}/${selected.size} saved`
           : `${row.uniqueStrains} strains`;
-        const showPerShopCheckDate = !(state.listingCheckBatch && state.listingCheckBatch.isSharedBatch);
+        const showPerShopCheckDate = Boolean(row.menuUpdatedAt);
         const updatedLabel = showPerShopCheckDate ? formatDate(row.menuUpdatedAt) : '';
         const freshness = showPerShopCheckDate ? freshnessBadgeInfo(row.menuUpdatedAt) : null;
         const recommendation = selected.size && row.selectedMatches.length
@@ -5653,7 +6536,7 @@
                 </a>
                 <div class="shop-card-copy">
                   <strong>${escapeHtml(row.shopName)}</strong>
-                  <div class="shop-card-meta">${escapeHtml(row.city)}${updatedLabel ? ` · Last checked ${escapeHtml(updatedLabel).replace(/^checked\s+/, '')}` : ''}</div>
+                  <div class="shop-card-meta">${escapeHtml(row.city)}${updatedLabel ? ` · Menu changed ${escapeHtml(updatedLabel).replace(/^checked\s+/, '')}` : ''}</div>
                   <div class="shop-card-metrics">
                     <span class="chip">${escapeHtml(matchLabel)}</span>
                     <span class="chip ${row.cheapest == null ? 'is-price-unknown' : ''}">${row.cheapest == null ? 'Price unknown' : `Lowest ${money(row.cheapest)}`}</span>
@@ -5750,6 +6633,45 @@
       render();
     }
 
+    function isMobileResultsViewport() {
+      return window.matchMedia && window.matchMedia('(max-width: 680px)').matches;
+    }
+
+    function activeResultsElement() {
+      if (state.view === 'shops') return document.getElementById('shops-view');
+      if (state.view === 'compare') return document.getElementById('compare-view');
+      return document.getElementById('strains-view');
+    }
+
+    function activeResultsAnchorElement() {
+      if (state.view === 'shops') {
+        if (state.shopMenuExpanded) {
+          return document.querySelector('#shop-menu-browser .shop-menu-hero, #shop-menu-browser .menu-listing-card, #shop-list .fresh-shop-row, #shop-list .shop-card, #shops-view .section-head') || activeResultsElement();
+        }
+        return document.querySelector('#shop-list .fresh-shop-row, #shop-list .shop-card, #shops-view .section-head') || activeResultsElement();
+      }
+      if (state.view === 'compare') {
+        return document.querySelector('#common-shop-board .common-shop-card, #comparison-grid .comparison-card, #compare-view .section-head') || activeResultsElement();
+      }
+      return document.querySelector('#price-guide-panel .listing-card, #strain-grid .fresh-shop-row, #strain-grid .strain-card, #strains-view .section-head') || activeResultsElement();
+    }
+
+    let mobileResultsScrollTimer = 0;
+    function scheduleMobileResultsScroll(options = {}) {
+      if (!isMobileResultsViewport()) return;
+      const source = options.source || '';
+      if (source === 'search' && normaliseSearchText(els.search.value).length < 2) return;
+      window.clearTimeout(mobileResultsScrollTimer);
+      mobileResultsScrollTimer = window.setTimeout(() => {
+        const target = activeResultsAnchorElement();
+        if (!target || target.hidden) return;
+        const searchPanel = document.querySelector('.database-search-panel');
+        const searchHeight = searchPanel ? Math.ceil(searchPanel.getBoundingClientRect().height) : 0;
+        const top = Math.max(0, window.scrollY + target.getBoundingClientRect().top - searchHeight - 6);
+        window.scrollTo({ top, behavior: options.instant ? 'auto' : 'smooth' });
+      }, options.delay ?? 180);
+    }
+
     function applyInitialUrlState() {
       const params = new URLSearchParams(window.location.search || '');
       const strain = (params.get('strain') || params.get('search') || '').trim();
@@ -5768,6 +6690,7 @@
       }
       if (shopId) {
         state.activeShopId = shopId;
+        state.shopMenuExpanded = true;
         state.view = 'shops';
         const meta = getShopMeta(shopId);
         if (els.shopBrowserSearch && meta && meta.name) els.shopBrowserSearch.value = meta.name;
@@ -5839,6 +6762,7 @@
       els.search.addEventListener(eventName, () => {
         syncUniversalSearchMode();
         renderAfterFilterChange();
+        scheduleMobileResultsScroll({ source: 'search', delay: eventName === 'input' ? 520 : 80 });
       });
     });
     els.search.addEventListener('keydown', event => {
@@ -5847,6 +6771,7 @@
       if (universalSearchIntent(query) !== 'shops') return;
       event.preventDefault();
       openShopSearchResults();
+      scheduleMobileResultsScroll({ source: 'search', delay: 80 });
     });
     if (els.searchShopsShortcut) {
       els.searchShopsShortcut.addEventListener('click', () => {
@@ -5864,10 +6789,17 @@
         syncUniversalSearchMode();
         resetStrainWindow();
         render();
+        scheduleMobileResultsScroll({ source: 'chip', delay: 80 });
       });
     }
-    [els.city, els.type, els.cali, els.sort].forEach(el => el.addEventListener('change', renderAfterFilterChange));
-    [els.priceMin, els.priceMax].forEach(el => el.addEventListener('input', renderAfterFilterChange));
+    [els.city, els.type, els.cali, els.sort].forEach(el => el.addEventListener('change', () => {
+      renderAfterFilterChange();
+      scheduleMobileResultsScroll({ source: 'filter' });
+    }));
+    [els.priceMin, els.priceMax].forEach(el => el.addEventListener('input', () => {
+      renderAfterFilterChange();
+      scheduleMobileResultsScroll({ source: 'filter', delay: 320 });
+    }));
 
     if (els.browseModeGrid) {
       els.browseModeGrid.addEventListener('click', event => {
@@ -5880,6 +6812,7 @@
         els.sort.value = '';
         resetStrainWindow();
         render();
+        scheduleMobileResultsScroll({ source: 'mode' });
       });
     }
 
@@ -5890,6 +6823,7 @@
         state.familyFilter = button.dataset.familyFilter || '';
         resetStrainWindow();
         render();
+        scheduleMobileResultsScroll({ source: 'filter' });
       });
     }
 
@@ -5906,8 +6840,10 @@
         if (state.view === 'shops' && els.shopBrowserSearch && els.search.value) {
           els.shopBrowserSearch.value = els.search.value;
           state.activeShopId = '';
+          state.shopMenuExpanded = false;
         }
         render();
+        scheduleMobileResultsScroll({ source: 'view' });
       });
     });
 
@@ -5918,6 +6854,7 @@
           const shopId = String(focusShop.dataset.focusShopMenu || '').trim();
           const meta = getShopMeta(shopId);
           state.activeShopId = shopId;
+          state.shopMenuExpanded = true;
           if (els.shopBrowserSearch) els.shopBrowserSearch.value = meta.name || '';
           setView('shops');
           render();
@@ -6119,6 +7056,19 @@
     });
 
     els.shopList.addEventListener('click', event => {
+      const openShopButton = event.target.closest('[data-open-shop-menu]');
+      if (openShopButton) {
+        const shopId = String(openShopButton.dataset.openShopMenu || '').trim();
+        const meta = getShopMeta(shopId);
+        state.activeShopId = shopId;
+        state.shopMenuExpanded = true;
+        if (els.shopBrowserSearch) els.shopBrowserSearch.value = meta.name || '';
+        if (els.sort) els.sort.value = '';
+        render();
+        if (els.shopMenuBrowser) els.shopMenuBrowser.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
       const strainButton = event.target.closest('[data-select-strain]');
       if (strainButton) {
         toggleSelected(strainButton.dataset.selectStrain);
@@ -6133,35 +7083,46 @@
     if (els.shopBrowserSearch) {
       els.shopBrowserSearch.addEventListener('input', () => {
         state.activeShopId = '';
-        renderShopMenuBrowser();
+        state.shopMenuExpanded = false;
+        if (els.search) els.search.value = els.shopBrowserSearch.value;
+        render();
+        scheduleMobileResultsScroll({ source: 'shop-search', delay: 260 });
       });
     }
 
     if (els.shopBrowserSelect) {
       els.shopBrowserSelect.addEventListener('change', () => {
         state.activeShopId = els.shopBrowserSelect.value;
+        state.shopMenuExpanded = true;
         renderShopMenuBrowser();
+        scheduleMobileResultsScroll({ source: 'shop-search', delay: 80 });
       });
     }
 
     if (els.shopMenuSort) {
       els.shopMenuSort.addEventListener('change', () => {
         state.shopMenuSort = els.shopMenuSort.value || 'name';
+        state.shopMenuExpanded = true;
         renderShopMenuBrowser();
+        scheduleMobileResultsScroll({ source: 'shop-search', delay: 80 });
       });
     }
 
     if (els.shopCategoryFilter) {
       els.shopCategoryFilter.addEventListener('change', () => {
         state.shopMenuCategory = els.shopCategoryFilter.value || '';
+        state.shopMenuExpanded = true;
         renderShopMenuBrowser();
+        scheduleMobileResultsScroll({ source: 'shop-search', delay: 80 });
       });
     }
 
     if (els.shopHideUnknownPrices) {
       els.shopHideUnknownPrices.addEventListener('change', () => {
         state.shopHideUnknownPrices = els.shopHideUnknownPrices.checked;
+        state.shopMenuExpanded = true;
         renderShopMenuBrowser();
+        scheduleMobileResultsScroll({ source: 'shop-search', delay: 80 });
       });
     }
 

@@ -1506,6 +1506,7 @@
 
     .settings-panel {
       scroll-margin: 18px;
+      opacity: 0.92;
     }
 
     .settings-panel:focus {
@@ -1636,8 +1637,28 @@
 
     .workflow-shortcuts {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr;
       gap: 8px;
+    }
+
+    .map-secondary-tools {
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: 16px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.36));
+      overflow: hidden;
+    }
+
+    .map-secondary-tools summary {
+      min-height: 44px;
+      padding: 12px 14px;
+      color: var(--control-text, var(--ink));
+      font-weight: 900;
+      cursor: pointer;
+      list-style-position: inside;
+    }
+
+    .map-secondary-tools .workflow-shortcuts {
+      padding: 0 12px 12px;
     }
 
     .map-quick-chips {
@@ -1791,8 +1812,8 @@
     .intent-link {
       display: grid;
       gap: 4px;
-      min-height: 64px;
-      padding: 12px;
+      min-height: 54px;
+      padding: 10px 12px;
       border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 16px;
       background: var(--control-bg-strong, var(--control-bg, rgba(255, 255, 255, 0.78)));
@@ -1803,8 +1824,7 @@
     }
 
     .intent-card.is-primary {
-      grid-column: 1 / -1;
-      min-height: 82px;
+      min-height: 58px;
       background:
         linear-gradient(
           135deg,
@@ -1828,8 +1848,8 @@
     .intent-card span,
     .intent-link span {
       color: var(--control-muted, var(--muted));
-      font-size: 12px;
-      line-height: 1.35;
+      font-size: 11px;
+      line-height: 1.3;
     }
 
     .intent-card:hover,
@@ -2093,7 +2113,7 @@
     .journey-builder-grid,
     .journey-save-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
       gap: 8px;
       align-items: end;
     }
@@ -2116,7 +2136,7 @@
     }
 
     .journey-saved-actions {
-      grid-template-columns: minmax(0, 1fr) minmax(74px, auto) minmax(74px, auto);
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .journey-timeline {
@@ -3026,6 +3046,7 @@
 
     :root[data-map-theme-tone="dark"] .route-panel,
     :root[data-map-theme-tone="dark"] .search-wanted-panel,
+    :root[data-map-theme-tone="dark"] .map-secondary-tools,
     :root[data-map-theme-tone="dark"] .intent-card,
     :root[data-map-theme-tone="dark"] .intent-link,
     :root[data-map-theme-tone="dark"] .detail-drawer,
@@ -3457,6 +3478,7 @@
     .data-disclaimer {
       margin: 12px 0 0;
       color: var(--muted);
+      font-size: 11px;
     }
 
     .guide-overlay {
@@ -5780,6 +5802,240 @@
         opacity: 0;
       }
     }
+
+    /* Product polish: readable, consistent controls across map themes. */
+    .controls,
+    .overlay-card,
+    #instructions {
+      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 13%, var(--panel-border));
+      box-shadow: 0 18px 46px rgba(29, 42, 32, 0.16), 0 0 20px var(--accent-glow);
+    }
+
+    .panel-section,
+    .route-panel,
+    .search-wanted-panel,
+    .wanted-list-panel,
+    .best-match-panel,
+    .best-match-card,
+    .destination-card,
+    .destination-card-empty,
+    .journey-planner-card,
+    .journey-section,
+    .journey-itinerary-empty,
+    .journey-stop-card,
+    .trip-plan-card,
+    .detail-drawer,
+    #strain-spotlight-card,
+    .metric-card,
+    .stash-bag,
+    .stash-shelf-empty {
+      border-color: var(--control-border, rgba(92, 107, 97, 0.14)) !important;
+      background: var(--control-bg, rgba(255, 255, 255, 0.58)) !important;
+      color: var(--control-text, var(--ink)) !important;
+      box-shadow: none !important;
+    }
+
+    .controls-header,
+    .stash-shelf-stage {
+      border-color: var(--control-border, rgba(92, 107, 97, 0.12));
+      background: var(--control-bg, rgba(255, 255, 255, 0.5));
+    }
+
+    .controls button,
+    .controls .panel-link-button,
+    .selection-actions button,
+    .selection-actions a,
+    #ui-toggles button,
+    .stash-shelf-close,
+    .selection-card-toggle,
+    .destination-card-action,
+    .best-match-action {
+      border-radius: 999px;
+      min-width: 0;
+      line-height: 1.15;
+      text-align: center;
+      overflow-wrap: anywhere;
+      text-shadow: none;
+    }
+
+    .controls button:not(.secondary-btn):not(.controls-hide):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action),
+    .controls .panel-link-button,
+    .selection-actions button:not(.ghost-btn):not(.neutral-btn),
+    .destination-card-action.is-primary,
+    .best-match-action.is-primary,
+    .popup-journey-start-btn {
+      border: 0 !important;
+      background: var(--map-primary-button-bg, linear-gradient(135deg, var(--accent), var(--accent-strong))) !important;
+      color: var(--button-text, #fff9f0) !important;
+      box-shadow: 0 12px 24px var(--accent-glow) !important;
+    }
+
+    .secondary-btn,
+    .controls-hide,
+    #ui-toggles button,
+    .selection-actions .ghost-btn,
+    .selection-actions .neutral-btn,
+    .stash-shelf-close,
+    .selection-card-toggle,
+    .destination-card-action:not(.is-primary),
+    .best-match-action:not(.is-primary),
+    .map-quick-chip,
+    .intent-card,
+    .intent-link {
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.78)) !important;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14)) !important;
+      color: var(--control-text, var(--ink)) !important;
+      box-shadow: none !important;
+    }
+
+    .intent-card.is-primary,
+    .journey-section.is-primary,
+    .destination-card.is-selected,
+    .destination-card.is-cheapest {
+      background: var(--control-selected-bg, var(--control-bg-strong, rgba(255, 255, 255, 0.86))) !important;
+      border-color: var(--control-selected-border, var(--control-border, rgba(92, 107, 97, 0.18))) !important;
+      color: var(--control-text, var(--ink)) !important;
+    }
+
+    .map-quick-chip,
+    .destination-card-badge,
+    .destination-card-chip,
+    .best-match-badge,
+    .hero-meta-pill,
+    .selection-chip,
+    .strain-spotlight-chip {
+      min-height: 26px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      line-height: 1.15;
+      color: var(--control-text, var(--ink));
+    }
+
+    .controls label,
+    .controls strong,
+    .controls-title,
+    .destination-card-name,
+    .destination-card-matches,
+    .destination-card-meta strong,
+    .destination-card-why strong,
+    .best-match-head strong,
+    .best-match-name,
+    .intent-card strong,
+    .intent-link strong,
+    #selection-card h2,
+    #stash-shelf h3,
+    .stash-bag-name,
+    .journey-section-title,
+    .journey-itinerary-title {
+      color: var(--control-text, var(--ink)) !important;
+    }
+
+    .controls-summary,
+    .field-note,
+    .panel-kicker,
+    .panel-copy,
+    .destination-card-city,
+    .destination-card-meta,
+    .destination-card-why,
+    .destination-card-matches span,
+    .best-match-head span,
+    .best-match-empty,
+    .best-match-reason,
+    .best-match-meta,
+    .intent-card span,
+    .intent-link span,
+    .metric-label,
+    .stash-shelf-summary,
+    .stash-bag-meta,
+    .stash-bag-city,
+    .stash-bag-footer,
+    .journey-section-copy {
+      color: var(--control-muted, var(--muted)) !important;
+    }
+
+    .controls select,
+    .controls input[type="text"],
+    .controls input[type="search"] {
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.82)) !important;
+      border-color: var(--control-border, rgba(92, 107, 97, 0.16)) !important;
+      color: var(--control-text, var(--ink)) !important;
+      box-shadow: none !important;
+    }
+
+    .controls input::placeholder {
+      color: var(--control-muted, var(--muted)) !important;
+      opacity: 0.9;
+    }
+
+    .search-wanted-panel:focus-within,
+    .best-match-panel:focus-within {
+      border-color: var(--control-selected-border, var(--accent)) !important;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent) !important;
+    }
+
+    .controls button:hover,
+    .controls .panel-link-button:hover,
+    #ui-toggles button:hover,
+    .selection-actions button:hover,
+    .selection-actions a:hover,
+    .map-quick-chip:hover,
+    .intent-card:hover,
+    .intent-link:hover,
+    .destination-card-action:hover,
+    .best-match-action:hover {
+      border-color: var(--control-selected-border, var(--accent)) !important;
+      transform: translateY(-1px);
+    }
+
+    :root[data-map-theme-tone="dark"] .controls,
+    :root[data-map-theme-tone="dark"] .overlay-card,
+    :root[data-map-theme-tone="dark"] #instructions {
+      background: var(--panel-strong) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .panel-section,
+    :root[data-map-theme-tone="dark"] .route-panel,
+    :root[data-map-theme-tone="dark"] .search-wanted-panel,
+    :root[data-map-theme-tone="dark"] .map-secondary-tools,
+    :root[data-map-theme-tone="dark"] .wanted-list-panel,
+    :root[data-map-theme-tone="dark"] .best-match-panel,
+    :root[data-map-theme-tone="dark"] .best-match-card,
+    :root[data-map-theme-tone="dark"] .destination-card,
+    :root[data-map-theme-tone="dark"] .destination-card-empty,
+    :root[data-map-theme-tone="dark"] .journey-planner-card,
+    :root[data-map-theme-tone="dark"] .journey-section,
+    :root[data-map-theme-tone="dark"] .journey-itinerary-empty,
+    :root[data-map-theme-tone="dark"] .journey-stop-card,
+    :root[data-map-theme-tone="dark"] .trip-plan-card,
+    :root[data-map-theme-tone="dark"] .detail-drawer,
+    :root[data-map-theme-tone="dark"] #strain-spotlight-card,
+    :root[data-map-theme-tone="dark"] .metric-card,
+    :root[data-map-theme-tone="dark"] .stash-bag,
+    :root[data-map-theme-tone="dark"] .stash-shelf-empty {
+      background: var(--control-bg-strong) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+    }
+
+    :root[data-map-theme-tone="dark"] .secondary-btn,
+    :root[data-map-theme-tone="dark"] .controls-hide,
+    :root[data-map-theme-tone="dark"] #ui-toggles button,
+    :root[data-map-theme-tone="dark"] .selection-actions .ghost-btn,
+    :root[data-map-theme-tone="dark"] .selection-actions .neutral-btn,
+    :root[data-map-theme-tone="dark"] .stash-shelf-close,
+    :root[data-map-theme-tone="dark"] .selection-card-toggle,
+    :root[data-map-theme-tone="dark"] .destination-card-action:not(.is-primary),
+    :root[data-map-theme-tone="dark"] .best-match-action:not(.is-primary),
+    :root[data-map-theme-tone="dark"] .map-quick-chip,
+    :root[data-map-theme-tone="dark"] .intent-card,
+    :root[data-map-theme-tone="dark"] .intent-link,
+    :root[data-map-theme-tone="dark"] .map-secondary-tools summary {
+      background: var(--control-bg-strong) !important;
+      border-color: var(--control-border) !important;
+      color: var(--control-text) !important;
+    }
   </style>
 </head>
 
@@ -5880,12 +6136,12 @@
         <span class="selection-chip" id="selected-destination-eta">ETA --</span>
       </div>
       <div class="selection-actions">
-        <button id="selection-directions-btn" type="button">Open directions</button>
-        <button id="selection-add-stop-btn" type="button" class="neutral-btn">Add to itinerary</button>
+        <button id="selection-directions-btn" type="button">Directions</button>
+        <button id="selection-add-stop-btn" type="button" class="neutral-btn">Add Stop</button>
         <button id="selection-move-up-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place earlier in itinerary" title="Move earlier">−</button>
         <button id="selection-move-down-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place later in itinerary" title="Move later">+</button>
-        <button id="selection-center-btn" type="button" class="ghost-btn">Focus map</button>
-        <a id="selection-price-menus-link" class="selection-link" href="database.html">Price &amp; Menus</a>
+        <button id="selection-center-btn" type="button" class="ghost-btn">View on Map</button>
+        <a id="selection-price-menus-link" class="selection-link" href="database.html">Research Prices</a>
         <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
       </div>
     </div>
@@ -5926,11 +6182,11 @@
     <div class="controls-content">
       <section class="panel-section search-wanted-panel control-group" aria-labelledby="map-intent-title">
         <div class="intent-head">
-          <strong id="map-intent-title">Find your next stop</strong>
-          <span>Search by strain, shop, or area.</span>
+          <strong id="map-intent-title">Where should I go next?</strong>
+          <span>Search a strain, shop, or area to rank useful stops.</span>
         </div>
         <label for="destination-search">Search Budfinder</label>
-        <input id="destination-search" type="search" placeholder="Try Gelato, The Plug, or De Pijp..." autocomplete="off" list="global-search-suggestions" />
+        <input id="destination-search" type="search" placeholder="Gelato, The Plug, De Pijp..." autocomplete="off" list="global-search-suggestions" />
         <datalist id="global-search-suggestions"></datalist>
         <div id="destination-search-status" class="field-note">Loading Amsterdam menu data...</div>
         <div class="map-quick-chips" aria-label="Quick searches">
@@ -5953,30 +6209,33 @@
             <p class="best-match-empty">Search for a strain, shop, or area to see suggested stops.</p>
           </div>
         </div>
-        <div class="workflow-shortcuts" aria-label="Quick planning shortcuts">
+        <details class="map-secondary-tools" aria-label="Quick planning shortcuts">
+          <summary>More tools</summary>
+          <div class="workflow-shortcuts">
           <button class="intent-card" type="button" data-map-intent="wanted">
-            <strong>Map matching strains</strong>
-            <span>Save strains to highlight matching shops on the map.</span>
+            <strong>Find strain matches</strong>
+            <span>Highlight shops likely to list saved strains.</span>
           </button>
           <button class="intent-card" type="button" data-map-intent="value">
-            <strong>Good-value shops</strong>
-            <span>Sort by useful price signals and nearby options.</span>
+            <strong>Find good value</strong>
+            <span>Sort by price signals and nearby options.</span>
           </button>
           <button class="intent-card is-primary" type="button" data-map-intent="nearby">
-            <strong>Build itinerary</strong>
-            <span>Add stops and estimate walking time, distance, and spend.</span>
+            <strong>Build Route</strong>
+            <span>Add stops, walking time, distance, and spend.</span>
           </button>
           <a id="map-price-menus-link" class="intent-link" href="database.html">
-            <strong>Open Price &amp; Menus</strong>
-            <span>Compare average strain prices or browse full known shop menus.</span>
+            <strong>Research Prices</strong>
+            <span>Open Price &amp; Menus for deeper research.</span>
           </a>
-        </div>
+          </div>
+        </details>
       </section>
 
       <section class="panel-section route-panel control-group">
         <div class="route-panel-topline">
           <span class="panel-kicker">Destination</span>
-          <p class="panel-copy">Compare suggested stops, pick a visible place, then add it to the itinerary or open directions.</p>
+          <p class="panel-copy">Pick a stop, then open directions or add it to your route.</p>
         </div>
         <div class="map-mode-strip" aria-live="polite">
           <span>Current mode</span>
@@ -6074,7 +6333,7 @@
               <p class="journey-section-copy">The map shows your start, numbered stops, route direction, and walking-route line when route data is available.</p>
             </div>
             <div class="journey-map-actions">
-              <button id="journey-fit-map-btn" type="button" class="secondary-btn">Fit route on map</button>
+            <button id="journey-fit-map-btn" type="button" class="secondary-btn">View Route</button>
             </div>
           </section>
         </div>
@@ -6127,11 +6386,11 @@
           <button id="center-on-me-btn" type="button" class="secondary-btn">Near me</button>
         </div>
 
-        <button id="toggle-directions" type="button">Open directions</button>
+        <button id="toggle-directions" type="button">Directions</button>
 
         <div class="route-action-row">
           <button id="nearest-btn">Closest</button>
-          <button id="add-destination-stop-btn" type="button" class="secondary-btn">Add Destination to itinerary</button>
+          <button id="add-destination-stop-btn" type="button" class="secondary-btn">Add Stop</button>
           <button id="surprise-btn" type="button" class="secondary-btn">Pick a random shop</button>
           <button id="show-strain-shops-btn" type="button" class="secondary-btn" hidden>Show strain matches</button>
           <button id="clear-route-focus-btn" type="button" class="secondary-btn">Clear Destination</button>
@@ -6144,7 +6403,7 @@
         <span class="panel-kicker">Map matching strains</span>
         <div id="strain-list-panel">
           <div class="strain-list-head">
-            <strong>Map matching strains</strong>
+            <strong>Find strain matches</strong>
           </div>
           <input id="strain-list-search" type="text" placeholder="Filter strains..." />
           <div id="strain-list-status">Loading strain matches...</div>
@@ -6176,7 +6435,7 @@
               </div>
             </div>
             <p id="strain-spotlight-notes" class="strain-spotlight-notes">No map match selected yet. Once a strain is selected, this card stays focused on useful shops to visit next.</p>
-            <a id="strain-price-guide-link" class="panel-link-button" href="database.html">Open strain price guide</a>
+            <a id="strain-price-guide-link" class="panel-link-button" href="database.html">Research Prices</a>
             <div class="strain-spotlight-top">
               <div class="strain-spotlight-top-head">
                 <strong>Top shops</strong>
@@ -6227,7 +6486,7 @@
               <select id="csv-switch-select"></select>
             </label>
           </div>
-          <a class="panel-link-button" href="database.html">Open Price &amp; Menus</a>
+          <a class="panel-link-button" href="database.html">Research Prices</a>
           <div class="button-row">
             <button id="clear-saved-data-btn" type="button" class="secondary-btn">Clear saved data</button>
           </div>
@@ -6290,7 +6549,7 @@
   <!-- Leaflet + Routing JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-  <script src="scripts/budfinder-theme.js?v=20260705-leaf-bg1"></script>
+  <script src="scripts/budfinder-theme.js?v=20260706-readable-dark1"></script>
 
   <script>
     // =========================================================
@@ -6425,6 +6684,7 @@
     let popupStrainDetailsByNameCity = new Map(); // "name|city" -> Map(strain_key -> {priceText, growerText, notesText, priceEntries})
     let popupMenuUpdatedByShopId = new Map();     // shop_id -> latest offering updated timestamp
     let popupMenuUpdatedByNameCity = new Map();   // "name|city" -> latest offering updated timestamp
+    let popupMenuBatchSignal = null;              // shared export refresh window, if detected
     let strainAveragePricesByKey = new Map(); // strain_key -> Map("currency|unit" -> average price info)
     let popupStrainIndexReady = false;
     let popupStrainIndexPromise = null;
@@ -6445,6 +6705,8 @@
     const TOP_SHELF_RAIL_COLLAPSED_STORAGE_KEYS = ['budfinder_top_shelf_rail_collapsed', 'locate3_top_shelf_rail_collapsed'];
     const MAP_FOCUS_SHOPS_STORAGE_KEY = 'budfinder_map_focus_shops';
     const HOW_GUIDE_DISABLED_STORAGE_KEY = 'budfinder_how_guide_disabled';
+    const MENU_BATCH_FRESHNESS_FIELDS = new Set(['menu_checked_at_utc', 'last_seen_at_utc', 'last_seen_at', 'updated_at']);
+    const MENU_SHARED_BATCH_CLUSTER_GAP_MS = 10 * 60 * 1000;
     const accentThemeAliases = {
       'neon-night': 'kings-juice',
       'midnight-radar': 'blue-zushi',
@@ -8201,7 +8463,7 @@
       }
       if (btn) {
         btn.hidden = false;
-        btn.textContent = directionsVisible ? 'Hide directions' : 'Open directions';
+        btn.textContent = directionsVisible ? 'Hide directions' : 'Directions';
       }
 
       if (mapDiv) {
@@ -9230,6 +9492,7 @@
           const data = await res.json();
           if (Array.isArray(data)) {
             activeOfferingsRows = data;
+            popupMenuBatchSignal = buildPopupMenuBatchSignal(activeOfferingsRows.filter(isActiveOfferingRowAvailable));
             return activeOfferingsRows;
           }
         } catch (_err) {
@@ -9729,6 +9992,124 @@
       return Math.max(0, Math.floor(diffMs / 86400000));
     }
 
+    function getFreshnessTime(value) {
+      const time = new Date(value || '').getTime();
+      return Number.isFinite(time) ? time : null;
+    }
+
+    function offeringFreshnessDateSource(row, options = {}) {
+      const source = row || {};
+      const includeBatchFields = options.includeBatchFields !== false;
+      const candidates = [
+        ['source_menu_date', source.source_menu_date],
+        ['menu_date', source.menu_date],
+        ['listing_date', source.listing_date],
+        ['menu_changed_at_utc', source.menu_changed_at_utc],
+        ['checked_at', source.checked_at],
+        ['checked_at_utc', source.checked_at_utc],
+        ['source_checked_at', source.source_checked_at],
+        ['source_updated_at', source.source_updated_at],
+        ['source_seen_at', source.source_seen_at],
+        ['scraped_at', source.scraped_at],
+        ['scraped_at_utc', source.scraped_at_utc],
+        ['fetched_at_utc', source.fetched_at_utc],
+        ['created_at', source.created_at],
+        ...(includeBatchFields ? [
+          ['menu_checked_at_utc', source.menu_checked_at_utc],
+          ['last_seen_at_utc', source.last_seen_at_utc],
+          ['last_seen_at', source.last_seen_at],
+          ['updated_at', source.updated_at]
+        ] : [])
+      ];
+      for (const [field, value] of candidates) {
+        if (getFreshnessTime(value) !== null) return { field, value: (value || '').toString().trim() };
+      }
+      return { field: '', value: '' };
+    }
+
+    function trustedOfferingUpdatedAt(row) {
+      return offeringFreshnessDateSource(row, { includeBatchFields: false }).value || '';
+    }
+
+    function buildPopupMenuBatchSignal(rows) {
+      const latestByShop = new Map();
+      let trustedDateCount = 0;
+      (Array.isArray(rows) ? rows : []).forEach(row => {
+        const shopId = parseInt(row && row.shop_id, 10);
+        const nameCityKey = normaliseNameCityKey(row && row.shop_name, row && row.shop_city);
+        const key = Number.isFinite(shopId) ? `id:${shopId}` : `name:${nameCityKey}`;
+        const source = offeringFreshnessDateSource(row);
+        const time = getFreshnessTime(source.value);
+        if (!key || key === 'name:|' || !Number.isFinite(time)) return;
+        latestByShop.set(key, Math.max(latestByShop.get(key) || 0, time));
+        if (trustedOfferingUpdatedAt(row)) trustedDateCount += 1;
+      });
+
+      const dateCounts = new Map();
+      latestByShop.forEach(time => {
+        const dateKey = new Date(time).toISOString().slice(0, 10);
+        dateCounts.set(dateKey, (dateCounts.get(dateKey) || 0) + 1);
+      });
+      const dominant = Array.from(dateCounts.entries()).sort((a, b) => b[1] - a[1])[0] || ['', 0];
+      const timesOnDominantDate = Array.from(latestByShop.values())
+        .filter(time => dominant[0] && new Date(time).toISOString().slice(0, 10) === dominant[0])
+        .sort((a, b) => a - b);
+      const clusters = [];
+      timesOnDominantDate.forEach(time => {
+        const last = clusters.at(-1);
+        if (!last || time - last.end > MENU_SHARED_BATCH_CLUSTER_GAP_MS) {
+          clusters.push({ start: time, end: time, count: 1 });
+        } else {
+          last.end = time;
+          last.count += 1;
+        }
+      });
+      const dominantCluster = clusters.sort((a, b) => b.count - a.count)[0] || { start: 0, end: 0, count: dominant[1] };
+      const shopCount = latestByShop.size;
+      const ratio = shopCount ? (dominantCluster.count || 0) / shopCount : 0;
+      return {
+        date: dominant[0],
+        shopCount,
+        count: dominantCluster.count || 0,
+        ratio,
+        windowStart: dominantCluster.start || 0,
+        windowEnd: dominantCluster.end || 0,
+        trustedDateCount,
+        isSharedBatch: shopCount >= 8 && ratio >= 0.8
+      };
+    }
+
+    function isSharedBatchOfferingDate(row) {
+      const batch = popupMenuBatchSignal;
+      if (!batch || !batch.isSharedBatch || !Number.isFinite(batch.windowStart) || !Number.isFinite(batch.windowEnd)) return false;
+      if (trustedOfferingUpdatedAt(row)) return false;
+      const source = offeringFreshnessDateSource(row);
+      if (!MENU_BATCH_FRESHNESS_FIELDS.has(source.field)) return false;
+      const time = getFreshnessTime(source.value);
+      return Number.isFinite(time) && time >= batch.windowStart && time <= batch.windowEnd;
+    }
+
+    function getDisplayOfferingUpdatedAt(row) {
+      const trustedValue = trustedOfferingUpdatedAt(row);
+      if (trustedValue) return trustedValue;
+      if (isSharedBatchOfferingDate(row)) return '';
+      const source = offeringFreshnessDateSource(row);
+      return MENU_BATCH_FRESHNESS_FIELDS.has(source.field) ? '' : source.value;
+    }
+
+    function getDisplayShopMetaUpdatedAt(meta) {
+      if (!meta) return '';
+      const changedValue = (meta.menu_changed_at_utc || '').toString().trim();
+      if (changedValue && getFreshnessTime(changedValue) !== null) return changedValue;
+      const value = ((meta.fetched_at_utc || meta.updated_at) || '').toString().trim();
+      const time = getFreshnessTime(value);
+      const batch = popupMenuBatchSignal;
+      if (value && batch && batch.isSharedBatch && Number.isFinite(time) && time >= batch.windowStart && time <= batch.windowEnd) {
+        return '';
+      }
+      return value;
+    }
+
     function formatFreshnessLabel(value) {
       const days = getAgeInDays(value);
       if (days === null) return '';
@@ -9756,7 +10137,7 @@
 
     function pushPopupMenuUpdated(rawMap, locationKey, row) {
       const key = (locationKey || '').toString().trim();
-      const updatedAt = ((row && (row.updated_at || row.last_seen_at_utc)) || '').toString().trim();
+      const updatedAt = getDisplayOfferingUpdatedAt(row);
       if (!key || !updatedAt) return;
       const current = rawMap.get(key) || '';
       if (!current || updatedAt > current) rawMap.set(key, updatedAt);
@@ -9844,6 +10225,7 @@
         try {
           const rows = (await loadActiveOfferingsRows()).filter(isActiveOfferingRowAvailable);
           if (rows.length) sawRows = true;
+          popupMenuBatchSignal = buildPopupMenuBatchSignal(rows);
           strainAveragePricesByKey = buildStrainAveragePriceMap(rows.filter(isOfferingRowInCurrentAtlas));
           rows.forEach(r => {
             const strainName = ((r && (r.strain_name || r.strain_name_normalised)) || '').toString().trim();
@@ -10005,8 +10387,8 @@
         const byId = popupMenuUpdatedByShopId.get(String(loc.db_shop_id));
         if (byId) return byId;
         const meta = dbShopMetaById.get(loc.db_shop_id);
-        if (meta && (meta.fetched_at_utc || meta.updated_at)) {
-          return meta.fetched_at_utc || meta.updated_at;
+        if (meta && meta.menu_changed_at_utc) {
+          return getDisplayShopMetaUpdatedAt(meta);
         }
       }
 
@@ -11304,7 +11686,7 @@
           ? ''
           : (
               `<button type="button" class="popup-journey-start-btn" data-index="${i}">Set itinerary start</button>` +
-              `<button type="button" class="popup-journey-add-btn" data-index="${i}">Add to itinerary</button>` +
+              `<button type="button" class="popup-journey-add-btn" data-index="${i}">Add Stop</button>` +
               `<span class="popup-journey-order" data-popup-journey-order="${i}" hidden>` +
                 `<button type="button" class="popup-journey-move-btn" data-popup-journey-move="up" data-index="${i}" aria-label="Move ${escapeHtmlAttr(loc.name || 'place')} earlier in itinerary" title="Move earlier">−</button>` +
                 `<button type="button" class="popup-journey-move-btn" data-popup-journey-move="down" data-index="${i}" aria-label="Move ${escapeHtmlAttr(loc.name || 'place')} later in itinerary" title="Move later">+</button>` +
@@ -12659,7 +13041,7 @@
         }
 
         const entry = shopsByKey.get(summaryKey);
-        const updatedAt = ((row && (row.updated_at || row.last_seen_at_utc)) || '').toString().trim();
+        const updatedAt = getDisplayOfferingUpdatedAt(row);
         if (updatedAt && (!entry.updatedAt || updatedAt > entry.updatedAt)) {
           entry.updatedAt = updatedAt;
         }
@@ -13157,8 +13539,8 @@
         if (Number.isFinite(loc.db_shop_id)) {
           priceMenusLink.hidden = false;
           priceMenusLink.href = priceMenusUrl({ shopId: loc.db_shop_id });
-          priceMenusLink.textContent = 'Open Price & Menus';
-          priceMenusLink.setAttribute('aria-label', `Open Price & Menus for ${loc.name || 'this destination'}`);
+          priceMenusLink.textContent = 'Research Prices';
+          priceMenusLink.setAttribute('aria-label', `Research prices for ${loc.name || 'this destination'}`);
         } else {
           priceMenusLink.hidden = true;
           priceMenusLink.href = 'database.html';
@@ -13169,7 +13551,7 @@
       const inItinerary = stopIndex >= 0;
       if (addStopBtn) {
         addStopBtn.hidden = isArea;
-        addStopBtn.textContent = inItinerary ? 'Remove from itinerary' : 'Add to itinerary';
+        addStopBtn.textContent = inItinerary ? 'Remove Stop' : 'Add Stop';
         addStopBtn.classList.toggle('is-remove', inItinerary);
         addStopBtn.setAttribute('aria-pressed', inItinerary ? 'true' : 'false');
       }
@@ -13213,7 +13595,7 @@
         topShopsEl.innerHTML = '<div class="strain-spotlight-empty">Search or tap a strain to see matching shops.</div>';
         if (priceGuideLink) {
           priceGuideLink.href = 'database.html';
-          priceGuideLink.textContent = 'Open Price & Menus';
+          priceGuideLink.textContent = 'Research Prices';
         }
         return;
       }
@@ -14483,7 +14865,7 @@
         const index = parseInt(btn.getAttribute('data-index') || '', 10);
         const stopIndex = getJourneyStopIndexByLocationIndex(index);
         const inItinerary = stopIndex >= 0;
-        btn.textContent = inItinerary ? 'Remove from itinerary' : 'Add to itinerary';
+        btn.textContent = inItinerary ? 'Remove Stop' : 'Add Stop';
         btn.classList.toggle('is-remove', inItinerary);
         btn.setAttribute('aria-pressed', inItinerary ? 'true' : 'false');
       });
@@ -14836,7 +15218,7 @@
           : '<span class="destination-card-chip">No saved strains matched yet</span>';
         const inItinerary = !!item.inItinerary;
         const itineraryStopIndex = Number.isInteger(item.itineraryStopIndex) ? item.itineraryStopIndex : -1;
-        const itineraryActionText = inItinerary ? 'Remove from itinerary' : 'Add to itinerary';
+        const itineraryActionText = inItinerary ? 'Remove Stop' : 'Add Stop';
         const itineraryOrderHtml = inItinerary
           ? (
               `<span class="destination-card-order">` +

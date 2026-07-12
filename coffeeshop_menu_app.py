@@ -680,11 +680,21 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                so.package_price_amount,
                so.package_weight_g,
                so.notes,
+               COALESCE(mh_new.menu_changed_at_utc, '') AS menu_changed_at_utc,
+               COALESCE(m.fetched_at_utc, '') AS menu_checked_at_utc,
+               COALESCE(m.status, '') AS menu_status,
                so.last_seen_at_utc,
                so.updated_at
         FROM shop_offerings so
         JOIN shops s ON s.id = so.shop_id
         JOIN strains st ON st.id = so.strain_id
+        LEFT JOIN menus m ON m.shop_id = so.shop_id
+        LEFT JOIN (
+            SELECT shop_id, MAX(fetched_at_utc) AS menu_changed_at_utc
+            FROM menu_history
+            WHERE event_type = 'new_menu'
+            GROUP BY shop_id
+        ) mh_new ON mh_new.shop_id = so.shop_id
         WHERE so.status = 'active'
           AND COALESCE(s.show_in_admin, 1) = 1
           AND COALESCE(s.is_closed, 0) = 0
@@ -714,6 +724,9 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "package_price_amount": float(r["package_price_amount"] or r["price_amount"]),
             "package_weight_g": float(r["package_weight_g"] or 1),
             "notes": r["notes"] or "",
+            "menu_changed_at_utc": r["menu_changed_at_utc"] or "",
+            "menu_checked_at_utc": r["menu_checked_at_utc"] or "",
+            "menu_status": r["menu_status"] or "",
             "last_seen_at_utc": r["last_seen_at_utc"],
             "updated_at": r["updated_at"],
         }
@@ -732,6 +745,9 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                 "shop_key": item["shop_key"],
                 "shop_name": item["shop_name"],
                 "shop_city": item["shop_city"],
+                "menu_changed_at_utc": item["menu_changed_at_utc"],
+                "menu_checked_at_utc": item["menu_checked_at_utc"],
+                "menu_status": item["menu_status"],
             }
         )
 
@@ -752,6 +768,9 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "package_price_amount": float(r["package_price_amount"] or r["price_amount"]),
             "package_weight_g": float(r["package_weight_g"] or 1),
             "notes": r["notes"] or "",
+            "menu_changed_at_utc": r["menu_changed_at_utc"] or "",
+            "menu_checked_at_utc": r["menu_checked_at_utc"] or "",
+            "menu_status": r["menu_status"] or "",
             "created_at": r["created_at"],
         }
         for r in conn.execute(
@@ -770,10 +789,20 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                    me.package_price_amount,
                    me.package_weight_g,
                    me.notes,
+                   COALESCE(mh_new.menu_changed_at_utc, '') AS menu_changed_at_utc,
+                   COALESCE(m.fetched_at_utc, '') AS menu_checked_at_utc,
+                   COALESCE(m.status, '') AS menu_status,
                    me.created_at
             FROM menu_entries me
             JOIN strains st ON st.id = me.strain_id
             JOIN shops s ON s.id = me.shop_id
+            LEFT JOIN menus m ON m.shop_id = me.shop_id
+            LEFT JOIN (
+                SELECT shop_id, MAX(fetched_at_utc) AS menu_changed_at_utc
+                FROM menu_history
+                WHERE event_type = 'new_menu'
+                GROUP BY shop_id
+            ) mh_new ON mh_new.shop_id = me.shop_id
             WHERE COALESCE(s.show_in_admin, 1) = 1
               AND COALESCE(s.is_closed, 0) = 0
             ORDER BY me.shop_id, st.name_display;
