@@ -12,7 +12,8 @@
     'locate3_strain_shelf',
     'budfinder_saved_journeys',
     'budfinder_map_focus_shops',
-    'budfinder_explorer_selected_shops'
+    'budfinder_explorer_selected_shops',
+    'budfinder_database_navigation_state'
   ];
   const DEFAULT_PERSONALISATION = {
     displayName: 'Explorer',
@@ -186,6 +187,12 @@
       .site-settings-button.danger {
         border-color: rgba(142, 54, 54, 0.28);
         color: #8e3636;
+      }
+
+      html[data-budfinder-mode="dark"] .site-settings-button.danger {
+        border-color: rgba(255, 179, 179, 0.42);
+        background: color-mix(in srgb, #8e3636 22%, var(--control-bg, #15201e));
+        color: #ffb3b3;
       }
 
       .site-settings-close {
@@ -406,6 +413,7 @@
     panel.querySelector('#site-reset-filters').addEventListener('click', () => {
       removeStorageKey('budfinder_map_focus_shops');
       removeStorageKey('budfinder_explorer_selected_shops');
+      removeStorageKey('budfinder_database_navigation_state');
       setStatus('Stored map handoff filters reset.');
     });
 

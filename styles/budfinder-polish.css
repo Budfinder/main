@@ -1,4 +1,25 @@
 /* Shared interaction and responsive refinements for the public Budfinder pages. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.atmosphere {
+  width: auto;
+  max-width: 100%;
+  overflow: clip;
+  contain: layout paint;
+}
+
+@media (min-width: 700px) and (max-width: 900px) {
+  .atmosphere-leaves,
+  .smoke-plume {
+    inset: 0 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
 
 :where(button, a, input, select, textarea):focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent, #4df49a) 72%, white);

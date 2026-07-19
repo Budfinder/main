@@ -3,15 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Budfinder | Amsterdam coffeeshop strain finder and map</title>
-  <meta name="description" content="Budfinder helps you search Amsterdam coffeeshop menu data, save strains, compare shops, explore locations, and plan an Amsterdam itinerary." />
-  <link rel="canonical" href="https://budfinder.app/" />
-  <meta property="og:title" content="Budfinder | Amsterdam coffeeshop strain finder" />
-  <meta property="og:description" content="Search Amsterdam coffeeshop menu data, save strains, compare shops, explore locations, and plan an Amsterdam itinerary." />
+  <title>Budfinder | Find the right Amsterdam coffeeshop in minutes</title>
+  <meta name="description" content="Search an Amsterdam strain, coffeeshop or neighbourhood and compare three ranked matches by price, distance and menu freshness." />
+  <link rel="canonical" href="https://budfinder.org/" />
+  <meta property="og:title" content="Budfinder | Find the right Amsterdam coffeeshop in minutes" />
+  <meta property="og:description" content="Search a strain, shop or neighbourhood. Compare ranked matches by price, distance and menu freshness." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://budfinder.app/" />
-  <meta property="og:image" content="https://budfinder.app/images/IMG_5124.ico" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="https://budfinder.org/" />
+  <meta property="og:image" content="https://budfinder.org/static/images/budfinder-social.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Budfinder Amsterdam map with a ranked coffeeshop result and walking route." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://budfinder.org/static/images/budfinder-social.png" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Budfinder",
+      "url": "https://budfinder.org/",
+      "description": "Search Amsterdam coffeeshop listings and compare known price, distance and menu-freshness signals.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://budfinder.org/map.html?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
   <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
   <style>
     :root {
@@ -397,7 +418,7 @@
       border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 999px;
       background: var(--chip-bg);
-      color: var(--muted);
+      color: var(--ink);
       font-size: 12px;
       font-weight: 900;
       text-transform: uppercase;
@@ -1138,6 +1159,14 @@
       gap: 10px;
     }
 
+    .market-signal-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .market-snapshot .insight-panel > span {
+      color: var(--muted);
+    }
+
     .insight-panel {
       min-width: 0;
       padding: 12px;
@@ -1169,19 +1198,97 @@
       line-height: 1.4;
     }
 
+    .coverage-counts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .coverage-counts > span {
+      display: grid;
+      gap: 3px;
+      padding: 10px;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      background: var(--panel-strong);
+    }
+
+    .coverage-counts strong {
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(22px, 2.6vw, 30px);
+      line-height: 1;
+    }
+
+    .coverage-counts small {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .coverage-filter-note {
+      padding-top: 8px;
+      border-top: 1px solid var(--panel-border);
+    }
+
+    .market-signal-card {
+      display: grid;
+      align-content: start;
+      min-height: 100%;
+      color: inherit;
+      text-decoration: none;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .market-signal-card:hover,
+    .market-signal-card:focus-visible {
+      border-color: var(--accent);
+      background: var(--control-bg-hover, var(--panel-strong));
+      transform: translateY(-2px);
+    }
+
+    .market-signal-card::after {
+      content: "Open Price & Menus →";
+      align-self: end;
+      margin-top: 12px;
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .market-list-card {
+      display: grid;
+      align-content: start;
+    }
+
     .insight-list {
       display: grid;
       gap: 7px;
       margin-top: 9px;
+      padding: 0;
+      list-style: none;
     }
 
-    .insight-item {
+    .insight-item a {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      min-height: 38px;
+      padding: 8px 10px;
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      background: var(--panel-strong);
       color: var(--ink);
       text-decoration: none;
+    }
+
+    .insight-item a:hover,
+    .insight-item a:focus-visible {
+      border-color: var(--accent);
+      background: var(--control-bg-hover, var(--panel-alt));
     }
 
     .insight-item b {
@@ -1196,6 +1303,20 @@
     .insight-item span {
       flex: 0 0 auto;
       color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .insight-empty {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .market-list-footer {
+      width: fit-content;
+      margin-top: 12px;
+      color: var(--ink);
       font-size: 12px;
       font-weight: 900;
     }
@@ -1341,8 +1462,12 @@
 
     .version-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
+      margin-top: 14px;
+    }
+
+    .release-status {
       margin-top: 14px;
     }
 
@@ -1355,7 +1480,7 @@
 
     .version-box span {
       display: block;
-      color: var(--soft);
+      color: var(--muted);
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
@@ -1511,6 +1636,10 @@
         display: grid;
       }
 
+      .coverage-counts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .board-head {
         display: grid;
       }
@@ -1542,6 +1671,208 @@
     }
   </style>
   <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260712-3" />
+  <style>
+    .hero-search-first {
+      min-height: min(820px, calc(100svh - 40px));
+      align-items: center;
+      padding-top: 104px;
+      padding-bottom: 54px;
+    }
+
+    .hero-search-first .hero-copy {
+      max-width: 720px;
+    }
+
+    .hero-search-first h1 {
+      max-width: 12ch;
+      margin-top: 18px;
+      font-size: clamp(48px, 6.2vw, 86px);
+      line-height: 0.94;
+    }
+
+    .hero-search-first .lead {
+      max-width: 58ch;
+      font-size: clamp(17px, 1.7vw, 21px);
+    }
+
+    .hero-search {
+      --ink: #f5fff8;
+      --muted: #c7d9d0;
+      --control-text: #f8fff9;
+      --control-muted: #c7d9d0;
+      margin-top: 30px;
+      padding: 8px;
+      border: 1px solid rgba(153, 255, 203, 0.3);
+      background: rgba(4, 14, 12, 0.84);
+      box-shadow: 0 18px 54px rgba(0, 0, 0, 0.34), 0 0 32px rgba(77, 244, 154, 0.1);
+    }
+
+    .hero-search .search-input-label {
+      padding: 4px 8px 0;
+    }
+
+    .hero-search .search-row {
+      margin-top: 7px;
+    }
+
+    .hero-search .search-row input {
+      min-height: 58px;
+      font-size: 18px;
+    }
+
+    .hero-search .search-row button {
+      min-height: 58px;
+      padding-inline: 22px;
+    }
+
+    .intent-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .intent-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 15px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.055);
+      color: var(--ink);
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .intent-action:hover,
+    .intent-action:focus-visible {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .live-proof {
+      --ink: #f5fff8;
+      --muted: #c7d9d0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1px;
+      margin-top: 20px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--line);
+    }
+
+    .live-proof > span {
+      display: grid;
+      flex: 1 1 210px;
+      gap: 3px;
+      min-height: 72px;
+      padding: 14px 16px;
+      background: rgba(7, 18, 16, 0.96);
+    }
+
+    .live-proof b {
+      color: var(--ink);
+      font-size: 17px;
+    }
+
+    .live-proof small,
+    .availability-note {
+      color: var(--muted);
+    }
+
+    .availability-note {
+      max-width: 68ch;
+      margin: 13px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 900px) {
+      .hero-search-first {
+        min-height: 0;
+        padding-top: 92px;
+      }
+
+      .hero-search-first .hero-media {
+        order: 2;
+      }
+
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding-bottom: calc(76px + env(safe-area-inset-bottom));
+      }
+
+      .app-mode-toggle {
+        position: fixed;
+        top: auto;
+        right: max(10px, env(safe-area-inset-right));
+        bottom: max(10px, env(safe-area-inset-bottom));
+        left: max(10px, env(safe-area-inset-left));
+        justify-content: stretch;
+        border-radius: 18px;
+      }
+
+      .app-mode-toggle a {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 48px;
+        padding: 0 8px;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .hero-search-first h1 {
+        font-size: clamp(43px, 13vw, 58px);
+      }
+
+      .hero-search {
+        padding: 7px;
+      }
+
+      .hero-search .search-row {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-search .search-row input,
+      .hero-search .search-row button {
+        width: 100%;
+      }
+
+      .intent-actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .intent-action {
+        padding-inline: 8px;
+        text-align: center;
+      }
+
+      .hero-search-first .hero-media {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav class="app-mode-toggle" aria-label="Main navigation">
@@ -1559,247 +1890,117 @@
   </div>
 
   <main class="page">
-    <section class="hero" aria-labelledby="home-title">
+    <section class="hero hero-search-first" aria-labelledby="home-title">
       <div class="hero-copy">
         <div class="brand">
           <img src="images/IMG_5124.ico" alt="" />
           <span>Budfinder</span>
         </div>
+        <span class="kicker">Amsterdam coffeeshop decision engine</span>
+        <h1 id="home-title">Find the right Amsterdam coffeeshop—in minutes.</h1>
+        <p class="lead">Search a strain, shop or neighbourhood. Every result shows price, distance and when its menu was last checked.</p>
 
-        <div class="kicker-row">
-          <span class="kicker">Coffeeshop-first Amsterdam map</span>
+        <form id="home-search-form" class="home-search hero-search" action="map.html" aria-label="Search Budfinder">
+          <label class="search-input-label" for="home-search-input">Strain, shop or neighbourhood</label>
+          <div class="search-row">
+            <input id="home-search-input" name="search" type="search" placeholder="Gelato, Family First, De Pijp…" autocomplete="off" enterkeyhint="search" />
+            <button class="primary-btn" type="submit">Show my best matches</button>
+          </div>
+        </form>
+
+        <div class="intent-actions" aria-label="Quick intents">
+          <a class="intent-action" href="map.html?source=home&amp;intent=nearby">Near me</a>
+          <a class="intent-action" href="database.html">Find a strain</a>
+          <a class="intent-action" href="map.html?source=home&amp;intent=itinerary">Plan a route</a>
         </div>
 
-        <h1 id="home-title">Find Amsterdam coffeeshops faster.</h1>
-        <p class="lead">Search strains, compare known menu signals, and plan your next stop with coffeeshop-first map intelligence.</p>
-
-        <div class="actions" aria-label="Primary actions">
-          <a class="primary-btn" href="map.html?source=home&intent=coffeeshops">Find My Next Stop</a>
-          <a class="secondary-btn" href="database.html">Search Strains</a>
-          <a class="tertiary-btn" href="map.html?source=home&intent=itinerary">Build a Route</a>
-        </div>
-
+        <p class="availability-note">Menu availability changes. Budfinder shows planning intelligence, never guaranteed stock. Location stays off until you choose a location feature.</p>
       </div>
 
       <aside class="hero-media" aria-label="Budfinder map preview">
         <picture class="hero-image-card">
-          <img src="static/images/budfinder-hero.png" width="1672" height="941" loading="eager" alt="Budfinder Amsterdam coffeeshop map focused on coffeeshop locations, route planning, and strain search." onerror="this.onerror=null; this.src='images/budfinder-hero.png';" />
+          <img src="static/images/budfinder-hero.png" width="1672" height="941" loading="eager" alt="Budfinder map showing ranked Amsterdam coffeeshop stops and a walking route." onerror="this.onerror=null; this.src='images/budfinder-hero.png';" />
         </picture>
         <div class="hero-caption" aria-hidden="true">
-          <span>Coffeeshops first</span>
-          <span>Menus, strains, routes</span>
+          <span>Three ranked matches</span>
+          <span>Price · distance · freshness</span>
         </div>
       </aside>
     </section>
 
-    <section class="section" aria-labelledby="quick-actions-title">
-      <span class="eyebrow">What can I do?</span>
-      <h2 id="quick-actions-title" class="section-title">Choose your next step.</h2>
-      <div class="simple-action-grid">
-        <a class="simple-action-card" href="map.html?source=home&intent=coffeeshops">
-          <b>1</b>
-          <strong>Find coffeeshops</strong>
-          <p>See nearby coffeeshops with strain, menu, distance, and route context before you move.</p>
-          <span>Find My Next Stop</span>
-        </a>
-        <a class="simple-action-card" href="database.html">
-          <b>2</b>
-          <strong>Research prices and menus</strong>
-          <p>Compare known prices and menus when you want to research before choosing a stop.</p>
-          <span>Search Strains</span>
-        </a>
-        <a class="simple-action-card" href="map.html?source=home&intent=itinerary">
-          <b>3</b>
-          <strong>Plan your route</strong>
-          <p>Turn promising shops into a simple route with walking time, distance, and likely spend.</p>
-          <span>Build a Route</span>
-        </a>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="quick-search-title">
-      <div class="theme-island" aria-label="Theme selector">
-        <span>Theme</span>
-        <select data-budfinder-vibe-selector aria-label="Choose visual theme"></select>
-      </div>
-      <form id="home-search-form" class="home-search" action="map.html" aria-labelledby="quick-search-title">
-        <div class="search-island-head">
-          <span class="eyebrow">Search</span>
-          <h2 id="quick-search-title" class="search-island-title">Search once. Choose faster.</h2>
-          <p class="search-island-copy">Search a strain, shop, or area and Budfinder opens the map with useful context.</p>
-        </div>
-        <label class="search-input-label" for="home-search-input">Strain, shop, or area</label>
-        <div class="search-row">
-          <input id="home-search-input" name="search" type="search" placeholder="Gelato, The Plug, De Pijp..." autocomplete="off" />
-          <button class="primary-btn" type="submit">Search Budfinder</button>
-        </div>
-        <div class="quick-chips" aria-label="Quick searches">
-          <button class="chip-btn" type="button" data-search="Gelato">Gelato</button>
-          <button class="chip-btn" type="button" data-search="Amnesia Haze">Amnesia Haze</button>
-          <button class="chip-btn" type="button" data-search="White Widow">White Widow</button>
-          <button class="chip-btn" type="button" data-search="Zkittlez">Zkittlez</button>
-          <button class="chip-btn" type="button" data-search="The Plug">The Plug</button>
-          <button class="chip-btn" type="button" data-search="Family First">Family First</button>
-          <button class="chip-btn" type="button" data-search="De Pijp">De Pijp</button>
-        </div>
-        <p class="showcase-status">Menu data changes quickly. Budfinder is planning intelligence, not a stock guarantee.</p>
-      </form>
-    </section>
-
-    <section class="section planning-panel" aria-labelledby="planning-emphasis-title">
-      <div>
-        <span class="eyebrow">Coffeeshop-first planning</span>
-        <h2 id="planning-emphasis-title">Start with coffeeshops.</h2>
-        <p>Add strains, routes, landmarks, food, hotels, and transport only when you need them. Budfinder keeps the first decision simple, then layers in the rest of Amsterdam when you are building a full day.</p>
-      </div>
-      <div class="planning-layers" aria-label="Optional map layers">
-        <span>Coffeeshops</span>
-        <span>Strains</span>
-        <span>Menus</span>
-        <span>Routes</span>
-        <span>Food</span>
-        <span>Hotels</span>
-        <span>Transport</span>
-        <span>Landmarks</span>
-      </div>
-    </section>
-
-    <details class="section intel-board launch-detail" aria-label="Live Budfinder showcase" data-home-detail="live-data-preview">
-      <summary>Live data preview</summary>
-      <div class="board-head">
-        <div>
-          <span class="eyebrow">Data preview</span>
-          <h2>A few live signals from the database.</h2>
-          <p id="showcase-status" class="showcase-status" aria-live="polite">Loading Amsterdam menu data...</p>
-        </div>
-        <button id="shuffle-showcase-btn" class="showcase-button" type="button">Shuffle</button>
-      </div>
-
-      <div id="shop-showcase" class="showcase-grid" aria-label="Featured shops">
-        <div class="showcase-skeleton" aria-hidden="true"></div>
-        <div class="showcase-skeleton" aria-hidden="true"></div>
-      </div>
-
-      <div id="strain-showcase" class="strain-row" aria-label="Featured strains">
-        <div class="showcase-skeleton" aria-hidden="true"></div>
-        <div class="showcase-skeleton" aria-hidden="true"></div>
-        <div class="showcase-skeleton" aria-hidden="true"></div>
-      </div>
-    </details>
-
-    <details class="section insights-panel launch-detail" aria-labelledby="amsterdam-insights-title" data-home-detail="amsterdam-data-signals">
-      <summary>Amsterdam data signals</summary>
+    <section class="insights-panel market-snapshot" aria-labelledby="market-snapshot-title">
       <div class="insights-head">
         <div>
-          <span class="eyebrow">Amsterdam Insights</span>
-          <h2 id="amsterdam-insights-title">Live signals to shape the plan.</h2>
-          <p>Compact price and strain signals from current menu data. Use them to choose what to search, compare, or add to a day out.</p>
+          <span class="eyebrow">Latest menu snapshot</span>
+          <h2 id="market-snapshot-title">What Budfinder’s data actually means</h2>
         </div>
-        <a class="card-link" href="database.html">Open Price &amp; Menus</a>
+        <p>Snapshot updated <strong id="snapshot-date">Loading…</strong>. These figures describe collected menu data, not guaranteed live stock.</p>
       </div>
-      <div id="amsterdam-insights" class="insights-grid" aria-live="polite">
-        <article class="insight-panel">
-          <span>Price index</span>
-          <strong>Loading...</strong>
-          <p>Reading current Amsterdam listings.</p>
+      <div id="amsterdam-insights" class="insights-grid market-signal-grid" aria-live="polite">
+        <article class="insight-panel coverage-panel">
+          <span>Data coverage</span>
+          <div class="coverage-counts">
+            <span><strong id="catalog-shop-count">Loading…</strong><small id="catalog-shop-label">selected-city coffeeshops</small></span>
+            <span><strong id="catalog-listing-count">Loading…</strong><small>menu listings</small></span>
+          </div>
+          <p id="coverage-definition">The coffeeshop figure follows the city selected in the map’s location-file setting. One listing is one strain-and-price row in the latest source export.</p>
+          <p id="coverage-filter-note" class="coverage-filter-note">Current market signals are loading.</p>
         </article>
-        <article class="insight-panel">
-          <span>Most common strains</span>
-          <p>Loading top strains...</p>
+        <a class="insight-panel market-signal-card" href="database.html" aria-label="Open the strain price guide">
+          <span>Average strain price</span>
+          <strong id="home-average-price">Loading…</strong>
+          <p>The mean of each strain’s current average price, so heavily stocked strains do not dominate.</p>
+        </a>
+        <article class="insight-panel market-list-card">
+          <span>Most commonly stocked strains</span>
+          <strong id="home-most-common">Loading…</strong>
+          <p id="home-most-common-note">Ranked by the number of distinct shops with a current browsable listing.</p>
+          <ol id="home-most-common-list" class="insight-list" aria-label="Most commonly stocked strains"></ol>
+          <a class="market-list-footer" href="database.html">Explore all strains →</a>
         </article>
-        <article class="insight-panel">
-          <span>Rare finds in 2-3 shops</span>
-          <p>Looking for interesting scarce strains...</p>
+        <article class="insight-panel market-list-card">
+          <span>Random 2–3 shop finds</span>
+          <strong id="home-rare-count">Loading…</strong>
+          <p>A new selection on each visit, drawn only from strains stocked by exactly two or three currently represented shops.</p>
+          <ul id="home-rare-list" class="insight-list" aria-label="Random strains stocked in two or three shops"></ul>
+          <a class="market-list-footer" href="database.html?mode=rare">Explore all 2–3 shop finds →</a>
         </article>
       </div>
-    </details>
+    </section>
 
-    <section class="section" aria-labelledby="feature-title">
-      <span class="eyebrow">Why Budfinder</span>
-      <h2 id="feature-title" class="section-title">Amsterdam discovery, connected to actual planning.</h2>
-      <p class="section-copy">Budfinder helps you move from coffeeshop search to strain research to a practical itinerary without losing the thread.</p>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <strong>Search strains</strong>
-          <p>Search Gelato, Amnesia Haze, Zkittlez, hash, Cali, and more across known menu data.</p>
+    <section class="about-card release-status" aria-labelledby="release-status-title">
+      <span class="eyebrow">Release details</span>
+      <h2 id="release-status-title">Current version and data</h2>
+      <div class="version-grid">
+        <div class="version-box">
+          <span>App version</span>
+          <strong id="app-version">Loading…</strong>
         </div>
-        <div class="feature-card">
-          <strong>Explore Amsterdam places</strong>
-          <p>Start with coffeeshops, then add attractions, hotels, landmarks, food, and transport stops only when useful.</p>
+        <div class="version-box">
+          <span>Site updated</span>
+          <strong id="app-updated">Loading…</strong>
         </div>
-        <div class="feature-card">
-          <strong>Plan the walk before you go</strong>
-          <p>Add places to an itinerary, estimate distance, walking time, spend, and see which strains fit the route.</p>
+        <div class="version-box">
+          <span>Database snapshot</span>
+          <strong id="database-snapshot-date">Loading…</strong>
         </div>
       </div>
     </section>
 
-    <section id="how-it-works" class="section workflow">
-      <div>
-        <span class="eyebrow">How Budfinder works</span>
-        <h2>Find, compare, add, save.</h2>
-      </div>
-      <div class="workflow-grid">
-        <div class="workflow-card">
-          <b>1. Find</b>
-          <strong>Search a strain, shop, or place</strong>
-          <p>Start with the map for planning, or use Price & Menus when you want deeper strain and price research.</p>
-        </div>
-        <div class="workflow-card">
-          <b>2. Compare</b>
-          <strong>Judge usefulness, not just distance</strong>
-          <p>Cards surface price signals, walking time, data age, confidence, and why a place is worth considering.</p>
-        </div>
-        <div class="workflow-card">
-          <b>3. Plan</b>
-          <strong>Add places to an itinerary</strong>
-          <p>Mix locations, optional strains, walking estimates, and saved journeys so the day feels clear before you move.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section about-grid" aria-label="Budfinder data and version">
-      <div class="about-card">
-        <span class="eyebrow">Data notes</span>
-        <h2>Helpful guidance, not guaranteed stock.</h2>
-        <p>Budfinder uses menu and listing data to make Amsterdam coffeeshop exploration easier. Menus, prices, and availability can change quickly, so treat listings as planning guidance and check with the shop before travelling far. Location is only used when you choose location-based features.</p>
-      </div>
-      <div class="about-card">
-        <span class="eyebrow">Release intel</span>
-        <h2>Current build</h2>
-        <div class="version-grid">
-          <div class="version-box">
-            <span>App version</span>
-            <strong>1.19</strong>
-          </div>
-          <div class="version-box">
-            <span>Updated</span>
-            <strong>12 July 2026</strong>
-          </div>
-          <div class="version-box">
-            <span>Database snapshot</span>
-            <strong id="snapshot-date">Loading...</strong>
-          </div>
-          <div class="version-box">
-            <span>Amsterdam picks</span>
-            <strong id="database-counts">Loading...</strong>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <p class="note">Budfinder is for responsible planning, not a stock guarantee. Please follow local laws, respect coffeeshop rules, check before crossing town for one item, and consume responsibly.</p>
+    <p class="note">For adults planning responsibly. Follow local laws and coffeeshop rules, and check before travelling across town for a specific item.</p>
   </main>
 
-  <script src="scripts/budfinder-theme.js?v=20260706-readable-dark1"></script>
-  <script src="scripts/budfinder-page-settings.js?v=20260712-focus2"></script>
+  <script src="scripts/budfinder-logos.js?v=20260719-1"></script>
+  <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260719-contrast1"></script>
   <script>
     (() => {
-      const APP_VERSION = '1.19';
-      const APP_UPDATED = '12 July 2026';
+      const APP_VERSION = '1.2';
+      const APP_UPDATED = '19 July 2026';
       const state = {
         shops: [],
         offerings: [],
+        marketSnapshot: null,
         shopLogoByKey: new Map(),
         strainImageByKey: new Map(),
         shopCards: [],
@@ -1808,6 +2009,10 @@
 
       const shopShowcase = document.getElementById('shop-showcase');
       const strainShowcase = document.getElementById('strain-showcase');
+      const appVersionEl = document.getElementById('app-version');
+      const appUpdatedEl = document.getElementById('app-updated');
+      if (appVersionEl) appVersionEl.textContent = `v${APP_VERSION}`;
+      if (appUpdatedEl) appUpdatedEl.textContent = APP_UPDATED;
       const showcaseStatus = document.getElementById('showcase-status');
       const shuffleBtn = document.getElementById('shuffle-showcase-btn');
       const insightsEl = document.getElementById('amsterdam-insights');
@@ -1873,6 +2078,43 @@
       }
 
       const rareVisitSeed = `${Date.now()}-${Math.random()}`;
+      const LOCATION_DATA_STORAGE_KEY = 'budfinder_location_data_csv_path';
+
+      function selectedCityFromLocationPreference() {
+        let selectedPath = '';
+        try {
+          const stored = window.localStorage.getItem(LOCATION_DATA_STORAGE_KEY);
+          if (stored) {
+            try {
+              selectedPath = JSON.parse(stored);
+            } catch (_err) {
+              selectedPath = stored;
+            }
+          }
+        } catch (_err) {
+          // Storage is optional; Amsterdam remains the default city.
+        }
+        if (typeof selectedPath !== 'string' || !selectedPath.trim()) return 'Amsterdam';
+        let filename = selectedPath.split(/[?#]/)[0].split('/').pop() || '';
+        try {
+          filename = decodeURIComponent(filename);
+        } catch (_err) {
+          // Keep the original filename if a stored path is malformed.
+        }
+        const city = filename
+          .replace(/\.csv$/i, '')
+          .replace(/([a-z])([A-Z])/g, '$1 $2')
+          .replace(/[_-]+/g, ' ')
+          .replace(/\s+loc(?:ation)?\s*\d*$/i, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (!city) return 'Amsterdam';
+        return city
+          .split(' ')
+          .filter(Boolean)
+          .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+          .join(' ');
+      }
 
       function formatDate(value) {
         if (!value) return '';
@@ -1944,16 +2186,6 @@
         return url.pathname.split('/').pop() + url.search;
       }
 
-      function logoSlug(value) {
-        return String(value || '')
-          .trim()
-          .toLowerCase()
-          .replace(/^cs-/, '')
-          .replace(/&/g, ' and ')
-          .replace(/[^a-z0-9]+/g, '_')
-          .replace(/^_+|_+$/g, '');
-      }
-
       function initials(value, fallback) {
         const parts = String(value || '').trim().split(/\s+/).filter(Boolean);
         return (parts.slice(0, 2).map(part => part.charAt(0).toUpperCase()).join('') || fallback).slice(0, 2);
@@ -1986,20 +2218,9 @@
 
       function shopLogoCandidates(shopKey, shopName) {
         const explicit = state.shopLogoByKey.get(String(shopKey || '').trim());
-        const bases = explicit
-          ? [explicit]
-          : [logoSlug(shopKey), logoSlug(shopName)].filter(Boolean).flatMap(slug => [`${slug}.png`, `${slug}.jpg`, `${slug}.svg`]);
-        const paths = [];
-        bases.forEach(raw => {
-          const clean = String(raw || '').replace(/^\.?\//, '').replace(/^\/+/, '');
-          if (!clean) return;
-          const parts = clean.split('/').filter(Boolean);
-          const basename = parts[parts.length - 1] || clean;
-          if (clean.includes('/')) paths.push(clean);
-          paths.push(`images/logos/${encodeURIComponent(basename)}`);
-          paths.push(`images/logos/${basename}`);
-        });
-        return Array.from(new Set(paths));
+        return window.BudfinderLogos
+          ? window.BudfinderLogos.candidates({ filename: explicit, shopKey, shopName })
+          : [];
       }
 
       function shopLogoHtml(shop) {
@@ -2026,13 +2247,7 @@
       }
 
       window.handleHomeShopLogoError = img => {
-        const candidates = String(img.getAttribute('data-candidates') || '').split('|').filter(Boolean);
-        const nextIndex = Number(img.getAttribute('data-idx') || 0) + 1;
-        if (candidates[nextIndex]) {
-          img.setAttribute('data-idx', String(nextIndex));
-          img.src = candidates[nextIndex];
-          return;
-        }
+        if (window.BudfinderLogos && window.BudfinderLogos.advanceImage(img)) return;
         img.remove();
       };
 
@@ -2149,16 +2364,6 @@
           text.length < 4;
       }
 
-      function rareFindScore(card) {
-        if (!card || (card.count !== 2 && card.count !== 3) || looksLikeHouseExclusive(card.name)) return -Infinity;
-        const name = normalise(card.name);
-        const famousSignals = ['zushi', 'runtz', 'gelato', 'gelonade', 'sherbet', 'zkittlez', 'biscotti', 'mac', 'zheetos', 'gushers', 'rs11', 'blue', 'rainbow', 'wedding', 'lemon', 'cali'];
-        const fame = famousSignals.some(signal => name.includes(signal)) ? 3 : 0;
-        const recent = isRecent(card.latest, 120) ? 2 : 0;
-        const priced = Number.isFinite(Number(card.price)) ? 1 : 0;
-        return (5 - card.count) * 2 + fame + recent + priced;
-      }
-
       function weeklySeed() {
         return Math.floor(Date.now() / (7 * 86400000));
       }
@@ -2173,58 +2378,153 @@
         return ((hash >>> 0) % 10000) / 10000;
       }
 
+      function isClosedMarketShop(shop) {
+        const value = shop && shop.is_closed;
+        return value === true || Number(value) === 1 || normalise(value) === 'true';
+      }
+
+      function isHiddenMarketShop(shop) {
+        if (!shop || shop.show_in_admin == null) return false;
+        const value = shop.show_in_admin;
+        const text = normalise(value);
+        return value === false || Number(value) === 0 || ['false', 'no', 'n', 'off'].includes(text);
+      }
+
+      function hasUnavailableMarketStatus(shop) {
+        const status = normalise(shop && shop.menu_status);
+        return Boolean(status && ['closed', 'archived', 'archive', 'previous', 'old', 'error', 'failed'].includes(status));
+      }
+
+      function marketSourceToken(value) {
+        let decoded = String(value || '');
+        try {
+          decoded = decodeURIComponent(decoded);
+        } catch (_err) {
+          // Keep malformed source text usable for a best-effort comparison.
+        }
+        return decoded
+          .toLowerCase()
+          .replace(/^cs-/, '')
+          .replace(/&/g, 'and')
+          .replace(/[^a-z0-9]+/g, '');
+      }
+
+      function marketShopSourceTokens(shop) {
+        return [
+          marketSourceToken(shop && shop.name),
+          marketSourceToken(String((shop && shop.shop_key) || '').replace(/^cs-/, ''))
+        ].filter(token => token.length >= 5);
+      }
+
+      function buildMarketSnapshot() {
+        const shopById = new Map(state.shops.map(shop => [String(shop.shop_id), shop]));
+        const closedTokens = Array.from(new Set(
+          state.shops
+            .filter(isClosedMarketShop)
+            .flatMap(marketShopSourceTokens)
+        ));
+        const hasSourceConflict = shop => {
+          const source = marketSourceToken(shop && shop.image_url);
+          if (!source) return false;
+          const ownTokens = new Set(marketShopSourceTokens(shop));
+          return closedTokens.some(token => !ownTokens.has(token) && source.includes(token));
+        };
+        const unavailableShopIds = new Set(
+          state.shops
+            .filter(shop => isClosedMarketShop(shop) || isHiddenMarketShop(shop) || hasUnavailableMarketStatus(shop) || hasSourceConflict(shop))
+            .map(shop => String(shop.shop_id || '').trim())
+            .filter(Boolean)
+        );
+        const browsableOfferings = state.offerings.filter(item => {
+          const shopId = String(item && item.shop_id || '').trim();
+          return Boolean(shopId && shopById.has(shopId) && !unavailableShopIds.has(shopId));
+        });
+        const strains = new Map();
+        browsableOfferings.forEach(item => {
+          const name = String(item.strain_name_normalised || item.strain_name || '').trim();
+          const price = Number(item.price_amount);
+          if (!name || !Number.isFinite(price)) return;
+          const key = normalise(name);
+          if (!strains.has(key)) strains.set(key, { name, prices: [], shopIds: new Set() });
+          const strain = strains.get(key);
+          strain.prices.push(price);
+          if (item.shop_id != null) strain.shopIds.add(String(item.shop_id));
+        });
+        const strainRows = Array.from(strains.values()).map(strain => ({
+          ...strain,
+          averagePrice: strain.prices.reduce((sum, price) => sum + price, 0) / strain.prices.length,
+          shopCount: strain.shopIds.size
+        }));
+        const strainAverages = strainRows.map(strain => strain.averagePrice).filter(Number.isFinite);
+        const averagePrice = strainAverages.length
+          ? strainAverages.reduce((sum, price) => sum + price, 0) / strainAverages.length
+          : null;
+        const commonStrains = strainRows
+          .slice()
+          .sort((a, b) => b.shopCount - a.shopCount || a.name.localeCompare(b.name))
+          .slice(0, 5);
+        const allRareStrains = strainRows.filter(strain => strain.shopCount === 2 || strain.shopCount === 3);
+        const readerFriendlyRareStrains = allRareStrains.filter(strain => !looksLikeHouseExclusive(strain.name));
+        const rarePool = readerFriendlyRareStrains.length >= 5 ? readerFriendlyRareStrains : allRareStrains;
+        const rareStrains = rarePool
+          .slice()
+          .sort((a, b) => seededNoise(a.name, rareVisitSeed) - seededNoise(b.name, rareVisitSeed))
+          .slice(0, 5);
+        return {
+          averagePrice,
+          commonStrains,
+          rareStrains,
+          rareCount: allRareStrains.length,
+          browsableListingCount: browsableOfferings.length,
+          representedShopCount: new Set(browsableOfferings.map(item => String(item.shop_id))).size
+        };
+      }
+
       function renderInsights() {
         if (!insightsEl) return;
-        const amsterdamOfferings = state.offerings.filter(item => normalise(item.shop_city) === 'amsterdam');
-        const prices = amsterdamOfferings
-          .map(item => Number(item.price_amount))
-          .filter(value => Number.isFinite(value) && value > 0 && value <= 80);
-        const average = prices.length ? prices.reduce((sum, value) => sum + value, 0) / prices.length : null;
-        const contributingShops = new Set(amsterdamOfferings
-          .filter(item => Number.isFinite(Number(item.price_amount)) && Number(item.price_amount) > 0)
-          .map(item => String(item.shop_id || item.shop_key || ''))
-          .filter(Boolean)).size;
-        const common = state.strainCards
-          .filter(card => card.count >= 2)
-          .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
-          .slice(0, 5);
-        const rare = state.strainCards
-          .map(card => ({
-            card,
-            score: rareFindScore(card),
-            noise: seededNoise(card.name, `rare-pick-${rareVisitSeed}`)
-          }))
-          .filter(item => Number.isFinite(item.score))
-          .sort((a, b) => b.score - a.score || a.card.name.localeCompare(b.card.name))
-          .slice(0, 30)
-          .sort((a, b) => b.noise - a.noise || b.score - a.score || a.card.name.localeCompare(b.card.name))
-          .slice(0, 5)
-          .map(item => item.card);
-
-        const listHtml = (items, labelFn) => items.length
-          ? `<div class="insight-list">${items.map(card => `
-              <a class="insight-item" href="${escapeHtml(strainMapUrl(card))}">
-                <b>${escapeHtml(displayName(card.name))}</b>
-                <span>${escapeHtml(labelFn(card))}</span>
+        state.marketSnapshot = buildMarketSnapshot();
+        const snapshot = state.marketSnapshot;
+        const averageEl = document.getElementById('home-average-price');
+        const commonEl = document.getElementById('home-most-common');
+        const commonNoteEl = document.getElementById('home-most-common-note');
+        const commonListEl = document.getElementById('home-most-common-list');
+        const rareEl = document.getElementById('home-rare-count');
+        const rareListEl = document.getElementById('home-rare-list');
+        const coverageNoteEl = document.getElementById('coverage-filter-note');
+        const strainListHtml = rows => rows.map(strain => {
+          const url = new URL('database.html', window.location.href);
+          url.searchParams.set('search', strain.name);
+          const shopLabel = `${strain.shopCount} shop${strain.shopCount === 1 ? '' : 's'}`;
+          const price = Number.isFinite(strain.averagePrice) ? plainPriceLabel(strain.averagePrice) : '';
+          return `
+            <li class="insight-item">
+              <a href="${escapeHtml(url.pathname.split('/').pop() + url.search)}">
+                <b>${escapeHtml(displayName(strain.name))}</b>
+                <span>${escapeHtml(`${shopLabel}${price ? ` · ${price}` : ''}`)}</span>
               </a>
-            `).join('')}</div>`
-          : '<p>Not enough current menu data yet.</p>';
-
-        insightsEl.innerHTML = `
-          <article class="insight-panel">
-            <span>Amsterdam Price Index</span>
-            <strong>${average ? escapeHtml(plainPriceLabel(average)) : 'Loading...'}</strong>
-            <p>${contributingShops ? `${contributingShops} shops contributing current price signals.` : 'Price signals appear as menus load.'}</p>
-          </article>
-          <article class="insight-panel">
-            <span>Most Common Strains</span>
-            ${listHtml(common, card => `${card.count} shops`)}
-          </article>
-          <article class="insight-panel">
-            <span>Rare Finds In 2-3 Shops</span>
-            ${listHtml(rare, card => `${card.count} shops`)}
-          </article>
-        `;
+            </li>
+          `;
+        }).join('');
+        if (averageEl) averageEl.textContent = Number.isFinite(snapshot.averagePrice) ? plainPriceLabel(snapshot.averagePrice) : 'Unavailable';
+        if (commonEl) commonEl.textContent = snapshot.commonStrains.length ? `Top ${snapshot.commonStrains.length}` : 'Unavailable';
+        if (commonNoteEl && snapshot.commonStrains.length) {
+          commonNoteEl.textContent = `Ranked across ${snapshot.representedShopCount.toLocaleString()} currently represented shops.`;
+        }
+        if (commonListEl) {
+          commonListEl.innerHTML = snapshot.commonStrains.length
+            ? strainListHtml(snapshot.commonStrains)
+            : '<li class="insight-empty">Current strain rankings are unavailable.</li>';
+        }
+        if (rareEl) rareEl.textContent = `${snapshot.rareCount.toLocaleString()} qualifying strains`;
+        if (rareListEl) {
+          rareListEl.innerHTML = snapshot.rareStrains.length
+            ? strainListHtml(snapshot.rareStrains)
+            : '<li class="insight-empty">No 2–3 shop strains are available in this snapshot.</li>';
+        }
+        if (coverageNoteEl) {
+          const excluded = Math.max(0, state.offerings.length - snapshot.browsableListingCount);
+          coverageNoteEl.textContent = `The selected-city count is separate from the wider market signals, which use ${snapshot.browsableListingCount.toLocaleString()} browsable listings across ${snapshot.representedShopCount.toLocaleString()} represented shops after excluding ${excluded.toLocaleString()} listing${excluded === 1 ? '' : 's'} from unavailable shops.`;
+        }
       }
 
       function renderShops() {
@@ -2349,16 +2649,25 @@
 
       function updateManifest(manifest) {
         const snapshotEl = document.getElementById('snapshot-date');
-        const countsEl = document.getElementById('database-counts');
-        if (snapshotEl) snapshotEl.textContent = formatDate(manifest && manifest.exported_at_utc) || APP_UPDATED;
-        if (countsEl) {
-          const counts = manifest && manifest.counts ? manifest.counts : {};
-          const shops = Number(counts.shops);
-          const strains = Number(counts.active_offerings);
-          countsEl.textContent = Number.isFinite(shops) && Number.isFinite(strains)
-            ? `${shops} shops - ${strains} listings`
-            : `${state.shopCards.length} shops - ${state.strainCards.length} strains`;
+        const databaseSnapshotEl = document.getElementById('database-snapshot-date');
+        const shopCountEl = document.getElementById('catalog-shop-count');
+        const shopLabelEl = document.getElementById('catalog-shop-label');
+        const listingCountEl = document.getElementById('catalog-listing-count');
+        const coverageDefinitionEl = document.getElementById('coverage-definition');
+        const snapshotDate = formatDate(manifest && manifest.exported_at_utc) || APP_UPDATED;
+        if (snapshotEl) snapshotEl.textContent = snapshotDate;
+        if (databaseSnapshotEl) databaseSnapshotEl.textContent = snapshotDate;
+        const counts = manifest && manifest.counts ? manifest.counts : {};
+        const listings = Number(counts.active_offerings);
+        const selectedCity = selectedCityFromLocationPreference();
+        const selectedCityKey = normalise(selectedCity);
+        const selectedCityShops = state.shops.filter(shop => normalise(shop && shop.city) === selectedCityKey);
+        if (shopCountEl) shopCountEl.textContent = selectedCityShops.length.toLocaleString();
+        if (shopLabelEl) shopLabelEl.textContent = `${selectedCity} coffeeshops`;
+        if (coverageDefinitionEl) {
+          coverageDefinitionEl.textContent = `The coffeeshop figure counts source records for ${selectedCity}, following the city selected in the map’s location-file setting. One listing is one strain-and-price row in the latest source export.`;
         }
+        if (listingCountEl) listingCountEl.textContent = (Number.isFinite(listings) ? listings : state.offerings.length).toLocaleString();
       }
 
       function openSearch(query) {
@@ -2437,13 +2746,25 @@
             });
         } catch (_err) {
           renderFallbackShowcase();
-          if (insightsEl) {
-            insightsEl.innerHTML = `
-              <article class="insight-panel"><span>Price index</span><strong>Unavailable</strong><p>Amsterdam menu data could not be loaded.</p></article>
-              <article class="insight-panel"><span>Most common strains</span><p>Try searching Gelato, Amnesia Haze, or Zkittlez.</p></article>
-              <article class="insight-panel"><span>Rare finds this week</span><p>Rare finds appear when current menu data is available.</p></article>
-            `;
-          }
+          const unavailableIds = [
+            'catalog-shop-count',
+            'catalog-listing-count',
+            'home-average-price',
+            'home-most-common',
+            'home-rare-count'
+          ];
+          unavailableIds.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = 'Unavailable';
+          });
+          const commonNote = document.getElementById('home-most-common-note');
+          const coverageNote = document.getElementById('coverage-filter-note');
+          const commonList = document.getElementById('home-most-common-list');
+          const rareList = document.getElementById('home-rare-list');
+          if (commonNote) commonNote.textContent = 'Current menu data could not be loaded.';
+          if (coverageNote) coverageNote.textContent = 'Refresh the page to try loading the latest source export again.';
+          if (commonList) commonList.innerHTML = '<li class="insight-empty">Current strain rankings are unavailable.</li>';
+          if (rareList) rareList.innerHTML = '<li class="insight-empty">Current 2–3 shop strains are unavailable.</li>';
           if (showcaseStatus) {
             showcaseStatus.textContent = 'Amsterdam menu data could not be loaded. Try refreshing the page.';
           }

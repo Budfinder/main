@@ -3,13 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Budfinder Map | Amsterdam coffeeshop menu planner</title>
-  <meta name="description" content="Use Budfinder's Amsterdam coffeeshop map to compare strain matches, nearby shops, walking time, price signals, and directions from your Starting point." />
-  <link rel="canonical" href="https://budfinder.app/map.html" />
-  <meta property="og:title" content="Budfinder Map | Amsterdam coffeeshop menu planner" />
-  <meta property="og:description" content="Compare strain matches, nearby coffeeshops, walking time, price signals, and directions from your Starting point." />
+  <title>Amsterdam Coffeeshop Map &amp; Ranked Matches | Budfinder</title>
+  <meta name="description" content="Search an Amsterdam strain, shop or neighbourhood and compare three coffeeshop matches by price, distance, confidence and menu freshness." />
+  <link rel="canonical" href="https://budfinder.org/map.html" />
+  <meta property="og:title" content="Amsterdam Coffeeshop Map &amp; Ranked Matches | Budfinder" />
+  <meta property="og:description" content="Compare three ranked coffeeshop matches and open directions or add a stop to your route." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://budfinder.app/map.html" />
+  <meta property="og:image" content="https://budfinder.app/static/images/budfinder-social.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://budfinder.app/static/images/budfinder-social.png" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://budfinder.app/"},
+        {"@type": "ListItem", "position": 2, "name": "Map", "item": "https://budfinder.app/map.html"}
+      ]
+    }
+  </script>
   <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
 
   <!-- Leaflet CSS -->
@@ -32,7 +47,7 @@
       --panel-strong: rgba(255, 252, 246, 0.94);
       --panel-border: rgba(98, 113, 95, 0.16);
       --ink: #203128;
-      --muted: #5b6b61;
+      --muted: #46534b;
       --accent: #2e7b59;
       --accent-strong: #205b42;
       --accent-soft: rgba(46, 123, 89, 0.16);
@@ -1333,6 +1348,14 @@
     }
 
     .controls-header-main {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
       min-width: 0;
       flex: 1 1 auto;
       cursor: pointer;
@@ -1608,6 +1631,32 @@
       background: var(--control-bg, rgba(255, 255, 255, 0.52));
     }
 
+    .route-tools-dropdown {
+      overflow: hidden;
+    }
+
+    .route-tools-dropdown:not([open]) > :not(summary) {
+      display: none !important;
+    }
+
+    .route-tools-dropdown > summary {
+      min-height: 48px;
+      padding: 14px;
+      color: var(--control-text, var(--ink));
+      cursor: pointer;
+    }
+
+    .route-tools-dropdown[open] > summary {
+      border-bottom: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+    }
+
+    .route-tools-dropdown-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 12px;
+    }
+
     .route-panel-topline { order: 0; }
     .map-mode-strip { order: 1; }
     #destination-picker-wrap { order: 2; }
@@ -1732,6 +1781,25 @@
       color: var(--control-text, var(--ink));
     }
 
+    .best-match-identity {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .best-match-logo {
+      flex: 0 0 auto;
+      width: 46px;
+      height: 46px;
+      padding: 4px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
+      border-radius: 12px;
+      background: #fff;
+      object-fit: contain;
+      box-shadow: 0 5px 14px rgba(23, 52, 39, 0.08);
+    }
+
     .best-match-main {
       display: grid;
       gap: 2px;
@@ -1781,9 +1849,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 32px;
+      min-height: 44px;
       min-width: 0;
-      padding: 7px 12px;
+      padding: 7px;
       border: 1px solid var(--control-border, rgba(92, 107, 97, 0.12));
       border-radius: 999px;
       background: var(--control-bg, rgba(255, 255, 255, 0.68));
@@ -1792,8 +1860,10 @@
       font-weight: 900;
       line-height: 1.15;
       text-align: center;
+      text-decoration: none;
       white-space: normal;
-      overflow-wrap: anywhere;
+      overflow-wrap: normal;
+      word-break: normal;
       cursor: pointer;
     }
 
@@ -2279,7 +2349,7 @@
       padding: 0 7px;
       border-radius: 999px;
       background: rgba(255, 247, 232, 0.86);
-      color: var(--accent-strong);
+      color: #203128;
       font-size: 10px;
       font-weight: 900;
       letter-spacing: 0.05em;
@@ -2843,7 +2913,7 @@
     .destination-card-badge.is-selected {
       background: rgba(213, 239, 225, 0.86);
       border-color: rgba(32, 91, 66, 0.2);
-      color: var(--accent-strong);
+      color: #205b42;
     }
 
     .destination-card-badge.is-favourite {
@@ -2861,7 +2931,7 @@
     .destination-card-badge.is-freshness-fresh {
       background: rgba(213, 239, 225, 0.86);
       border-color: rgba(32, 91, 66, 0.18);
-      color: var(--accent-strong);
+      color: #205b42;
     }
 
     .destination-card-badge.is-freshness-recent {
@@ -2885,7 +2955,7 @@
     .destination-card-badge.is-confidence-high {
       background: rgba(213, 239, 225, 0.86);
       border-color: rgba(32, 91, 66, 0.18);
-      color: var(--accent-strong);
+      color: #205b42;
     }
 
     .destination-card-badge.is-confidence-medium,
@@ -4626,10 +4696,52 @@
     }
 
     #category-filters input[type="checkbox"] {
+      appearance: none;
+      flex: 0 0 20px;
       width: 20px;
       height: 20px;
       margin: 0;
-      accent-color: var(--accent);
+      border: 2px solid var(--control-border, rgba(92, 107, 97, 0.45));
+      border-radius: 50%;
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.9));
+      box-shadow: inset 0 0 0 3px var(--control-bg-strong, rgba(255, 255, 255, 0.9));
+    }
+
+    #category-filters input[type="checkbox"]:checked {
+      border-color: var(--control-selected-border, var(--accent));
+      background: var(--control-selected-border, var(--accent));
+    }
+
+    #category-filters input[type="checkbox"]:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--accent) 38%, transparent);
+      outline-offset: 3px;
+    }
+
+    #category-filters label:has(input:checked) {
+      border-color: var(--control-selected-border, var(--accent));
+      background: var(--control-selected-bg, color-mix(in srgb, var(--accent) 14%, var(--control-bg)));
+      color: var(--control-text, var(--ink));
+    }
+
+    .map-category-shortcuts {
+      padding-bottom: 12px;
+    }
+
+    .map-category-shortcuts #category-filters {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 2px 2px 6px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: thin;
+      scroll-snap-type: x proximity;
+    }
+
+    .map-category-shortcuts #category-filters label {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      white-space: nowrap;
     }
 
     .leaflet-control-zoom a,
@@ -5641,7 +5753,7 @@
       background: rgba(255, 255, 255, 0.96);
       border: 1px solid rgba(92, 107, 97, 0.18);
       border-radius: 999px;
-      color: var(--accent-strong);
+      color: #203128;
       font-weight: 700;
       font-size: 11px;
       line-height: 1;
@@ -5842,6 +5954,25 @@
       background: var(--control-bg, rgba(255, 255, 255, 0.5));
     }
 
+    .controls-header-main {
+      background: transparent !important;
+      border: 0 !important;
+      color: var(--control-text, var(--ink)) !important;
+      box-shadow: none !important;
+    }
+
+    .selection-eyebrow,
+    .journey-section-eyebrow,
+    .settings-section h4,
+    #category-filters > span {
+      color: var(--control-text, var(--ink)) !important;
+    }
+
+    .leaflet-control-attribution a {
+      color: #174d66;
+      font-weight: 700;
+    }
+
     .controls button,
     .controls .panel-link-button,
     .selection-actions button,
@@ -5910,6 +6041,21 @@
       border-radius: 999px;
       line-height: 1.15;
       color: var(--control-text, var(--ink));
+    }
+
+    .destination-card-badge {
+      color: #203128 !important;
+    }
+
+    .destination-card-badge.is-selected,
+    .destination-card-badge.is-freshness-fresh,
+    .destination-card-badge.is-confidence-high {
+      color: #205b42 !important;
+    }
+
+    .destination-card-badge.is-freshness-old,
+    .destination-card-badge.is-confidence-low {
+      color: #7b2f2f !important;
     }
 
     .controls label,
@@ -6038,13 +6184,333 @@
     }
   </style>
   <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260712-3" />
+  <style>
+    .simple-shop-marker {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 3px solid #07100f;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4df49a, #d7ed70);
+      color: #07100f;
+      box-shadow: 0 7px 16px rgba(0, 0, 0, 0.38);
+    }
+
+    .simple-shop-marker::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      width: 9px;
+      height: 9px;
+      background: #b6e878;
+      transform: rotate(45deg);
+      z-index: -1;
+    }
+
+    .simple-shop-marker > span {
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .simple-shop-marker > b {
+      position: absolute;
+      top: -13px;
+      right: -16px;
+      min-width: 38px;
+      padding: 3px 5px;
+      border-radius: 999px;
+      background: #f0b854;
+      color: #07100f;
+      font-size: 9px;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .journey-progressive,
+    .destination-picker-progressive,
+    .destination-results-progressive {
+      border: 1px solid var(--control-border, rgba(153, 255, 203, 0.18));
+      border-radius: 12px;
+      background: var(--control-bg-strong, rgba(7, 18, 16, 0.78));
+    }
+
+    .journey-progressive-summary,
+    .destination-picker-progressive > summary,
+    .destination-results-progressive > summary {
+      min-height: 44px;
+      padding: 13px 14px;
+      color: var(--control-text, #f4fff8);
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .journey-progressive-content,
+    .destination-picker-progressive > label,
+    .destination-picker-progressive > select,
+    .destination-results-progressive > :not(summary) {
+      margin: 0 12px 12px;
+    }
+
+    .journey-progressive .journey-planner-head {
+      display: none;
+    }
+
+    /* Simplified sidebar: primary decisions stay visible; supporting tools open on demand. */
+    .route-panel-topline { order: 0; }
+    .map-mode-strip { order: 1; }
+    #journey-planner-card { order: 2; }
+    #destination-picker-wrap { order: 3; }
+    #destination-card-deck { order: 4; }
+    .route-secondary-tools { order: 5; }
+    #route-status { order: 6; }
+
+    .map-quick-searches,
+    .route-secondary-tools,
+    .journey-save-progressive,
+    .wanted-list-panel {
+      border: 1px solid var(--control-border, rgba(153, 255, 203, 0.18));
+      border-radius: 12px;
+      background: var(--control-bg-strong, rgba(7, 18, 16, 0.78));
+      overflow: hidden;
+    }
+
+    .map-quick-searches > summary,
+    .route-secondary-tools > summary,
+    .journey-save-progressive > summary,
+    .sidebar-drawer-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 44px;
+      padding: 12px 14px;
+      color: var(--control-text, #f4fff8);
+      font-weight: 850;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .map-quick-searches > summary::-webkit-details-marker,
+    .route-secondary-tools > summary::-webkit-details-marker,
+    .journey-save-progressive > summary::-webkit-details-marker,
+    .journey-progressive-summary::-webkit-details-marker,
+    .sidebar-drawer-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .map-quick-searches > summary::after,
+    .route-secondary-tools > summary::after,
+    .journey-save-progressive > summary::after,
+    .journey-progressive-summary::after,
+    .sidebar-drawer-summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .map-quick-searches[open] > summary::after,
+    .route-secondary-tools[open] > summary::after,
+    .journey-save-progressive[open] > summary::after,
+    .journey-progressive[open] > .journey-progressive-summary::after,
+    .wanted-list-panel[open] > .sidebar-drawer-summary::after {
+      content: "−";
+    }
+
+    .map-quick-searches .map-quick-chips,
+    .route-secondary-tools-content,
+    .journey-save-progressive-content,
+    .sidebar-drawer-content {
+      margin: 0;
+      padding: 0 12px 12px;
+    }
+
+    .journey-progressive-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      list-style: none;
+    }
+
+    .journey-progressive-summary > span,
+    .sidebar-drawer-summary > span {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .journey-progressive-summary strong,
+    .sidebar-drawer-summary strong {
+      color: var(--control-text, var(--ink));
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .journey-progressive-summary small,
+    .sidebar-drawer-summary small {
+      color: var(--control-muted, var(--muted));
+      font-size: 11px;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .journey-progressive-content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .journey-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .journey-save-progressive {
+      background: var(--control-bg, rgba(255, 255, 255, 0.38));
+    }
+
+    .journey-save-progressive-content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .route-secondary-tools-content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .route-secondary-tools .control-divider {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .wanted-list-panel {
+      display: block;
+      padding: 0 !important;
+    }
+
+    .sidebar-drawer-content {
+      display: grid;
+      gap: 12px;
+    }
+
+    .settings-panel[hidden] {
+      display: none !important;
+    }
+
+    .settings-panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .best-match-action {
+      min-height: 44px;
+    }
+
+    @media (max-width: 767px), (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+      body {
+        --app-mobile-nav-clearance: calc(82px + env(safe-area-inset-bottom));
+        padding-bottom: calc(76px + env(safe-area-inset-bottom));
+      }
+
+      .app-mode-toggle {
+        position: fixed !important;
+        top: auto !important;
+        right: max(10px, env(safe-area-inset-right)) !important;
+        bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        left: max(10px, env(safe-area-inset-left)) !important;
+        justify-content: stretch;
+        border-radius: 18px;
+      }
+
+      .app-mode-toggle a,
+      .app-mode-toggle button {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 48px;
+        padding: 0 7px;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      #map {
+        bottom: var(--app-mobile-nav-clearance) !important;
+      }
+
+      #ui-toggles {
+        bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+      }
+
+      #selection-card,
+      body.compact-layout #selection-card,
+      body.compact-landscape-layout #selection-card,
+      #stash-shelf,
+      body.compact-layout #stash-shelf {
+        bottom: var(--app-mobile-nav-clearance) !important;
+      }
+
+      .controls {
+        bottom: var(--app-mobile-nav-clearance) !important;
+        max-height: var(--app-mobile-controls-max-height) !important;
+      }
+
+      body.mobile-selection-visible #map,
+      body.compact-layout.mobile-selection-visible #map {
+        bottom: calc(var(--app-mobile-nav-clearance) + 160px) !important;
+      }
+
+      body.compact-landscape-layout.mobile-selection-visible #map {
+        bottom: calc(var(--app-mobile-nav-clearance) + 176px) !important;
+      }
+
+      body.selection-card-collapsed.mobile-selection-visible #map,
+      body.compact-layout.selection-card-collapsed.mobile-selection-visible #map {
+        bottom: calc(var(--app-mobile-nav-clearance) + 56px) !important;
+      }
+
+      body.compact-landscape-layout.selection-card-collapsed.mobile-selection-visible #map {
+        bottom: calc(var(--app-mobile-nav-clearance) + 92px) !important;
+      }
+
+      body.mobile-shelf-open #map,
+      body.compact-layout.mobile-shelf-open #map {
+        bottom: calc(min(56dvh, 460px) + var(--app-mobile-nav-clearance) + 8px) !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    #map .leaflet-control-zoom a {
+      width: 44px;
+      height: 44px;
+      line-height: 44px;
+    }
+  </style>
 </head>
 
 <body class="hero-popup-hidden">
   <nav class="app-mode-toggle" aria-label="Switch app view">
     <a href="index.html">Home</a>
     <a class="is-active" href="map.html" aria-current="page">Map</a>
-    <a href="database.html">Price &amp; Menus</a>
+    <a id="nav-price-menus-link" href="database.html">Price &amp; Menus</a>
     <button id="nav-settings-btn" type="button">Settings</button>
   </nav>
   <div class="atmosphere" aria-hidden="true">
@@ -6138,9 +6604,9 @@
       </div>
       <div class="selection-actions">
         <button id="selection-directions-btn" type="button">Directions</button>
-        <button id="selection-add-stop-btn" type="button" class="neutral-btn">Add Stop</button>
-        <button id="selection-move-up-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place earlier in itinerary" title="Move earlier">−</button>
-        <button id="selection-move-down-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place later in itinerary" title="Move later">+</button>
+        <button id="selection-add-stop-btn" type="button" class="neutral-btn">Add to route</button>
+        <button id="selection-move-up-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place earlier in route" title="Move earlier">−</button>
+        <button id="selection-move-down-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place later in route" title="Move later">+</button>
         <button id="selection-center-btn" type="button" class="ghost-btn">View on Map</button>
         <a id="selection-price-menus-link" class="selection-link" href="database.html">Research Prices</a>
         <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
@@ -6171,16 +6637,29 @@
   <!-- Main controls panel -->
   <div class="controls">
     <div class="controls-header" id="controls-header">
-      <div class="controls-header-main">
-        <div class="controls-handle" aria-hidden="true"></div>
+      <button class="controls-header-main" id="controls-header-toggle" type="button" aria-expanded="true" aria-controls="map-tools-content">
+        <span class="controls-handle" aria-hidden="true"></span>
         <span class="controls-title">Map tools</span>
         <span class="controls-summary" id="controls-summary">Choose a Destination</span>
-      </div>
+      </button>
       <div class="controls-header-actions">
         <button id="mobile-hide-controls" class="controls-hide" type="button">Hide</button>
       </div>
     </div>
-    <div class="controls-content">
+    <div class="controls-content" id="map-tools-content">
+      <section class="panel-section map-category-shortcuts control-group" aria-labelledby="map-category-title">
+        <div class="intent-head">
+          <strong id="map-category-title">Show on map</strong>
+          <span>Choose one or more location categories. Swipe sideways to see more.</span>
+        </div>
+        <div id="category-filters" role="group" aria-labelledby="map-category-title">
+          <!-- Multi-select category controls injected here by JS -->
+        </div>
+        <div class="button-row">
+          <button id="reset-filters-btn" type="button" class="secondary-btn">Reset map filters</button>
+        </div>
+      </section>
+
       <section class="panel-section search-wanted-panel control-group" aria-labelledby="map-intent-title">
         <div class="intent-head">
           <strong id="map-intent-title">Where should I go next?</strong>
@@ -6190,17 +6669,20 @@
         <input id="destination-search" type="search" placeholder="Gelato, The Plug, De Pijp..." autocomplete="off" list="global-search-suggestions" />
         <datalist id="global-search-suggestions"></datalist>
         <div id="destination-search-status" class="field-note">Loading Amsterdam menu data...</div>
-        <div class="map-quick-chips" aria-label="Quick searches">
-          <button class="map-quick-chip" type="button" data-map-quick-search="Gelato">Gelato</button>
-          <button class="map-quick-chip" type="button" data-map-quick-search="Amnesia Haze">Amnesia Haze</button>
-          <button class="map-quick-chip" type="button" data-map-quick-search="White Widow">White Widow</button>
-          <button class="map-quick-chip" type="button" data-map-quick-search="Zkittlez">Zkittlez</button>
-          <button class="map-quick-chip" type="button" data-map-quick-search="The Plug">The Plug</button>
-          <button class="map-quick-chip" type="button" data-map-quick-search="Family First">Family First</button>
-          <button class="map-quick-chip" type="button" data-map-quick-search="De Pijp">De Pijp</button>
-          <button class="map-quick-chip" type="button" data-map-quick-search="Centrum">Centrum</button>
-          <button class="map-quick-chip" type="button" data-map-quick-search="Jordaan">Jordaan</button>
-        </div>
+        <details class="map-quick-searches">
+          <summary>Popular searches</summary>
+          <div class="map-quick-chips" aria-label="Quick searches">
+            <button class="map-quick-chip" type="button" data-map-quick-search="Gelato">Gelato</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Amnesia Haze">Amnesia Haze</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="White Widow">White Widow</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Zkittlez">Zkittlez</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="The Plug">The Plug</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Family First">Family First</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="De Pijp">De Pijp</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Centrum">Centrum</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Jordaan">Jordaan</button>
+          </div>
+        </details>
         <div class="best-match-panel" aria-labelledby="best-match-title">
           <div class="best-match-head">
             <strong id="best-match-title">Best matches</strong>
@@ -6210,7 +6692,7 @@
             <p class="best-match-empty">Search for a strain, shop, or area to see suggested stops.</p>
           </div>
         </div>
-        <details class="map-secondary-tools" aria-label="Quick planning shortcuts">
+        <details class="map-secondary-tools" aria-label="Quick planning shortcuts" hidden>
           <summary>More tools</summary>
           <div class="workflow-shortcuts">
           <button class="intent-card" type="button" data-map-intent="wanted">
@@ -6233,71 +6715,54 @@
         </details>
       </section>
 
-      <section class="panel-section route-panel control-group">
+      <details id="route-tools-dropdown" class="panel-section route-panel control-group route-tools-dropdown">
+        <summary class="sidebar-drawer-summary">
+          <span>
+            <strong>Route building</strong>
+            <small>Plan stops, directions, travel time, and spend.</small>
+          </span>
+        </summary>
+        <div class="route-tools-dropdown-content">
         <div class="route-panel-topline">
-          <span class="panel-kicker">Destination</span>
-          <p class="panel-copy">Pick a stop, then open directions or add it to your route.</p>
+          <span class="panel-kicker">Your route</span>
+          <p class="panel-copy">Add shops from Best matches, choose a start, then review the route in one place.</p>
         </div>
         <div class="map-mode-strip" aria-live="polite">
-          <span>Current mode</span>
-          <strong id="current-mode-status">Free roam</strong>
+          <span>Route status</span>
+          <strong id="current-mode-status">No stops yet</strong>
         </div>
-        <div class="journey-planner-card" id="journey-planner-card" aria-label="Amsterdam Itinerary Builder">
-          <div class="journey-planner-head">
-            <div>
-              <strong>Plan my Amsterdam day</strong>
-              <span>Mix hotels, museums, food, transport, landmarks, and coffeeshops in the order you choose.</span>
-            </div>
-          </div>
-
+        <details class="journey-planner-card journey-progressive" id="journey-planner-card" open>
+          <summary class="journey-progressive-summary">
+            <span>
+              <strong>Plan a route</strong>
+              <small id="journey-planner-summary-text">Choose a start and add your first stop.</small>
+            </span>
+          </summary>
+          <div class="journey-progressive-content" aria-label="Amsterdam route planner">
           <section class="journey-section is-primary" aria-labelledby="journey-section-title">
             <div class="journey-section-head">
-              <span class="journey-section-eyebrow">Journey</span>
-              <strong id="journey-section-title" class="journey-section-title">Your day in order</strong>
-              <p class="journey-section-copy">Choose a start, add mapped places, then adjust the order yourself.</p>
-            </div>
-
-            <div class="journey-itinerary-hero" aria-live="polite">
-              <div>
-                <span class="panel-kicker">Itinerary</span>
-                <strong id="journey-itinerary-title" class="journey-itinerary-title">Amsterdam day out</strong>
-                <span id="journey-itinerary-route" class="journey-itinerary-route">Choose a start point, then add the places you want to visit.</span>
-              </div>
+              <strong id="journey-section-title" class="journey-section-title">Build your route</strong>
+              <p class="journey-section-copy">1. Choose a start &nbsp; 2. Add stops &nbsp; 3. Adjust their order</p>
             </div>
 
             <div class="journey-builder-grid">
-              <label for="journey-start-select">Start location
+              <label for="journey-start-select">1. Start
                 <select id="journey-start-select"></select>
               </label>
-              <label for="journey-stop-select">Add location
+              <label for="journey-stop-select">2. Next stop
                 <select id="journey-stop-select"></select>
               </label>
             </div>
             <div class="journey-add-row">
-              <div id="journey-status" class="field-note">Choose a start, then add mapped places to build your itinerary.</div>
-              <button id="journey-add-stop-btn" type="button">Add place</button>
+              <div id="journey-status" class="field-note">Choose a start, then add mapped places to build your route.</div>
+              <button id="journey-add-stop-btn" type="button">Add stop</button>
             </div>
             <div id="journey-timeline" class="journey-timeline"></div>
-
-            <div class="journey-save-row">
-              <label for="journey-name-input">Itinerary name
-                <input id="journey-name-input" type="text" maxlength="48" placeholder="Saturday Amsterdam" />
-              </label>
-              <button id="journey-save-btn" type="button" class="secondary-btn">Save itinerary</button>
-            </div>
-            <div class="journey-saved-actions">
-              <label for="journey-saved-select">Saved itineraries
-                <select id="journey-saved-select"></select>
-              </label>
-              <button id="journey-load-btn" type="button" class="secondary-btn">Load</button>
-              <button id="journey-delete-btn" type="button" class="secondary-btn">Delete</button>
-            </div>
           </section>
 
           <section class="journey-section is-summary" aria-labelledby="journey-summary-title">
             <div class="journey-section-head">
-              <span class="journey-section-eyebrow">Journey Summary</span>
-              <strong id="journey-summary-title" class="journey-section-title">Useful totals</strong>
+              <strong id="journey-summary-title" class="journey-section-title">Route summary</strong>
             </div>
             <div class="journey-summary-grid" aria-live="polite">
               <div class="journey-summary-item">
@@ -6316,39 +6781,41 @@
                 <span>Stops</span>
                 <strong id="journey-summary-stops">0</strong>
               </div>
-              <div class="journey-summary-item">
-                <span>Strains</span>
-                <strong id="journey-summary-strains">0</strong>
-              </div>
-              <div class="journey-summary-item">
-                <span>Avg / stop</span>
-                <strong id="journey-summary-average">--</strong>
-              </div>
-            </div>
-          </section>
-
-          <section class="journey-section is-map" aria-labelledby="journey-map-title">
-            <div class="journey-section-head">
-              <span class="journey-section-eyebrow">Map</span>
-              <strong id="journey-map-title" class="journey-section-title">Route preview</strong>
-              <p class="journey-section-copy">The map shows your start, numbered stops, route direction, and walking-route line when route data is available.</p>
             </div>
             <div class="journey-map-actions">
-            <button id="journey-fit-map-btn" type="button" class="secondary-btn">View Route</button>
+              <button id="journey-fit-map-btn" type="button" class="secondary-btn">View route on map</button>
             </div>
           </section>
-        </div>
 
-        <div id="destination-picker-wrap">
-          <label for="destination-select" style="margin-top:12px;">Destination preview</label>
+          <details class="journey-save-progressive">
+            <summary>Save or load a route</summary>
+            <div class="journey-save-progressive-content">
+              <div class="journey-save-row">
+                <label for="journey-name-input">Route name
+                  <input id="journey-name-input" type="text" maxlength="48" placeholder="Saturday Amsterdam" />
+                </label>
+                <button id="journey-save-btn" type="button" class="secondary-btn">Save route</button>
+              </div>
+              <div class="journey-saved-actions">
+                <label for="journey-saved-select">Saved routes
+                  <select id="journey-saved-select"></select>
+                </label>
+                <button id="journey-load-btn" type="button" class="secondary-btn">Load</button>
+                <button id="journey-delete-btn" type="button" class="secondary-btn">Delete</button>
+              </div>
+            </div>
+          </details>
+          </div>
+        </details>
+
+        <details id="destination-picker-wrap" class="destination-picker-progressive">
+          <summary>Choose from all places</summary>
+          <label for="destination-select" style="margin-top:12px;">Place</label>
           <select id="destination-select"></select>
-        </div>
+        </details>
 
-        <div class="control-divider destination-matches-divider">
-          <span class="panel-kicker">Best matches</span>
-          <p class="panel-copy">Ranked shops explain matches, distance, price signals, and data age.</p>
-        </div>
-        <div id="destination-card-deck">
+        <details id="destination-card-deck" class="destination-results-progressive">
+          <summary>Compare more places</summary>
           <div class="destination-cards-head">
             <div class="destination-cards-copy">
               <strong id="destination-card-title">Best matches</strong>
@@ -6366,47 +6833,71 @@
             </label>
           </div>
           <div id="destination-card-list" class="destination-card-list"></div>
-        </div>
+        </details>
 
-        <select id="mission-mode" hidden aria-hidden="true">
+        <select id="mission-mode" hidden aria-hidden="true" aria-label="Map mission mode">
           <option value="free-roam">Free roam</option>
         </select>
 
-        <div class="control-divider travel-mode-divider">
-          <span class="panel-kicker">Directions / Travel mode</span>
-          <p class="panel-copy">Choose how you are moving, then open directions when a Destination looks worth it.</p>
-        </div>
-        <div class="route-mode-row">
-          <label for="mode">Travel mode
-            <select id="mode">
-              <option value="walking">Walking</option>
-              <option value="driving">Driving</option>
-              <option value="cycling">Cycling</option>
-            </select>
-          </label>
-          <button id="center-on-me-btn" type="button" class="secondary-btn">Near me</button>
-        </div>
+        <details class="route-secondary-tools">
+          <summary>Directions and other options</summary>
+          <div class="route-secondary-tools-content">
+            <div class="control-divider travel-mode-divider">
+              <span class="panel-kicker">Directions</span>
+              <p class="panel-copy">Choose how you are moving, then open directions for the selected place.</p>
+            </div>
+            <div class="route-mode-row">
+              <label for="mode">Travel mode
+                <select id="mode">
+                  <option value="walking">Walking</option>
+                  <option value="driving">Driving</option>
+                  <option value="cycling">Cycling</option>
+                </select>
+              </label>
+              <button id="center-on-me-btn" type="button" class="secondary-btn">Near me</button>
+            </div>
 
-        <button id="toggle-directions" type="button">Directions</button>
+            <button id="toggle-directions" type="button">Directions</button>
 
-        <div class="route-action-row">
-          <button id="nearest-btn">Closest</button>
-          <button id="add-destination-stop-btn" type="button" class="secondary-btn">Add Stop</button>
-          <button id="surprise-btn" type="button" class="secondary-btn">Pick a random shop</button>
-          <button id="show-strain-shops-btn" type="button" class="secondary-btn" hidden>Show strain matches</button>
-          <button id="clear-route-focus-btn" type="button" class="secondary-btn">Clear Destination</button>
-        </div>
+            <div class="route-action-row">
+              <button id="nearest-btn">Closest</button>
+              <button id="add-destination-stop-btn" type="button" class="secondary-btn">Add selected stop</button>
+              <button id="surprise-btn" type="button" class="secondary-btn">Pick a random shop</button>
+              <button id="show-strain-shops-btn" type="button" class="secondary-btn" hidden>Show strain matches</button>
+              <button id="clear-route-focus-btn" type="button" class="secondary-btn">Clear selected place</button>
+            </div>
+          </div>
+        </details>
         <div id="route-status" class="field-note">Location is only used after you choose Closest, Near me, or directions.</div>
+        </div>
+      </details>
 
+      <section class="panel-section location-file-panel control-group" aria-labelledby="location-file-title">
+        <div class="intent-head">
+          <strong id="location-file-title">Location file</strong>
+          <span>Choose which available city or location dataset appears on the map.</span>
+        </div>
+        <div id="csv-switch-wrap" style="display:none;">
+          <label class="field-label" for="csv-switch-select">
+            Available locations
+            <select id="csv-switch-select"></select>
+          </label>
+        </div>
       </section>
 
-      <section class="panel-section wanted-list-panel control-group">
-        <span class="panel-kicker">Map matching strains</span>
+      <details id="map-strain-tools" class="panel-section wanted-list-panel control-group" hidden>
+        <summary class="sidebar-drawer-summary">
+          <span>
+            <strong>Match a strain</strong>
+            <small>Show shops that list a strain you want.</small>
+          </span>
+        </summary>
+        <div class="sidebar-drawer-content">
         <div id="strain-list-panel">
           <div class="strain-list-head">
             <strong>Find strain matches</strong>
           </div>
-          <input id="strain-list-search" type="text" placeholder="Filter strains..." />
+          <input id="strain-list-search" type="text" placeholder="Filter strains..." aria-label="Filter strains" />
           <div id="strain-list-status">Loading strain matches...</div>
           <div id="strain-list"></div>
         </div>
@@ -6415,7 +6906,7 @@
           <button id="toggle-current-strain-shelf-btn" type="button" class="secondary-btn" disabled>Save strain</button>
           <button id="clear-strain-btn" type="button" class="secondary-btn">Clear map match</button>
         </div>
-        <div id="strain-status" style="margin-top:8px; font-size:12px; color:#444;">No map matching strains selected yet.</div>
+        <div id="strain-status">No map matching strains selected yet.</div>
 
         <details class="detail-drawer">
           <summary>Map strain match preview</summary>
@@ -6448,13 +6939,16 @@
             </div>
           </div>
         </details>
-      </section>
+        </div>
+      </details>
 
-      <section id="settings-panel" class="panel-section settings-panel control-group" aria-labelledby="settings-title" tabindex="-1">
+      <section id="settings-panel" class="panel-section settings-panel control-group" aria-labelledby="settings-title" tabindex="-1" hidden>
         <div class="settings-panel-head">
-          <span class="panel-kicker">Settings</span>
-          <h3 id="settings-title">Settings</h3>
-          <p class="panel-copy">Preferences, filters, display, and data tools live together here.</p>
+          <div>
+            <span class="panel-kicker">Settings</span>
+            <h3 id="settings-title">Map settings</h3>
+          </div>
+          <button id="close-map-settings-btn" type="button" class="secondary-btn">Done</button>
         </div>
 
         <section class="settings-section" aria-labelledby="settings-preferences-title">
@@ -6467,26 +6961,9 @@
           </div>
         </section>
 
-        <section class="settings-section" aria-labelledby="settings-filters-title">
-          <h4 id="settings-filters-title">Filters</h4>
-          <p class="panel-copy">Choose which Destinations are visible on the map and in Best matches.</p>
-          <div id="category-filters">
-            <!-- Checkboxes injected here by JS -->
-          </div>
-          <div class="button-row">
-            <button id="reset-filters-btn" type="button" class="secondary-btn">Reset filters</button>
-          </div>
-        </section>
-
         <section class="settings-section" aria-labelledby="settings-data-title">
           <h4 id="settings-data-title">Data</h4>
-          <p class="panel-copy">Choose which built-in location file Budfinder should show on the map.</p>
-          <div id="csv-switch-wrap" style="display:none;">
-            <label class="field-label" for="csv-switch-select">
-              Location file
-              <select id="csv-switch-select"></select>
-            </label>
-          </div>
+          <p class="panel-copy">Manage saved map data and open the full price research view.</p>
           <a class="panel-link-button" href="database.html">Research Prices</a>
           <div class="button-row">
             <button id="clear-saved-data-btn" type="button" class="secondary-btn">Clear saved data</button>
@@ -6550,7 +7027,8 @@
   <!-- Leaflet + Routing JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-  <script src="scripts/budfinder-theme.js?v=20260706-readable-dark1"></script>
+  <script src="scripts/budfinder-logos.js?v=20260719-1"></script>
+  <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
 
   <script>
     // =========================================================
@@ -6572,7 +7050,7 @@
     let heroPopupVisible = false; // intro popup is opt-in from settings.
     let selectionCardCollapsed = false; // compact landscape destination card state
     let previousCompactLandscapeLayout = false;
-    let strainListVisible = true; // strain list panel visibility
+    let strainListVisible = false; // Strain matching stays collapsed until requested.
     let viewportResyncTimers = [];
     let uiTogglePositionTimer = null;
     let locationSearchText = '';
@@ -6636,7 +7114,6 @@
 
     // Downloaded logos live under images/logos/. Keep this narrow so missing
     // files do not trigger repeated fallback requests during map rendering.
-    const LOGO_BASE_PATHS = ['images/logos/'];
     const STRAIN_IMAGE_BASE_PATHS = ['images/strains/', './images/strains/', '/images/strains/'];
     const STRAIN_IMAGE_MAP_CANDIDATES = [
       'database/strain_image_map.csv',
@@ -7271,7 +7748,7 @@
       if (mapThemeToneOverrides[themeKey]) return mapThemeToneOverrides[themeKey];
       return {
         text: '#203128',
-        muted: '#5b6b61',
+        muted: '#46534b',
         secondary: themeKey === 'lemon-haze' ? '#8a7614' : '#b46b20',
         surface: '#ffffff',
         surfaceStrong: '#ffffff',
@@ -7407,25 +7884,41 @@
     function priceMenusUrl(context = {}) {
       const params = new URLSearchParams();
       const strain = (context.strain || '').toString().trim();
-      const shopId = Number.isFinite(Number(context.shopId)) ? String(Number(context.shopId)) : '';
+      const rawShopId = context.shopId == null ? '' : String(context.shopId).trim();
+      const shopId = rawShopId && Number.isFinite(Number(rawShopId)) ? String(Number(rawShopId)) : '';
       if (shopId) {
         params.set('mode', 'shop');
         params.set('view', 'shops');
         params.set('shop_id', shopId);
       } else if (strain) {
         params.set('mode', 'strain');
-        params.set('strain', strain);
       }
+      if (strain) params.set('strain', strain);
       const query = params.toString();
       return query ? `database.html?${query}` : 'database.html';
     }
 
     function syncPriceMenusLinks() {
       const mapResearchLink = document.getElementById('map-price-menus-link');
-      if (!mapResearchLink) return;
-
+      const navResearchLink = document.getElementById('nav-price-menus-link');
       const activeName = getCanonicalStrainName(strainFilterText);
-      mapResearchLink.href = activeName ? priceMenusUrl({ strain: activeName }) : 'database.html';
+      const selectedIndex = getSelectedDestinationIndex();
+      const selectedLocation = selectedIndex !== null ? locations[selectedIndex] : null;
+      const selectedShopId = selectedLocation && Number.isFinite(Number(selectedLocation.db_shop_id))
+        ? Number(selectedLocation.db_shop_id)
+        : null;
+      const href = activeName || selectedShopId
+        ? priceMenusUrl({ strain: activeName, shopId: selectedShopId })
+        : 'database.html';
+      if (mapResearchLink) mapResearchLink.href = activeName ? priceMenusUrl({ strain: activeName }) : href;
+      if (navResearchLink) {
+        navResearchLink.href = href;
+        navResearchLink.title = activeName
+          ? `Continue researching ${activeName} in Price & Menus`
+          : selectedLocation
+            ? `Open the known menu for ${selectedLocation.name || 'this coffeeshop'}`
+            : 'Open Price & Menus';
+      }
     }
 
     function loadExplorerFocusContext() {
@@ -8001,7 +8494,8 @@
         : 92;
       const controlsMaxHeight = Math.max(180, viewportHeight - 48);
       const controlsContentMaxHeight = Math.max(120, controlsMaxHeight - measuredHeaderHeight - 8);
-      const mobileControlsMaxHeight = Math.min(540, Math.max(220, viewportHeight - 24));
+      const mobileNavigationClearance = 106;
+      const mobileControlsMaxHeight = Math.min(540, Math.max(220, viewportHeight - mobileNavigationClearance));
       const mobileControlsContentMaxHeight = Math.max(120, mobileControlsMaxHeight - measuredHeaderHeight - 8);
       const strainPanelMaxHeight = Math.min(320, Math.max(240, Math.round(viewportHeight * 0.38)));
       const strainListMaxHeight = Math.max(144, Math.min(200, strainPanelMaxHeight - 96));
@@ -8339,6 +8833,7 @@
       const backdrop = document.getElementById('controls-backdrop');
       const controlsDiv = document.querySelector('.controls');
       const hideBtn = document.getElementById('mobile-hide-controls');
+      const headerToggle = document.getElementById('controls-header-toggle');
       const isMobile = isCompactMobileLayout();
       const showMobileOverlay = controlsVisible && !controlsCollapsed && isCompactMobileLayout();
       const showMobileDirections = directionsVisible && isCompactMobileLayout();
@@ -8361,6 +8856,10 @@
       }
       if (btn) {
         btn.textContent = getControlsToggleLabel();
+      }
+      if (headerToggle) {
+        headerToggle.setAttribute('aria-expanded', String(!controlsCollapsed));
+        headerToggle.setAttribute('aria-label', controlsCollapsed ? 'Open map tools' : 'Collapse map tools');
       }
       syncClearSelectionToggle();
       if (hideBtn) {
@@ -8427,9 +8926,6 @@
         controlsCollapsed = !!options.collapsed;
       }
       if (controlsDiv) controlsDiv.style.display = controlsVisible ? 'block' : 'none';
-      if (controlsVisible && !strainListVisible) {
-        setStrainListVisible(true);
-      }
       syncControlsChrome();
       invalidateMapSizeSettled([0, 120, 260, 420]);
     }
@@ -8584,16 +9080,14 @@
       return Number.isFinite(id) ? id : null;
     }
 
-    function logoCandidates(logoFilename) {
-      const raw = (logoFilename || '').toString().trim();
-      if (!raw) return [];
-      const encoded = encodeURIComponent(raw);
-      const out = [];
-      LOGO_BASE_PATHS.forEach(base => {
-        out.push(`${base}${encoded}`);
-        out.push(`${base}${raw}`);
-      });
-      return Array.from(new Set(out));
+    function logoCandidates(logoFilename, loc = null) {
+      return window.BudfinderLogos
+        ? window.BudfinderLogos.candidates({
+            filename: logoFilename,
+            shopKey: loc && loc.shop_key,
+            shopName: loc && loc.name
+          })
+        : [];
     }
 
     function strainImageCandidates(imageFilename) {
@@ -8943,14 +9437,7 @@
     }
 
     function tryNextImageCandidate(imgEl) {
-      const all = (imgEl.dataset.candidates || '').split('|').filter(Boolean);
-      const i = parseInt(imgEl.dataset.idx || '0', 10) + 1;
-      if (i < all.length) {
-        imgEl.dataset.idx = String(i);
-        imgEl.src = all[i];
-        return true;
-      }
-      return false;
+      return Boolean(window.BudfinderLogos && window.BudfinderLogos.advanceImage(imgEl));
     }
 
     // Used by popup <img onerror> to try fallback logo paths.
@@ -9079,7 +9566,7 @@
     }
 
     function getLocationIconHtml(loc, category) {
-      const candidates = loc ? logoCandidates(loc.logo) : [];
+      const candidates = loc ? logoCandidates(loc.logo, loc) : [];
       if (candidates.length) {
         const joined = candidates.map(escapeHtmlAttr).join('|');
         const first = escapeHtmlAttr(candidates[0]);
@@ -9186,8 +9673,8 @@
      * CSV column: logo
      * Example value: boerejongens.png
      */
-    function createLogoIcon(logoFilename, priceLabel = '') {
-      const candidates = logoCandidates(logoFilename);
+    function createLogoIcon(loc, priceLabel = '') {
+      const candidates = loc ? logoCandidates(loc.logo, loc) : [];
       if (!candidates.length) return null;
       const joined = candidates.map(escapeHtmlAttr).join('|');
       const first = escapeHtmlAttr(candidates[0]);
@@ -9211,6 +9698,23 @@
       });
     }
 
+    function createSimpleShopIcon(loc, priceLabel = '') {
+      const label = (loc && loc.name ? loc.name : 'Coffeeshop').toString().trim();
+      const initial = escapeHtml((label.charAt(0) || 'B').toUpperCase());
+      const price = (priceLabel || '').toString().trim();
+      return L.divIcon({
+        html:
+          `<div class="simple-shop-marker" aria-hidden="true">` +
+            `<span aria-hidden="true">${initial}</span>` +
+            (price ? `<b>${escapeHtml(price)}</b>` : '') +
+          `</div>`,
+        iconSize: [34, 42],
+        iconAnchor: [17, 38],
+        popupAnchor: [0, -34],
+        className: 'simple-shop-marker-icon'
+      });
+    }
+
     /**
      * Decide which icon to use for a location:
       *  1) Use logo icon if present
@@ -9218,11 +9722,12 @@
       *  3) Else default icon
       */
     function chooseMarkerIcon(loc, priceLabel = '') {
-      // 1) Prefer logo icon if available
-      const logoIcon = createLogoIcon(loc.logo, priceLabel);
-      if (logoIcon) return logoIcon;
+      if (isCoffeeShopLocation(loc)) {
+        const logoIcon = createLogoIcon(loc, priceLabel);
+        if (logoIcon) return logoIcon;
+        return createSimpleShopIcon(loc, priceLabel);
+      }
 
-      // 2) Fall back to a Budfinder category icon, then the generic Leaflet pin.
       const fallbackCategory = getLocationFallbackCategory(loc);
       return categoryIcons[fallbackCategory] || defaultIcon;
     }
@@ -9260,7 +9765,7 @@
     }
 
     function popupLogoHtml(loc) {
-      const candidates = logoCandidates(loc.logo);
+      const candidates = logoCandidates(loc.logo, loc);
       if (!candidates.length) return '';
       const joined = candidates.map(escapeHtmlAttr).join('|');
       const first = escapeHtmlAttr(candidates[0]);
@@ -9268,6 +9773,17 @@
                   data-candidates="${joined}" data-idx="0"
                   onerror="popupLogoFallback(this)"
                   style="width:${POPUP_LOGO_SIZE}px;height:${POPUP_LOGO_SIZE}px;object-fit:contain;display:block;margin:8px auto;border-radius:8px;background:white;">`;
+    }
+
+    function bestMatchLogoHtml(loc) {
+      const candidates = loc ? logoCandidates(loc.logo, loc) : [];
+      if (!candidates.length) return '';
+      const joined = candidates.map(escapeHtmlAttr).join('|');
+      const first = escapeHtmlAttr(candidates[0]);
+      const label = escapeHtmlAttr(`${cleanDisplayName(loc.name || 'Coffeeshop')} logo`);
+      return `<img class="best-match-logo" src="${first}" alt="${label}"
+                  data-candidates="${joined}" data-idx="0"
+                  onerror="popupLogoFallback(this)">`;
     }
 
     // =========================================================
@@ -10113,10 +10629,10 @@
 
     function formatFreshnessLabel(value) {
       const days = getAgeInDays(value);
-      if (days === null) return '';
+      if (days === null) return 'Unknown';
       if (days <= 14) return 'Fresh';
-      if (days <= 60) return 'Older menu';
-      return 'Check before travelling';
+      if (days <= 60) return 'Likely';
+      return 'Old intel';
     }
 
     function freshnessTone(value) {
@@ -10581,7 +11097,9 @@
       if (!listEl || !searchEl) return;
 
       const q = normaliseText(searchEl.value || '');
-      const names = activeStrainNames.filter(name => !q || normaliseText(name).includes(q));
+      const names = activeStrainNames
+        .filter(name => !q || normaliseText(name).includes(q))
+        .slice(0, 24);
       listEl.innerHTML = '';
 
       if (!names.length) {
@@ -10698,14 +11216,15 @@
         values.push(text);
       };
 
-      locations.forEach(loc => {
+      locations.filter(isCoffeeShopLocation).slice(0, 50).forEach(loc => {
         push(loc && loc.name);
         push(loc && loc.city);
       });
-      activeStrainNames.slice(0, 120).forEach(push);
+      locations.filter(isAreaLocation).slice(0, 15).forEach(loc => push(loc && loc.name));
+      activeStrainNames.slice(0, 40).forEach(push);
 
       list.innerHTML = values
-        .slice(0, 220)
+        .slice(0, 105)
         .map(value => `<option value="${escapeHtmlAttr(value)}"></option>`)
         .join('');
     }
@@ -10759,7 +11278,9 @@
     function setStrainListVisible(show) {
       strainListVisible = !!show;
       const panel = document.getElementById('strain-list-panel');
+      const drawer = document.getElementById('map-strain-tools');
       if (panel) panel.style.display = strainListVisible ? 'block' : 'none';
+      if (drawer) drawer.open = strainListVisible;
       if (strainListVisible) {
         populateStrainListPanel();
       }
@@ -10993,13 +11514,22 @@
       updateMarkers();
     }
 
+    function selectInitialExplorerShopIfUnique() {
+      if (!(explorerFocusShopIds instanceof Set) || explorerFocusShopIds.size !== 1) return false;
+      const [shopId] = Array.from(explorerFocusShopIds);
+      const index = locations.findIndex(loc => String(loc && loc.db_shop_id || '') === String(shopId));
+      return index >= 0 ? selectDestinationIndex(index) : false;
+    }
+
     async function applyExplorerStrainContextAfterCsvLoad() {
       if (!explorerFocusStrainName) {
+        selectInitialExplorerShopIfUnique();
         syncExplorerFocusControls();
         return;
       }
 
       await applyStrainFilter(explorerFocusStrainName);
+      selectInitialExplorerShopIfUnique();
       const isNarrowedExplorerFocus = canShowAllExplorerStrainShops();
       setRouteStatus(
         isNarrowedExplorerFocus
@@ -11151,7 +11681,7 @@
 
       select.innerHTML = '';
 
-      if (!Array.isArray(discoveredCsvPaths) || discoveredCsvPaths.length <= 1) {
+      if (!Array.isArray(discoveredCsvPaths) || discoveredCsvPaths.length === 0) {
         wrap.style.display = 'none';
         return;
       }
@@ -11393,6 +11923,15 @@
       return strainImageMapPromise;
     }
 
+    function cleanDisplayName(value) {
+      return (value || '')
+        .toString()
+        .replace(/Caf�/g, 'Café')
+        .replace(/\bSatvia\b/g, 'Sativa')
+        .replace(/\bKadinski\b/g, 'Kadinsky')
+        .trim();
+    }
+
     async function applyCsvRows(rows, options = {}) {
       const csvPathLike = (options && options.csvPathLike) || currentCsvPath || '';
       // Map each CSV row into a location object.
@@ -11401,7 +11940,7 @@
       //  - Any additional Y/N columns become boolean flags (categories).
       locations = rows.map(r => {
         const obj = {
-          name: r.name,
+          name: cleanDisplayName(r.name),
           city: inferCityForLocationRow(r, csvPathLike),
           coords: [parseFloat(r.lat), parseFloat(r.lng)],
           website: r.website,
@@ -11494,9 +12033,8 @@
           typeof locations[0][key] === 'boolean'
       );
 
-      // Add synthetic categories.
-      categoryOptions.unshift('favourites');
-      categoryOptions.unshift('all');
+      // Keep the most useful map choices first; Saved shops remains available at the end.
+      categoryOptions = ['all', ...categoryOptions, 'favourites'];
 
       selectedCategories = getDefaultLocationCategories();
 
@@ -11651,8 +12189,8 @@
       locations.forEach((loc, i) => {
         const initialPriceLabel = getMarkerPriceLabel(loc);
         const icon = chooseMarkerIcon(loc, initialPriceLabel);
-        const usesLogoIcon = logoCandidates(loc.logo).length > 0;
         const isCoffeeShop = isCoffeeShopLocation(loc);
+        const usesLogoIcon = isCoffeeShop && logoCandidates(loc.logo, loc).length > 0;
         const isArea = isAreaLocation(loc);
 
         // Popup logo supports multiple fallback paths.
@@ -11686,7 +12224,7 @@
         const journeyControlsHtml = isArea
           ? ''
           : (
-              `<button type="button" class="popup-journey-start-btn" data-index="${i}">Set itinerary start</button>` +
+              `<button type="button" class="popup-journey-start-btn" data-index="${i}">Set route start</button>` +
               `<button type="button" class="popup-journey-add-btn" data-index="${i}">Add Stop</button>` +
               `<span class="popup-journey-order" data-popup-journey-order="${i}" hidden>` +
                 `<button type="button" class="popup-journey-move-btn" data-popup-journey-move="up" data-index="${i}" aria-label="Move ${escapeHtmlAttr(loc.name || 'place')} earlier in itinerary" title="Move earlier">−</button>` +
@@ -11711,7 +12249,13 @@
               `<span class="rating-stars" data-index="${i}" data-rating="${loc.rating}">${renderStars(loc.rating)}</span>`
             );
 
-        const marker = L.marker(loc.coords, { icon: icon, zIndexOffset: 1000 })
+        const marker = L.marker(loc.coords, {
+          icon,
+          zIndexOffset: 1000,
+          keyboard: false,
+          alt: '',
+          riseOnHover: true
+        })
           .addTo(map)
           .bindPopup(
             `<div id="${popupCardId(i)}" class="${popupCardClass}">` +
@@ -11756,7 +12300,6 @@
       updateMarkers();
       updateControlsSummary();
       renderJourneyPlanner();
-
       // Let the desktop layout settle before the first fit so we use the
       // final map width instead of the transitional "panel just hid" state.
       if (markers.length > 0) {
@@ -11766,7 +12309,7 @@
           map.invalidateSize();
           requestAnimationFrame(() => {
             if (!map) return;
-            fitMapToVisibleMarkers({ preferCluster: true });
+            fitMapToVisibleMarkers();
           });
         }, initialFitDelay);
       }
@@ -12050,41 +12593,7 @@
       });
     }
 
-    function buildClusteredInitialBounds(markerEntries) {
-      const entries = (markerEntries || [])
-        .filter(item => item && item.marker && locations[item.index])
-        .filter(item => isCoffeeShopLocation(locations[item.index]) && !isClosedLocation(locations[item.index]));
-      const candidates = entries.length >= 8 ? entries : (markerEntries || []);
-      if (candidates.length < 8) return null;
-
-      const trimRatio = isCompactMobileLayout() ? 0.16 : 0.12;
-      const trim = Math.min(
-        Math.floor(candidates.length * trimRatio),
-        Math.floor((candidates.length - 6) / 2)
-      );
-      if (trim <= 0) return null;
-
-      const coords = candidates
-        .map(item => {
-          const loc = locations[item.index] || {};
-          return Array.isArray(loc.coords) ? loc.coords : null;
-        })
-        .filter(coords => coords && Number.isFinite(coords[0]) && Number.isFinite(coords[1]));
-      if (coords.length < 8) return null;
-
-      const lats = coords.map(coords => coords[0]).sort((a, b) => a - b);
-      const lngs = coords.map(coords => coords[1]).sort((a, b) => a - b);
-      const lo = trim;
-      const hi = coords.length - trim - 1;
-      if (hi <= lo) return null;
-
-      return L.latLngBounds(
-        [lats[lo], lngs[lo]],
-        [lats[hi], lngs[hi]]
-      );
-    }
-
-    function fitMapToVisibleMarkers(options = {}) {
+    function fitMapToVisibleMarkers() {
       if (!map || !markers.length) return;
       const visibleEntries = markers
         .map((marker, index) => ({ marker, index }))
@@ -12096,10 +12605,7 @@
             .filter(item => item.marker);
       if (!markerEntries.length) return;
 
-      const bounds = options.preferCluster
-        ? buildClusteredInitialBounds(markerEntries)
-        : null;
-      const fitBounds = bounds || L.featureGroup(markerEntries.map(item => item.marker)).getBounds();
+      const fitBounds = L.featureGroup(markerEntries.map(item => item.marker)).getBounds();
       if (!fitBounds.isValid()) return;
       const rawInsets = getMapViewportInsets();
       const mapRect = getMeasuredMapRect();
@@ -12126,9 +12632,29 @@
         rememberMapFilterState();
       }
 
+      if (!Array.from(destinationSelect.options).some(option => option.value === String(safeIndex))) {
+        const option = document.createElement('option');
+        option.value = String(safeIndex);
+        option.textContent = locations[safeIndex].name || 'Selected destination';
+        destinationSelect.appendChild(option);
+      }
       destinationSelect.value = String(safeIndex);
       destinationSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      refreshSelectedMarkerIcons();
       return true;
+    }
+
+    function refreshSelectedMarkerIcons() {
+      markers.forEach((marker, markerIndex) => {
+        const loc = locations[markerIndex];
+        if (!marker || !loc) return;
+        const priceLabel = getMarkerPriceLabel(loc);
+        marker.setIcon(chooseMarkerIcon(loc, priceLabel));
+        marker._usesLogoIcon = isCoffeeShopLocation(loc) && logoCandidates(loc.logo, loc).length > 0;
+        marker._priceLabelText = priceLabel || '';
+        syncMarkerHighlightState(markerIndex, passesCategoryFilter(loc, markerIndex));
+        syncMarkerValueTone(markerIndex);
+      });
     }
 
     function toggleFavouriteDestination(index) {
@@ -12331,7 +12857,8 @@
         ...normaliseStorageKeys(STRAIN_SHELF_STORAGE_KEYS),
         ...normaliseStorageKeys(SAVED_JOURNEYS_STORAGE_KEYS),
         MAP_FOCUS_SHOPS_STORAGE_KEY,
-        'budfinder_explorer_selected_shops'
+        'budfinder_explorer_selected_shops',
+        'budfinder_database_navigation_state'
       ]));
     }
 
@@ -12580,8 +13107,8 @@
      */
     function getCategoryFilterLabel(cat) {
       const labels = {
-        all: 'All Destinations',
-        favourites: 'Saved shops'
+        all: 'All',
+        favourites: 'Saved'
       };
       if (labels[cat]) return labels[cat];
       return (cat || '')
@@ -12596,9 +13123,12 @@
       const container = document.getElementById('category-filters');
       if (!container) return;
 
-      container.innerHTML = '<span>Show Destinations</span>';
+      container.innerHTML = '';
 
-      const cats = selectedCategories || [];
+      const cats = Array.isArray(selectedCategories)
+        ? selectedCategories.filter(cat => categoryOptions.includes(cat))
+        : [];
+      selectedCategories = cats.length ? Array.from(new Set(cats)) : ['all'];
 
       categoryOptions.forEach(cat => {
         const id = 'cat-' + cat;
@@ -12611,10 +13141,7 @@
         input.value = cat;
         input.id = id;
 
-        // Check the box if it's currently selected, or default to 'all'
-        if ((cats.length === 0 && cat === 'all') || cats.includes(cat)) {
-          input.checked = true;
-        }
+        input.checked = selectedCategories.includes(cat);
 
         const niceName = getCategoryFilterLabel(cat);
         labelEl.appendChild(input);
@@ -12639,8 +13166,10 @@
     }
 
     function syncCategoryCheckboxes() {
+      const activeCategories = (selectedCategories || []).filter(cat => categoryOptions.includes(cat));
+      selectedCategories = activeCategories.length ? Array.from(new Set(activeCategories)) : ['all'];
       document.querySelectorAll('.category-checkbox').forEach(cb => {
-        cb.checked = (selectedCategories || []).includes(cb.value);
+        cb.checked = selectedCategories.includes(cb.value);
       });
     }
 
@@ -13253,7 +13782,7 @@
       if (!hasSearch) {
         if (!baseVisibleCount) {
           statusEl.textContent = hasExplorerFocus()
-            ? 'No itinerary Destinations are visible on this map yet. Try showing all strain matches or clearing filters.'
+            ? 'No route stops are visible on this map yet. Try showing all strain matches or clearing filters.'
           : 'No Destinations are visible yet. Clear a filter or choose another strain to widen the map.';
           return;
         }
@@ -13360,7 +13889,7 @@
           ? 'Nearby option with one saved-strain match.'
           : `Strong saved-strain match with ${item.savedMatches.length} saved strains.`);
       } else {
-        parts.push('Useful nearby option for the current itinerary.');
+        parts.push('Useful nearby option for the current route.');
       }
       if (item.etaLabel) parts.push(`${item.etaLabel} from Starting point`);
       if (item.priceInsight && item.priceInsight.tone === 'deal') parts.push(item.priceInsight.label);
@@ -13383,8 +13912,8 @@
 
       if (modeEl) {
         modeEl.textContent = stopCount
-          ? `Itinerary · ${stopCount} place${stopCount === 1 ? '' : 's'}`
-          : 'Itinerary Builder';
+          ? `${stopCount} stop${stopCount === 1 ? '' : 's'} added`
+          : 'No stops yet';
       }
       if (startEl) {
         if (selected) {
@@ -13480,7 +14009,9 @@
       const savedMatches = getSavedStrainMatchesForLocation(loc);
       const priceLabel = getMarkerPriceLabel(loc);
       const priceInsight = getPriceInsightForLocation(loc, priceLabel);
-      const freshnessLabel = formatFreshnessLabel(getPopupMenuUpdatedAt(loc)) || 'freshness unknown';
+      const menuUpdatedAt = getPopupMenuUpdatedAt(loc);
+      const freshnessLabel = formatFreshnessLabel(menuUpdatedAt);
+      const checkedDate = formatDisplayDate(menuUpdatedAt);
       const confidence = getConfidenceInfo(loc);
       const isArea = isAreaLocation(loc);
 
@@ -13516,7 +14047,7 @@
           : 'Menu matches are still loading for this shop.';
         metaEl.textContent = isArea
           ? nearbyCopy
-          : `${nearbyCopy} ${priceInsight.text} Menu ${freshnessLabel}. ${confidence.label}.`;
+          : `${nearbyCopy} ${priceInsight.text} ${freshnessLabel}${checkedDate ? ` · checked ${checkedDate}` : ' · check date unknown'}. ${confidence.label}; availability is not guaranteed.`;
       }
       if (cityEl) cityEl.textContent = loc.city || inferCityFromCsvPath(currentCsvPath) || 'Amsterdam';
       if (etaEl) etaEl.textContent = etaLabel
@@ -13535,7 +14066,10 @@
       if (priceMenusLink) {
         if (Number.isFinite(loc.db_shop_id)) {
           priceMenusLink.hidden = false;
-          priceMenusLink.href = priceMenusUrl({ shopId: loc.db_shop_id });
+          priceMenusLink.href = priceMenusUrl({
+            shopId: loc.db_shop_id,
+            strain: getCanonicalStrainName(strainFilterText)
+          });
           priceMenusLink.textContent = 'Research Prices';
           priceMenusLink.setAttribute('aria-label', `Research prices for ${loc.name || 'this destination'}`);
         } else {
@@ -13548,7 +14082,7 @@
       const inItinerary = stopIndex >= 0;
       if (addStopBtn) {
         addStopBtn.hidden = isArea;
-        addStopBtn.textContent = inItinerary ? 'Remove Stop' : 'Add Stop';
+        addStopBtn.textContent = inItinerary ? 'Remove from route' : 'Add to route';
         addStopBtn.classList.toggle('is-remove', inItinerary);
         addStopBtn.setAttribute('aria-pressed', inItinerary ? 'true' : 'false');
       }
@@ -13561,6 +14095,7 @@
         moveDownBtn.disabled = isArea || !inItinerary || stopIndex >= journeyPlanner.stops.length - 1;
       }
 
+      syncPriceMenusLinks();
       syncSelectionCardChrome();
       syncDesktopTogglePosition();
     }
@@ -13647,9 +14182,17 @@
 
     function syncRoutePanelOrder() {
       const journeyCard = document.getElementById('journey-planner-card');
-      const routeStatus = document.getElementById('route-status');
-      if (!journeyCard || !routeStatus || routeStatus.nextElementSibling === journeyCard) return;
-      routeStatus.after(journeyCard);
+      const modeStrip = document.querySelector('.route-panel .map-mode-strip');
+      if (!journeyCard || !modeStrip || modeStrip.nextElementSibling === journeyCard) return;
+      modeStrip.after(journeyCard);
+    }
+
+    function openRouteTools() {
+      const routeTools = document.getElementById('route-tools-dropdown');
+      if (routeTools) routeTools.open = true;
+      const planner = document.getElementById('journey-planner-card');
+      if (planner) planner.open = true;
+      return planner;
     }
 
     function updateControlsSummary() {
@@ -13725,44 +14268,29 @@
       return matchesLocationSearch(loc);
     }
 
-    // Handle changes to category checkboxes (multi-select categories)
+    // Handle the multi-select location category controls. "All" remains exclusive.
     document.getElementById('category-filters').addEventListener('change', e => {
       if (!e.target.classList.contains('category-checkbox')) return;
       rememberMapFilterState();
 
       const cat = e.target.value;
       const checked = e.target.checked;
+      let current = Array.isArray(selectedCategories)
+        ? selectedCategories.filter(value => categoryOptions.includes(value))
+        : [];
 
-      let current = Array.isArray(selectedCategories) ? selectedCategories.slice() : [];
-
-      if (checked) {
-        if (cat === 'all') {
-          // 'All' overrides everything else
-          current = ['all'];
-          // Uncheck all other boxes
-          document.querySelectorAll('.category-checkbox').forEach(cb => {
-            if (cb.value !== 'all') cb.checked = false;
-          });
-        } else {
-          // Add this category, remove 'all' if present
-          current = current.filter(c => c !== 'all');
-          if (!current.includes(cat)) current.push(cat);
-          // Uncheck 'all'
-          const allCb = document.querySelector('.category-checkbox[value="all"]');
-          if (allCb) allCb.checked = false;
-        }
+      if (checked && cat === 'all') {
+        current = ['all'];
+      } else if (checked) {
+        current = current.filter(value => value !== 'all');
+        if (!current.includes(cat)) current.push(cat);
       } else {
-        // Removing a category
-        current = current.filter(c => c !== cat);
-        // If nothing left, default back to 'all'
-        if (current.length === 0) {
-          current = ['all'];
-          const allCb = document.querySelector('.category-checkbox[value="all"]');
-          if (allCb) allCb.checked = true;
-        }
+        current = current.filter(value => value !== cat);
+        if (!current.length) current = ['all'];
       }
 
       selectedCategories = current;
+      syncCategoryCheckboxes();
       updateNearestLabel();
       updateDestinationDropdown();
       updateDistanceInfo();
@@ -14331,7 +14859,15 @@
         opt.textContent = point.name;
         startSelect.appendChild(opt);
       });
-      getJourneyLocationOptions().forEach(({ loc, index }) => {
+      const journeyOptions = getJourneyLocationOptions();
+      const progressiveStartOptions = journeyOptions
+        .filter(({ loc, index }) => {
+          const ref = getJourneyLocationRef(loc, index);
+          return journeyPlanner.start && journeyPlanner.start.ref === ref;
+        })
+        .concat(journeyOptions.slice(0, 12))
+        .filter((item, itemIndex, items) => items.findIndex(candidate => candidate.index === item.index) === itemIndex);
+      progressiveStartOptions.forEach(({ loc, index }) => {
         const ref = getJourneyLocationRef(loc, index);
         const opt = document.createElement('option');
         opt.value = journeySelectValueForLocation(loc, index);
@@ -14350,7 +14886,11 @@
       placeholder.value = '';
       placeholder.textContent = 'Choose a mapped place...';
       stopSelect.appendChild(placeholder);
-      getJourneyLocationOptions().forEach(({ loc, index }) => {
+      const progressiveStopOptions = journeyOptions
+        .filter(({ loc, index }) => journeyPlanner.stops.some(stop => stop.ref === getJourneyLocationRef(loc, index)))
+        .concat(journeyOptions.slice(0, 12))
+        .filter((item, itemIndex, items) => items.findIndex(candidate => candidate.index === item.index) === itemIndex);
+      progressiveStopOptions.forEach(({ loc, index }) => {
         const ref = getJourneyLocationRef(loc, index);
         if (existingRefs.has(ref)) return;
         const opt = document.createElement('option');
@@ -14485,6 +15025,22 @@
       setText('journey-summary-spend', spendLabel);
       setText('journey-summary-average', formatJourneyMoney(metrics.averageSpend));
       setText('journey-summary-strains', String(metrics.selectedStrains));
+      const plannerSummary = document.getElementById('journey-planner-summary-text');
+      if (plannerSummary) {
+        if (metrics.stops.length && metrics.start) {
+          plannerSummary.textContent = [
+            `${metrics.stops.length} stop${metrics.stops.length === 1 ? '' : 's'}`,
+            distanceLabel !== '--' ? distanceLabel : '',
+            timeLabel !== '--' ? timeLabel : ''
+          ].filter(Boolean).join(' · ');
+        } else if (metrics.stops.length) {
+          plannerSummary.textContent = `${metrics.stops.length} stop${metrics.stops.length === 1 ? '' : 's'} added · choose a start`;
+        } else if (metrics.start) {
+          plannerSummary.textContent = 'Start chosen · add your first stop';
+        } else {
+          plannerSummary.textContent = 'Choose a start and add your first stop.';
+        }
+      }
 
       const distanceEl = document.getElementById('distance-info');
       const timeEl = document.getElementById('time-estimate');
@@ -14541,7 +15097,7 @@
 	            `<span class="journey-stop-copy">` +
 	              `<span class="journey-stop-role">Start location</span>` +
 	              `<strong>Choose a start point</strong>` +
-	              `<span>Select one above, or use Set itinerary start from a map card.</span>` +
+	              `<span>Select one above, or use Set route start from a map card.</span>` +
 	              `<span class="journey-stop-type">Start point</span>` +
             `</span>` +
           `</div>` +
@@ -14622,12 +15178,12 @@
       select.innerHTML = '';
       const placeholder = document.createElement('option');
       placeholder.value = '';
-      placeholder.textContent = savedJourneys.length ? 'Choose saved itinerary...' : 'No saved itineraries yet';
+      placeholder.textContent = savedJourneys.length ? 'Choose saved route...' : 'No saved routes yet';
       select.appendChild(placeholder);
       savedJourneys.forEach(journey => {
         const opt = document.createElement('option');
         opt.value = journey.id;
-        opt.textContent = journey.name || 'Saved itinerary';
+        opt.textContent = journey.name || 'Saved route';
         select.appendChild(opt);
       });
       select.value = Array.from(select.options).some(opt => opt.value === previous) ? previous : '';
@@ -14754,7 +15310,7 @@
     }
 
     function getJourneyNodePopupHtml(point, pointIndex, metrics) {
-      const safeLabel = escapeHtml(point && point.label ? point.label : 'Itinerary point');
+      const safeLabel = escapeHtml(point && point.label ? point.label : 'Route point');
       const safeCity = escapeHtml(point && point.city ? point.city : 'Amsterdam');
       if (pointIndex === 0) {
         return (
@@ -14777,7 +15333,7 @@
           `<div class="journey-node-actions">` +
             `<button type="button" data-journey-node-move="up" data-stop-index="${stopIndex}" ${stopIndex <= 0 ? 'disabled' : ''}>↑ Earlier</button>` +
             `<button type="button" data-journey-node-move="down" data-stop-index="${stopIndex}" ${stopIndex >= stopCount - 1 ? 'disabled' : ''}>↓ Later</button>` +
-            `<button type="button" data-journey-node-remove="${stopIndex}">Remove from itinerary</button>` +
+            `<button type="button" data-journey-node-remove="${stopIndex}">Remove from route</button>` +
           `</div>` +
         `</div>`
       );
@@ -14896,7 +15452,7 @@
       const stopIndex = getJourneyStopIndexByLocationIndex(index);
       if (stopIndex < 0) {
         if (Number.isInteger(index) && locations[index]) {
-          setJourneyStatus(`${locations[index].name} is not in your itinerary yet.`, 'warn');
+          setJourneyStatus(`${locations[index].name} is not in your route yet.`, 'warn');
         }
         return false;
       }
@@ -14907,7 +15463,7 @@
       if (!journeyPlanner.start) return false;
       journeyPlanner.start = null;
       renderJourneyPlanner({ fit: options.fit === true });
-      setJourneyStatus('Itinerary start cleared. Choose a new start point when you are ready.', 'good');
+      setJourneyStatus('Route start cleared. Choose a new start point when you are ready.', 'good');
       return true;
     }
 
@@ -14936,7 +15492,7 @@
       const location = getJourneyStopLocation(item);
       journeyPlanner.stops.splice(stopIndex, 1);
       renderJourneyPlanner({ fit: options.fit !== false });
-      setJourneyStatus(`${location && location.loc ? location.loc.name : 'Place'} removed from your itinerary.`, 'good');
+      setJourneyStatus(`${location && location.loc ? location.loc.name : 'Place'} removed from your route.`, 'good');
       return true;
     }
 
@@ -14944,11 +15500,12 @@
       if (!Number.isInteger(index) || !locations[index]) return false;
       const ref = getJourneyLocationRef(locations[index], index);
       if (getJourneyStopIndexByLocationIndex(index) >= 0) {
-        setJourneyStatus(`${locations[index].name} is already in this itinerary.`, 'warn');
+        setJourneyStatus(`${locations[index].name} is already in this route.`, 'warn');
         return false;
       }
       journeyPlanner.stops.push({ ref, strains: [] });
-      setJourneyStatus(`${locations[index].name} added to your itinerary.`, 'good');
+      openRouteTools();
+      setJourneyStatus(`${locations[index].name} added to your route.`, 'good');
       renderJourneyPlanner({ fit: true });
       return true;
     }
@@ -14965,8 +15522,9 @@
         type: 'location',
         ref: getJourneyLocationRef(locations[index], index)
       };
+      openRouteTools();
       renderJourneyPlanner({ fit: options.fit !== false && journeyPlanner.stops.length > 0 });
-      setJourneyStatus(`${locations[index].name || 'Location'} set as itinerary start.`, 'good');
+      setJourneyStatus(`${locations[index].name || 'Location'} set as route start.`, 'good');
       return true;
     }
 
@@ -14974,7 +15532,7 @@
       const input = document.getElementById('journey-name-input');
       const name = ((input && input.value) || '').toString().replace(/\s+/g, ' ').trim();
       if (!name) {
-        setJourneyStatus('Name the itinerary before saving it.', 'warn');
+        setJourneyStatus('Name the route before saving it.', 'warn');
         if (input) input.focus();
         return;
       }
@@ -14999,7 +15557,7 @@
       renderSavedJourneySelect();
       const select = document.getElementById('journey-saved-select');
       if (select) select.value = id;
-      setJourneyStatus(`${name} itinerary saved on this device.`, 'good');
+      setJourneyStatus(`${name} saved on this device.`, 'good');
     }
 
     function loadSelectedJourney() {
@@ -15007,7 +15565,7 @@
       const id = select ? select.value : '';
       const saved = savedJourneys.find(item => item.id === id);
       if (!saved) {
-        setJourneyStatus('Choose a saved itinerary to load.', 'warn');
+        setJourneyStatus('Choose a saved route to load.', 'warn');
         return;
       }
       journeyPlanner = {
@@ -15017,7 +15575,7 @@
       const input = document.getElementById('journey-name-input');
       if (input) input.value = saved.name || '';
       renderJourneyPlanner({ fit: true });
-      setJourneyStatus(`${saved.name || 'Saved itinerary'} loaded.`, 'good');
+      setJourneyStatus(`${saved.name || 'Saved route'} loaded.`, 'good');
     }
 
     function deleteSelectedJourney() {
@@ -15025,13 +15583,13 @@
       const id = select ? select.value : '';
       const saved = savedJourneys.find(item => item.id === id);
       if (!saved) {
-        setJourneyStatus('Choose a saved itinerary to delete.', 'warn');
+        setJourneyStatus('Choose a saved route to delete.', 'warn');
         return;
       }
       savedJourneys = savedJourneys.filter(item => item.id !== id);
       saveSavedJourneys();
       renderSavedJourneySelect();
-      setJourneyStatus(`${saved.name || 'Saved itinerary'} deleted from this device.`, 'good');
+      setJourneyStatus(`${saved.name || 'Saved route'} deleted from this device.`, 'good');
     }
 
     function buildDestinationItems() {
@@ -15158,9 +15716,9 @@
         ? `Best matches for ${activeName}`
         : (hasSelectedOrigin ? `Nearby from ${locations[selectedIndex].name}` : 'Nearby places');
 
-      const displayItems = hasSelectedOrigin
+      const displayItems = (hasSelectedOrigin
         ? items.filter(item => item.index !== selectedIndex)
-        : items;
+        : items).slice(0, 6);
 
       if (!displayItems.length) {
         statusEl.textContent = activeName
@@ -15334,6 +15892,7 @@
       }
 
       listEl.innerHTML = displayItems.map(item => {
+        const loc = locations[item.index] || {};
         const locationLabel = item.city || inferCityFromCsvPath(currentCsvPath) || '';
         const priceLabel = item.priceLabel || (item.priceInsight && item.priceInsight.label) || '';
         const freshnessLabel = item.freshnessLabel || '';
@@ -15346,17 +15905,26 @@
           freshnessLabel ? `<span class="best-match-badge is-fresh">${escapeHtml(freshnessLabel === 'Fresh' ? 'Fresh data' : freshnessLabel)}</span>` : ''
         ].filter(Boolean).join('');
         const inItinerary = !!item.inItinerary;
+        const researchUrl = Number.isFinite(Number(loc.db_shop_id))
+          ? priceMenusUrl({
+              shopId: loc.db_shop_id,
+              strain: getCanonicalStrainName(strainFilterText)
+            })
+          : '';
         return (
           `<article class="best-match-card" data-best-match-index="${item.index}">` +
-            `<div class="best-match-main">` +
-              `<span class="best-match-name">${escapeHtml(item.name)}</span>` +
-              `<span class="best-match-reason">${escapeHtml(reason)}</span>` +
-              (badges ? `<span class="best-match-meta">${badges}</span>` : '') +
+            `<div class="best-match-identity">` +
+              bestMatchLogoHtml(loc) +
+              `<div class="best-match-main">` +
+                `<span class="best-match-name">${escapeHtml(item.name)}</span>` +
+                `<span class="best-match-reason">${escapeHtml(reason)}</span>` +
+                (badges ? `<span class="best-match-meta">${badges}</span>` : '') +
+              `</div>` +
             `</div>` +
             `<div class="best-match-actions">` +
               `<button type="button" class="best-match-action is-primary" data-best-match-action="details" data-best-match-index="${item.index}">View</button>` +
-              `<button type="button" class="best-match-action${inItinerary ? ' is-primary' : ''}" data-best-match-action="itinerary" data-best-match-index="${item.index}" aria-pressed="${inItinerary ? 'true' : 'false'}">${inItinerary ? 'Added' : 'Add'}</button>` +
-              `<button type="button" class="best-match-action" data-best-match-action="directions" data-best-match-index="${item.index}">Route</button>` +
+              `<button type="button" class="best-match-action${inItinerary ? ' is-primary' : ''}" data-best-match-action="itinerary" data-best-match-index="${item.index}" aria-pressed="${inItinerary ? 'true' : 'false'}">${inItinerary ? 'Added' : 'Add to route'}</button>` +
+              (researchUrl ? `<a class="best-match-action" href="${escapeHtmlAttr(researchUrl)}">Prices</a>` : '') +
             `</div>` +
           `</article>`
         );
@@ -15395,7 +15963,13 @@
       placeholder.selected = true;
       destSelect.appendChild(placeholder);
 
-      items.forEach(item => {
+      const progressiveItems = items.slice(0, 3);
+      if (previousSelection !== null && !progressiveItems.some(item => item.index === previousSelection)) {
+        const selectedItem = items.find(item => item.index === previousSelection);
+        if (selectedItem) progressiveItems.push(selectedItem);
+      }
+
+      progressiveItems.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.index;
         opt.text = item.name +
@@ -15408,7 +15982,7 @@
       });
 
       const canRestoreSelection = previousSelection !== null &&
-        items.some(item => item.index === previousSelection);
+        progressiveItems.some(item => item.index === previousSelection);
       if (canRestoreSelection) {
         destSelect.value = String(previousSelection);
       } else {
@@ -15419,6 +15993,7 @@
       refreshDestinationCards(items);
       updateControlsSummary();
       updateDistanceInfo();
+      refreshSelectedMarkerIcons();
     }
 
     /**
@@ -15784,7 +16359,7 @@
       journeyPlanner.start = readJourneyPointValue(e.target.value);
       renderJourneyPlanner({ fit: journeyPlanner.stops.length > 0 });
       setJourneyStatus(
-        journeyPlanner.start ? 'Itinerary start updated.' : 'Choose a start, then add mapped places to build your itinerary.',
+        journeyPlanner.start ? 'Route start updated.' : 'Choose a start, then add mapped places to build your route.',
         journeyPlanner.start ? 'good' : ''
       );
     });
@@ -15805,7 +16380,7 @@
     document.getElementById('add-destination-stop-btn').addEventListener('click', () => {
       const selectedIndex = getSelectedDestinationIndex();
       if (selectedIndex === null || !locations[selectedIndex]) {
-        setJourneyStatus('Choose a Destination preview first, then add it to the itinerary.', 'warn');
+        setJourneyStatus('Choose a place first, then add it to the route.', 'warn');
         return;
       }
       addJourneyStopByIndex(selectedIndex);
@@ -15874,7 +16449,7 @@
         return;
       }
       updateJourneyMapOverlay(metrics, { fit: true });
-      setJourneyStatus(metrics.points.length > 1 ? 'Itinerary route fitted on the map.' : 'Itinerary start fitted on the map.', 'good');
+      setJourneyStatus(metrics.points.length > 1 ? 'Route fitted on the map.' : 'Route start fitted on the map.', 'good');
     });
     document.getElementById('journey-name-input').addEventListener('input', () => {
       renderJourneySummary(latestJourneyRouteMetrics || getJourneyMetrics());
@@ -15906,15 +16481,26 @@
         setDirectionsVisible(false);
       }
       setControlsVisible(true, { collapsed: false });
+      const panel = document.getElementById('settings-panel');
+      if (panel) panel.hidden = false;
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}#settings`);
       }
       window.setTimeout(() => {
-        const panel = document.getElementById('settings-panel');
         if (!panel) return;
         panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
         panel.focus({ preventScroll: true });
       }, 80);
+    }
+
+    function closeSettingsPanel() {
+      const panel = document.getElementById('settings-panel');
+      if (panel) panel.hidden = true;
+      if ((window.location.hash || '').toLowerCase() === '#settings' && window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
+      }
+      const searchInput = document.getElementById('destination-search');
+      if (searchInput) searchInput.focus({ preventScroll: true });
     }
 
     function openSettingsFromHash() {
@@ -15922,7 +16508,30 @@
       openSettingsPanel();
     }
 
+    function applyInitialWorkflowIntent() {
+      let intent = '';
+      try {
+        intent = (new URLSearchParams(window.location.search || '').get('intent') || '').toLowerCase();
+      } catch (_err) {
+        intent = '';
+      }
+      if (intent !== 'itinerary') return;
+      setControlsVisible(true, { collapsed: false });
+      const planner = openRouteTools();
+      if (planner) {
+        window.setTimeout(() => {
+          setControlsVisible(true, { collapsed: false });
+          const content = document.getElementById('map-tools-content');
+          if (!content) return;
+          const targetTop = Math.max(0, planner.offsetTop - content.offsetTop - 12);
+          content.scrollTo({ top: targetTop, behavior: 'auto' });
+        }, 700);
+      }
+      setJourneyStatus('Choose a start, then add places in the order you want to visit them.', 'good');
+    }
+
     document.getElementById('nav-settings-btn').addEventListener('click', openSettingsPanel);
+    document.getElementById('close-map-settings-btn').addEventListener('click', closeSettingsPanel);
 
     window.addEventListener('hashchange', openSettingsFromHash);
 
@@ -15942,9 +16551,11 @@
           return;
         }
         if (intent === 'nearby') {
-          const planner = document.getElementById('journey-planner-card');
-          if (planner) planner.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          setJourneyStatus('Choose a start, then add Amsterdam places in the order you want to visit them.', 'good');
+          const planner = openRouteTools();
+          if (planner) {
+            planner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          setJourneyStatus('Choose a start, then add places in the order you want to visit them.', 'good');
           return;
         }
         if (intent === 'value') {
@@ -15958,6 +16569,16 @@
         }
       });
     });
+
+    const strainToolsDrawer = document.getElementById('map-strain-tools');
+    if (strainToolsDrawer) {
+      strainToolsDrawer.addEventListener('toggle', () => {
+        strainListVisible = strainToolsDrawer.open;
+        const panel = document.getElementById('strain-list-panel');
+        if (panel) panel.style.display = strainListVisible ? 'block' : 'none';
+        if (strainListVisible) populateStrainListPanel();
+      });
+    }
 
     document.getElementById('clear-selection-toggle').addEventListener('click', () => {
       clearDestinationSelection();
@@ -16028,7 +16649,7 @@
       const selectedIndex = getSelectedDestinationIndex();
       if (selectedIndex === null || !locations[selectedIndex]) {
         setControlsVisible(true, { collapsed: false });
-        setJourneyStatus('Choose a Destination preview first, then add it to the itinerary.', 'warn');
+        setJourneyStatus('Choose a place first, then add it to the route.', 'warn');
         return;
       }
       toggleJourneyStopByIndex(selectedIndex);
@@ -16068,6 +16689,12 @@
 
     document.getElementById('controls-header').addEventListener('click', e => {
       if (e.target.closest('button')) return;
+      if (controlsVisible && isCompactMobileLayout()) {
+        setControlsCollapsed(!controlsCollapsed);
+      }
+    });
+
+    document.getElementById('controls-header-toggle').addEventListener('click', () => {
       if (controlsVisible && isCompactMobileLayout()) {
         setControlsCollapsed(!controlsCollapsed);
       }
@@ -16209,6 +16836,7 @@
     syncCompactLayoutState();
     syncControlsChrome();
     scheduleViewportResync([160, 420]);
+    applyInitialWorkflowIntent();
     openSettingsFromHash();
     bootstrapInitialCsvLoad();
 
