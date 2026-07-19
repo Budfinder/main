@@ -12629,10 +12629,6 @@
       const hasRowsForCategory = category => categoryOptions.includes(category) &&
         locations.some(loc => loc && !isClosedLocation(loc) && loc[category]);
 
-      const preferredCategories = ['Coffeeshop', 'Albert Heijn'];
-      const preferred = preferredCategories.find(hasRowsForCategory);
-      if (preferred) return [preferred];
-
       const firstAvailable = categoryOptions.find(category =>
         category !== 'all' &&
         category !== 'favourites' &&
