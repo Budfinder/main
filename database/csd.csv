@@ -1,9 +1,9 @@
 name,city,address,shop_url,show_in_admin,is_closed
-Any Time,Alkmaar,"Any Time, Laat 16, Alkmaar 1811 EJ",https://www.coffeeshopmenus.org/cs-anytime.html,0,0
-De Brug,Alkmaar,"De Brug, Herenstraat 1, 1811 MH, Alkmaar",https://www.coffeeshopmenus.org/cs-brug.html,0,0
-High-Time,Alkmaar,"High-Time, Spoorstraat 99, Alkmaar 1815 CA",https://www.coffeeshopmenus.org/cs-hightime-alk.html,0,0
-Stepping Out,Alkmaar,"Stepping Out, Ritsevoort 30, Alkmaar 1811 DP",https://www.coffeeshopmenus.org/cs-steppingout.html,0,0
-Zero Zero,Alkmaar,"Zero Zero, Laat 32, 1811 EJ Alkmaarn",https://www.coffeeshopmenus.org/cs-zero-zero-alk.html,0,0
+Any Time,Alkmaar,"Any Time, Laat 16, Alkmaar 1811 EJ",https://www.coffeeshopmenus.org/cs-anytime.html,1,0
+De Brug,Alkmaar,"De Brug, Herenstraat 1, 1811 MH, Alkmaar",https://www.coffeeshopmenus.org/cs-brug.html,1,0
+High-Time,Alkmaar,"High-Time, Spoorstraat 99, Alkmaar 1815 CA",https://www.coffeeshopmenus.org/cs-hightime-alk.html,1,0
+Stepping Out,Alkmaar,"Stepping Out, Ritsevoort 30, Alkmaar 1811 DP",https://www.coffeeshopmenus.org/cs-steppingout.html,1,0
+Zero Zero,Alkmaar,"Zero Zero, Laat 32, 1811 EJ Alkmaarn",https://www.coffeeshopmenus.org/cs-zero-zero-alk.html,1,0
 Boerejongens Almere,Almere,"Boerejongens Almere, Grote Markt 23, Almere 1315 JA",https://www.coffeeshopmenus.org/cs-boerejongensalmere.html,0,0
 Koffie en Dromen (Blowboot),Almere,"Koffie en Dromen (Blowboot), Festivalplein 19, Almere 1315 KL",https://www.coffeeshopmenus.org/cs-blowbootalmere.html,0,0
 Chillie Kiki,Almere-Haven,"Chillie Kiki, Schoolstraat 260, Almere-Haven 1354 HX",https://www.coffeeshopmenus.org/cs-chilliekiki.html,0,0
@@ -225,20 +225,20 @@ Chip N Dale,den Bosch,"Chip N Dale, Hinthamerstraat 104, 5211 MS 's-Hertogenbosc
 Meetpoint,den Bosch,"Meetpoint, Hinthamerstraat 104, 5211 MS 's-Hertogenbosch",https://www.coffeeshopmenus.org/cs-meetpoint.html,0,0
 Speakeasy,den Bosch,"Speakeasy (Closed), Snellestraat 47, 5211 EM den Bosch",https://www.coffeeshopmenus.org/cs-speak-easy-bos.html,0,0
 The Grass Company,den Bosch,"The Grass Company, Emmaplein 24-A, 5211 VW, 's-Hertogenbosch (Den Bosch)",https://www.coffeeshopmenus.org/cs-grass-company.html,0,0
-Cremers,den Haag,"Cremers, Prinsestraat 84, 2513 CG 's-Gravenhage ( Den Haag )",https://www.coffeeshopmenus.org/cs-cremers.html,1,0
-de Mazzelaar,den Haag,"de Mazzelaar, Zoutmanstraat 29, 2518 GL, The Hague ('s-Gravenhage, Den Haag)",https://www.coffeeshopmenus.org/cs-mazzelaar.html,1,0
-Dizzy Duck,den Haag,"Dizzy Duck, Trompstraat 210, 2518 BR Den Haag",https://www.coffeeshopmenus.org/cs-dizzy-duck.html,1,0
-Dizzy Duck Downtown,den Haag,"Dizzy Duck Downtown, Fluwelen Burgwal 1-C, The Hague 2511 CH",https://www.coffeeshopmenus.org/cs-dizzy-duck-downtown.html,1,0
-Fly,den Haag,"Fly, Veenkade 46, The Hague 2513 EH",https://www.coffeeshopmenus.org/cs-fly.html,1,0
-Galaxy,den Haag,"Galaxy, Weimarstraat 245, 2562 HH Den Haag",https://www.coffeeshopmenus.org/cs-galaxy.html,1,0
-Green House Secret Farmers,den Haag,"Green House Secret Farmers, Elandstraat 18, The Hague 2513 GR",https://www.coffeeshopmenus.org/cs-greenhouse-sf.html,1,0
-Happy Smile,den Haag,"Happy Smile, Verheeskade 30, 2521 BN Den Haag",https://www.coffeeshopmenus.org/cs-happy-smile.html,1,0
-Le Mistral,den Haag,"Le Mistral, Weimarstraat 378, 2562 HW The Hague",https://www.coffeeshopmenus.org/cs-mistral.html,1,0
-Magic,den Haag,"Magic, Gortstraat 6, 2511 GK den Haag",https://www.coffeeshopmenus.org/cs-magic-haag.html,1,0
-No Limit,den Haag,"No Limit, Witte de Withstraat 4a, The Hague 2518 CT",https://www.coffeeshopmenus.org/cs-no-limit.html,1,0
-Sky 2,den Haag,"Sky 2, Gortstraat 6, 2511 GK den Haag",https://www.coffeeshopmenus.org/cs-sky-2.html,1,1
-Sky High 1,den Haag,"Sky High 1, Fluwelen Burgwal 1-C, The Hague 2511 CH",https://www.coffeeshopmenus.org/cs-sky-high-1.html,1,1
-Waterworld,den Haag,"Waterworld, Gedempte Burgwal 55, 2512 BS den Haag",https://www.coffeeshopmenus.org/cs-waterworld.html,1,0
+Cremers,den Haag,"Cremers, Prinsestraat 84, 2513 CG 's-Gravenhage ( Den Haag )",https://www.coffeeshopmenus.org/cs-cremers.html,0,0
+de Mazzelaar,den Haag,"de Mazzelaar, Zoutmanstraat 29, 2518 GL, The Hague ('s-Gravenhage, Den Haag)",https://www.coffeeshopmenus.org/cs-mazzelaar.html,0,0
+Dizzy Duck,den Haag,"Dizzy Duck, Trompstraat 210, 2518 BR Den Haag",https://www.coffeeshopmenus.org/cs-dizzy-duck.html,0,0
+Dizzy Duck Downtown,den Haag,"Dizzy Duck Downtown, Fluwelen Burgwal 1-C, The Hague 2511 CH",https://www.coffeeshopmenus.org/cs-dizzy-duck-downtown.html,0,0
+Fly,den Haag,"Fly, Veenkade 46, The Hague 2513 EH",https://www.coffeeshopmenus.org/cs-fly.html,0,0
+Galaxy,den Haag,"Galaxy, Weimarstraat 245, 2562 HH Den Haag",https://www.coffeeshopmenus.org/cs-galaxy.html,0,0
+Green House Secret Farmers,den Haag,"Green House Secret Farmers, Elandstraat 18, The Hague 2513 GR",https://www.coffeeshopmenus.org/cs-greenhouse-sf.html,0,0
+Happy Smile,den Haag,"Happy Smile, Verheeskade 30, 2521 BN Den Haag",https://www.coffeeshopmenus.org/cs-happy-smile.html,0,0
+Le Mistral,den Haag,"Le Mistral, Weimarstraat 378, 2562 HW The Hague",https://www.coffeeshopmenus.org/cs-mistral.html,0,0
+Magic,den Haag,"Magic, Gortstraat 6, 2511 GK den Haag",https://www.coffeeshopmenus.org/cs-magic-haag.html,0,0
+No Limit,den Haag,"No Limit, Witte de Withstraat 4a, The Hague 2518 CT",https://www.coffeeshopmenus.org/cs-no-limit.html,0,0
+Sky 2,den Haag,"Sky 2, Gortstraat 6, 2511 GK den Haag",https://www.coffeeshopmenus.org/cs-sky-2.html,0,1
+Sky High 1,den Haag,"Sky High 1, Fluwelen Burgwal 1-C, The Hague 2511 CH",https://www.coffeeshopmenus.org/cs-sky-high-1.html,0,1
+Waterworld,den Haag,"Waterworld, Gedempte Burgwal 55, 2512 BS den Haag",https://www.coffeeshopmenus.org/cs-waterworld.html,0,0
 Aktama,Den Helder,"Aktama, Industrieweg 1B, 1785 AG Den Helder",https://www.coffeeshopmenus.org/cs-aktama.html,0,0
 Tops,Den Helder,"Tops, Koningstraat 34, Den Helder 1781 KH",https://www.coffeeshopmenus.org/cs-tops-dh.html,0,0
 Bulls,Deventer,"Bulls, Op de Keizer 28, 7411 TA Deventer",https://www.coffeeshopmenus.org/cs-bulls.html,0,0

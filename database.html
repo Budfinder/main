@@ -9,19 +9,19 @@
   <meta property="og:title" content="Amsterdam Strain Prices &amp; Coffeeshop Menus | Budfinder" />
   <meta property="og:description" content="Compare lowest and typical prices, shop counts and freshness before opening a detailed comparison." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://budfinder.app/database.html" />
-  <meta property="og:image" content="https://budfinder.app/static/images/budfinder-social.png" />
+  <meta property="og:url" content="https://budfinder.org/database.html" />
+  <meta property="og:image" content="https://budfinder.org/static/images/budfinder-social.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://budfinder.app/static/images/budfinder-social.png" />
+  <meta name="twitter:image" content="https://budfinder.org/static/images/budfinder-social.png" />
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://budfinder.app/"},
-        {"@type": "ListItem", "position": 2, "name": "Price & Menus", "item": "https://budfinder.app/database.html"}
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://budfinder.org/"},
+        {"@type": "ListItem", "position": 2, "name": "Price & Menus", "item": "https://budfinder.org/database.html"}
       ]
     }
   </script>
@@ -218,6 +218,465 @@
       .smoke-plume {
         filter: blur(26px);
         opacity: 0.11;
+      }
+    }
+
+    /* Search-first database experience */
+    .page-shell {
+      width: min(1040px, calc(100% - 32px));
+      padding-top: clamp(24px, 5vw, 64px);
+      padding-bottom: 112px;
+    }
+
+    .topbar {
+      width: min(880px, 100%);
+      margin: 0 auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .topbar .brand {
+      max-width: 720px;
+    }
+
+    .topbar .brand h1 {
+      margin-top: 8px;
+      font-size: clamp(36px, 6vw, 68px);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+    }
+
+    .topbar .intro-copy {
+      max-width: 620px;
+      margin-top: 16px;
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.55;
+    }
+
+    .database-search-panel {
+      position: static;
+      width: min(880px, 100%);
+      margin: clamp(22px, 4vw, 38px) auto 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .database-search-panel:focus-within {
+      border-color: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .database-search-head {
+      margin-bottom: 12px;
+    }
+
+    .database-search-title {
+      display: block;
+    }
+
+    .database-search-title strong {
+      display: block;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+    }
+
+    .database-search-title span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .database-search-field {
+      position: relative;
+      display: block;
+      padding: 0;
+    }
+
+    .database-search-field label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .database-search-field input {
+      width: 100%;
+      min-height: 68px;
+      padding: 0 58px 0 24px;
+      border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--line));
+      border-radius: 22px;
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--panel) 96%, white), color-mix(in srgb, var(--panel-strong) 94%, transparent));
+      color: var(--ink);
+      font-size: clamp(17px, 2.2vw, 21px);
+      box-shadow: 0 18px 50px rgba(26, 43, 34, 0.1);
+    }
+
+    .database-search-field::after {
+      content: "⌕";
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-52%);
+      color: var(--accent-strong);
+      font-size: 30px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .database-search-field input:focus {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--accent) 17%, transparent),
+        0 20px 54px rgba(26, 43, 34, 0.13);
+    }
+
+    .database-quick-chips,
+    .database-search-field > .field-note {
+      display: none;
+    }
+
+    .discovery-suggestions,
+    .discovery-results {
+      width: min(880px, 100%);
+      margin: 30px auto 0;
+    }
+
+    .discovery-suggestions[hidden],
+    .discovery-results[hidden] {
+      display: none !important;
+    }
+
+    .discovery-intro {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .discovery-group + .discovery-group {
+      margin-top: 32px;
+    }
+
+    .discovery-group-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .discovery-group-head h2,
+    .discovery-group-head h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .discovery-group-head span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .discovery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .discovery-grid.is-results {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .discovery-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      width: 100%;
+      min-width: 0;
+      min-height: 86px;
+      padding: 14px;
+      border: 1px solid color-mix(in srgb, var(--line) 84%, transparent);
+      border-radius: 18px;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      color: var(--ink);
+      text-align: left;
+      text-decoration: none;
+      box-shadow: 0 10px 26px rgba(30, 50, 40, 0.06);
+      cursor: pointer;
+      transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .discovery-card:hover,
+    .discovery-card:focus-visible {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--accent) 56%, var(--line));
+      box-shadow: 0 14px 34px rgba(30, 50, 40, 0.11);
+      outline: none;
+    }
+
+    .discovery-card-copy {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .discovery-card-copy strong {
+      display: block;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .discovery-card-copy small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .discovery-card .shop-art,
+    .discovery-card .strain-art {
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      border-radius: 14px;
+    }
+
+    .discovery-card .strain-art img,
+    .discovery-card .shop-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .discovery-area-icon {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      min-width: 48px;
+      place-items: center;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--accent) 15%, var(--panel-strong));
+      color: var(--accent-strong);
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .discovery-type-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .discovery-type-row span {
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 9%, var(--panel-strong));
+      color: var(--ink);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .discovery-empty {
+      padding: 26px;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    #database-layout,
+    .result-toolbar,
+    .workflow-strip,
+    #jump-top {
+      display: none !important;
+    }
+
+    #status {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .database-detail {
+      width: min(920px, 100%);
+      margin: 24px auto 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .database-detail .detail-header,
+    .database-detail .detail-section {
+      border-radius: 22px;
+      background: color-mix(in srgb, var(--panel) 96%, transparent);
+      box-shadow: 0 14px 38px rgba(30, 50, 40, 0.08);
+    }
+
+    .database-detail .detail-header-main .shop-art {
+      width: 82px;
+      height: 82px;
+      min-width: 82px;
+      border-radius: 20px;
+    }
+
+    .menu-listing-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .menu-listing-main .strain-art {
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
+      border-radius: 12px;
+    }
+
+    .average-comparison.is-below {
+      color: #145b33;
+      background: #dff5e7;
+      border-color: #94d1aa;
+    }
+
+    .average-comparison.is-above {
+      color: #7b2d25;
+      background: #fbe5e2;
+      border-color: #e6a7a0;
+    }
+
+    .average-comparison.is-average {
+      color: #604b16;
+      background: #f8f0d3;
+      border-color: #ddc675;
+    }
+
+    body.database-detail-open .topbar,
+    body.database-detail-open .database-search-panel,
+    body.database-detail-open .discovery-suggestions,
+    body.database-detail-open .discovery-results {
+      display: none !important;
+    }
+
+    body.database-detail-open .page-shell {
+      padding-top: 34px;
+    }
+
+    @media (max-width: 680px) {
+      .page-shell {
+        width: min(100% - 24px, 1040px);
+        padding-top: 18px;
+        padding-bottom: calc(104px + env(safe-area-inset-bottom));
+      }
+
+      .topbar .brand h1 {
+        margin-top: 6px;
+        font-size: clamp(34px, 12vw, 50px);
+      }
+
+      .topbar .intro-copy {
+        margin-top: 12px;
+        font-size: 15px;
+      }
+
+      .database-search-panel {
+        margin-top: 20px;
+      }
+
+      .database-search-head {
+        margin-bottom: 9px;
+      }
+
+      .database-search-field input {
+        min-height: 58px;
+        padding: 0 50px 0 18px;
+        border-radius: 18px;
+        font-size: 17px;
+      }
+
+      .database-search-field::after {
+        right: 17px;
+        font-size: 26px;
+      }
+
+      .discovery-suggestions,
+      .discovery-results {
+        margin-top: 24px;
+      }
+
+      .discovery-group + .discovery-group {
+        margin-top: 26px;
+      }
+
+      .discovery-grid,
+      .discovery-grid.is-results {
+        grid-template-columns: 1fr;
+        gap: 9px;
+      }
+
+      .discovery-card {
+        min-height: 78px;
+        padding: 12px;
+        border-radius: 16px;
+      }
+
+      .discovery-card .shop-art,
+      .discovery-card .strain-art,
+      .discovery-area-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+      }
+
+      .database-detail {
+        margin-top: 0;
+      }
+
+      .database-detail .detail-header,
+      .database-detail .detail-section {
+        border-radius: 18px;
+      }
+
+      .database-detail .detail-header-main {
+        align-items: flex-start;
+      }
+
+      .database-detail .detail-header-main .shop-art {
+        width: 64px;
+        height: 64px;
+        min-width: 64px;
+        border-radius: 17px;
+      }
+
+      body.database-detail-open .page-shell {
+        padding-top: 18px;
       }
     }
 
@@ -3314,6 +3773,24 @@
       font-size: 22px;
     }
 
+    .detail-load-more-row {
+      display: flex;
+      justify-content: center;
+      padding-top: 4px;
+    }
+
+    .detail-load-more-row button {
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.12));
+      color: var(--control-text, var(--ink));
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
     .menu-listing-title {
       min-height: 0;
       padding: 0;
@@ -3486,6 +3963,188 @@
       }
     }
   </style>
+  <style>
+    /* Final cascade for the simplified search-first shell. */
+    body .page-shell {
+      width: min(1040px, calc(100% - 32px));
+      padding-top: clamp(24px, 5vw, 64px);
+      padding-bottom: 112px;
+    }
+
+    body .topbar {
+      display: block;
+      width: min(880px, 100%);
+      margin: 0 auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    body .topbar .brand {
+      max-width: 720px;
+    }
+
+    body .topbar .brand h1 {
+      margin-top: 8px;
+      font-size: clamp(36px, 6vw, 68px);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+    }
+
+    body .topbar .intro-copy {
+      display: block;
+      max-width: 620px;
+      margin-top: 16px;
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.55;
+    }
+
+    body .database-search-panel {
+      position: static;
+      top: auto;
+      z-index: auto;
+      display: block;
+      width: min(880px, 100%);
+      margin: clamp(22px, 4vw, 38px) auto 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      transform: none;
+    }
+
+    body .database-search-panel:focus-within {
+      border-color: transparent;
+      box-shadow: none;
+      transform: none;
+    }
+
+    body .database-search-head {
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    body .database-search-title {
+      display: block;
+      text-align: left;
+    }
+
+    body .database-search-title strong {
+      display: block;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+    }
+
+    body .database-search-title span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    body .database-search-field {
+      position: relative;
+      display: block;
+      padding: 0;
+    }
+
+    body .database-search-field label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    body .database-search-field input {
+      width: 100%;
+      min-height: 68px;
+      padding: 0 58px 0 24px;
+      border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--line));
+      border-radius: 22px;
+      background: color-mix(in srgb, var(--panel) 96%, white);
+      color: var(--ink);
+      font-size: clamp(17px, 2.2vw, 21px);
+      box-shadow: 0 18px 50px rgba(26, 43, 34, 0.1);
+    }
+
+    body .database-search-field input:focus {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--accent) 17%, transparent),
+        0 20px 54px rgba(26, 43, 34, 0.13);
+    }
+
+    body .database-quick-chips,
+    body .database-search-field > .field-note,
+    body #database-layout,
+    body .result-toolbar,
+    body .workflow-strip,
+    body #jump-top {
+      display: none !important;
+    }
+
+    body .database-detail {
+      width: min(920px, 100%);
+      margin: 24px auto 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    body.database-detail-open .topbar,
+    body.database-detail-open .database-search-panel {
+      display: none !important;
+    }
+
+    @media (max-width: 680px) {
+      body .page-shell {
+        width: min(100% - 24px, 1040px);
+        padding-top: 18px;
+        padding-bottom: calc(104px + env(safe-area-inset-bottom));
+      }
+
+      body .topbar .brand h1 {
+        margin-top: 6px;
+        font-size: clamp(34px, 9.5vw, 40px);
+        line-height: 1.02;
+      }
+
+      body .topbar .intro-copy {
+        display: none;
+      }
+
+      body .database-search-panel {
+        margin-top: 16px;
+      }
+
+      body .database-search-head {
+        margin-bottom: 9px;
+      }
+
+      body .database-search-field input {
+        min-height: 58px;
+        padding: 0 50px 0 18px;
+        border-radius: 18px;
+        font-size: 17px;
+      }
+
+      body .database-detail {
+        margin-top: 0;
+      }
+
+      body.database-detail-open .page-shell {
+        padding-top: 18px;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav class="app-mode-toggle" aria-label="Switch app view">
@@ -3503,22 +4162,22 @@
   <main class="page-shell">
     <header class="topbar">
       <div class="brand">
-        <span class="kicker">Research prices</span>
-        <h1>Budfinder Price &amp; Menus</h1>
-        <p class="intro-copy">Compare Amsterdam strain prices, check known menus, and decide which shops are worth opening on the map. Budfinder shows planning intelligence, not stock guarantees.</p>
+        <span class="kicker" id="database-personal-greeting">Explore the database</span>
+        <h1>Find a shop, strain or area</h1>
+        <p class="intro-copy">Start with a name. Budfinder will keep everything else out of the way until you need it.</p>
       </div>
     </header>
 
     <section class="database-search-panel" aria-labelledby="database-search-title">
       <div class="database-search-head">
         <div class="database-search-title">
-          <strong id="database-search-title">What does the data tell me?</strong>
-          <span>Search a strain for price signals, or a shop name to inspect its known menu.</span>
+          <strong id="database-search-title">What are you looking for?</strong>
+          <span>Search areas, coffeeshops and strains.</span>
         </div>
       </div>
       <div class="field database-search-field">
-        <label id="search-label" for="search">Search strains or coffeeshops</label>
-        <input id="search" type="search" placeholder="Gelato, The Plug, Family First..." autocomplete="off" />
+        <label id="search-label" for="search">Search areas, coffeeshops and strains</label>
+        <input id="search" type="search" placeholder="Try Abraxas, Lemon or Jordaan..." autocomplete="off" />
         <div id="search-chip-row" class="database-quick-chips" aria-label="Quick searches">
           <button type="button" data-search-chip="Gelato">Gelato</button>
           <button type="button" data-search-chip="Amnesia Haze">Amnesia Haze</button>
@@ -3528,6 +4187,19 @@
         </div>
         <div class="field-note">Shop names open the menu browser automatically.</div>
       </div>
+    </section>
+
+    <section id="discovery-suggestions" class="discovery-suggestions" aria-labelledby="discovery-suggestions-title">
+      <h2 id="discovery-suggestions-title" class="discovery-intro">A few useful places to begin.</h2>
+      <div id="discovery-suggestion-groups"></div>
+    </section>
+
+    <section id="discovery-results" class="discovery-results" aria-live="polite" hidden>
+      <div class="discovery-group-head">
+        <h2 id="discovery-results-title">Search results</h2>
+        <span id="discovery-results-count"></span>
+      </div>
+      <div id="discovery-result-groups"></div>
     </section>
 
     <section id="detail-view" class="database-detail panel" aria-live="polite" hidden></section>
@@ -3768,9 +4440,9 @@
 
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
-  <script src="scripts/budfinder-logos.js?v=20260719-1"></script>
+  <script src="scripts/budfinder-logos.js?v=20260720-3"></script>
   <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
-  <script src="scripts/budfinder-page-settings.js?v=20260719-contrast1"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260720-name2"></script>
   <script>
     const state = {
       offerings: [],
@@ -3798,8 +4470,11 @@
       shopHideUnknownPrices: false,
       view: 'strains',
       detail: null,
-      detailReturnSearch: ''
+      detailReturnSearch: '',
+      detailVisibleLimit: 12
     };
+
+    const DETAIL_LISTING_STEP = 12;
 
     const els = {
       status: document.getElementById('status'),
@@ -3852,8 +4527,38 @@
       shopList: document.getElementById('shop-list'),
       strainsSummary: document.getElementById('strains-summary'),
       compareSummary: document.getElementById('compare-summary'),
-      shopsSummary: document.getElementById('shops-summary')
+      shopsSummary: document.getElementById('shops-summary'),
+      discoverySuggestions: document.getElementById('discovery-suggestions'),
+      discoverySuggestionGroups: document.getElementById('discovery-suggestion-groups'),
+      discoveryResults: document.getElementById('discovery-results'),
+      discoveryResultsTitle: document.getElementById('discovery-results-title'),
+      discoveryResultsCount: document.getElementById('discovery-results-count'),
+      discoveryResultGroups: document.getElementById('discovery-result-groups')
     };
+
+    const databasePersonalGreetingEl = document.getElementById('database-personal-greeting');
+    const databaseSearchTitleEl = document.getElementById('database-search-title');
+
+    function currentUserName() {
+      return window.BudfinderPersonalisation
+        ? window.BudfinderPersonalisation.userName()
+        : '';
+    }
+
+    function applyDatabasePersonalisation() {
+      const name = currentUserName();
+      if (databasePersonalGreetingEl) {
+        databasePersonalGreetingEl.textContent = name ? `Explore · ${name}` : 'Explore the database';
+      }
+      if (databaseSearchTitleEl) {
+        databaseSearchTitleEl.textContent = name
+          ? `What are you looking for, ${name}?`
+          : 'What are you looking for?';
+      }
+    }
+
+    window.addEventListener('budfinder:namechange', applyDatabasePersonalisation);
+    applyDatabasePersonalisation();
 
     function escapeHtml(value) {
       return String(value == null ? '' : value)
@@ -5536,7 +6241,19 @@
 
     function getStatByKey(key) {
       const cleanKey = normalise(key);
-      return state.strainStats.find(stat => stat.key === cleanKey) || null;
+      if (!cleanKey) return null;
+
+      const exact = state.strainStats.find(stat =>
+        stat.key === cleanKey || normalise(stat.name) === cleanKey
+      );
+      if (exact) return exact;
+
+      const comparableKey = normaliseSearchText(key);
+      if (!comparableKey) return null;
+      return state.strainStats.find(stat =>
+        normaliseSearchText(stat.key) === comparableKey ||
+        normaliseSearchText(stat.name) === comparableKey
+      ) || null;
     }
 
     function getCanonicalShelfName(nameOrKey) {
@@ -6063,6 +6780,240 @@
       return Array.from(grouped.values()).sort(compareShopName);
     }
 
+    const DISCOVERY_AREAS = [
+      { name: 'Centrum', city: 'Amsterdam', note: 'Canals, old centre and central station' },
+      { name: 'Jordaan', city: 'Amsterdam', note: 'West of the canal ring' },
+      { name: 'De Pijp', city: 'Amsterdam', note: 'South of the centre' },
+      { name: 'Oud-West', city: 'Amsterdam', note: 'West of Vondelpark' },
+      { name: 'Oost', city: 'Amsterdam', note: 'East Amsterdam' },
+      { name: 'Noord', city: 'Amsterdam', note: 'Across the IJ' },
+      { name: 'Alkmaar', city: 'Alkmaar', note: 'Explore the Alkmaar map' },
+      { name: 'Utrecht', city: 'Utrecht', note: 'Explore the Utrecht map' }
+    ];
+
+    function discoveryMatchScore(value, query) {
+      const text = normaliseSearchText(value);
+      const q = normaliseSearchText(query);
+      if (!text || !q) return 0;
+      if (text === q) return 100;
+      if (text.startsWith(q)) return 80;
+      if (text.split(' ').some(word => word.startsWith(q))) return 70;
+      if (text.includes(q)) return 55;
+      const tokens = q.split(' ').filter(Boolean);
+      return tokens.length > 1 && tokens.every(token => text.includes(token)) ? 45 : 0;
+    }
+
+    function discoveryGroupHtml(title, helper, cards, className = '') {
+      if (!cards.length) return '';
+      return `
+        <section class="discovery-group">
+          <div class="discovery-group-head">
+            <h3>${escapeHtml(title)}</h3>
+            ${helper ? `<span>${escapeHtml(helper)}</span>` : ''}
+          </div>
+          <div class="discovery-grid${className ? ` ${escapeHtmlAttr(className)}` : ''}">
+            ${cards.join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function discoveryAreaCardHtml(area) {
+      const params = new URLSearchParams();
+      if (area.city) params.set('city', area.city);
+      if (normaliseSearchText(area.name) !== normaliseSearchText(area.city)) {
+        params.set('search', area.name);
+      }
+      return `
+        <a class="discovery-card" href="map.html?${escapeHtmlAttr(params.toString())}" aria-label="Explore ${escapeHtmlAttr(area.name)} on the map">
+          <span class="discovery-area-icon" aria-hidden="true">⌖</span>
+          <span class="discovery-card-copy">
+            <strong>${escapeHtml(area.name)}</strong>
+            <small>${escapeHtml(area.note || area.city)}</small>
+          </span>
+        </a>
+      `;
+    }
+
+    function categoryCountsForShop(row) {
+      const counts = new Map();
+      (row && Array.isArray(row.offerings) ? row.offerings : []).forEach(item => {
+        const key = normalise(item.base_type || 'other') || 'other';
+        counts.set(key, (counts.get(key) || 0) + 1);
+      });
+      return counts;
+    }
+
+    function categoryPillsHtml(row, limit = 4) {
+      const counts = categoryCountsForShop(row);
+      const order = ['sativa', 'indica', 'hybrid', 'kush', 'hash', 'other'];
+      const entries = Array.from(counts.entries())
+        .sort((a, b) => {
+          const aIndex = order.indexOf(a[0]);
+          const bIndex = order.indexOf(b[0]);
+          return (aIndex < 0 ? order.length : aIndex) - (bIndex < 0 ? order.length : bIndex) || b[1] - a[1];
+        })
+        .slice(0, limit);
+      return entries.length
+        ? `<span class="discovery-type-row">${entries.map(([type, count]) => `<span>${count} ${escapeHtml(type)}</span>`).join('')}</span>`
+        : '';
+    }
+
+    function discoveryShopCardHtml(row) {
+      return `
+        <button class="discovery-card" type="button" data-discovery-shop="${escapeHtmlAttr(row.shopId)}">
+          ${getShopLogoHtml(row.shopKey, row.shopName)}
+          <span class="discovery-card-copy">
+            <strong>${escapeHtml(row.shopName)}</strong>
+            <small>${escapeHtml(row.city || 'City unknown')} · ${row.offerings.length.toLocaleString()} known listing${row.offerings.length === 1 ? '' : 's'}</small>
+            ${categoryPillsHtml(row)}
+          </span>
+        </button>
+      `;
+    }
+
+    function discoveryStrainCardHtml(stat) {
+      const averagePrice = Number.isFinite(Number(stat.avg)) ? money(stat.avg) : 'Price unknown';
+      const typeLabel = stat.topType ? ` · ${stat.topType}` : '';
+      return `
+        <button class="discovery-card" type="button" data-discovery-strain="${escapeHtmlAttr(stat.key)}">
+          ${getStrainImageHtml(stat.name)}
+          <span class="discovery-card-copy">
+            <strong>${escapeHtml(stat.name)}</strong>
+            <small>${stat.shopCount.toLocaleString()} shop${stat.shopCount === 1 ? '' : 's'} · Avg ${escapeHtml(averagePrice)}${escapeHtml(typeLabel)}</small>
+          </span>
+        </button>
+      `;
+    }
+
+    let discoverySuggestionSelection = null;
+
+    function randomSample(items, count) {
+      const pool = (Array.isArray(items) ? items : []).slice();
+      for (let index = pool.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [pool[index], pool[swapIndex]] = [pool[swapIndex], pool[index]];
+      }
+      return pool.slice(0, Math.max(0, count));
+    }
+
+    function ensureDiscoverySuggestionSelection(shopRows) {
+      if (discoverySuggestionSelection) return discoverySuggestionSelection;
+      discoverySuggestionSelection = {
+        areas: randomSample(DISCOVERY_AREAS, 3),
+        shopIds: randomSample(shopRows.filter(row => row.offerings.length), 3).map(row => row.shopId),
+        strainKeys: randomSample(state.strainStats.filter(stat => stat.shopCount > 0), 3).map(stat => stat.key)
+      };
+      return discoverySuggestionSelection;
+    }
+
+    function renderDiscoverySuggestions(shopRows) {
+      if (!els.discoverySuggestionGroups) return;
+      const selection = ensureDiscoverySuggestionSelection(shopRows);
+      const selectedShops = selection.shopIds
+        .map(shopId => shopRows.find(row => row.shopId === shopId))
+        .filter(Boolean);
+      const selectedStrains = selection.strainKeys
+        .map(key => state.strainStats.find(stat => stat.key === key))
+        .filter(Boolean);
+      els.discoverySuggestionGroups.innerHTML = [
+        discoveryGroupHtml('Locations', 'Open on the map', selection.areas.map(discoveryAreaCardHtml)),
+        discoveryGroupHtml('Coffeeshops', 'Open a known menu', selectedShops.map(discoveryShopCardHtml)),
+        discoveryGroupHtml('Strains', 'Compare prices and shops', selectedStrains.map(discoveryStrainCardHtml))
+      ].join('');
+    }
+
+    function renderDiscovery() {
+      if (!els.discoverySuggestions || !els.discoveryResults || !els.discoveryResultGroups) return;
+      if (state.detail) {
+        els.discoverySuggestions.hidden = true;
+        els.discoveryResults.hidden = true;
+        return;
+      }
+
+      const query = (els.search && els.search.value || '').replace(/\s+/g, ' ').trim();
+      const shopRows = shopRowsFromOfferings(state.offerings);
+      if (!query) {
+        els.discoverySuggestions.hidden = false;
+        els.discoveryResults.hidden = true;
+        renderDiscoverySuggestions(shopRows);
+        return;
+      }
+
+      els.discoverySuggestions.hidden = true;
+      els.discoveryResults.hidden = false;
+
+      const areaMatches = DISCOVERY_AREAS
+        .map(area => ({
+          area,
+          score: Math.max(
+            discoveryMatchScore(area.name, query),
+            discoveryMatchScore(area.city, query),
+            discoveryMatchScore(area.note, query)
+          )
+        }))
+        .filter(row => row.score > 0)
+        .sort((a, b) => b.score - a.score || compareText(a.area.name, b.area.name))
+        .map(row => row.area);
+
+      const shopMatches = shopRows
+        .map(row => ({
+          row,
+          score: Math.max(
+            discoveryMatchScore(row.shopName, query),
+            discoveryMatchScore(row.city, query),
+            discoveryMatchScore(row.shopKey, query)
+          )
+        }))
+        .filter(match => match.score > 0)
+        .sort((a, b) => b.score - a.score || b.row.offerings.length - a.row.offerings.length || compareShopName(a.row, b.row))
+        .map(match => match.row);
+
+      const strainMatches = state.strainStats
+        .map(stat => ({
+          stat,
+          score: Math.max(
+            discoveryMatchScore(stat.name, query),
+            discoveryMatchScore(stat.topType, query)
+          )
+        }))
+        .filter(match => match.score > 0)
+        .sort((a, b) => b.score - a.score || b.stat.shopCount - a.stat.shopCount || compareStrainName(a.stat, b.stat))
+        .map(match => match.stat);
+
+      const visibleShopMatches = shopMatches.slice(0, 20);
+      const visibleStrainMatches = strainMatches.slice(0, 100);
+      const totalMatches = areaMatches.length + shopMatches.length + strainMatches.length;
+      if (els.discoveryResultsTitle) els.discoveryResultsTitle.textContent = `Matches for “${query}”`;
+      if (els.discoveryResultsCount) {
+        els.discoveryResultsCount.textContent = `${totalMatches.toLocaleString()} result${totalMatches === 1 ? '' : 's'}`;
+      }
+
+      const groups = [
+        discoveryGroupHtml('Locations', `${areaMatches.length.toLocaleString()} found`, areaMatches.map(discoveryAreaCardHtml), 'is-results'),
+        discoveryGroupHtml(
+          'Coffeeshops',
+          shopMatches.length > visibleShopMatches.length
+            ? `Showing ${visibleShopMatches.length} of ${shopMatches.length}`
+            : `${shopMatches.length.toLocaleString()} found`,
+          visibleShopMatches.map(discoveryShopCardHtml),
+          'is-results'
+        ),
+        discoveryGroupHtml(
+          'Strains',
+          strainMatches.length > visibleStrainMatches.length
+            ? `Showing ${visibleStrainMatches.length} of ${strainMatches.length}`
+            : `${strainMatches.length.toLocaleString()} found`,
+          visibleStrainMatches.map(discoveryStrainCardHtml),
+          'is-results'
+        )
+      ].filter(Boolean);
+
+      els.discoveryResultGroups.innerHTML = groups.length
+        ? groups.join('')
+        : '<div class="discovery-empty">No locations, coffeeshops or strains match yet. Try a shorter name.</div>';
+    }
+
     function shopBrowserRows() {
       const q = normaliseSearchText(els.shopBrowserSearch ? els.shopBrowserSearch.value : '');
       return shopRowsFromOfferings(state.offerings)
@@ -6095,6 +7046,21 @@
         .join('');
     }
 
+    function averageComparisonBadgeHtml(price, averagePrice) {
+      if (!Number.isFinite(price) || !Number.isFinite(averagePrice) || averagePrice <= 0) {
+        return '<span class="price-judgement average-comparison">Average unavailable</span>';
+      }
+      const difference = ((price - averagePrice) / averagePrice) * 100;
+      const rounded = Math.round(Math.abs(difference));
+      if (Math.abs(difference) < 3) {
+        return '<span class="price-judgement average-comparison is-average">Around average</span>';
+      }
+      if (difference < 0) {
+        return `<span class="price-judgement average-comparison is-below">${rounded}% below average</span>`;
+      }
+      return `<span class="price-judgement average-comparison is-above">${rounded}% above average</span>`;
+    }
+
     function menuListingCardHtml(item) {
       const stat = getStatByKey(item.strain_name_normalised || normalise(item.strain_name));
       const profile = priceProfileForListings(stat ? stat.offerings : [item]);
@@ -6111,14 +7077,17 @@
       return `
         <article class="menu-listing-card">
           <div class="listing-card-head">
-            <div>
-              <button type="button" class="menu-listing-title" data-open-strain-detail="${escapeHtmlAttr(item.strain_name_normalised || normalise(item.strain_name))}">${escapeHtml(item.strain_name || 'Unknown strain')}</button>
-              <div class="menu-listing-meta">${escapeHtml(meta)}</div>
+            <div class="menu-listing-main">
+              ${getStrainImageHtml(item.strain_name || 'Unknown strain')}
+              <div>
+                <button type="button" class="menu-listing-title" data-open-strain-detail="${escapeHtmlAttr(item.strain_name_normalised || normalise(item.strain_name))}">${escapeHtml(item.strain_name || 'Unknown strain')}</button>
+                <div class="menu-listing-meta">${escapeHtml(meta)}</div>
+              </div>
             </div>
             <span class="menu-listing-price">${escapeHtml(priceLabel)}</span>
           </div>
           <div class="chip-row">
-            ${priceJudgementBadgeHtml(price, profile.median)}
+            ${averageComparisonBadgeHtml(price, profile.average)}
             ${ageBadgeHtml(displayListingDateValue(item))}
           </div>
           ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
@@ -6244,6 +7213,7 @@
       if (!stat) return;
       state.detailReturnSearch = els.search.value;
       state.detail = { type: 'strain', key: stat.key };
+      state.detailVisibleLimit = DETAIL_LISTING_STEP;
       state.view = 'strains';
       els.search.value = stat.name;
       if (window.history && window.history.pushState) {
@@ -6273,6 +7243,7 @@
     function closeDetail() {
       const returnSearch = state.detailReturnSearch || '';
       state.detail = null;
+      state.detailVisibleLimit = DETAIL_LISTING_STEP;
       state.detailReturnSearch = '';
       els.search.value = returnSearch;
       if (window.history && window.history.pushState) {
@@ -6289,6 +7260,7 @@
     function renderDetail() {
       if (!els.detailView || !els.databaseLayout) return;
       const detail = state.detail;
+      document.body.classList.toggle('database-detail-open', Boolean(detail));
       els.detailView.hidden = !detail;
       els.databaseLayout.hidden = Boolean(detail);
       if (!detail) {
@@ -6307,6 +7279,8 @@
           return priceDiff || compareShopName(a, b);
         });
         const profile = priceProfileForListings(listings);
+        const visibleListings = listings.slice(0, state.detailVisibleLimit);
+        const remainingListings = Math.max(0, listings.length - visibleListings.length);
         const shopIds = shopIdsForListings(listings);
         const mapUrl = mapUrlForShopIds(shopIds, { strainName: stat.name, strainShopIds: shopIds });
         const cities = (stat.cities || []).join(', ') || 'City unknown';
@@ -6346,8 +7320,16 @@
               <p class="muted">${listings.length.toLocaleString()} current listing${listings.length === 1 ? '' : 's'} across ${shopIds.length.toLocaleString()} shop${shopIds.length === 1 ? '' : 's'}. Select a shop to see its full known menu.</p>
             </div>
             <div class="detail-listing-grid">
-              ${listings.length ? listings.map(item => listingCardHtml(item, profile, { strainName: stat.name })).join('') : '<div class="empty">No current listings are available for this strain.</div>'}
+              ${visibleListings.length ? visibleListings.map(item => listingCardHtml(item, profile, { strainName: stat.name })).join('') : '<div class="empty">No current listings are available for this strain.</div>'}
             </div>
+            ${remainingListings ? `
+              <div class="detail-load-more-row">
+                <button type="button" data-load-more-detail>
+                  Show ${Math.min(DETAIL_LISTING_STEP, remainingListings).toLocaleString()} more
+                  (${remainingListings.toLocaleString()} left)
+                </button>
+              </div>
+            ` : ''}
           </section>
         `;
         return;
@@ -6375,9 +7357,15 @@
           ${ageBadgeHtml(newestDate)}
         </div>
         <header class="detail-header">
-          <p class="detail-eyebrow">Coffeeshop menu</p>
-          <h2>${escapeHtml(row.shopName)}</h2>
-          <p>${escapeHtml(row.city || 'City unknown')} · full current menu snapshot. Select any strain to open its price profile and every known stocking shop.</p>
+          <div class="detail-header-main">
+            ${getShopLogoHtml(row.shopKey, row.shopName)}
+            <div class="detail-header-copy">
+              <p class="detail-eyebrow">Coffeeshop menu</p>
+              <h2>${escapeHtml(row.shopName)}</h2>
+              <p>${escapeHtml(row.city || 'City unknown')} · full current menu snapshot. Select any strain to open its price profile and every known stocking shop.</p>
+              ${categoryPillsHtml(row, 6)}
+            </div>
+          </div>
           <div class="shop-menu-summary-grid">
             ${statTileHtml('Known listings', listings.length.toLocaleString(), `${categories.size.toLocaleString()} categories`)}
             ${statTileHtml('Priced listings', prices.length.toLocaleString(), prices.length ? `Low ${money(Math.min(...prices))}` : 'No usable prices')}
@@ -7199,9 +8187,9 @@
     }
 
     function syncModeSearchCopy() {
-      if (els.searchLabel) els.searchLabel.textContent = 'Search strains or coffeeshops';
+      if (els.searchLabel) els.searchLabel.textContent = 'Search areas, coffeeshops and strains';
       if (els.search) {
-        els.search.placeholder = 'Try Gelato, The Plug, Family First, or Amnesia Haze...';
+        els.search.placeholder = 'Try Abraxas, Lemon or Jordaan...';
       }
       if (els.searchChipRow) {
         const chips = ['Gelato', 'Amnesia Haze', 'The Plug', 'Family First', 'Zkittlez', 'Terps Army'];
@@ -7240,6 +8228,7 @@
         if (els.shopMenuBrowser) els.shopMenuBrowser.replaceChildren();
         if (els.shopList) els.shopList.replaceChildren();
       }
+      renderDiscovery();
       renderDetail();
       saveDatabaseNavigationState();
     }
@@ -7274,6 +8263,7 @@
 
     let mobileResultsScrollTimer = 0;
     function scheduleMobileResultsScroll(options = {}) {
+      if (els.discoveryResults) return;
       if (!isMobileResultsViewport()) return;
       const source = options.source || '';
       if (source === 'search' && normaliseSearchText(els.search.value).length < 2) return;
@@ -7329,7 +8319,8 @@
         syncUniversalSearchMode();
       }
       if (detailType === 'strain' && strain) {
-        state.detail = { type: 'strain', key: normalise(strain) };
+        const stat = getStatByKey(strain);
+        state.detail = { type: 'strain', key: stat ? stat.key : normalise(strain) };
         state.view = 'strains';
       }
       if (detailType === 'shop' && shopId) {
@@ -7373,7 +8364,6 @@
           : '';
         els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.${exported}${hidden}${listingCheckBatchNote()}`;
         applyInitialUrlState();
-        restoreDatabaseNavigationState();
         setView(state.view);
         render();
       } catch (err) {
@@ -7778,8 +8768,33 @@
       });
     }
 
+    function handleDiscoveryClick(event) {
+      const shopCard = event.target.closest('[data-discovery-shop]');
+      if (shopCard) {
+        openShopDetail(shopCard.dataset.discoveryShop);
+        return;
+      }
+      const strainCard = event.target.closest('[data-discovery-strain]');
+      if (strainCard) {
+        openStrainDetail(strainCard.dataset.discoveryStrain);
+      }
+    }
+
+    if (els.discoverySuggestionGroups) {
+      els.discoverySuggestionGroups.addEventListener('click', handleDiscoveryClick);
+    }
+    if (els.discoveryResultGroups) {
+      els.discoveryResultGroups.addEventListener('click', handleDiscoveryClick);
+    }
+
     if (els.detailView) {
       els.detailView.addEventListener('click', event => {
+        const loadMoreButton = event.target.closest('[data-load-more-detail]');
+        if (loadMoreButton) {
+          state.detailVisibleLimit += DETAIL_LISTING_STEP;
+          renderDetail();
+          return;
+        }
         const closeButton = event.target.closest('[data-close-detail]');
         if (closeButton) {
           closeDetail();

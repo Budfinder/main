@@ -4,7 +4,7 @@
     "name": "Any Time",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-anytime.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-brug": {
@@ -12,7 +12,7 @@
     "name": "De Brug",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-brug.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-hightime-alk": {
@@ -20,7 +20,7 @@
     "name": "High-Time",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-hightime-alk.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-steppingout": {
@@ -28,7 +28,7 @@
     "name": "Stepping Out",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-steppingout.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-zero-zero-alk": {
@@ -36,7 +36,7 @@
     "name": "Zero Zero",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-zero-zero-alk.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-boerejongensalmere": {
@@ -3509,7 +3509,7 @@
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-sky-2.html",
     "show_in_admin": 0,
-    "is_closed": 0
+    "is_closed": 1
   },
   "cs-sky-high-1": {
     "shop_id": 418,
@@ -3517,7 +3517,7 @@
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-sky-high-1.html",
     "show_in_admin": 0,
-    "is_closed": 0
+    "is_closed": 1
   },
   "cs-waterworld": {
     "shop_id": 393,

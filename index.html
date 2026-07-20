@@ -1472,6 +1472,7 @@
     }
 
     .version-box {
+      min-width: 0;
       padding: 13px;
       border-radius: var(--radius);
       background: var(--panel-alt);
@@ -1491,6 +1492,11 @@
       margin-top: 5px;
       color: var(--ink);
       font-size: 16px;
+    }
+
+    #database-snapshot-date {
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
 
     .note {
@@ -1675,7 +1681,7 @@
     .hero-search-first {
       min-height: min(820px, calc(100svh - 40px));
       align-items: center;
-      padding-top: 104px;
+      padding-top: 28px;
       padding-bottom: 54px;
     }
 
@@ -1794,7 +1800,7 @@
     @media (max-width: 900px) {
       .hero-search-first {
         min-height: 0;
-        padding-top: 92px;
+        padding-top: 18px;
       }
 
       .hero-search-first .hero-media {
@@ -1829,6 +1835,10 @@
 
       .hero-search-first h1 {
         font-size: clamp(43px, 13vw, 58px);
+      }
+
+      .hero-search-first {
+        padding-top: 10px;
       }
 
       .hero-search {
@@ -1896,7 +1906,7 @@
           <img src="images/IMG_5124.ico" alt="" />
           <span>Budfinder</span>
         </div>
-        <span class="kicker">Amsterdam coffeeshop decision engine</span>
+        <span class="kicker" id="home-personal-greeting">Amsterdam coffeeshop decision engine</span>
         <h1 id="home-title">Find the right Amsterdam coffeeshop—in minutes.</h1>
         <p class="lead">Search a strain, shop or neighbourhood. Every result shows price, distance and when its menu was last checked.</p>
 
@@ -1904,7 +1914,7 @@
           <label class="search-input-label" for="home-search-input">Strain, shop or neighbourhood</label>
           <div class="search-row">
             <input id="home-search-input" name="search" type="search" placeholder="Gelato, Family First, De Pijp…" autocomplete="off" enterkeyhint="search" />
-            <button class="primary-btn" type="submit">Show my best matches</button>
+            <button class="primary-btn" id="home-search-submit" type="submit">Show my best matches</button>
           </div>
         </form>
 
@@ -1990,13 +2000,13 @@
     <p class="note">For adults planning responsibly. Follow local laws and coffeeshop rules, and check before travelling across town for a specific item.</p>
   </main>
 
-  <script src="scripts/budfinder-logos.js?v=20260719-1"></script>
+  <script src="scripts/budfinder-logos.js?v=20260720-3"></script>
   <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
-  <script src="scripts/budfinder-page-settings.js?v=20260719-contrast1"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260720-name2"></script>
   <script>
     (() => {
-      const APP_VERSION = '1.2';
-      const APP_UPDATED = '19 July 2026';
+      const APP_VERSION = '1.21';
+      const APP_UPDATED = '20 July 2026';
       const state = {
         shops: [],
         offerings: [],
@@ -2016,6 +2026,31 @@
       const showcaseStatus = document.getElementById('showcase-status');
       const shuffleBtn = document.getElementById('shuffle-showcase-btn');
       const insightsEl = document.getElementById('amsterdam-insights');
+      const personalGreetingEl = document.getElementById('home-personal-greeting');
+      const homeSearchSubmitEl = document.getElementById('home-search-submit');
+
+      function currentUserName() {
+        return window.BudfinderPersonalisation
+          ? window.BudfinderPersonalisation.userName()
+          : '';
+      }
+
+      function applyHomePersonalisation() {
+        const name = currentUserName();
+        if (personalGreetingEl) {
+          personalGreetingEl.textContent = name
+            ? `Welcome back, ${name}`
+            : 'Amsterdam coffeeshop decision engine';
+        }
+        if (homeSearchSubmitEl) {
+          homeSearchSubmitEl.textContent = name
+            ? `Show best matches for ${name}`
+            : 'Show my best matches';
+        }
+      }
+
+      window.addEventListener('budfinder:namechange', applyHomePersonalisation);
+      applyHomePersonalisation();
 
       function escapeHtml(value) {
         return String(value == null ? '' : value)
@@ -2120,7 +2155,7 @@
         if (!value) return '';
         const date = new Date(value);
         if (Number.isNaN(date.getTime())) return '';
-        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
       }
 
       function parseTime(value) {

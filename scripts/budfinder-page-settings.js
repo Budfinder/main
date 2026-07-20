@@ -52,6 +52,32 @@
     });
   }
 
+  function personalUserName() {
+    const value = (readPersonalisation().displayName || '')
+      .toString()
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 24);
+    return value && value.toLowerCase() !== 'explorer' ? value : '';
+  }
+
+  function dispatchPersonalisationChange() {
+    window.dispatchEvent(new CustomEvent('budfinder:namechange', {
+      detail: { displayName: personalUserName() }
+    }));
+  }
+
+  window.BudfinderPersonalisation = Object.freeze({
+    read: readPersonalisation,
+    userName: personalUserName
+  });
+
+  window.addEventListener('storage', event => {
+    if (event && PERSONALISATION_STORAGE_KEYS.includes(event.key)) {
+      dispatchPersonalisationChange();
+    }
+  });
+
   function removeStorageKey(key) {
     try {
       localStorage.removeItem(key);
@@ -397,6 +423,7 @@
       const personalisation = readPersonalisation();
       personalisation.displayName = (event.target.value || '').replace(/\s+/g, ' ').trim().slice(0, 24);
       savePersonalisation(personalisation);
+      dispatchPersonalisationChange();
       setStatus('Preferences saved.');
     });
 
@@ -439,6 +466,7 @@
         window.BudfinderTheme.applyTheme(DEFAULT_PERSONALISATION.accent);
       }
       syncForm();
+      dispatchPersonalisationChange();
       setStatus('Display reset.');
     });
 

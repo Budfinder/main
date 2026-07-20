@@ -4,24 +4,24 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Amsterdam Coffeeshop Map &amp; Ranked Matches | Budfinder</title>
-  <meta name="description" content="Search an Amsterdam strain, shop or neighbourhood and compare three coffeeshop matches by price, distance, confidence and menu freshness." />
+  <meta name="description" content="Search an Amsterdam strain, shop or neighbourhood and compare every matching coffeeshop by price, distance, confidence and menu freshness." />
   <link rel="canonical" href="https://budfinder.org/map.html" />
   <meta property="og:title" content="Amsterdam Coffeeshop Map &amp; Ranked Matches | Budfinder" />
-  <meta property="og:description" content="Compare three ranked coffeeshop matches and open directions or add a stop to your route." />
+  <meta property="og:description" content="Compare all ranked coffeeshop matches and open directions or add a stop to your route." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://budfinder.app/map.html" />
-  <meta property="og:image" content="https://budfinder.app/static/images/budfinder-social.png" />
+  <meta property="og:url" content="https://budfinder.org/map.html" />
+  <meta property="og:image" content="https://budfinder.org/static/images/budfinder-social.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://budfinder.app/static/images/budfinder-social.png" />
+  <meta name="twitter:image" content="https://budfinder.org/static/images/budfinder-social.png" />
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://budfinder.app/"},
-        {"@type": "ListItem", "position": 2, "name": "Map", "item": "https://budfinder.app/map.html"}
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://budfinder.org/"},
+        {"@type": "ListItem", "position": 2, "name": "Map", "item": "https://budfinder.org/map.html"}
       ]
     }
   </script>
@@ -1769,6 +1769,9 @@
     .best-match-list {
       display: grid;
       gap: 8px;
+      max-height: min(520px, 55vh);
+      overflow-y: auto;
+      scrollbar-width: thin;
     }
 
     .best-match-card {
@@ -3961,13 +3964,91 @@
       touch-action: pan-y;
     }
 
-    .strain-chip-row,
-    .popup-strain-row {
+    .strain-chip-row {
       display: flex;
       align-items: stretch;
       gap: 8px;
       margin: 3px 0;
       min-width: 0;
+    }
+
+    .popup-strain-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+      min-width: 0;
+      margin: 5px 0;
+    }
+
+    .popup-strain-actions {
+      display: none;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .popup-strain-row[open] .popup-strain-actions {
+      display: grid;
+    }
+
+    .popup-strain-actions > * {
+      width: 100%;
+      min-width: 0;
+      min-height: 36px;
+    }
+
+    .popup-strain-show-shops {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 9px;
+      padding: 8px 11px;
+      border: 1px solid rgba(32, 91, 66, 0.2);
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+      color: #fff;
+      font: inherit;
+      text-align: left;
+      box-shadow: 0 7px 16px rgba(18, 67, 40, 0.16);
+      cursor: pointer;
+    }
+
+    .popup-strain-action-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+    }
+
+    .popup-strain-action-icon svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .popup-strain-action-copy {
+      display: grid;
+      gap: 1px;
+      min-width: 0;
+    }
+
+    .popup-strain-action-copy strong {
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .popup-strain-action-copy small {
+      font-size: 9px;
+      line-height: 1.2;
+      opacity: 0.78;
     }
 
     .strain-item {
@@ -4043,9 +4124,10 @@
 
     .strain-item-main > span:first-child {
       min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow: visible;
+      overflow-wrap: anywhere;
+      text-overflow: clip;
+      white-space: normal;
     }
 
     .strain-item-badges {
@@ -4099,6 +4181,70 @@
       background: var(--control-selected-bg, rgba(32, 91, 66, 0.12));
       border-color: var(--control-selected-border, rgba(32, 91, 66, 0.22));
       color: var(--control-text, var(--accent-strong));
+    }
+
+    .strain-explore-btn,
+    .popup-strain-explore {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.16));
+      border-radius: 12px;
+      background: var(--control-bg-strong, rgba(255, 255, 255, 0.86));
+      color: var(--control-text, var(--accent-strong));
+      font: inherit;
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      box-shadow: none;
+    }
+
+    .strain-explore-btn {
+      min-height: 40px;
+      padding: 0 14px;
+    }
+
+    .popup-strain-explore {
+      flex: 0 0 auto;
+      padding: 0 10px;
+    }
+
+    .popup-strain-actions .strain-shelf-chip-btn,
+    .popup-strain-actions .popup-strain-explore {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: auto;
+      max-width: 100%;
+      min-width: 0;
+      padding-inline: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .strain-explore-btn:hover,
+    .strain-explore-btn:focus-visible,
+    .popup-strain-show-shops:hover,
+    .popup-strain-show-shops:focus-visible,
+    .popup-strain-explore:hover,
+    .popup-strain-explore:focus-visible {
+      border-color: var(--accent);
+      background: var(--control-selected-bg, rgba(32, 91, 66, 0.12));
+      outline: none;
+    }
+
+    .popup-strain-show-shops:hover,
+    .popup-strain-show-shops:focus-visible {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #fff;
+    }
+
+    .strain-explore-btn.is-disabled {
+      opacity: 0.5;
+      pointer-events: none;
     }
 
     .strain-cheapest-badge {
@@ -4280,6 +4426,11 @@
       font-size: 12px;
       line-height: 1.3;
       cursor: pointer;
+      list-style: none;
+    }
+
+    .popup-strain-btn::-webkit-details-marker {
+      display: none;
     }
 
     .popup-strain-meta {
@@ -5033,6 +5184,7 @@
       .button-row button,
       .destination-card-action,
       .strain-shelf-chip-btn,
+      .popup-strain-explore,
       .popup-strain-btn,
       .strain-item {
         min-height: 44px;
@@ -5476,6 +5628,7 @@
     body.compact-layout .button-row button,
     body.compact-layout .destination-card-action,
     body.compact-layout .strain-shelf-chip-btn,
+    body.compact-layout .popup-strain-explore,
     body.compact-layout .popup-strain-btn,
     body.compact-layout .strain-item {
       min-height: 44px;
@@ -5575,6 +5728,37 @@
     body.compact-layout .strain-chip-row,
     body.compact-layout .popup-strain-row {
       gap: 6px;
+    }
+
+    body.compact-layout .popup-strain-actions {
+      gap: 4px;
+      padding: 5px;
+      border: 1px solid var(--control-border, rgba(92, 107, 97, 0.14));
+      border-radius: 16px;
+      background: var(--control-bg, rgba(255, 255, 255, 0.62));
+    }
+
+    body.compact-layout .popup-strain-show-shops {
+      min-height: 48px;
+      padding: 8px 12px;
+      border-radius: 12px;
+    }
+
+    body.compact-layout .popup-strain-actions .strain-shelf-chip-btn,
+    body.compact-layout .popup-strain-actions .popup-strain-explore {
+      min-height: 38px;
+      border-color: transparent;
+      border-radius: 10px;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    body.compact-layout .popup-strain-actions .strain-shelf-chip-btn:hover,
+    body.compact-layout .popup-strain-actions .strain-shelf-chip-btn:focus-visible,
+    body.compact-layout .popup-strain-actions .popup-strain-explore:hover,
+    body.compact-layout .popup-strain-actions .popup-strain-explore:focus-visible {
+      border-color: var(--control-selected-border, rgba(32, 91, 66, 0.22));
+      background: var(--control-selected-bg, rgba(32, 91, 66, 0.12));
     }
 
     body.compact-layout .top-shelf-rail-chip {
@@ -6444,7 +6628,7 @@
       }
 
       #ui-toggles {
-        bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+        bottom: calc(var(--app-mobile-nav-clearance) + 8px);
       }
 
       #selection-card,
@@ -6482,6 +6666,243 @@
       body.compact-layout.mobile-shelf-open #map {
         bottom: calc(min(56dvh, 460px) + var(--app-mobile-nav-clearance) + 8px) !important;
       }
+    }
+
+    /* Mobile map chrome: keep the navigation and map actions in separate,
+       space-efficient rows, and make saved matches scan like a list. */
+    body.compact-layout {
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+
+    body.compact-layout #map,
+    body.compact-layout #instructions,
+    body.compact-layout .controls,
+    body.compact-layout #selection-card,
+    body.compact-layout #stash-shelf,
+    body.compact-layout #ui-toggles {
+      position: fixed;
+    }
+
+    body.compact-layout #map {
+      bottom: calc(var(--app-mobile-nav-clearance) + 66px) !important;
+    }
+
+    body.compact-layout.mobile-selection-visible #map {
+      bottom: calc(var(--app-mobile-nav-clearance) + 226px) !important;
+    }
+
+    body.compact-layout.selection-card-collapsed.mobile-selection-visible #map {
+      bottom: calc(var(--app-mobile-nav-clearance) + 122px) !important;
+    }
+
+    body.compact-layout.mobile-controls-open #map,
+    body.compact-layout.mobile-directions-open #map,
+    body.compact-layout.mobile-shelf-open.shelf-open #map {
+      bottom: var(--app-mobile-nav-clearance) !important;
+    }
+
+    body.compact-layout .app-mode-toggle {
+      box-sizing: border-box;
+    }
+
+    body.compact-layout #ui-toggles {
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
+      bottom: calc(var(--app-mobile-nav-clearance) + 8px);
+      width: auto;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    body.compact-layout #ui-toggles button,
+    body.compact-layout #ui-toggles button + button {
+      width: 100%;
+      min-width: 0;
+      min-height: 48px;
+      margin: 0;
+      padding: 7px 8px;
+      font-size: 12px;
+      line-height: 1.1;
+    }
+
+    body.compact-layout #toggle-shelf {
+      min-width: 0;
+      padding-inline: 8px !important;
+    }
+
+    body.compact-layout .saved-toggle-content {
+      justify-content: center;
+      gap: 0;
+      width: 100%;
+    }
+
+    body.compact-layout .saved-toggle-thumbs {
+      display: none;
+    }
+
+    body.compact-layout #stash-shelf {
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
+      bottom: var(--app-mobile-nav-clearance);
+      width: auto;
+      max-width: none;
+      max-height: min(50dvh, 410px);
+      padding: 10px;
+      border-radius: 20px;
+    }
+
+    body.compact-layout #stash-shelf .selection-eyebrow {
+      display: none;
+    }
+
+    body.compact-layout #stash-shelf h3 {
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    body.compact-layout .stash-shelf-summary {
+      display: -webkit-box;
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.35;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+    body.compact-layout .stash-shelf-close {
+      min-height: 40px;
+      padding-inline: 12px;
+    }
+
+    body.compact-layout .stash-shelf-stage {
+      margin-top: 8px;
+      padding: 8px;
+    }
+
+    body.compact-layout .stash-shelf-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      max-height: min(34dvh, 286px);
+      padding-right: 0;
+      overflow-x: hidden;
+    }
+
+    body.compact-layout .stash-bag {
+      box-sizing: border-box;
+      min-height: 0;
+      padding: 8px;
+      border-radius: 14px;
+    }
+
+    body.compact-layout .stash-bag::before,
+    body.compact-layout .stash-bag::after {
+      display: none;
+    }
+
+    body.compact-layout .stash-bag-main {
+      display: grid;
+      grid-template-columns: 88px minmax(0, 1fr);
+      grid-template-rows: repeat(4, auto);
+      column-gap: 10px;
+      align-content: center;
+      overflow: hidden;
+    }
+
+    body.compact-layout .stash-bag-art,
+    body.compact-layout .stash-bag.has-art .stash-bag-art {
+      grid-column: 1;
+      grid-row: 1 / 5;
+      min-height: 88px;
+      height: 100%;
+      padding: 8px;
+      border-radius: 12px;
+    }
+
+    body.compact-layout .stash-bag-ribbon {
+      top: 6px;
+      right: 6px;
+      min-height: 18px;
+      padding-inline: 6px;
+      font-size: 8px;
+    }
+
+    body.compact-layout .stash-bag-art-title {
+      font-size: 11px;
+    }
+
+    body.compact-layout .stash-bag-art-sub {
+      margin-top: 2px;
+      font-size: 9px;
+      line-height: 1.2;
+    }
+
+    body.compact-layout .stash-bag-name,
+    body.compact-layout .stash-bag-city,
+    body.compact-layout .stash-bag-meta,
+    body.compact-layout .stash-bag-price {
+      grid-column: 2;
+      min-width: 0;
+    }
+
+    body.compact-layout .stash-bag-name {
+      margin-top: 0;
+      padding-right: 28px;
+      font-size: 17px;
+      line-height: 1.1;
+    }
+
+    body.compact-layout .stash-bag-city {
+      margin-top: 3px;
+      font-size: 9px;
+      line-height: 1.2;
+    }
+
+    body.compact-layout .stash-bag-meta {
+      margin-top: 4px;
+      overflow: hidden;
+      font-size: 10px;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.compact-layout .stash-bag-price {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      margin-top: 5px;
+      padding: 4px 7px;
+      overflow: hidden;
+      font-size: 9px;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.compact-layout .stash-bag-footer {
+      display: none;
+    }
+
+    body.compact-layout .leaflet-popup-content {
+      width: min(304px, calc(100vw - 82px));
+      min-width: min(276px, calc(100vw - 82px));
+      max-height: min(50dvh, 350px);
+      margin: 12px 14px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body.compact-layout .stash-bag-remove {
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -6639,7 +7060,7 @@
     <div class="controls-header" id="controls-header">
       <button class="controls-header-main" id="controls-header-toggle" type="button" aria-expanded="true" aria-controls="map-tools-content">
         <span class="controls-handle" aria-hidden="true"></span>
-        <span class="controls-title">Map tools</span>
+        <span class="controls-title" id="map-tools-title">Map tools</span>
         <span class="controls-summary" id="controls-summary">Choose a Destination</span>
       </button>
       <div class="controls-header-actions">
@@ -6904,6 +7325,7 @@
 
         <div class="button-row">
           <button id="toggle-current-strain-shelf-btn" type="button" class="secondary-btn" disabled>Save strain</button>
+          <a id="explore-current-strain-btn" class="strain-explore-btn is-disabled" href="database.html" aria-disabled="true">Explore strain</a>
           <button id="clear-strain-btn" type="button" class="secondary-btn">Clear map match</button>
         </div>
         <div id="strain-status">No map matching strains selected yet.</div>
@@ -7027,7 +7449,7 @@
   <!-- Leaflet + Routing JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-  <script src="scripts/budfinder-logos.js?v=20260719-1"></script>
+  <script src="scripts/budfinder-logos.js?v=20260720-3"></script>
   <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
 
   <script>
@@ -7056,6 +7478,8 @@
     let locationSearchText = '';
     let globalSearchStrainTimer = null;
     let globalSearchAppliedStrainKey = '';
+    let globalSearchResolveRequestId = 0;
+    let pendingInitialSearchPresentation = false;
     let locationRequestInFlight = null;
     let missionMode = 'free-roam';
     let activePopupLocationIndex = null;
@@ -7176,6 +7600,7 @@
     const PERSONALISATION_STORAGE_KEYS = ['budfinder_personalisation', 'locate3_personalisation', 'locate2_personalisation'];
     const LOCATION_PREFERENCES_STORAGE_KEYS = ['budfinder_location_preferences', 'locate3_location_preferences'];
     const LOCATION_DATA_STORAGE_KEYS = ['budfinder_location_data_csv_path'];
+    const LOCATION_DATA_EXPLICIT_SELECTION_STORAGE_KEYS = ['budfinder_location_data_user_selected'];
     const LEGACY_FAVORITES_STORAGE_KEY = 'favorites';
     const RECENT_DESTINATIONS_STORAGE_KEYS = ['budfinder_recent_destinations', 'locate3_recent_destinations'];
     const STRAIN_SHELF_STORAGE_KEYS = ['budfinder_strain_shelf', 'locate3_strain_shelf'];
@@ -7890,8 +8315,10 @@
         params.set('mode', 'shop');
         params.set('view', 'shops');
         params.set('shop_id', shopId);
+        params.set('detail', 'shop');
       } else if (strain) {
         params.set('mode', 'strain');
+        if (context.detail !== false) params.set('detail', 'strain');
       }
       if (strain) params.set('strain', strain);
       const query = params.toString();
@@ -7955,6 +8382,7 @@
       const query = getInitialSearchFromUrl();
       if (!query || explorerFocusStrainName) return;
 
+      pendingInitialSearchPresentation = true;
       const searchInput = document.getElementById('destination-search');
       locationSearchText = query;
       if (searchInput) searchInput.value = query;
@@ -7963,11 +8391,30 @@
       updateMarkers();
       updateControlsSummary();
       refreshDestinationCards();
-      if (!controlsVisible) {
-        setControlsVisible(true, { collapsed: isCompactMobileLayout() });
-      }
+      setControlsVisible(true, { collapsed: false });
       const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
-      scheduleGlobalSearchStrainResolve(query, visibleLocationCount);
+      scheduleGlobalSearchStrainResolve(query, visibleLocationCount, { immediate: true });
+      scheduleInitialSearchPresentation();
+    }
+
+    function focusSearchResultsPanel() {
+      if (!isCompactMobileLayout()) return;
+      setControlsVisible(true, { collapsed: false });
+      const content = document.getElementById('map-tools-content');
+      const panel = document.querySelector('.search-wanted-panel');
+      if (!content || !panel) return;
+      const targetTop = Math.max(0, panel.offsetTop - content.offsetTop - 8);
+      content.scrollTo({ top: targetTop, behavior: 'auto' });
+    }
+
+    function scheduleInitialSearchPresentation() {
+      [120, 520, 1100].forEach(delay => {
+        window.setTimeout(() => {
+          if (!pendingInitialSearchPresentation) return;
+          focusSearchResultsPanel();
+          fitMapToVisibleMarkers({ searchResults: true });
+        }, delay);
+      });
     }
 
     function applyExplorerFocusContext(context) {
@@ -8178,11 +8625,19 @@
 
     function syncActiveStrainShelfButton() {
       const btn = document.getElementById('toggle-current-strain-shelf-btn');
+      const exploreLink = document.getElementById('explore-current-strain-btn');
       if (!btn) return;
 
       if (!strainFilterText) {
         btn.disabled = true;
         btn.textContent = 'Save strain';
+        if (exploreLink) {
+          exploreLink.href = 'database.html';
+          exploreLink.classList.add('is-disabled');
+          exploreLink.setAttribute('aria-disabled', 'true');
+          exploreLink.textContent = 'Explore strain';
+          exploreLink.removeAttribute('aria-label');
+        }
         return;
       }
 
@@ -8190,6 +8645,14 @@
       btn.textContent = isStrainShelved(strainFilterText)
         ? 'Remove saved strain'
         : 'Save strain';
+      if (exploreLink) {
+        const strainName = getCanonicalStrainName(strainFilterText);
+        exploreLink.href = priceMenusUrl({ strain: strainName });
+        exploreLink.classList.remove('is-disabled');
+        exploreLink.removeAttribute('aria-disabled');
+        exploreLink.textContent = 'Explore';
+        exploreLink.setAttribute('aria-label', `Explore ${strainName} prices and shops`);
+      }
     }
 
     function toggleShelfMembershipForStrain(name, options = {}) {
@@ -8351,10 +8814,19 @@
       saveStoredJson(PERSONALISATION_STORAGE_KEYS, personalisation);
     }
 
+    function currentMapUserName() {
+      const value = (personalisation.displayName || '')
+        .toString()
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 24);
+      return value && value.toLowerCase() !== 'explorer' ? value : '';
+    }
+
     function applyPersonalisation() {
       const theme = accentThemes[personalisation.accent] || accentThemes['northern-lights'];
       const rawName = (personalisation.displayName || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
-      const safeName = rawName || 'Explorer';
+      const userName = currentMapUserName();
       const root = document.documentElement;
       root.style.setProperty('--bg-top', theme.bgTop);
       root.style.setProperty('--bg-mid', theme.bgMid);
@@ -8397,10 +8869,26 @@
       applyCategoryMarkerPalette(theme);
 
       const kicker = document.getElementById('hero-kicker');
+      const mapToolsTitle = document.getElementById('map-tools-title');
+      const mapIntentTitle = document.getElementById('map-intent-title');
+      const journeySectionTitle = document.getElementById('journey-section-title');
+      const journeyNameInput = document.getElementById('journey-name-input');
       const nameInput = document.getElementById('display-name-input');
       const heroPopupBtn = document.getElementById('toggle-hero-popup-pref-btn');
       const heroPopupNote = document.getElementById('hero-popup-pref-note');
-      if (kicker) kicker.textContent = rawName ? `${safeName}'s map` : 'Mission map';
+      if (kicker) kicker.textContent = userName ? `Map for ${userName}` : 'Mission map';
+      if (mapToolsTitle) mapToolsTitle.textContent = userName ? `Map tools · ${userName}` : 'Map tools';
+      if (mapIntentTitle) {
+        mapIntentTitle.textContent = userName
+          ? `Where do you want to go next, ${userName}?`
+          : 'Where should I go next?';
+      }
+      if (journeySectionTitle) {
+        journeySectionTitle.textContent = userName ? `Build a route for ${userName}` : 'Build your route';
+      }
+      if (journeyNameInput) {
+        journeyNameInput.placeholder = userName ? `Amsterdam day out for ${userName}` : 'Saturday Amsterdam';
+      }
       if (nameInput && nameInput.value !== rawName) nameInput.value = rawName;
       document.querySelectorAll('[data-budfinder-vibe-selector], #accent-select').forEach(select => {
         if (select && select.value !== personalisation.accent) select.value = personalisation.accent;
@@ -8849,7 +9337,9 @@
       document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
       if (uiToggles) {
         const togglesReady = uiToggles.dataset.ready === 'true';
-        uiToggles.style.display = togglesReady && (!isMobile || (!controlsVisible && !shelfVisible)) ? 'block' : 'none';
+        uiToggles.style.display = togglesReady && (!isMobile || (!controlsVisible && !shelfVisible))
+          ? (isMobile ? 'grid' : 'block')
+          : 'none';
       }
       if (backdrop) {
         backdrop.style.display = showMobileOverlay ? 'block' : 'none';
@@ -9080,14 +9570,74 @@
       return Number.isFinite(id) ? id : null;
     }
 
-    function logoCandidates(logoFilename, loc = null) {
-      return window.BudfinderLogos
-        ? window.BudfinderLogos.candidates({
-            filename: logoFilename,
-            shopKey: loc && loc.shop_key,
-            shopName: loc && loc.name
-          })
-        : [];
+    function fallbackLogoSlug(value) {
+      return (value || '')
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/^cs-/, '')
+        .replace(/&/g, ' and ')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+
+    function fallbackLogoCandidates(logoFilename, loc = null, options = {}) {
+      const filenames = [];
+      const explicit = (logoFilename || '').toString().trim();
+      if (explicit) filenames.push(explicit);
+
+      [
+        fallbackLogoSlug(loc && loc.shop_key),
+        fallbackLogoSlug(loc && loc.name)
+      ].filter(Boolean).forEach(slug => {
+        filenames.push(`${slug}.png`, `${slug}.jpg`, `${slug}.svg`);
+      });
+
+      const paths = [];
+      const seen = new Set();
+      filenames.forEach(filename => {
+        const clean = filename.replace(/^\.?\//, '').replace(/^\/+/, '');
+        const basename = clean.split('/').filter(Boolean).at(-1) || clean;
+        const candidates = clean.includes('/')
+          ? [`/${clean}`, clean]
+          : [`/images/logos/${encodeURIComponent(basename)}`, `images/logos/${encodeURIComponent(basename)}`];
+        candidates.forEach(path => {
+          if (!path || seen.has(path)) return;
+          seen.add(path);
+          paths.push(path);
+        });
+      });
+
+      if (options.includeMonogram !== false) {
+        const label = ((loc && loc.name) || fallbackLogoSlug(loc && loc.shop_key) || 'Coffeeshop').toString().trim();
+        const initials = label
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map(part => part.charAt(0).toUpperCase())
+          .join('')
+          .slice(0, 2) || 'CS';
+        const svg =
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">` +
+            `<rect width="96" height="96" rx="22" fill="#f7fbf8"/>` +
+            `<circle cx="48" cy="48" r="35" fill="#183f32"/>` +
+            `<text x="48" y="58" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" font-weight="800" fill="#ffffff">${initials}</text>` +
+          `</svg>`;
+        paths.push(`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`);
+      }
+      return paths;
+    }
+
+    function logoCandidates(logoFilename, loc = null, options = {}) {
+      if (window.BudfinderLogos) {
+        return window.BudfinderLogos.candidates({
+          filename: logoFilename,
+          shopKey: loc && loc.shop_key,
+          shopName: loc && loc.name,
+          includeMonogram: options.includeMonogram !== false
+        });
+      }
+      return fallbackLogoCandidates(logoFilename, loc, options);
     }
 
     function strainImageCandidates(imageFilename) {
@@ -9201,7 +9751,9 @@
     }
 
     function getSavedToggleHtml(entries, isOpen) {
-      const label = isOpen ? 'Hide map matches' : 'Map matches';
+      const label = isCompactMobileLayout()
+        ? (isOpen ? 'Hide matches' : 'Matches')
+        : (isOpen ? 'Hide map matches' : 'Map matches');
       const visibleEntries = (entries || []).slice(0, 3);
       if (!visibleEntries.length) {
         return `<span class="saved-toggle-content"><span class="saved-toggle-label">${escapeHtml(label)}</span></span>`;
@@ -9673,8 +10225,8 @@
      * CSV column: logo
      * Example value: boerejongens.png
      */
-    function createLogoIcon(loc, priceLabel = '') {
-      const candidates = loc ? logoCandidates(loc.logo, loc) : [];
+    function createLogoIcon(loc, priceLabel = '', options = {}) {
+      const candidates = loc ? logoCandidates(loc.logo, loc, options) : [];
       if (!candidates.length) return null;
       const joined = candidates.map(escapeHtmlAttr).join('|');
       const first = escapeHtmlAttr(candidates[0]);
@@ -9726,6 +10278,13 @@
         const logoIcon = createLogoIcon(loc, priceLabel);
         if (logoIcon) return logoIcon;
         return createSimpleShopIcon(loc, priceLabel);
+      }
+
+      // Branded hotels, shops, restaurants, and other locations may also
+      // provide an explicit logo. Keep category pins for unbranded places.
+      if ((loc && loc.logo || '').toString().trim()) {
+        const brandedLocationIcon = createLogoIcon(loc, priceLabel, { includeMonogram: false });
+        if (brandedLocationIcon) return brandedLocationIcon;
       }
 
       const fallbackCategory = getLocationFallbackCategory(loc);
@@ -10403,57 +10962,57 @@
       if (!qNorm) return { ids: new Set(), nameCityKeys: new Set(), source: 'none' };
 
       try {
-        const rows = await loadStrainIndexRows();
-        const exactMatches = [];
-        const partialMatches = [];
-
-        rows.forEach(r => {
-          const n = normaliseText((r && (r.strain_name_normalised || r.strain_name_display)) || '');
-          if (!n) return;
-          if (n === qNorm) {
-            exactMatches.push(r);
-          } else if (n.includes(qNorm)) {
-            partialMatches.push(r);
-          }
+        const rows = (await loadActiveOfferingsRows()).filter(isActiveOfferingRowAvailable);
+        const exact = rows.filter(r => {
+          const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
+          return n === qNorm;
         });
-
-        const matchedRows = exactMatches.length ? exactMatches : partialMatches;
+        const partial = rows.filter(r => {
+          const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
+          return n.includes(qNorm);
+        });
+        const matchedRows = exact.length ? exact : partial;
         const ids = new Set();
         const nameCityKeys = new Set();
         matchedRows.forEach(r => {
-            const shops = (r && Array.isArray(r.shops)) ? r.shops : [];
-            shops.forEach(s => {
-              const id = parseInt(s && s.shop_id, 10);
-              if (Number.isFinite(id) && isUnavailableDbShopId(id)) return;
-              if (Number.isFinite(id)) ids.add(id);
-              const key = normaliseNameCityKey(s && s.shop_name, s && s.shop_city);
-              if (key !== '|') nameCityKeys.add(key);
-          });
+          const id = parseInt(r && r.shop_id, 10);
+          if (Number.isFinite(id)) ids.add(id);
+          const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
+          if (key !== '|') nameCityKeys.add(key);
         });
-        return { ids, nameCityKeys, source: 'strain_index' };
-      } catch (_strainErr) {
-        // Fallback to active_offerings.json when strain_index.json is missing.
+        return { ids, nameCityKeys, source: 'active_offerings' };
+      } catch (_offeringErr) {
+        // Fall back to strain_index.json only when the current listings are unavailable.
       }
 
-      const rows = (await loadActiveOfferingsRows()).filter(isActiveOfferingRowAvailable);
-      const exact = rows.filter(r => {
-        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
-        return n === qNorm;
+      const rows = await loadStrainIndexRows();
+      const exactMatches = [];
+      const partialMatches = [];
+
+      rows.forEach(r => {
+        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name_display)) || '');
+        if (!n) return;
+        if (n === qNorm) {
+          exactMatches.push(r);
+        } else if (n.includes(qNorm)) {
+          partialMatches.push(r);
+        }
       });
-      const partial = rows.filter(r => {
-        const n = normaliseText((r && (r.strain_name_normalised || r.strain_name)) || '');
-        return n.includes(qNorm);
-      });
-      const matchedRows = exact.length ? exact : partial;
+
+      const matchedRows = exactMatches.length ? exactMatches : partialMatches;
       const ids = new Set();
       const nameCityKeys = new Set();
       matchedRows.forEach(r => {
-        const id = parseInt(r && r.shop_id, 10);
-        if (Number.isFinite(id)) ids.add(id);
-        const key = normaliseNameCityKey(r && r.shop_name, r && r.shop_city);
-        if (key !== '|') nameCityKeys.add(key);
+        const shops = (r && Array.isArray(r.shops)) ? r.shops : [];
+        shops.forEach(s => {
+          const id = parseInt(s && s.shop_id, 10);
+          if (Number.isFinite(id) && isUnavailableDbShopId(id)) return;
+          if (Number.isFinite(id)) ids.add(id);
+          const key = normaliseNameCityKey(s && s.shop_name, s && s.shop_city);
+          if (key !== '|') nameCityKeys.add(key);
+        });
       });
-      return { ids, nameCityKeys, source: 'active_offerings' };
+      return { ids, nameCityKeys, source: 'strain_index' };
     }
 
     function dedupeAndSortStrainNames(names) {
@@ -10475,10 +11034,12 @@
       indexMap.get(k).push(n);
     }
 
-    function finalisePopupStrainMap(indexMap) {
+    function finalisePopupStrainMap(indexMap, allowedStrainKeys = null) {
       const out = new Map();
       indexMap.forEach((names, key) => {
-        const deduped = dedupeAndSortStrainNames(names);
+        const deduped = dedupeAndSortStrainNames(names).filter(name =>
+          !(allowedStrainKeys instanceof Set) || allowedStrainKeys.has(normaliseText(name))
+        );
         if (deduped.length) out.set(key, deduped);
       });
       return out;
@@ -10714,6 +11275,7 @@
         const menuUpdatedByNameCityRaw = new Map();
         strainAveragePricesByKey = new Map();
         let sawRows = false;
+        let activeStrainKeys = null;
 
         try {
           const rows = await loadStrainIndexRows();
@@ -10742,6 +11304,9 @@
         try {
           const rows = (await loadActiveOfferingsRows()).filter(isActiveOfferingRowAvailable);
           if (rows.length) sawRows = true;
+          activeStrainKeys = new Set(rows
+            .map(r => normaliseText((r && (r.strain_name || r.strain_name_normalised)) || ''))
+            .filter(Boolean));
           popupMenuBatchSignal = buildPopupMenuBatchSignal(rows);
           strainAveragePricesByKey = buildStrainAveragePriceMap(rows.filter(isOfferingRowInCurrentAtlas));
           rows.forEach(r => {
@@ -10765,8 +11330,14 @@
           // Optional source; keep going.
         }
 
-        popupStrainsByShopId = finalisePopupStrainMap(byIdRaw);
-        popupStrainsByNameCity = finalisePopupStrainMap(byNameCityRaw);
+        if (activeStrainKeys instanceof Set) {
+          Array.from(strainMetaByKey.keys()).forEach(key => {
+            if (!activeStrainKeys.has(key)) strainMetaByKey.delete(key);
+          });
+        }
+
+        popupStrainsByShopId = finalisePopupStrainMap(byIdRaw, activeStrainKeys);
+        popupStrainsByNameCity = finalisePopupStrainMap(byNameCityRaw, activeStrainKeys);
         popupStrainDetailsByShopId = finalisePopupStrainDetailMap(detailsByIdRaw);
         popupStrainDetailsByNameCity = finalisePopupStrainDetailMap(detailsByNameCityRaw);
         popupMenuUpdatedByShopId = menuUpdatedByIdRaw;
@@ -10854,6 +11425,7 @@
       );
       iconEl.classList.add(`is-value-${tone}`);
       iconEl.setAttribute('title', (summary && (summary.title || summary.label)) || '');
+      iconEl.setAttribute('aria-hidden', 'true');
     }
 
     function updateAllMarkerValueTones() {
@@ -10923,6 +11495,67 @@
       return meta && meta.image_url ? meta.image_url : '';
     }
 
+    function settleOpenPopupLayout(index) {
+      const marker = markers[index];
+      if (!marker || typeof marker.isPopupOpen !== 'function' || !marker.isPopupOpen()) return;
+      const popup = typeof marker.getPopup === 'function' ? marker.getPopup() : null;
+      if (!popup || typeof popup.update !== 'function') return;
+
+      const panPopupInsideMap = () => {
+        if (!map || !marker.isPopupOpen() || typeof popup.getElement !== 'function') return;
+        const popupElement = popup.getElement();
+        const mapElement = typeof map.getContainer === 'function' ? map.getContainer() : null;
+        if (!popupElement || !mapElement) return;
+
+        const popupRect = popupElement.getBoundingClientRect();
+        const mapRect = mapElement.getBoundingClientRect();
+        const padding = 12;
+        const leftEdge = mapRect.left + padding;
+        const rightEdge = mapRect.right - padding;
+        const topEdge = mapRect.top + padding;
+        const bottomEdge = mapRect.bottom - padding;
+        let panX = 0;
+        let panY = 0;
+
+        if (popupRect.left < leftEdge) {
+          panX = popupRect.left - leftEdge;
+        } else if (popupRect.right > rightEdge) {
+          panX = popupRect.right - rightEdge;
+        }
+        if (popupRect.top < topEdge) {
+          panY = popupRect.top - topEdge;
+        } else if (popupRect.bottom > bottomEdge) {
+          panY = popupRect.bottom - bottomEdge;
+        }
+
+        if (Math.abs(panX) > 1 || Math.abs(panY) > 1) {
+          map.panBy([panX, panY], { animate: false });
+        }
+      };
+
+      requestAnimationFrame(() => {
+        if (!marker.isPopupOpen()) return;
+        const popupElement = typeof popup.getElement === 'function' ? popup.getElement() : null;
+        const liveContent = popupElement
+          ? popupElement.querySelector('.leaflet-popup-content > *')
+          : null;
+        if (liveContent && typeof popup.getContent === 'function' && popup.getContent() !== liveContent) {
+          // Leaflet stores string popup content and rebuilds it during update().
+          // Promote the live card node first so asynchronously rendered menus
+          // are preserved while the popup is remeasured and repositioned.
+          popup.setContent(liveContent);
+        } else {
+          popup.update();
+        }
+        panPopupInsideMap();
+        window.setTimeout(() => {
+          if (!marker.isPopupOpen()) return;
+          popup.update();
+          panPopupInsideMap();
+        }, 90);
+      });
+    }
+
     function getLocationFreshnessLabel(loc) {
       return formatFreshnessLabel(getPopupMenuUpdatedAt(loc));
     }
@@ -10939,11 +11572,25 @@
       container.innerHTML = '<p class="popup-strains-status">Checking menu matches...</p>';
 
       if (!loc.db_shop_id) {
-        const dbOk = await ensureDbIntegration();
-        if (dbOk) bindDbShopIdToLocation(loc);
+        ensureDbIntegration()
+          .then(dbOk => {
+            if (dbOk) bindDbShopIdToLocation(loc);
+          })
+          .catch(() => {
+            // Name-and-city menu matching below does not depend on DB linking.
+          });
       }
 
-      await ensurePopupStrainIndex();
+      try {
+        await ensurePopupStrainIndex();
+      } catch (_err) {
+        const failedContainer = document.getElementById(containerId);
+        if (failedContainer) {
+          failedContainer.innerHTML = '<p class="popup-strains-empty">Menu data could not be loaded. Close this shop and try again.</p>';
+          settleOpenPopupLayout(index);
+        }
+        return;
+      }
 
       const liveContainer = document.getElementById(containerId);
       if (!liveContainer) return;
@@ -10956,6 +11603,7 @@
         });
         liveContainer.style.display = 'block';
         liveContainer.innerHTML = '<p class="popup-strains-empty">No menu match for this shop yet. Try another Destination or check the shop directly.</p>';
+        settleOpenPopupLayout(index);
         return;
       }
 
@@ -11009,8 +11657,8 @@
         const cheapestBadge = isCheapest ? '<span class="strain-cheapest-badge">Cheapest</span>' : '';
         const rowHtml = (
           `<li>` +
-            `<div class="popup-strain-row">` +
-              `<button type="button" class="popup-strain-btn${caliClass}${isActive ? ' active' : ''}${isCheapest ? ' is-cheapest' : ''}" data-strain="${escapeHtmlAttr(n)}" data-popup-index="${index}">` +
+            `<details class="popup-strain-row" name="popup-strain-${index}"${isActive ? ' open' : ''}>` +
+              `<summary class="popup-strain-btn${caliClass}${isActive ? ' active' : ''}${isCheapest ? ' is-cheapest' : ''}" data-strain="${escapeHtmlAttr(n)}" data-popup-index="${index}" role="button">` +
                 `<span class="strain-item-main">` +
                   `<span>${escapeHtml(n)}</span>` +
                   `<span class="strain-item-badges">` +
@@ -11019,9 +11667,28 @@
                   `</span>` +
                 `</span>` +
                 `${metaHtml}` +
-              `</button>` +
-              `<button type="button" class="strain-shelf-chip-btn${isShelved ? ' is-active' : ''}" data-strain-shelf-toggle="${escapeHtmlAttr(n)}" data-popup-index="${index}">${isShelved ? 'Saved' : 'Save'}</button>` +
-            `</div>` +
+              `</summary>` +
+              `<span class="popup-strain-actions">` +
+                `<button type="button" class="popup-strain-show-shops" data-popup-strain-show-shops="${escapeHtmlAttr(n)}" aria-label="Show all shops carrying ${escapeHtmlAttr(n)}">` +
+                  `<span class="popup-strain-action-icon" aria-hidden="true">` +
+                    `<svg viewBox="0 0 24 24"><path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z"></path><circle cx="12" cy="10" r="2.2"></circle></svg>` +
+                  `</span>` +
+                  `<span class="popup-strain-action-copy"><strong>Show other shops</strong><small>See every map match</small></span>` +
+                `</button>` +
+                `<button type="button" class="strain-shelf-chip-btn${isShelved ? ' is-active' : ''}" data-strain-shelf-toggle="${escapeHtmlAttr(n)}" data-popup-index="${index}">` +
+                  `<span class="popup-strain-action-icon" aria-hidden="true">` +
+                    `<svg viewBox="0 0 24 24"><path d="M6.5 4.5h11v16L12 17l-5.5 3.5v-16Z"></path></svg>` +
+                  `</span>` +
+                  `<span>${isShelved ? 'Saved strain' : 'Save strain'}</span>` +
+                `</button>` +
+                `<a class="popup-strain-explore" href="${escapeHtmlAttr(priceMenusUrl({ strain: n }))}" aria-label="Explore ${escapeHtmlAttr(n)} prices and shops">` +
+                  `<span class="popup-strain-action-icon" aria-hidden="true">` +
+                    `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="3"></ellipse><path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5"></path><path d="M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7"></path></svg>` +
+                  `</span>` +
+                  `<span>Explore prices</span>` +
+                `</a>` +
+              `</span>` +
+            `</details>` +
           `</li>`
         );
         if (!groupedPopupRows.has(baseType)) groupedPopupRows.set(baseType, []);
@@ -11043,6 +11710,18 @@
       liveContainer.innerHTML =
         `<p class="popup-strains-count">${countText}${menuValueSummaryHtml}</p>` +
         `<ul class="popup-strains-list">${itemsHtml}</ul>`;
+      liveContainer.querySelectorAll('[data-strain-shelf-toggle]').forEach(shelfBtn => {
+        shelfBtn.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          const strain = (shelfBtn.getAttribute('data-strain-shelf-toggle') || '').trim();
+          const popupIndex = parseInt(shelfBtn.getAttribute('data-popup-index') || '', 10);
+          toggleShelfMembershipForStrain(strain, {
+            popupIndex: Number.isInteger(popupIndex) ? popupIndex : null
+          });
+        });
+      });
+      settleOpenPopupLayout(index);
     }
 
     function refreshOpenPopupStrainLists() {
@@ -11054,6 +11733,15 @@
     }
 
     async function fetchActiveStrainNames() {
+      try {
+        const rows = await loadStrainIndexRows();
+        const names = rows.map(r => (r && (r.strain_name_display || r.strain_name_normalised)) || '');
+        const out = dedupeAndSortStrainNames(names);
+        if (out.length) return out;
+      } catch (_err) {
+        // Fall back to the richer menu index below.
+      }
+
       try {
         await ensurePopupStrainIndex();
         const namesFromMeta = Array.from(strainMetaByKey.values())
@@ -11074,9 +11762,7 @@
         // Fallback below.
       }
 
-      const rows = await loadStrainIndexRows();
-      const names = rows.map(r => (r && (r.strain_name_display || r.strain_name_normalised)) || '');
-      return dedupeAndSortStrainNames(names);
+      return [];
     }
 
     function updateStrainListSelection() {
@@ -11202,12 +11888,13 @@
       return contains.length === 1 ? contains[0] : '';
     }
 
-    function updateGlobalSearchSuggestions() {
+    function updateGlobalSearchSuggestions(queryText = '') {
       const list = document.getElementById('global-search-suggestions');
       if (!list) return;
 
       const values = [];
       const seen = new Set();
+      const queryKey = normaliseText(queryText);
       const push = value => {
         const text = (value || '').toString().replace(/\s+/g, ' ').trim();
         const key = normaliseText(text);
@@ -11216,12 +11903,21 @@
         values.push(text);
       };
 
+      if (queryKey) {
+        activeStrainNames
+          .filter(name => normaliseText(name).includes(queryKey))
+          .slice(0, 60)
+          .forEach(push);
+      }
+
       locations.filter(isCoffeeShopLocation).slice(0, 50).forEach(loc => {
         push(loc && loc.name);
         push(loc && loc.city);
       });
       locations.filter(isAreaLocation).slice(0, 15).forEach(loc => push(loc && loc.name));
-      activeStrainNames.slice(0, 40).forEach(push);
+      (queryKey ? activeStrainNames.filter(name => normaliseText(name).includes(queryKey)) : activeStrainNames)
+        .slice(0, 60)
+        .forEach(push);
 
       list.innerHTML = values
         .slice(0, 105)
@@ -11238,7 +11934,8 @@
       return true;
     }
 
-    function scheduleGlobalSearchStrainResolve(query, visibleLocationCount) {
+    function scheduleGlobalSearchStrainResolve(query, visibleLocationCount, options = {}) {
+      const requestId = ++globalSearchResolveRequestId;
       if (globalSearchStrainTimer !== null) {
         window.clearTimeout(globalSearchStrainTimer);
         globalSearchStrainTimer = null;
@@ -11246,33 +11943,63 @@
 
       const q = (query || '').toString().replace(/\s+/g, ' ').trim();
       if (q.length < 3) return;
+      const searchStatus = document.getElementById('destination-search-status');
+      if (searchStatus && visibleLocationCount === 0) {
+        searchStatus.textContent = `Checking menu matches for "${q}"…`;
+        const bestMatchSummary = document.getElementById('best-match-summary');
+        const bestMatchList = document.getElementById('best-match-list');
+        if (bestMatchSummary) bestMatchSummary.textContent = `Checking current menus for ${q}…`;
+        if (bestMatchList) {
+          bestMatchList.innerHTML = '<p class="best-match-empty">Searching the full strain index…</p>';
+        }
+      }
 
       globalSearchStrainTimer = window.setTimeout(async () => {
         globalSearchStrainTimer = null;
         const searchInput = document.getElementById('destination-search');
-        const currentQ = (searchInput ? searchInput.value : q).toString().replace(/\s+/g, ' ').trim();
-        if (normaliseText(currentQ) !== normaliseText(q)) return;
+        const isCurrentRequest = () => {
+          const currentQ = (searchInput ? searchInput.value : q).toString().replace(/\s+/g, ' ').trim();
+          return requestId === globalSearchResolveRequestId && normaliseText(currentQ) === normaliseText(q);
+        };
+        if (!isCurrentRequest()) return;
 
         try {
           if (!activeStrainNames.length) {
             activeStrainNames = await fetchActiveStrainNames();
+            if (!isCurrentRequest()) return;
             if (strainListVisible) renderStrainList();
-            updateGlobalSearchSuggestions();
+            updateGlobalSearchSuggestions(q);
           }
 
           const match = bestGlobalStrainMatch(q, visibleLocationCount);
-          if (!match) return;
+          if (!match || !isCurrentRequest()) {
+            if (isCurrentRequest()) {
+              updateDestinationSearchStatus();
+              refreshDestinationCards();
+            }
+            return;
+          }
 
           globalSearchAppliedStrainKey = normaliseText(match);
           locationSearchText = '';
           if (searchInput) searchInput.value = match;
-          await applyStrainFilter(match);
+          const applied = await applyStrainFilter(match, { isCurrent: isCurrentRequest });
+          if (!applied || !isCurrentRequest()) return;
           updateDestinationDropdown();
           updateMarkers();
+          if (pendingInitialSearchPresentation) {
+            focusSearchResultsPanel();
+            fitMapToVisibleMarkers({ searchResults: true });
+            pendingInitialSearchPresentation = false;
+          }
         } catch (_err) {
           // Keep plain shop/city search if strain data is not available.
+          if (isCurrentRequest()) {
+            updateDestinationSearchStatus();
+            refreshDestinationCards();
+          }
         }
-      }, 220);
+      }, options.immediate ? 0 : 360);
     }
 
     function setStrainListVisible(show) {
@@ -11291,15 +12018,15 @@
       let rows = [];
 
       try {
-        rows = await fetchDbIndex();
-        dbIntegrationSource = 'flask';
-        dbRouteLinksEnabled = true;
-      } catch (_flaskErr) {
+        rows = await fetchDbIndexFromJson();
+        dbIntegrationSource = 'json';
+        dbRouteLinksEnabled = false;
+      } catch (_jsonErr) {
         try {
-          rows = await fetchDbIndexFromJson();
-          dbIntegrationSource = 'json';
-          dbRouteLinksEnabled = false;
-        } catch (_jsonErr) {
+          rows = await fetchDbIndex();
+          dbIntegrationSource = 'flask';
+          dbRouteLinksEnabled = true;
+        } catch (_flaskErr) {
           dbIntegrationReady = false;
           dbIntegrationSource = 'none';
           dbRouteLinksEnabled = false;
@@ -11411,6 +12138,9 @@
     async function applyStrainFilter(queryText, options = {}) {
       const status = document.getElementById('strain-status');
       const q = (typeof queryText === 'string' ? queryText : '').trim();
+      const isCurrentRequest = typeof options.isCurrent === 'function'
+        ? options.isCurrent
+        : () => true;
       if (options.recordHistory !== false && normaliseText(q) !== normaliseText(strainFilterText)) {
         rememberMapFilterState();
       }
@@ -11435,10 +12165,11 @@
         }
         refreshOpenPopupStrainLists();
         syncActiveStrainShelfButton();
-        return;
+        return true;
       }
 
       const dbOk = await ensureDbIntegration();
+      if (!isCurrentRequest()) return false;
 
       // If DB index is available, link shop ids now.
       if (dbOk) {
@@ -11459,19 +12190,27 @@
         } else {
           result = await fetchStrainShopIdsFromJson(q);
         }
+        if (!isCurrentRequest()) return false;
+
+        let pricing = null;
+        try {
+          pricing = await fetchStrainPriceMapsFromJson(q);
+        } catch (_err) {
+          pricing = null;
+        }
+        if (!isCurrentRequest()) return false;
 
         strainFilterText = q;
         strainAllowedShopIds = result.ids;
         strainAllowedNameCityKeys = result.nameCityKeys.size ? result.nameCityKeys : null;
 
-        try {
-          const pricing = await fetchStrainPriceMapsFromJson(q);
+        if (pricing) {
           strainPriceByShopId = pricing.byShopId;
           strainPriceByNameCity = pricing.byNameCity;
           strainCheapestShopIds = pricing.cheapestShopIds.size ? pricing.cheapestShopIds : null;
           strainCheapestNameCityKeys = pricing.cheapestNameCityKeys.size ? pricing.cheapestNameCityKeys : null;
           strainCheapestPriceLabel = pricing.cheapestPriceLabel || '';
-        } catch (_err) {
+        } else {
           strainPriceByShopId = null;
           strainPriceByNameCity = null;
           strainCheapestShopIds = null;
@@ -11495,7 +12234,9 @@
         }
         refreshOpenPopupStrainLists();
         syncActiveStrainShelfButton();
+        return true;
       } catch (err) {
+        if (!isCurrentRequest()) return false;
         strainPriceByShopId = null;
         strainPriceByNameCity = null;
         strainCheapestShopIds = null;
@@ -11503,6 +12244,7 @@
         strainCheapestPriceLabel = '';
         if (status) status.textContent = 'Strain search is still getting ready. Try again in a moment.';
         syncActiveStrainShelfButton();
+        return false;
       }
     }
 
@@ -11606,6 +12348,23 @@
       return out[0] || null;
     }
 
+    function pickDefaultCsvPath(paths) {
+      const available = Array.from(new Set(
+        (paths || [])
+          .map(canonicalCsvPath)
+          .filter(p => p && /\.csv$/i.test(p))
+      ));
+      const exactAmsterdam = available.find(path =>
+        csvFileNameFromPath(path).toLowerCase() === 'amsterdamloc.csv'
+      );
+      if (exactAmsterdam) return exactAmsterdam;
+
+      const otherAmsterdam = available.find(path =>
+        /^amsterdam(?:[\s_-]|loc|location|\.csv)/i.test(csvFileNameFromPath(path))
+      );
+      return otherAmsterdam || pickFirstCsvPath(available);
+    }
+
     function canonicalCsvPath(pathLike) {
       const normalised = normaliseDiscoveredCsvPath(pathLike);
       if (normalised) return ensureLocationsPrefix(normalised);
@@ -11617,10 +12376,49 @@
       return canonicalCsvPath((saved || '').toString().trim());
     }
 
-    function saveSelectedCsvPath(pathLike) {
+    function saveSelectedCsvPath(pathLike, options = {}) {
       const path = canonicalCsvPath(pathLike);
       if (!path) return;
       saveStoredJson(LOCATION_DATA_STORAGE_KEYS, path);
+      if (options.explicit === true) {
+        saveStoredJson(LOCATION_DATA_EXPLICIT_SELECTION_STORAGE_KEYS, true);
+      }
+    }
+
+    function requestedLocationLabelFromUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search || '');
+        return (params.get('location_file') || params.get('location') || params.get('city') || '')
+          .toString()
+          .replace(/\s+/g, ' ')
+          .trim();
+      } catch (_err) {
+        return '';
+      }
+    }
+
+    function pickRequestedCsvPath(paths) {
+      const request = requestedLocationLabelFromUrl();
+      if (!request) return null;
+      const available = Array.from(new Set(
+        (paths || [])
+          .map(canonicalCsvPath)
+          .filter(path => path && /\.csv$/i.test(path))
+      ));
+      const requestedCanonical = canonicalCsvPath(request);
+      if (/\.csv$/i.test(request) && available.includes(requestedCanonical)) {
+        return requestedCanonical;
+      }
+      const requestKey = request
+        .toLowerCase()
+        .replace(/\.csv$/i, '')
+        .replace(/[^a-z0-9]+/g, '');
+      if (!requestKey) return null;
+      return available.find(path => {
+        const labelKey = csvLabelFromPath(path).toLowerCase().replace(/[^a-z0-9]+/g, '');
+        const fileKey = csvFileNameFromPath(path).toLowerCase().replace(/\.csv$/i, '').replace(/[^a-z0-9]+/g, '');
+        return labelKey === requestKey || fileKey === requestKey;
+      }) || null;
     }
 
     function pickInitialCsvPath(paths) {
@@ -11630,8 +12428,16 @@
           .filter(p => p && /\.csv$/i.test(p))
       ));
       const saved = loadSavedCsvPath();
-      if (saved && available.includes(saved)) return saved;
-      return pickFirstCsvPath(available);
+      const defaultPath = pickDefaultCsvPath(available);
+      const savedWasExplicit = loadStoredJson(LOCATION_DATA_EXPLICIT_SELECTION_STORAGE_KEYS, false) === true;
+      if (saved && available.includes(saved)) {
+        const looksLikeOldAutomaticFallback =
+          !savedWasExplicit &&
+          saved !== defaultPath &&
+          saved === pickFirstCsvPath(available);
+        if (!looksLikeOldAutomaticFallback) return saved;
+      }
+      return defaultPath;
     }
 
     function csvFileNameFromPath(pathLike) {
@@ -12062,10 +12868,15 @@
       });
       await applyExplorerStrainContextAfterCsvLoad();
       applyInitialSearchFromUrlAfterCsvLoad();
+      if (!getInitialSearchFromUrl() && (locationSearchText || '').trim()) {
+        const pendingQuery = locationSearchText.toString().replace(/\s+/g, ' ').trim();
+        const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
+        scheduleGlobalSearchStrainResolve(pendingQuery, visibleLocationCount, { immediate: true });
+      }
       openSettingsFromHash();
     }
 
-    async function loadCsvFromPath(path) {
+    async function loadCsvFromPath(path, options = {}) {
       const csvPath = (path || '').toString().trim();
       if (!csvPath) throw new Error('Location file path is empty.');
 
@@ -12077,7 +12888,9 @@
           const rows = await parseCsvInput(candidate, { download: true });
           await applyCsvRows(rows, { csvPathLike: candidate });
           currentCsvPath = canonicalCsvPath(candidate);
-          saveSelectedCsvPath(currentCsvPath);
+          if (options.persist !== false) {
+            saveSelectedCsvPath(currentCsvPath, { explicit: options.explicitSelection === true });
+          }
           renderCsvSwitchSelect(currentCsvPath);
           updateControlsSummary();
           return;
@@ -12097,10 +12910,13 @@
     }
 
     async function bootstrapInitialCsvLoad() {
-      setUploadPanelState('Opening the Amsterdam map', 'Loading Amsterdam menu data...', false);
+      const requestedLocation = requestedLocationLabelFromUrl();
+      const openingLabel = requestedLocation || 'Amsterdam';
+      setUploadPanelState(`Opening the ${openingLabel} map`, `Loading ${openingLabel} location data...`, false);
 
       const csvPaths = await discoverCsvPathsInLocations();
-      const initialCsv = pickInitialCsvPath(csvPaths);
+      const requestedCsv = pickRequestedCsvPath(csvPaths);
+      const initialCsv = requestedCsv || pickInitialCsvPath(csvPaths);
       if (!initialCsv) {
         if (window.location.protocol === 'file:') {
           setUploadPanelState(
@@ -12122,7 +12938,7 @@
       setDiscoveredCsvPaths(csvPaths, initialCsv);
 
       try {
-        await loadCsvFromPath(initialCsv);
+        await loadCsvFromPath(initialCsv, { persist: !requestedCsv });
       } catch (err) {
         const fallbackCsv = pickFirstCsvPath(csvPaths);
         if (fallbackCsv && fallbackCsv !== initialCsv) {
@@ -12145,7 +12961,7 @@
 
       setUploadPanelState('Switching location file', `Preparing ${csvLabelFromPath(selectedPath)}...`, false);
       try {
-        await loadCsvFromPath(selectedPath);
+        await loadCsvFromPath(selectedPath, { explicitSelection: true });
       } catch (err) {
         setUploadPanelState(
           'Could not switch location file',
@@ -12300,8 +13116,9 @@
       updateMarkers();
       updateControlsSummary();
       renderJourneyPlanner();
-      // Let the desktop layout settle before the first fit so we use the
-      // final map width instead of the transitional "panel just hid" state.
+      // Let the layout settle before choosing a useful city-level opening
+      // view. Fitting every marker makes dense cities look zoomed out and
+      // visually overloaded.
       if (markers.length > 0) {
         const initialFitDelay = isCompactMobileLayout() ? 60 : 260;
         window.setTimeout(() => {
@@ -12309,7 +13126,7 @@
           map.invalidateSize();
           requestAnimationFrame(() => {
             if (!map) return;
-            fitMapToVisibleMarkers();
+            focusInitialMapViewport();
           });
         }, initialFitDelay);
       }
@@ -12561,14 +13378,25 @@
       const minZoom = Number.isFinite(options.minZoom) ? options.minZoom : (isCompactMobileLayout() ? 15 : 16);
       const currentZoom = Number.isFinite(map.getZoom()) ? map.getZoom() : minZoom;
       const targetZoom = Number.isFinite(options.zoom) ? options.zoom : Math.max(currentZoom, minZoom);
-      const adjustedCenter = getViewportAdjustedCenter(coords, targetZoom);
       const popupIndex = Number.isInteger(options.popupIndex) ? options.popupIndex : null;
+      let adjustedCenter = getViewportAdjustedCenter(coords, targetZoom);
+
+      if (popupIndex !== null && isCompactMobileLayout()) {
+        const mapRect = getMeasuredMapRect();
+        const popupBreathingRoom = Math.min(180, Math.max(120, Math.round((mapRect && mapRect.height ? mapRect.height : 520) * 0.34)));
+        adjustedCenter = map.unproject(
+          map.project(adjustedCenter, targetZoom).subtract(L.point(0, popupBreathingRoom)),
+          targetZoom
+        );
+      }
 
       if (popupIndex !== null) {
         map.once('moveend', () => {
           if (!markers[popupIndex]) return;
           markers[popupIndex].openPopup();
-          markers[popupIndex].bringToFront();
+          if (typeof markers[popupIndex].bringToFront === 'function') {
+            markers[popupIndex].bringToFront();
+          }
         });
       }
 
@@ -12593,11 +13421,52 @@
       });
     }
 
-    function fitMapToVisibleMarkers() {
+    function mapCenterForEntries(entries) {
+      const coords = (Array.isArray(entries) ? entries : [])
+        .map(item => locations[item.index] && locations[item.index].coords)
+        .filter(value => Array.isArray(value) && value.length === 2);
+      if (!coords.length) return null;
+      const latitudes = coords.map(value => Number(value[0])).filter(Number.isFinite).sort((a, b) => a - b);
+      const longitudes = coords.map(value => Number(value[1])).filter(Number.isFinite).sort((a, b) => a - b);
+      if (!latitudes.length || !longitudes.length) return null;
+      const midpoint = values => {
+        const middle = Math.floor(values.length / 2);
+        return values.length % 2 ? values[middle] : ((values[middle - 1] + values[middle]) / 2);
+      };
+      return [midpoint(latitudes), midpoint(longitudes)];
+    }
+
+    function shouldShowMarkerOnMap(loc, index) {
+      return passesCategoryFilter(loc, index);
+    }
+
+    function focusInitialMapViewport() {
+      if (!map || !markers.length) return;
+      if (lastPosition) {
+        focusMapOnCoords(lastPosition, {
+          zoom: isCompactMobileLayout() ? 15 : 16,
+          animate: false
+        });
+        return;
+      }
+      const entries = markers
+        .map((marker, index) => ({ marker, index }))
+        .filter(item => item.marker && passesBaseFilters(locations[item.index], item.index));
+      const center = mapCenterForEntries(entries);
+      if (!center) {
+        fitMapToVisibleMarkers();
+        return;
+      }
+      // Keep every marker loaded, but begin one level closer to the city centre
+      // so the opening view is useful instead of presenting a wall of markers.
+      map.setView(center, 14, { animate: false });
+    }
+
+    function fitMapToVisibleMarkers(options = {}) {
       if (!map || !markers.length) return;
       const visibleEntries = markers
         .map((marker, index) => ({ marker, index }))
-        .filter(item => item.marker && passesCategoryFilter(locations[item.index], item.index));
+        .filter(item => item.marker && shouldShowMarkerOnMap(locations[item.index], item.index));
       const markerEntries = visibleEntries.length
         ? visibleEntries
         : markers
@@ -12620,6 +13489,12 @@
         paddingBottomRight: insets.paddingBottomRight,
         maxZoom: isCompactMobileLayout() ? 15 : 16
       });
+      const minimumUsefulZoom = options.searchResults
+        ? (isCompactMobileLayout() ? 13 : 13)
+        : null;
+      if (minimumUsefulZoom && map.getZoom() < minimumUsefulZoom) {
+        map.setZoom(minimumUsefulZoom, { animate: false });
+      }
     }
 
     function selectDestinationIndex(index) {
@@ -12992,6 +13867,12 @@
         focusDestinationOnMap(selectedIndex, { animate: false });
       } else if (selectedIndex === null && movedEnough) {
         clearRouteUi();
+        if (options.centerMap !== false) {
+          focusMapOnCoords(nextPosition, {
+            zoom: isCompactMobileLayout() ? 15 : 16,
+            animate: options.animate !== false
+          });
+        }
       }
 
       updateDestinationDropdown();
@@ -13715,6 +14596,39 @@
       }
     }
 
+    async function showOtherShopsForStrain(strain) {
+      const query = getCanonicalStrainName(strain);
+      if (!query) return false;
+
+      resetAtlasFiltersForShelfStrain();
+      const applied = await applyStrainFilter(query, { recordHistory: false });
+      const isActive = normaliseText(strainFilterText) === normaliseText(query);
+      if (!applied && !isActive) return false;
+
+      const matchCount = locations.filter((loc, index) => passesCategoryFilter(loc, index)).length;
+      setRouteStatus(
+        `Showing ${matchCount} shop${matchCount === 1 ? '' : 's'} carrying ${query}.`,
+        'good'
+      );
+
+      if (map) {
+        map.closePopup();
+        window.setTimeout(() => {
+          if (!map) return;
+          map.closePopup();
+          fitMapToVisibleMarkers({ searchResults: true });
+          window.setTimeout(() => {
+            if (map) map.closePopup();
+          }, 180);
+        }, 120);
+      }
+
+      if (isCompactMobileLayout() || document.body.classList.contains('compact-layout')) {
+        setControlsVisible(false);
+      }
+      return true;
+    }
+
     function passesBaseFilters(loc, index) {
       if (isClosedLocation(loc)) {
         return false;
@@ -14319,19 +15233,45 @@
         if (rawQuery !== locationSearchText) {
           rememberMapFilterState();
         }
+        if (rawQuery && (hasExplorerFocus() || explorerFocusStrainName)) {
+          clearExplorerFocus();
+          syncExplorerFocusControls();
+        }
         if (clearGlobalSearchAppliedStrainIfNeeded(rawQuery)) {
           // clearStrainFilter refreshes the UI; continue with the new search below.
         }
         locationSearchText = rawQuery;
+        updateGlobalSearchSuggestions(rawQuery);
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
         const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
         scheduleGlobalSearchStrainResolve(rawQuery, visibleLocationCount);
+        if (rawQuery) {
+          pendingInitialSearchPresentation = isCompactMobileLayout();
+          window.setTimeout(() => {
+            focusSearchResultsPanel();
+            fitMapToVisibleMarkers({ searchResults: true });
+          }, 260);
+        }
       };
 
       destinationSearchInput.addEventListener('input', handleDestinationSearch);
       destinationSearchInput.addEventListener('search', handleDestinationSearch);
+      destinationSearchInput.addEventListener('change', () => {
+        const rawQuery = (destinationSearchInput.value || '').toString().replace(/\s+/g, ' ').trim();
+        if (!rawQuery) return;
+        const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
+        scheduleGlobalSearchStrainResolve(rawQuery, visibleLocationCount, { immediate: true });
+      });
+      destinationSearchInput.addEventListener('keydown', event => {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        const rawQuery = (destinationSearchInput.value || '').toString().replace(/\s+/g, ' ').trim();
+        if (!rawQuery) return;
+        const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
+        scheduleGlobalSearchStrainResolve(rawQuery, visibleLocationCount, { immediate: true });
+      });
     }
 
     document.querySelectorAll('[data-map-quick-search]').forEach(button => {
@@ -14535,7 +15475,22 @@
       renderStrainList();
     });
 
-    document.body.addEventListener('click', e => {
+    document.body.addEventListener('click', async e => {
+      const showOtherShopsBtn = e.target.closest('[data-popup-strain-show-shops]');
+      if (showOtherShopsBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const strain = (showOtherShopsBtn.getAttribute('data-popup-strain-show-shops') || '').trim();
+        showOtherShopsBtn.disabled = true;
+        showOtherShopsBtn.setAttribute('aria-busy', 'true');
+        const applied = await showOtherShopsForStrain(strain);
+        if (!applied && showOtherShopsBtn.isConnected) {
+          showOtherShopsBtn.disabled = false;
+          showOtherShopsBtn.removeAttribute('aria-busy');
+        }
+        return;
+      }
+
       const shelfBtn = e.target.closest('[data-strain-shelf-toggle]');
       if (!shelfBtn) return;
       e.preventDefault();
@@ -14552,17 +15507,6 @@
       if (!target) return;
       const strain = target.getAttribute('data-strain') || '';
       await applyStrainFilter(strain);
-    });
-
-    document.body.addEventListener('click', async e => {
-      const btn = e.target.closest('.popup-strain-btn');
-      if (!btn) return;
-      e.preventDefault();
-      const strain = (btn.getAttribute('data-strain') || '').trim();
-      if (!strain) return;
-
-      await applyStrainFilter(strain);
-      if (map) map.closePopup();
     });
 
     // =========================================================
@@ -14770,7 +15714,8 @@
     function getJourneyDisplayName() {
       const input = document.getElementById('journey-name-input');
       const raw = ((input && input.value) || '').toString().replace(/\s+/g, ' ').trim();
-      return raw || 'Amsterdam day out';
+      const userName = currentMapUserName();
+      return raw || (userName ? `Amsterdam day out for ${userName}` : 'Amsterdam day out');
     }
 
     function getJourneyLocationOptions() {
@@ -15716,9 +16661,9 @@
         ? `Best matches for ${activeName}`
         : (hasSelectedOrigin ? `Nearby from ${locations[selectedIndex].name}` : 'Nearby places');
 
-      const displayItems = (hasSelectedOrigin
+      const displayItems = hasSelectedOrigin
         ? items.filter(item => item.index !== selectedIndex)
-        : items).slice(0, 6);
+        : items;
 
       if (!displayItems.length) {
         statusEl.textContent = activeName
@@ -15877,8 +16822,7 @@
 
       const coffeeItems = (Array.isArray(items) ? items : [])
         .filter(item => item && locations[item.index] && isCoffeeShopLocation(locations[item.index]));
-      const displayItems = coffeeItems
-        .slice(0, 3);
+      const displayItems = coffeeItems;
       summaryEl.textContent = getBestMatchSummary(coffeeItems);
 
       if (!hasBestMatchContext()) {
@@ -15963,7 +16907,7 @@
       placeholder.selected = true;
       destSelect.appendChild(placeholder);
 
-      const progressiveItems = items.slice(0, 3);
+      const progressiveItems = items.slice();
       if (previousSelection !== null && !progressiveItems.some(item => item.index === previousSelection)) {
         const selectedItem = items.find(item => item.index === previousSelection);
         if (selectedItem) progressiveItems.push(selectedItem);
@@ -16094,6 +17038,12 @@
         if (map && map.hasLayer(marker)) {
           marker.openTooltip();
         }
+        const tooltip = marker.getTooltip && marker.getTooltip();
+        const tooltipElement = tooltip && tooltip.getElement && tooltip.getElement();
+        if (tooltipElement) {
+          tooltipElement.setAttribute('aria-hidden', 'true');
+          tooltipElement.setAttribute('role', 'presentation');
+        }
       } else {
         if (marker.getTooltip()) marker.unbindTooltip();
         marker._priceLabelText = '';
@@ -16108,7 +17058,7 @@
      */
     function updateMarkers() {
       locations.forEach((loc, i) => {
-        const visible = passesCategoryFilter(loc, i);
+        const visible = shouldShowMarkerOnMap(loc, i);
         if (visible) {
           if (!map.hasLayer(markers[i])) map.addLayer(markers[i]);
         } else {
@@ -16515,6 +17465,20 @@
       } catch (_err) {
         intent = '';
       }
+      if (intent === 'nearby') {
+        setControlsVisible(true, { collapsed: isCompactMobileLayout() });
+        requestUserLocation({
+          label: 'Getting your location for nearby results...',
+          centerMap: true
+        }).then(() => {
+          nearbyExploreActive = true;
+          updateDestinationDropdown();
+          updateMarkers();
+        }).catch(() => {
+          focusInitialMapViewport();
+        });
+        return;
+      }
       if (intent !== 'itinerary') return;
       setControlsVisible(true, { collapsed: false });
       const planner = openRouteTools();
@@ -16551,11 +17515,18 @@
           return;
         }
         if (intent === 'nearby') {
-          const planner = openRouteTools();
-          if (planner) {
-            planner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          try {
+            await requestUserLocation({
+              label: 'Getting your location for nearby results...',
+              centerMap: true
+            });
+            nearbyExploreActive = true;
+            updateDestinationDropdown();
+            updateMarkers();
+            setRouteStatus('Showing useful stops around your location.', 'good');
+          } catch (_err) {
+            focusInitialMapViewport();
           }
-          setJourneyStatus('Choose a start, then add places in the order you want to visit them.', 'good');
           return;
         }
         if (intent === 'value') {
@@ -16705,6 +17676,15 @@
       personalisation.displayName = nextName;
       savePersonalisation();
       applyPersonalisation();
+      renderJourneyPlanner();
+      updateControlsSummary();
+    });
+
+    window.addEventListener('storage', event => {
+      if (!event || !PERSONALISATION_STORAGE_KEYS.includes(event.key)) return;
+      loadPersonalisation();
+      applyPersonalisation();
+      renderJourneyPlanner();
       updateControlsSummary();
     });
 

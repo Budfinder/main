@@ -1,7 +1,10 @@
 (() => {
   'use strict';
 
-  const LOGO_BASE_PATHS = ['images/logos/'];
+  // Public pages are served from the site root. Keep each candidate unique so a
+  // missing logo produces one inexpensive miss instead of retrying equivalent
+  // relative paths from the same page.
+  const LOGO_BASE_PATH = '/images/logos/';
   const LOGO_FILE_ALIASES = new Map([
     ['best_friends_centrum.png', 'best_friends_oost.png'],
     ['bulldog_energy.png', 'bulldog_rockshop.png'],
@@ -53,9 +56,9 @@
     if (!clean) return;
     const parts = clean.split('/').filter(Boolean);
     const basename = parts[parts.length - 1] || clean;
-    const paths = clean.includes('/')
-      ? [clean, ...LOGO_BASE_PATHS.flatMap(base => [`${base}${encodeURIComponent(basename)}`, `${base}${basename}`])]
-      : LOGO_BASE_PATHS.flatMap(base => [`${base}${encodeURIComponent(basename)}`, `${base}${basename}`]);
+    const paths = clean.includes('/') && !/^images\/logos\//i.test(clean)
+      ? [`/${clean}`, `${LOGO_BASE_PATH}${encodeURIComponent(basename)}`]
+      : [`${LOGO_BASE_PATH}${encodeURIComponent(basename)}`];
     paths.forEach(path => {
       if (seen.has(path)) return;
       seen.add(path);
@@ -72,18 +75,21 @@
     const seen = new Set();
     const filenames = [];
 
-    if (filename) filenames.push(filename);
-    [logoSlug(shopKey), logoSlug(shopName)]
-      .filter(Boolean)
-      .forEach(slug => {
-        filenames.push(`${slug}.png`, `${slug}.jpg`, `${slug}.svg`);
-      });
+    if (filename) {
+      const basename = String(filename).split('/').filter(Boolean).at(-1) || '';
+      const alias = LOGO_FILE_ALIASES.get(basename.toLowerCase());
+      if (alias) filenames.push(alias);
+      filenames.push(filename);
+    } else {
+      [logoSlug(shopKey), logoSlug(shopName)]
+        .filter(Boolean)
+        .forEach(slug => {
+          filenames.push(`${slug}.png`);
+        });
+    }
 
     filenames.forEach(candidate => {
       addLogoPath(out, seen, candidate);
-      const basename = String(candidate).split('/').filter(Boolean).at(-1) || '';
-      const alias = LOGO_FILE_ALIASES.get(basename.toLowerCase());
-      if (alias) addLogoPath(out, seen, alias);
     });
 
     if (settings.includeMonogram !== false) {
