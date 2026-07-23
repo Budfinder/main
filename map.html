@@ -10427,35 +10427,6 @@
       return isClosed || isHidden || ['closed', 'archived', 'archive', 'previous', 'old', 'error', 'failed'].includes(status);
     }
 
-    function dbSourceToken(value) {
-      let decoded = String(value || '');
-      try {
-        decoded = decodeURIComponent(decoded);
-      } catch (_err) {
-        // Keep the raw value if the URL has a malformed escape.
-      }
-      return decoded
-        .toLowerCase()
-        .replace(/^cs-/, '')
-        .replace(/&/g, 'and')
-        .replace(/[^a-z0-9]+/g, '');
-    }
-
-    function dbShopSourceTokens(row) {
-      return [
-        dbSourceToken(row && row.name),
-        dbSourceToken(String((row && row.shop_key) || '').replace(/^cs-/, ''))
-      ].filter(token => token.length >= 5);
-    }
-
-    function hasClosedDbSourceConflict(row, closedTokens) {
-      const source = dbSourceToken(row && row.image_url);
-      if (!source) return false;
-      const ownTokens = new Set(dbShopSourceTokens(row));
-      return (Array.isArray(closedTokens) ? closedTokens : [])
-        .some(token => !ownTokens.has(token) && source.includes(token));
-    }
-
     function isUnavailableDbShopId(shopId) {
       const id = String(shopId || '').trim();
       return Boolean(id && dbUnavailableShopIds.has(id));
@@ -12040,17 +12011,9 @@
       dbByPath = new Map();
       dbByNameCity = new Map();
       dbShopMetaById = new Map();
-      const closedSourceTokens = Array.from(new Set(
-        rows
-          .filter(r => {
-            const closedValue = r && r.is_closed;
-            return closedValue === true || Number(closedValue) === 1 || normaliseText(closedValue) === 'true';
-          })
-          .flatMap(dbShopSourceTokens)
-      ));
       dbUnavailableShopIds = new Set(
         rows
-          .filter(r => isUnavailableDbRow(r) || hasClosedDbSourceConflict(r, closedSourceTokens))
+          .filter(isUnavailableDbRow)
           .map(r => String(r.shop_id || '').trim())
           .filter(Boolean)
       );

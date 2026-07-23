@@ -4,7 +4,7 @@
     "name": "Any Time",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-anytime.html",
-    "show_in_admin": 1,
+    "show_in_admin": 0,
     "is_closed": 0
   },
   "cs-brug": {
@@ -12,7 +12,7 @@
     "name": "De Brug",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-brug.html",
-    "show_in_admin": 1,
+    "show_in_admin": 0,
     "is_closed": 0
   },
   "cs-hightime-alk": {
@@ -20,7 +20,7 @@
     "name": "High-Time",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-hightime-alk.html",
-    "show_in_admin": 1,
+    "show_in_admin": 0,
     "is_closed": 0
   },
   "cs-steppingout": {
@@ -28,7 +28,7 @@
     "name": "Stepping Out",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-steppingout.html",
-    "show_in_admin": 1,
+    "show_in_admin": 0,
     "is_closed": 0
   },
   "cs-zero-zero-alk": {
@@ -36,7 +36,7 @@
     "name": "Zero Zero",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-zero-zero-alk.html",
-    "show_in_admin": 1,
+    "show_in_admin": 0,
     "is_closed": 0
   },
   "cs-boerejongensalmere": {
@@ -3428,7 +3428,23 @@
     "name": "Cremers",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-cremers.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-tulp": {
+    "shop_id": 21809,
+    "name": "De Tulp",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-tulp.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-demo-2": {
+    "shop_id": 21810,
+    "name": "Demo",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-demo.html",
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-dizzy-duck": {
@@ -3436,7 +3452,7 @@
     "name": "Dizzy Duck",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-dizzy-duck.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-dizzy-duck-downtown": {
@@ -3444,7 +3460,15 @@
     "name": "Dizzy Duck Downtown",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-dizzy-duck-downtown.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-doctor-green-2": {
+    "shop_id": 21813,
+    "name": "Doctor Green",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-doctor-green.html",
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-fly": {
@@ -3452,7 +3476,7 @@
     "name": "Fly",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-fly.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-galaxy": {
@@ -3460,7 +3484,7 @@
     "name": "Galaxy",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-galaxy.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-greenhouse-sf": {
@@ -3468,7 +3492,7 @@
     "name": "Green House Secret Farmers",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-greenhouse-sf.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-happy-smile": {
@@ -3476,7 +3500,7 @@
     "name": "Happy Smile",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-happy-smile.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-mistral": {
@@ -3484,7 +3508,15 @@
     "name": "Le Mistral",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-mistral.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-london-2": {
+    "shop_id": 21819,
+    "name": "London",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-london.html",
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-magic-haag": {
@@ -3492,7 +3524,31 @@
     "name": "Magic",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-magic-haag.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-marbellaspecialfarmers-2": {
+    "shop_id": 21821,
+    "name": "Marbella Special Farmers",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-marbellaspecialfarmers.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-moonlight-2": {
+    "shop_id": 21822,
+    "name": "Moonlight",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-moonlight.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-nebula-2": {
+    "shop_id": 21823,
+    "name": "Nebula",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-nebula.html",
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-no-limit": {
@@ -3500,7 +3556,15 @@
     "name": "No Limit",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-no-limit.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-simpel-minds-2": {
+    "shop_id": 21825,
+    "name": "Simpel Minds",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-simpel-minds.html",
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-sky-2": {
@@ -3508,7 +3572,7 @@
     "name": "Sky 2",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-sky-2.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 1
   },
   "cs-sky-high-1": {
@@ -3516,15 +3580,79 @@
     "name": "Sky High 1",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-sky-high-1.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 1
+  },
+  "cs-smokey-haag-2": {
+    "shop_id": 21828,
+    "name": "Smokey",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-smokey-haag.html",
+    "show_in_admin": 1,
+    "is_closed": 1
+  },
+  "cs-space-ball-2": {
+    "shop_id": 21829,
+    "name": "Space Ball",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-space-ball.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-strainfellows-2": {
+    "shop_id": 21830,
+    "name": "Strain Fellows",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-strainfellows.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-canna-club-2": {
+    "shop_id": 21831,
+    "name": "The Canna Club",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-canna-club.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-crow-2": {
+    "shop_id": 21832,
+    "name": "The Crow",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-crow.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-freakbrothers-2": {
+    "shop_id": 21833,
+    "name": "The Freak Brothers",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-freakbrothers.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-goat-2": {
+    "shop_id": 21834,
+    "name": "The Goat",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-goat.html",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
+  "cs-hit-2": {
+    "shop_id": 21835,
+    "name": "The Hit",
+    "city": "den Haag",
+    "shop_url": "https://www.coffeeshopmenus.org/cs-hit.html",
+    "show_in_admin": 1,
+    "is_closed": 0
   },
   "cs-waterworld": {
     "shop_id": 393,
     "name": "Waterworld",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-waterworld.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-mazzelaar": {
@@ -3532,7 +3660,7 @@
     "name": "de Mazzelaar",
     "city": "den Haag",
     "shop_url": "https://www.coffeeshopmenus.org/cs-mazzelaar.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   }
 }
