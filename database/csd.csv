@@ -1,10 +1,10 @@
 name,city,address,shop_url,show_in_admin,is_closed
-Any Time,Alkmaar,"Any Time, Laat 16, Alkmaar 1811 EJ",https://www.coffeeshopmenus.org/cs-anytime.html,0,0
-De Brug,Alkmaar,"De Brug, Herenstraat 1, 1811 MH, Alkmaar",https://www.coffeeshopmenus.org/cs-brug.html,0,0
-High-Time,Alkmaar,"High-Time, Spoorstraat 99, Alkmaar 1815 CA",https://www.coffeeshopmenus.org/cs-hightime-alk.html,0,0
-Stepping Out,Alkmaar,"Stepping Out, Ritsevoort 30, Alkmaar 1811 DP",https://www.coffeeshopmenus.org/cs-steppingout.html,0,0
-Zero Zero,Alkmaar,"Zero Zero, Laat 32, 1811 EJ Alkmaarn",https://www.coffeeshopmenus.org/cs-zero-zero-alk.html,0,0
-Boerejongens Almere,Almere,"Boerejongens Almere, Grote Markt 23, Almere 1315 JA",https://www.coffeeshopmenus.org/cs-boerejongensalmere.html,0,0
+Any Time,Alkmaar,"Any Time, Laat 16, Alkmaar 1811 EJ",https://www.coffeeshopmenus.org/cs-anytime.html,1,0
+De Brug,Alkmaar,"De Brug, Herenstraat 1, 1811 MH, Alkmaar",https://www.coffeeshopmenus.org/cs-brug.html,1,0
+High-Time,Alkmaar,"High-Time, Spoorstraat 99, Alkmaar 1815 CA",https://www.coffeeshopmenus.org/cs-hightime-alk.html,1,0
+Stepping Out,Alkmaar,"Stepping Out, Ritsevoort 30, Alkmaar 1811 DP",https://www.coffeeshopmenus.org/cs-steppingout.html,1,0
+Zero Zero,Alkmaar,"Zero Zero, Laat 32, 1811 EJ Alkmaarn",https://www.coffeeshopmenus.org/cs-zero-zero-alk.html,1,0
+Boerejongens Almere,Almere,"Boerejongens Almere, Grote Markt 23, Almere 1315 JA",https://www.coffeeshopmenus.org/cs-boerejongensalmere.html,0,1
 Koffie en Dromen (Blowboot),Almere,"Koffie en Dromen (Blowboot), Festivalplein 19, Almere 1315 KL",https://www.coffeeshopmenus.org/cs-blowbootalmere.html,0,0
 Chillie Kiki,Almere-Haven,"Chillie Kiki, Schoolstraat 260, Almere-Haven 1354 HX",https://www.coffeeshopmenus.org/cs-chilliekiki.html,0,0
 Dutch Gold,Alphen aan den Rijn,"Dutch Gold, Hooftstraat 96, Alphen aan den Rijn 2406 GM",https://www.coffeeshopmenus.org/cs-dutchgold.html,0,0
@@ -291,23 +291,23 @@ Rag-a-Muffin,Groningen,"Rag-a-Muffin, Noorderstationsstraat 15, Groningen 9716 A
 Retro,Groningen,"Retro, Boterdiep 42, Groningen 9712 LR",https://www.coffeeshopmenus.org/cs-retro.html,0,0
 Reykjavik,Groningen,"Reykjavik, Spilsluizen 6, Groningen 9712 NS",https://www.coffeeshopmenus.org/cs-reykjavik.html,0,0
 Vliegende Hollander,Groningen,"Vliegende Hollander, Gedempte Zuiderdiep 63, 9711 HC Groningen",https://www.coffeeshopmenus.org/cs-vliegende-hollander.html,0,0
-Birdy,Haarlem,"Birdy, Schoterweg 19, 2021 HZ Haarlem",https://www.coffeeshopmenus.org/cs-birdy.html,0,0
-Coffeeshop Haarlem,Haarlem,"Coffeeshop Haarlem, Doelstraat 29, Haarlem 2011 XB",https://www.coffeeshopmenus.org/cs-haarlem.html,0,0
-De Kruidenier Cannabis Takeaway,Haarlem,"De Kruidenier Cannabis Takeaway, Nassaulaan 54, 2011 PE Haarlem",https://www.coffeeshopmenus.org/cs-kruidenier.html,0,0
-Dreamland,Haarlem,"Dreamland, Brouwersplein 44, Haarlem 2013 PH",https://www.coffeeshopmenus.org/cs-dreamland.html,0,0
-Easy Max,Haarlem,"Easy Max, Barrevoetestraat 23, Haarlem 2011 WN",https://www.coffeeshopmenus.org/cs-easy-max.html,0,0
-Empire,Haarlem,"Empire, Krocht 8, 2011 PT Haarlem",https://www.coffeeshopmenus.org/cs-empire.html,0,0
-Hunters Haarlem,Haarlem,"Hunters Haarlem, Schoterweg 66, 2021 HP Haarlem",https://www.coffeeshopmenus.org/cs-hunters-ha.html,0,0
-Join Us 2,Haarlem,"Join Us 2, Schalkwijkerstraat 23, Haarlem 2033 JB",https://www.coffeeshopmenus.org/cs-joinus2.html,0,0
-Maximillian,Haarlem,"Maximillian, Gedempte Oudegracht 123, 2011GP Haarlem",https://www.coffeeshopmenus.org/cs-maximillian.html,0,0
-Regine,Haarlem,"Regine, Gedempte Oudegracht 28, 2011 GP Haarlem",https://www.coffeeshopmenus.org/cs-regine.html,0,0
-Sandman,Haarlem,"Sandman, Zomervaart 154, Haarlem 2033 DC",https://www.coffeeshopmenus.org/cs-sandman.html,0,0
-The Greengrocers,Haarlem,"The Greengrocers, Lange Veerstraat 47, Haarlem 2011 DA",https://www.coffeeshopmenus.org/cs-greengrocers.html,0,0
-The Snoop,Haarlem,"The Snoop, Rijksstraatweg 198, Haarlem 2022 DH",https://www.coffeeshopmenus.org/cs-snoop.html,0,0
-Theehuis,Haarlem,"Theehuis (Closed), Smedestraat 25, 2011 RE Haarlem",https://www.coffeeshopmenus.org/cs-theehuis.html,0,0
-Willie Wortel Indica,Haarlem,"Willie Wortel Indica, Koudenhorn 58, 2011 JD Haarlem",https://www.coffeeshopmenus.org/cs-ww-indica.html,0,0
-Willie Wortel Sativa,Haarlem,"Willie Wortel Sativa, Kruisweg 46, 2011 LD Haarlem",https://www.coffeeshopmenus.org/cs-ww-sativa.html,0,0
-Willie Wortel's Sinsemilla,Haarlem,"Willie Wortel's Sinsemilla, Houtplein16a, Haarlem 2012 DH",https://www.coffeeshopmenus.org/cs-ww-sinsemilla.html,0,0
+Birdy,Haarlem,"Birdy, Schoterweg 19, 2021 HZ Haarlem",https://www.coffeeshopmenus.org/cs-birdy.html,1,0
+Coffeeshop Haarlem,Haarlem,"Coffeeshop Haarlem, Doelstraat 29, Haarlem 2011 XB",https://www.coffeeshopmenus.org/cs-haarlem.html,1,0
+De Kruidenier Cannabis Takeaway,Haarlem,"De Kruidenier Cannabis Takeaway, Nassaulaan 54, 2011 PE Haarlem",https://www.coffeeshopmenus.org/cs-kruidenier.html,1,0
+Dreamland,Haarlem,"Dreamland, Brouwersplein 44, Haarlem 2013 PH",https://www.coffeeshopmenus.org/cs-dreamland.html,1,0
+Easy Max,Haarlem,"Easy Max, Barrevoetestraat 23, Haarlem 2011 WN",https://www.coffeeshopmenus.org/cs-easy-max.html,1,0
+Empire,Haarlem,"Empire, Krocht 8, 2011 PT Haarlem",https://www.coffeeshopmenus.org/cs-empire.html,1,0
+Hunters Haarlem,Haarlem,"Hunters Haarlem, Schoterweg 66, 2021 HP Haarlem",https://www.coffeeshopmenus.org/cs-hunters-ha.html,1,0
+Join Us 2,Haarlem,"Join Us 2, Schalkwijkerstraat 23, Haarlem 2033 JB",https://www.coffeeshopmenus.org/cs-joinus2.html,1,0
+Maximillian,Haarlem,"Maximillian, Gedempte Oudegracht 123, 2011GP Haarlem",https://www.coffeeshopmenus.org/cs-maximillian.html,1,0
+Regine,Haarlem,"Regine, Gedempte Oudegracht 28, 2011 GP Haarlem",https://www.coffeeshopmenus.org/cs-regine.html,1,0
+Sandman,Haarlem,"Sandman, Zomervaart 154, Haarlem 2033 DC",https://www.coffeeshopmenus.org/cs-sandman.html,1,0
+The Greengrocers,Haarlem,"The Greengrocers, Lange Veerstraat 47, Haarlem 2011 DA",https://www.coffeeshopmenus.org/cs-greengrocers.html,1,0
+The Snoop,Haarlem,"The Snoop, Rijksstraatweg 198, Haarlem 2022 DH",https://www.coffeeshopmenus.org/cs-snoop.html,1,0
+Theehuis,Haarlem,"Theehuis (Closed), Smedestraat 25, 2011 RE Haarlem",https://www.coffeeshopmenus.org/cs-theehuis.html,1,1
+Willie Wortel Indica,Haarlem,"Willie Wortel Indica, Koudenhorn 58, 2011 JD Haarlem",https://www.coffeeshopmenus.org/cs-ww-indica.html,1,0
+Willie Wortel Sativa,Haarlem,"Willie Wortel Sativa, Kruisweg 46, 2011 LD Haarlem",https://www.coffeeshopmenus.org/cs-ww-sativa.html,1,0
+Willie Wortel's Sinsemilla,Haarlem,"Willie Wortel's Sinsemilla, Houtplein16a, Haarlem 2012 DH",https://www.coffeeshopmenus.org/cs-ww-sinsemilla.html,1,0
 Columbus,Harderwijk,"Columbus, Vijhestraat 3, Harderwijk 3841 CW",https://www.coffeeshopmenus.org/cs-columbus.html,0,0
 Hofnar,Harlingen,"Hofnar, Franekereind 17, Harlingen 8861 AA",https://www.coffeeshopmenus.org/cs-hofnar.html,0,0
 Stepping Inn,Heerhugowaard,"Stepping Inn, Raadhuisstraat 12, Heerhugowaard 1701 EK",https://www.coffeeshopmenus.org/cs-steppinginn.html,0,0
@@ -345,21 +345,21 @@ Leidseplein,Leiden,"Leidseplein, Pieterskerkgracht 28, 2311 SZ, Leiden",https://
 Relaxed,Leiden,"Relaxed, Janvossensteeg 6- 8, 2312 WE Leiden",https://www.coffeeshopmenus.org/cs-relaxed.html,0,0
 Koffie en Dromen,Lelystad,"Koffie en Dromen, Noord Stationsweg 21, Lelystad 8232 JT",https://www.coffeeshopmenus.org/cs-koffieendromen.html,0,0
 Happy Days,Lisse,"Happy Days, Heereweg 153, Lisse 2161 BC",https://www.coffeeshopmenus.org/cs-happy-days-lis.html,0,0
-Black Widow,Maastricht,"Black Widow, Bosscherweg 165, Maastricht 6219 AA",https://www.coffeeshopmenus.org/cs-blackwidow.html,0,0
-Club 69,Maastricht,"Club 69, Grote Gracht 97, Maastricht 6211 SV",https://www.coffeeshopmenus.org/cs-club69.html,0,0
-Cool Running,Maastricht,"Cool Running, Brusselsestraat 35, Maastricht 6211 PB",https://www.coffeeshopmenus.org/cs-coolrunning.html,0,0
-Easy Going,Maastricht,"Easy Going, Hoenderstraat 8, Maastricht 6211 EM",https://www.coffeeshopmenus.org/cs-easygoing.html,0,0
-Fantasia,Maastricht,"Fantasia, Sint Annalaan 3a, Maastricht 6214 AA",https://www.coffeeshopmenus.org/cs-fantasia.html,0,0
-Kosbor,Maastricht,"Kosbor, Kleine Gracht 3, 6211 CA Maastricht",https://www.coffeeshopmenus.org/cs-kosbor.html,0,0
-Mary Jane,Maastricht,"Mary Jane, Hoogbrugstraat 4, Maastricht 6221 CR",https://www.coffeeshopmenus.org/cs-maryjane.html,0,0
-Maxcys,Maastricht,"Maxcys, Rechtstraat 60a, 6221 EK, Maastricht",https://www.coffeeshopmenus.org/cs-maxcys.html,0,0
-Mississippi,Maastricht,"Mississippi, Maaspromenade 11, Maastricht 6211 AE",https://www.coffeeshopmenus.org/cs-mississippi.html,0,0
-Missouri,Maastricht,"Missouri, Hoogbrugstraat 31, Maastricht 6221 CN",https://www.coffeeshopmenus.org/cs-missouri.html,0,0
-Rastafarihouse Boni,Maastricht,"Rastafarihouse Boni, Stenenbrug 7, Maastricht 6211 HP",https://www.coffeeshopmenus.org/cs-rastafarihouseboni.html,0,0
-Slow Motion,Maastricht,"Slow Motion, Bourgognestraat 10a, Maastricht 6221 BX",https://www.coffeeshopmenus.org/cs-slowmotion.html,0,0
-Smoky,Maastricht,"Smoky, Maaspromenade 13, Maastricht 6211 HS",https://www.coffeeshopmenus.org/cs-smoky.html,0,0
-The Roundabout 69,Maastricht,"The Roundabout 69, Brusselsestraat 146, Maastricht 6211 PJ",https://www.coffeeshopmenus.org/cs-roundabout69.html,0,0
-Wall Street,Maastricht,"Wall Street (Closed), Grote Gracht 58, 6211 SX Maastricht",https://www.coffeeshopmenus.org/cs-wall-street.html,0,0
+Black Widow,Maastricht,"Black Widow, Bosscherweg 165, Maastricht 6219 AA",https://www.coffeeshopmenus.org/cs-blackwidow.html,1,0
+Club 69,Maastricht,"Club 69, Grote Gracht 97, Maastricht 6211 SV",https://www.coffeeshopmenus.org/cs-club69.html,1,0
+Cool Running,Maastricht,"Cool Running, Brusselsestraat 35, Maastricht 6211 PB",https://www.coffeeshopmenus.org/cs-coolrunning.html,1,0
+Easy Going,Maastricht,"Easy Going, Hoenderstraat 8, Maastricht 6211 EM",https://www.coffeeshopmenus.org/cs-easygoing.html,1,0
+Fantasia,Maastricht,"Fantasia, Sint Annalaan 3a, Maastricht 6214 AA",https://www.coffeeshopmenus.org/cs-fantasia.html,1,0
+Kosbor,Maastricht,"Kosbor, Kleine Gracht 3, 6211 CA Maastricht",https://www.coffeeshopmenus.org/cs-kosbor.html,1,0
+Mary Jane,Maastricht,"Mary Jane, Hoogbrugstraat 4, Maastricht 6221 CR",https://www.coffeeshopmenus.org/cs-maryjane.html,1,0
+Maxcys,Maastricht,"Maxcys, Rechtstraat 60a, 6221 EK, Maastricht",https://www.coffeeshopmenus.org/cs-maxcys.html,1,0
+Mississippi,Maastricht,"Mississippi, Maaspromenade 11, Maastricht 6211 AE",https://www.coffeeshopmenus.org/cs-mississippi.html,1,0
+Missouri,Maastricht,"Missouri, Hoogbrugstraat 31, Maastricht 6221 CN",https://www.coffeeshopmenus.org/cs-missouri.html,1,0
+Rastafarihouse Boni,Maastricht,"Rastafarihouse Boni, Stenenbrug 7, Maastricht 6211 HP",https://www.coffeeshopmenus.org/cs-rastafarihouseboni.html,1,0
+Slow Motion,Maastricht,"Slow Motion, Bourgognestraat 10a, Maastricht 6221 BX",https://www.coffeeshopmenus.org/cs-slowmotion.html,1,0
+Smoky,Maastricht,"Smoky, Maaspromenade 13, Maastricht 6211 HS",https://www.coffeeshopmenus.org/cs-smoky.html,1,0
+The Roundabout 69,Maastricht,"The Roundabout 69, Brusselsestraat 146, Maastricht 6211 PJ",https://www.coffeeshopmenus.org/cs-roundabout69.html,1,0
+Wall Street,Maastricht,"Wall Street (Closed), Grote Gracht 58, 6211 SX Maastricht",https://www.coffeeshopmenus.org/cs-wall-street.html,1,1
 Relax,Meppel,"Relax, Prinsengracht 15, Meppel 7941 KD",https://www.coffeeshopmenus.org/cs-relax-mep.html,0,0
 Espresso,Mijdrecht,"Espresso, Rondweg 1B, 3641 SC Mijdrecht",https://www.coffeeshopmenus.org/cs-espresso.html,0,0
 't Kunsje,Nijmegen,"'t Kunsje, 2e Walstraat 108, 6511 LW Nijmegan",https://www.coffeeshopmenus.org/cs-kunsje.html,0,0
@@ -377,25 +377,25 @@ Anna,Purmerend,"Anna, Gedempte Singelgracht 19, Purmerend 1441 AN",https://www.c
 Splif II,Purmerend,"Splif II, Achterdijk 76, Purmerend 1441 DJ",https://www.coffeeshopmenus.org/cs-splifii.html,0,0
 Skunk,Roermond,"Skunk (Closed), Zwartbroekstraat 29, 6041 JL Roermond",https://www.coffeeshopmenus.org/cs-skunk.html,0,0
 Skunk Station,Roermond,"Skunk Station, Randweg 3, Roermond 6045 JK",https://www.coffeeshopmenus.org/cs-skunkstation.html,0,0
-'t Geeltje,Rotterdam,"'t Geeltje, Claes de Vrieselaan 92a, 3021 JT Rotterdam",https://www.coffeeshopmenus.org/cs-geeltje.html,0,0
-Amigo,Rotterdam,"Amigo, 's Gravendijkwal 138b, Rotterdam 3015 CC",https://www.coffeeshopmenus.org/cs-amigo-rot.html,0,0
-Bambu High Tea,Rotterdam,"Bambu High Tea, Noordsingel 201, 3035 ER, Rotterdam",https://www.coffeeshopmenus.org/cs-bambu-high-tea.html,0,0
-Bob Marley,Rotterdam,"Bob Marley, Nieuwe Binnenweg 403a, Rotterdam 3023 EM",https://www.coffeeshopmenus.org/cs-bobmarley.html,0,0
-Charlois,Rotterdam,"Charlois, Bas Jungeriusstraat 161b, Rotterdam 3081 VB",https://www.coffeeshopmenus.org/cs-charlois.html,0,0
-Dreams,Rotterdam,"Dreams, Slaghekstraat 58a, Rotterdam 3074 LN",https://www.coffeeshopmenus.org/cs-dreams.html,0,0
-Hunter's Rotterdam,Rotterdam,"Hunter's Rotterdam, Henegouwerlaan 73, Rotterdam 3021 CT",https://www.coffeeshopmenus.org/cs-huntersrotterdam.html,0,0
-Mon Camarade,Rotterdam,"Mon Camarade, 1e Middellandstraat 10a, 3014 BD, Rotterdam",https://www.coffeeshopmenus.org/cs-mon-camarade.html,0,0
-New York,Rotterdam,"New York, Paul Krugerstraat 42, Rotterdam 3072 GM",https://www.coffeeshopmenus.org/cs-newyork-rot.html,0,0
-Out Of Time,Rotterdam,"Out Of Time, Nieuwe Binnenweg 363B, Rotterdam 3023 EK",https://www.coffeeshopmenus.org/cs-outoftime.html,0,0
-Pluto,Rotterdam,"Pluto, Nieuwe Binnenweg 54, 3015 BB Rotterdam",https://www.coffeeshopmenus.org/cs-pluto.html,0,0
-Sensi Smile,Rotterdam,"Sensi Smile, Henegouwerlaan 73, 3021 CT Rotterdam",https://www.coffeeshopmenus.org/cs-sensi-smile.html,0,0
-Seven,Rotterdam,"Seven, Joost van Geelstraat 69A, Rotterdam 3021 VL",https://www.coffeeshopmenus.org/cs-seven.html,0,0
-Sky High,Rotterdam,"Sky High, Nieuwe Binnenweg 59, Rotterdam 3014 GD",https://www.coffeeshopmenus.org/cs-sky-high-rot.html,0,0
-Sultan,Rotterdam,"Sultan, Eksterstraat 16, Rotterdam 3083 XB",https://www.coffeeshopmenus.org/cs-sultan.html,0,0
-The 4 Floors,Rotterdam,"The 4 Floors, Eendrachtsweg 29, Rotterdam 3012 LB",https://www.coffeeshopmenus.org/cs-4-floors.html,0,0
-The Reef,Rotterdam,"The Reef, Oppert 1, Rotterdam 3011 HS",https://www.coffeeshopmenus.org/cs-reef.html,0,0
-Trefpunt,Rotterdam,"Trefpunt, Botersloot 7, 3011 HE Rotterdam",https://www.coffeeshopmenus.org/cs-trefpunt-rot.html,0,0
-Witte De With,Rotterdam,"Witte De With, Witte de Withstraat 92, 3012 BT Rotterdam",https://www.coffeeshopmenus.org/cs-witte-de-with.html,0,0
+'t Geeltje,Rotterdam,"'t Geeltje, Claes de Vrieselaan 92a, 3021 JT Rotterdam",https://www.coffeeshopmenus.org/cs-geeltje.html,1,0
+Amigo,Rotterdam,"Amigo, 's Gravendijkwal 138b, Rotterdam 3015 CC",https://www.coffeeshopmenus.org/cs-amigo-rot.html,1,0
+Bambu High Tea,Rotterdam,"Bambu High Tea, Noordsingel 201, 3035 ER, Rotterdam",https://www.coffeeshopmenus.org/cs-bambu-high-tea.html,1,0
+Bob Marley,Rotterdam,"Bob Marley, Nieuwe Binnenweg 403a, Rotterdam 3023 EM",https://www.coffeeshopmenus.org/cs-bobmarley.html,1,0
+Charlois,Rotterdam,"Charlois, Bas Jungeriusstraat 161b, Rotterdam 3081 VB",https://www.coffeeshopmenus.org/cs-charlois.html,1,0
+Dreams,Rotterdam,"Dreams, Slaghekstraat 58a, Rotterdam 3074 LN",https://www.coffeeshopmenus.org/cs-dreams.html,1,0
+Hunter's Rotterdam,Rotterdam,"Hunter's Rotterdam, Henegouwerlaan 73, Rotterdam 3021 CT",https://www.coffeeshopmenus.org/cs-huntersrotterdam.html,1,0
+Mon Camarade,Rotterdam,"Mon Camarade, 1e Middellandstraat 10a, 3014 BD, Rotterdam",https://www.coffeeshopmenus.org/cs-mon-camarade.html,1,0
+New York,Rotterdam,"New York, Paul Krugerstraat 42, Rotterdam 3072 GM",https://www.coffeeshopmenus.org/cs-newyork-rot.html,1,0
+Out Of Time,Rotterdam,"Out Of Time, Nieuwe Binnenweg 363B, Rotterdam 3023 EK",https://www.coffeeshopmenus.org/cs-outoftime.html,1,0
+Pluto,Rotterdam,"Pluto, Nieuwe Binnenweg 54, 3015 BB Rotterdam",https://www.coffeeshopmenus.org/cs-pluto.html,1,0
+Sensi Smile,Rotterdam,"Sensi Smile, Henegouwerlaan 73, 3021 CT Rotterdam",https://www.coffeeshopmenus.org/cs-sensi-smile.html,1,0
+Seven,Rotterdam,"Seven, Joost van Geelstraat 69A, Rotterdam 3021 VL",https://www.coffeeshopmenus.org/cs-seven.html,1,0
+Sky High,Rotterdam,"Sky High, Nieuwe Binnenweg 59, Rotterdam 3014 GD",https://www.coffeeshopmenus.org/cs-sky-high-rot.html,1,0
+Sultan,Rotterdam,"Sultan, Eksterstraat 16, Rotterdam 3083 XB",https://www.coffeeshopmenus.org/cs-sultan.html,1,0
+The 4 Floors,Rotterdam,"The 4 Floors, Eendrachtsweg 29, Rotterdam 3012 LB",https://www.coffeeshopmenus.org/cs-4-floors.html,1,0
+The Reef,Rotterdam,"The Reef, Oppert 1, Rotterdam 3011 HS",https://www.coffeeshopmenus.org/cs-reef.html,1,0
+Trefpunt,Rotterdam,"Trefpunt, Botersloot 7, 3011 HE Rotterdam",https://www.coffeeshopmenus.org/cs-trefpunt-rot.html,1,0
+Witte De With,Rotterdam,"Witte De With, Witte de Withstraat 92, 3012 BT Rotterdam",https://www.coffeeshopmenus.org/cs-witte-de-with.html,1,0
 Roxanne,Schagen,"Roxanne, Laan 5, 1741 EA Schagen",https://www.coffeeshopmenus.org/cs-roxanne.html,0,0
 Blue and White,Scheveningen,"Blue and White, Bosschestraat 63, Scheveningen 2587 HC",https://www.coffeeshopmenus.org/cs-blue-and-white.html,0,0
 The Box,Scheveningen,"The Box, Havenkade 16, Scheveningen 2586 TS",https://www.coffeeshopmenus.org/cs-box.html,0,0
@@ -442,3 +442,4 @@ Zoo,Zutphen,"Zoo, Laarstraat 87, Zutphen",https://www.coffeeshopmenus.org/cs-zoo
 De Ambassade,Zwijndrecht,"De Ambassade, IJsselmeer 27, Zwijndrecht 3332 EX",https://www.coffeeshopmenus.org/cs-ambassade.html,0,0
 De Pijp,Zwolle,"De Pijp, Vechtstraat 98, Zwolle, NL",https://www.coffeeshopmenus.org/cs-pijp.html,0,0
 Sky High,Zwolle,"Sky High, van Karnebeekstraat 41, 8011 JB, Zwoole",https://www.coffeeshopmenus.org/cs-sky-high-z.html,0,0
+SuperFly,Amsterdam,"Van Woustraat 193, 1074 AN Amsterdam",https://coffeeshopsuperfly.nl/,1,0

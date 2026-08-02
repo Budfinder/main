@@ -1,8 +1,12 @@
 {
   "files": [
+    "Alkmaar.csv",
     "amsterdamLoc.csv",
     "amsterdamLoc2.csv",
-    "utrechtLoc.csv",
-    "Alkmaar.csv"
+    "denHaag.csv",
+    "Haarlem.csv",
+    "Maastricht.csv",
+    "Rotterdam.csv",
+    "utrechtLoc.csv"
   ]
 }

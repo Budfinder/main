@@ -1,11 +1,13 @@
 {
-  "exported_at_utc": "2026-07-23T00:36:54.152631+00:00",
+  "exported_at_utc": "2026-08-02T09:41:57.325658+00:00",
   "counts": {
-    "shops": 458,
-    "strains": 1252,
-    "active_offerings": 2738,
-    "menu_entries": 2744,
-    "strain_index": 1252
+    "shops": 444,
+    "strains": 1874,
+    "active_offerings": 4675,
+    "menu_entries": 4690,
+    "strain_index": 1874,
+    "home_active_shops": 239,
+    "home_active_listings": 4632
   },
   "files": [
     "shops.json",
@@ -13,7 +15,8 @@
     "strains.json",
     "active_offerings.json",
     "menu_entries.json",
-    "strain_index.json"
+    "strain_index.json",
+    "home_summary.json"
   ],
   "linking": {
     "shop_key_note": "Use shops.shop_key as the stable CSV link key.",

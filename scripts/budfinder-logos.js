@@ -9,8 +9,18 @@
     ['best_friends_centrum.png', 'best_friends_oost.png'],
     ['bulldog_energy.png', 'bulldog_rockshop.png'],
     ['bulldog_no_90.png', 'bulldog_rockshop.png'],
-    ['bulldog_palace.png', 'bulldog_rockshop.png']
+    ['bulldog_palace.png', 'bulldog_rockshop.png'],
+    ['marbella_specical_farmers.png', 'marbella_special_farmers.png']
   ]);
+  const FAILED_LOGO_URLS = new Set();
+
+  function absoluteLogoUrl(value) {
+    try {
+      return new URL(String(value || ''), window.location.href).href;
+    } catch (_) {
+      return String(value || '');
+    }
+  }
 
   function logoSlug(value) {
     return String(value || '')
@@ -46,7 +56,7 @@
     const raw = String(rawValue || '').trim();
     if (!raw) return;
     if (/^(?:data:|https?:\/\/)/i.test(raw)) {
-      if (!seen.has(raw)) {
+      if (!seen.has(raw) && !FAILED_LOGO_URLS.has(absoluteLogoUrl(raw))) {
         seen.add(raw);
         out.push(raw);
       }
@@ -60,7 +70,7 @@
       ? [`/${clean}`, `${LOGO_BASE_PATH}${encodeURIComponent(basename)}`]
       : [`${LOGO_BASE_PATH}${encodeURIComponent(basename)}`];
     paths.forEach(path => {
-      if (seen.has(path)) return;
+      if (seen.has(path) || FAILED_LOGO_URLS.has(absoluteLogoUrl(path))) return;
       seen.add(path);
       out.push(path);
     });
@@ -101,8 +111,12 @@
 
   function advanceImage(img) {
     if (!img) return false;
+    FAILED_LOGO_URLS.add(absoluteLogoUrl(img.currentSrc || img.src));
     const all = String(img.getAttribute('data-candidates') || '').split('|').filter(Boolean);
-    const nextIndex = Number(img.getAttribute('data-idx') || 0) + 1;
+    let nextIndex = Number(img.getAttribute('data-idx') || 0) + 1;
+    while (all[nextIndex] && FAILED_LOGO_URLS.has(absoluteLogoUrl(all[nextIndex]))) {
+      nextIndex += 1;
+    }
     if (!all[nextIndex]) return false;
     img.setAttribute('data-idx', String(nextIndex));
     img.src = all[nextIndex];

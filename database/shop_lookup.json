@@ -4,7 +4,7 @@
     "name": "Any Time",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-anytime.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-brug": {
@@ -12,7 +12,7 @@
     "name": "De Brug",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-brug.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-hightime-alk": {
@@ -20,7 +20,7 @@
     "name": "High-Time",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-hightime-alk.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-steppingout": {
@@ -28,7 +28,7 @@
     "name": "Stepping Out",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-steppingout.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-zero-zero-alk": {
@@ -36,7 +36,7 @@
     "name": "Zero Zero",
     "city": "Alkmaar",
     "shop_url": "https://www.coffeeshopmenus.org/cs-zero-zero-alk.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-boerejongensalmere": {
@@ -45,7 +45,7 @@
     "city": "Almere",
     "shop_url": "https://www.coffeeshopmenus.org/cs-boerejongensalmere.html",
     "show_in_admin": 0,
-    "is_closed": 0
+    "is_closed": 1
   },
   "cs-blowbootalmere": {
     "shop_id": 57,
@@ -1263,6 +1263,14 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
+  "superfly-amsterdam": {
+    "shop_id": 26011,
+    "name": "SuperFly",
+    "city": "Amsterdam",
+    "shop_url": "https://coffeeshopsuperfly.nl/",
+    "show_in_admin": 1,
+    "is_closed": 0
+  },
   "cs-superskunk-2": {
     "shop_id": 364,
     "name": "Superskunk",
@@ -2068,7 +2076,7 @@
     "name": "Birdy",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-birdy.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-haarlem": {
@@ -2076,7 +2084,7 @@
     "name": "Coffeeshop Haarlem",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-haarlem.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-kruidenier": {
@@ -2084,7 +2092,7 @@
     "name": "De Kruidenier Cannabis Takeaway",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-kruidenier.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-dreamland": {
@@ -2092,7 +2100,7 @@
     "name": "Dreamland",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-dreamland.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-easy-max": {
@@ -2100,7 +2108,7 @@
     "name": "Easy Max",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-easy-max.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-empire": {
@@ -2108,7 +2116,7 @@
     "name": "Empire",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-empire.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-hunters-ha": {
@@ -2116,7 +2124,7 @@
     "name": "Hunters Haarlem",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-hunters-ha.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-joinus2": {
@@ -2124,7 +2132,7 @@
     "name": "Join Us 2",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-joinus2.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-maximillian": {
@@ -2132,7 +2140,7 @@
     "name": "Maximillian",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-maximillian.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-regine": {
@@ -2140,7 +2148,7 @@
     "name": "Regine",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-regine.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-sandman": {
@@ -2148,7 +2156,7 @@
     "name": "Sandman",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-sandman.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-greengrocers": {
@@ -2156,7 +2164,7 @@
     "name": "The Greengrocers",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-greengrocers.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-snoop": {
@@ -2164,7 +2172,7 @@
     "name": "The Snoop",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-snoop.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-theehuis": {
@@ -2172,15 +2180,15 @@
     "name": "Theehuis",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-theehuis.html",
-    "show_in_admin": 0,
-    "is_closed": 0
+    "show_in_admin": 1,
+    "is_closed": 1
   },
   "cs-ww-indica": {
     "shop_id": 397,
     "name": "Willie Wortel Indica",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-ww-indica.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-ww-sativa": {
@@ -2188,7 +2196,7 @@
     "name": "Willie Wortel Sativa",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-ww-sativa.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-ww-sinsemilla": {
@@ -2196,7 +2204,7 @@
     "name": "Willie Wortel's Sinsemilla",
     "city": "Haarlem",
     "shop_url": "https://www.coffeeshopmenus.org/cs-ww-sinsemilla.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-columbus": {
@@ -2500,7 +2508,7 @@
     "name": "Black Widow",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-blackwidow.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-club69": {
@@ -2508,7 +2516,7 @@
     "name": "Club 69",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-club69.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-coolrunning": {
@@ -2516,7 +2524,7 @@
     "name": "Cool Running",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-coolrunning.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-easygoing": {
@@ -2524,7 +2532,7 @@
     "name": "Easy Going",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-easygoing.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-fantasia": {
@@ -2532,7 +2540,7 @@
     "name": "Fantasia",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-fantasia.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-kosbor": {
@@ -2540,7 +2548,7 @@
     "name": "Kosbor",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-kosbor.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-maryjane": {
@@ -2548,7 +2556,7 @@
     "name": "Mary Jane",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-maryjane.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-maxcys": {
@@ -2556,7 +2564,7 @@
     "name": "Maxcys",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-maxcys.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-mississippi": {
@@ -2564,7 +2572,7 @@
     "name": "Mississippi",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-mississippi.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-missouri": {
@@ -2572,7 +2580,7 @@
     "name": "Missouri",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-missouri.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-rastafarihouseboni": {
@@ -2580,7 +2588,7 @@
     "name": "Rastafarihouse Boni",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-rastafarihouseboni.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-slowmotion": {
@@ -2588,7 +2596,7 @@
     "name": "Slow Motion",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-slowmotion.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-smoky": {
@@ -2596,7 +2604,7 @@
     "name": "Smoky",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-smoky.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-roundabout69": {
@@ -2604,7 +2612,7 @@
     "name": "The Roundabout 69",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-roundabout69.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-wall-street": {
@@ -2612,8 +2620,8 @@
     "name": "Wall Street",
     "city": "Maastricht",
     "shop_url": "https://www.coffeeshopmenus.org/cs-wall-street.html",
-    "show_in_admin": 0,
-    "is_closed": 0
+    "show_in_admin": 1,
+    "is_closed": 1
   },
   "cs-relax-mep": {
     "shop_id": 310,
@@ -2756,7 +2764,7 @@
     "name": "'t Geeltje",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-geeltje.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-amigo-rot": {
@@ -2764,7 +2772,7 @@
     "name": "Amigo",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-amigo-rot.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-bambu-high-tea": {
@@ -2772,7 +2780,7 @@
     "name": "Bambu High Tea",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-bambu-high-tea.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-bobmarley": {
@@ -2780,7 +2788,7 @@
     "name": "Bob Marley",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-bobmarley.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-charlois": {
@@ -2788,7 +2796,7 @@
     "name": "Charlois",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-charlois.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-dreams": {
@@ -2796,7 +2804,7 @@
     "name": "Dreams",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-dreams.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-huntersrotterdam": {
@@ -2804,7 +2812,7 @@
     "name": "Hunter's Rotterdam",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-huntersrotterdam.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-mon-camarade": {
@@ -2812,7 +2820,7 @@
     "name": "Mon Camarade",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-mon-camarade.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-newyork-rot": {
@@ -2820,7 +2828,7 @@
     "name": "New York",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-newyork-rot.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-outoftime": {
@@ -2828,7 +2836,7 @@
     "name": "Out Of Time",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-outoftime.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-pluto": {
@@ -2836,7 +2844,7 @@
     "name": "Pluto",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-pluto.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-sensi-smile": {
@@ -2844,7 +2852,7 @@
     "name": "Sensi Smile",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-sensi-smile.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-seven": {
@@ -2852,7 +2860,7 @@
     "name": "Seven",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-seven.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-sky-high-rot": {
@@ -2860,7 +2868,7 @@
     "name": "Sky High",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-sky-high-rot.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-sultan": {
@@ -2868,7 +2876,7 @@
     "name": "Sultan",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-sultan.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-4-floors": {
@@ -2876,7 +2884,7 @@
     "name": "The 4 Floors",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-4-floors.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-reef": {
@@ -2884,7 +2892,7 @@
     "name": "The Reef",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-reef.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-trefpunt-rot": {
@@ -2892,7 +2900,7 @@
     "name": "Trefpunt",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-trefpunt-rot.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-witte-de-with": {
@@ -2900,7 +2908,7 @@
     "name": "Witte De With",
     "city": "Rotterdam",
     "shop_url": "https://www.coffeeshopmenus.org/cs-witte-de-with.html",
-    "show_in_admin": 0,
+    "show_in_admin": 1,
     "is_closed": 0
   },
   "cs-roxanne": {
@@ -2940,126 +2948,6 @@
     "name": "Hacas",
     "city": "Soest",
     "shop_url": "https://www.coffeeshopmenus.org/cs-hacas.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-demo": {
-    "shop_id": 107,
-    "name": "Demo",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-demo.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-doctor-green": {
-    "shop_id": 113,
-    "name": "Doctor Green",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-doctor-green.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-london": {
-    "shop_id": 222,
-    "name": "London",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-london.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-marbellaspecialfarmers": {
-    "shop_id": 230,
-    "name": "Marbella Special Farmers",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-marbellaspecialfarmers.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-moonlight": {
-    "shop_id": 251,
-    "name": "Moonlight",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-moonlight.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-nebula": {
-    "shop_id": 254,
-    "name": "Nebula",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-nebula.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-simpel-minds": {
-    "shop_id": 338,
-    "name": "Simpel Minds",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-simpel-minds.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-smokey-haag": {
-    "shop_id": 420,
-    "name": "Smokey",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-smokey-haag.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-space-ball": {
-    "shop_id": 350,
-    "name": "Space Ball",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-space-ball.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-strainfellows": {
-    "shop_id": 358,
-    "name": "Strain Fellows",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-strainfellows.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-canna-club": {
-    "shop_id": 1,
-    "name": "The Canna Club",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-canna-club.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-crow": {
-    "shop_id": 102,
-    "name": "The Crow",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-crow.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-freakbrothers": {
-    "shop_id": 137,
-    "name": "The Freak Brothers",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-freakbrothers.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-goat": {
-    "shop_id": 149,
-    "name": "The Goat",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-goat.html",
-    "show_in_admin": 0,
-    "is_closed": 0
-  },
-  "cs-hit": {
-    "shop_id": 181,
-    "name": "The Hit",
-    "city": "The Hague",
-    "shop_url": "https://www.coffeeshopmenus.org/cs-hit.html",
     "show_in_admin": 0,
     "is_closed": 0
   },
@@ -3439,7 +3327,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-demo-2": {
+  "cs-demo": {
     "shop_id": 21810,
     "name": "Demo",
     "city": "den Haag",
@@ -3463,7 +3351,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-doctor-green-2": {
+  "cs-doctor-green": {
     "shop_id": 21813,
     "name": "Doctor Green",
     "city": "den Haag",
@@ -3511,7 +3399,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-london-2": {
+  "cs-london": {
     "shop_id": 21819,
     "name": "London",
     "city": "den Haag",
@@ -3527,7 +3415,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-marbellaspecialfarmers-2": {
+  "cs-marbellaspecialfarmers": {
     "shop_id": 21821,
     "name": "Marbella Special Farmers",
     "city": "den Haag",
@@ -3535,7 +3423,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-moonlight-2": {
+  "cs-moonlight": {
     "shop_id": 21822,
     "name": "Moonlight",
     "city": "den Haag",
@@ -3543,7 +3431,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-nebula-2": {
+  "cs-nebula": {
     "shop_id": 21823,
     "name": "Nebula",
     "city": "den Haag",
@@ -3559,7 +3447,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-simpel-minds-2": {
+  "cs-simpel-minds": {
     "shop_id": 21825,
     "name": "Simpel Minds",
     "city": "den Haag",
@@ -3583,7 +3471,7 @@
     "show_in_admin": 1,
     "is_closed": 1
   },
-  "cs-smokey-haag-2": {
+  "cs-smokey-haag": {
     "shop_id": 21828,
     "name": "Smokey",
     "city": "den Haag",
@@ -3591,7 +3479,7 @@
     "show_in_admin": 1,
     "is_closed": 1
   },
-  "cs-space-ball-2": {
+  "cs-space-ball": {
     "shop_id": 21829,
     "name": "Space Ball",
     "city": "den Haag",
@@ -3599,7 +3487,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-strainfellows-2": {
+  "cs-strainfellows": {
     "shop_id": 21830,
     "name": "Strain Fellows",
     "city": "den Haag",
@@ -3607,7 +3495,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-canna-club-2": {
+  "cs-canna-club": {
     "shop_id": 21831,
     "name": "The Canna Club",
     "city": "den Haag",
@@ -3615,7 +3503,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-crow-2": {
+  "cs-crow": {
     "shop_id": 21832,
     "name": "The Crow",
     "city": "den Haag",
@@ -3623,7 +3511,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-freakbrothers-2": {
+  "cs-freakbrothers": {
     "shop_id": 21833,
     "name": "The Freak Brothers",
     "city": "den Haag",
@@ -3631,7 +3519,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-goat-2": {
+  "cs-goat": {
     "shop_id": 21834,
     "name": "The Goat",
     "city": "den Haag",
@@ -3639,7 +3527,7 @@
     "show_in_admin": 1,
     "is_closed": 0
   },
-  "cs-hit-2": {
+  "cs-hit": {
     "shop_id": 21835,
     "name": "The Hit",
     "city": "den Haag",

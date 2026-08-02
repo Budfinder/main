@@ -7,13 +7,14 @@ from menu images.
 
 You run a separate scraper that:
 - discovers shops
-- downloads the latest menu image per shop
+- downloads every image belonging to the latest menu for each shop
 - updates the shared SQLite database tables `shops` and `menus`
 You can also trigger this scraper from the in-app main menu (Check for new menus).
 
 This app then lets you:
-- View the menu image for a shop
+- View every image in a shop's current menu
 - Rapidly enter strains on the current menu into `menu_entries`
+- Maintain the grower choices used during entry
 - Edit / delete current menu entries
 - Browse the current database via a read-only browser page
 
@@ -40,8 +41,6 @@ Run
 Hotkeys
 -------
 While NOT typing in a field:
-- 1 / 2 / 3 / 4 / 5 : set type (sativa / indica / hybrid / hash / kush)
-- 6                 : toggle Cali
 - Enter         : save current entry (submits the form)
 - N / P         : next / previous *new* menu in the queue
 - /             : focus strain input
@@ -70,7 +69,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Optional, Tuple
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from flask import Flask, Response, jsonify, redirect, render_template_string, request, send_file, url_for
 
@@ -78,7 +77,7 @@ from flask import Flask, Response, jsonify, redirect, render_template_string, re
 # Configuration
 # -----------------------------------------------------------------------------
 
-VALID_BASE_TYPES = ["sativa", "indica", "hybrid", "hash", "kush"]
+VALID_BASE_TYPES = ["sativa", "indica", "hybrid", "hash"]
 
 DEFAULT_CURRENCY = "€"
 DEFAULT_UNIT = "g"  # Unit fixed to grams
@@ -89,11 +88,20 @@ DEFAULT_DATABASE_DIR = "database"
 DEFAULT_SHOPS_CSV = os.path.join(DEFAULT_DATABASE_DIR, "csd.csv")
 DEFAULT_MENUS_DIR = "menus_downloaded"
 DEFAULT_SCRAPER_SCRIPT = "scrape_update_menus.py"
+DEFAULT_BFWATCH_DIR = os.environ.get(
+    "BFWATCH_DIR",
+    os.path.join(os.path.expanduser("~"), "Documents", "Arduino", "bfwatch"),
+)
 MIN_KNOWN_MENU_HASHES_BEFORE_SCRAPE = 100
 MIN_ACTIVE_OFFERINGS_BEFORE_SCRAPE = 100
 MAX_CLOSED_LABEL_MISMATCHES_BEFORE_SCRAPE = 5
 DEFAULT_LOCATION_FILES = {
+    "Alkmaar": "Alkmaar.csv",
     "Amsterdam": "amsterdamLoc.csv",
+    "Den Haag": "denHaag.csv",
+    "Haarlem": "Haarlem.csv",
+    "Maastricht": "Maastricht.csv",
+    "Rotterdam": "Rotterdam.csv",
     "Utrecht": "utrechtLoc.csv",
 }
 
@@ -165,6 +173,116 @@ def run_scrape_update(
         "stderr": stderr,
         "duration_s": time.monotonic() - start,
         "summary": parse_scrape_summary(stdout),
+    }
+
+
+def run_watch_update(
+    watch_dir: str,
+    db_path: str,
+    locations_path: str,
+    *,
+    upload: bool = False,
+    dry_run: bool = False,
+    port: str = "",
+) -> Dict[str, object]:
+    """Generate BFWatch data and optionally upload the complete menu package."""
+    watch_dir = os.path.abspath(watch_dir)
+    generator_path = os.path.join(watch_dir, "generate_watch_data.py")
+    uploader_path = os.path.join(watch_dir, "upload_watch_map.py")
+    missing = [
+        path
+        for path in (watch_dir, generator_path, uploader_path, db_path, locations_path)
+        if not os.path.exists(path)
+    ]
+    if missing:
+        return {
+            "ok": False,
+            "stage": "preflight",
+            "returncode": None,
+            "stdout": "",
+            "stderr": "Missing required path(s):\n- " + "\n- ".join(missing),
+            "duration_s": 0.0,
+            "uploaded": False,
+        }
+
+    started = time.monotonic()
+    generate_command = [
+        sys.executable,
+        generator_path,
+        "--database",
+        os.path.abspath(db_path),
+        "--locations",
+        os.path.abspath(locations_path),
+        "--header-output",
+        os.path.join(watch_dir, "bfwatch_data.h"),
+        "--json-output",
+        os.path.join(watch_dir, "bfwatch_data.json"),
+        "--menus-output",
+        os.path.join(watch_dir, "watch_menus", "menus.bin"),
+    ]
+    try:
+        generated = subprocess.run(
+            generate_command,
+            cwd=watch_dir,
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+    except Exception as exc:
+        return {
+            "ok": False,
+            "stage": "generate",
+            "returncode": None,
+            "stdout": "",
+            "stderr": str(exc),
+            "duration_s": time.monotonic() - started,
+            "uploaded": False,
+        }
+
+    if generated.returncode != 0 or not upload:
+        return {
+            "ok": generated.returncode == 0,
+            "stage": "generate",
+            "returncode": generated.returncode,
+            "stdout": generated.stdout or "",
+            "stderr": generated.stderr or "",
+            "duration_s": time.monotonic() - started,
+            "uploaded": False,
+        }
+
+    upload_command = [sys.executable, uploader_path, "--menus-only"]
+    if dry_run:
+        upload_command.append("--dry-run")
+    if port:
+        upload_command.extend(["--port", port])
+    try:
+        uploaded = subprocess.run(
+            upload_command,
+            cwd=watch_dir,
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+    except Exception as exc:
+        return {
+            "ok": False,
+            "stage": "upload",
+            "returncode": None,
+            "stdout": generated.stdout or "",
+            "stderr": str(exc),
+            "duration_s": time.monotonic() - started,
+            "uploaded": False,
+        }
+
+    return {
+        "ok": uploaded.returncode == 0,
+        "stage": "upload",
+        "returncode": uploaded.returncode,
+        "stdout": "\n".join(part for part in (generated.stdout, uploaded.stdout) if part),
+        "stderr": "\n".join(part for part in (generated.stderr, uploaded.stderr) if part),
+        "duration_s": time.monotonic() - started,
+        "uploaded": uploaded.returncode == 0 and not dry_run,
+        "dry_run": dry_run,
     }
 
 
@@ -321,8 +439,11 @@ def csv_bool(value: bool, *, style: str = "01") -> str:
 
 
 def normalise_url_path(url: object) -> str:
-    """Return a stable URL-path join key for catalog/map matching."""
-    return (urlparse(str(url or "").strip()).path or "").rstrip("/").lower()
+    """Return a stable host/path join key for catalog/map matching."""
+    parsed = urlparse(str(url or "").strip())
+    host = (parsed.hostname or "").lower().removeprefix("www.")
+    path = (parsed.path or "").rstrip("/").lower()
+    return f"{host}{path}" if host else path
 
 
 def read_csv_rows(path: str, *, encoding: str) -> Tuple[List[str], List[Dict[str, str]]]:
@@ -364,7 +485,7 @@ def write_catalog_rows(path: str, fieldnames: List[str], rows: List[Dict[str, st
 def location_csv_paths(base_dir: str) -> Dict[str, str]:
     """Return the live location CSV paths keyed by city."""
     return {
-        city: os.path.join(base_dir, "locations", filename)
+        city: os.path.join(base_dir, DEFAULT_DATABASE_DIR, "locations", filename)
         for city, filename in DEFAULT_LOCATION_FILES.items()
     }
 
@@ -486,7 +607,7 @@ def sync_catalog_shop_to_db(
 def upsert_catalog_shop_to_db(
     conn: sqlite3.Connection,
     row: Dict[str, str],
-) -> None:
+) -> int:
     """Create or update the DB copy of a catalog shop."""
     now = utc_now_iso()
     conn.execute(
@@ -509,6 +630,41 @@ def upsert_catalog_shop_to_db(
             now,
         ),
     )
+    saved = conn.execute(
+        "SELECT id FROM shops WHERE name = ? AND city = ?;",
+        (
+            (row.get("name") or "").strip(),
+            (row.get("city") or "").strip(),
+        ),
+    ).fetchone()
+    if not saved:
+        raise sqlite3.IntegrityError("catalog shop was not saved")
+    return int(saved["id"])
+
+
+def ensure_manual_menu_record(
+    conn: sqlite3.Connection,
+    shop_id: int,
+    source_page_url: str,
+) -> bool:
+    """Make a catalog shop immediately editable when no scraped menu exists."""
+    existing = conn.execute(
+        "SELECT id FROM menus WHERE shop_id = ?;",
+        (shop_id,),
+    ).fetchone()
+    if existing:
+        return False
+    conn.execute(
+        """
+        INSERT INTO menus(
+            shop_id, fetched_at_utc, source_page_url, image_url,
+            local_path, sha256, bytes, status, error
+        )
+        VALUES(?, ?, ?, '', '', '', 0, 'new', '');
+        """,
+        (shop_id, utc_now_iso(), (source_page_url or "").strip()),
+    )
+    return True
 
 
 def sync_matching_map_rows_closed(
@@ -568,6 +724,217 @@ def find_row_by_url(rows: List[Dict[str, str]], field: str, url: str) -> Optiona
     return None
 
 
+def _home_source_token(value: Any) -> str:
+    """Return the compact identity token used to reject mismatched menu sources."""
+    decoded = unquote(str(value or ""))
+    decoded = decoded.lower().removeprefix("cs-").replace("&", "and")
+    return re.sub(r"[^a-z0-9]+", "", decoded)
+
+
+def _home_summary(
+    shops: List[Dict[str, Any]],
+    offerings: List[Dict[str, Any]],
+    exported_at_utc: str,
+    amsterdam_mapped_shops: Optional[int] = None,
+) -> Dict[str, Any]:
+    """Build the small, internally consistent payload used by the public homepage."""
+    unavailable_statuses = {"closed", "archived", "archive", "previous", "old", "error", "failed"}
+    closed_tokens = {
+        token
+        for shop in shops
+        if int(shop.get("is_closed") or 0) == 1
+        for token in (
+            _home_source_token(shop.get("name")),
+            _home_source_token(str(shop.get("shop_key") or "").removeprefix("cs-")),
+        )
+        if len(token) >= 5
+    }
+
+    def source_conflicts(shop: Dict[str, Any]) -> bool:
+        source = _home_source_token(shop.get("image_url"))
+        if not source:
+            return False
+        own_tokens = {
+            token
+            for token in (
+                _home_source_token(shop.get("name")),
+                _home_source_token(str(shop.get("shop_key") or "").removeprefix("cs-")),
+            )
+            if len(token) >= 5
+        }
+        return any(token not in own_tokens and token in source for token in closed_tokens)
+
+    unavailable_shop_ids = {
+        str(shop.get("shop_id") or "")
+        for shop in shops
+        if (
+            int(shop.get("is_closed") or 0) == 1
+            or int(shop.get("show_in_admin") or 0) == 0
+            or str(shop.get("menu_status") or "").strip().lower() in unavailable_statuses
+            or source_conflicts(shop)
+        )
+    }
+    browsable = [
+        row
+        for row in offerings
+        if str(row.get("shop_id") or "") not in unavailable_shop_ids
+    ]
+
+    def normalise_name(value: Any) -> str:
+        return re.sub(r"\s+", " ", str(value or "").strip().lower())
+
+    def strain_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        grouped: Dict[str, Dict[str, Any]] = {}
+        for row in rows:
+            name = str(row.get("strain_name_normalised") or row.get("strain_name") or "").strip()
+            try:
+                price = float(row.get("price_amount"))
+            except (TypeError, ValueError):
+                continue
+            if not name or price <= 0:
+                continue
+            key = normalise_name(name)
+            group = grouped.setdefault(
+                key,
+                {
+                    "name": name,
+                    "prices": [],
+                    "shop_ids": set(),
+                },
+            )
+            group["prices"].append(price)
+            if row.get("shop_id") is not None:
+                group["shop_ids"].add(str(row["shop_id"]))
+
+        output: List[Dict[str, Any]] = []
+        for group in grouped.values():
+            prices = group["prices"]
+            output.append(
+                {
+                    "name": group["name"],
+                    "shop_count": len(group["shop_ids"]),
+                    "average_price": round(sum(prices) / len(prices), 2),
+                }
+            )
+        return output
+
+    def scope_summary(rows: List[Dict[str, Any]], source_shop_count: int) -> Dict[str, Any]:
+        rows_by_strain = strain_rows(rows)
+        averages = [row["average_price"] for row in rows_by_strain]
+        return {
+            "source_shop_records": source_shop_count,
+            "active_shops": len({str(row.get("shop_id")) for row in rows if row.get("shop_id") is not None}),
+            "active_listings": len(rows),
+            "active_strains": len(rows_by_strain),
+            "average_strain_price": round(sum(averages) / len(averages), 2) if averages else None,
+        }
+
+    amsterdam_rows = [
+        row for row in browsable if normalise_name(row.get("shop_city")) == "amsterdam"
+    ]
+    amsterdam_source_shops = sum(
+        1
+        for shop in shops
+        if normalise_name(shop.get("city")) == "amsterdam"
+        and int(shop.get("show_in_admin") or 0) == 1
+    )
+    amsterdam_raw_listing_count = sum(
+        1
+        for row in offerings
+        if normalise_name(row.get("shop_city")) == "amsterdam"
+    )
+
+    network_strains = strain_rows(browsable)
+    common_strains = sorted(
+        network_strains,
+        key=lambda row: (-int(row["shop_count"]), str(row["name"]).lower()),
+    )[:5]
+    rare_pool = sorted(
+        (row for row in network_strains if int(row["shop_count"]) in {2, 3}),
+        key=lambda row: str(row["name"]).lower(),
+    )
+
+    city_rows: Dict[str, List[Dict[str, Any]]] = {}
+    for row in browsable:
+        city = str(row.get("shop_city") or "").strip()
+        if city:
+            city_rows.setdefault(city, []).append(row)
+    location_summaries = []
+    for city, rows in city_rows.items():
+        summary = scope_summary(rows, source_shop_count=0)
+        location_summaries.append(
+            {
+                "name": city,
+                "map_location": {
+                    "amsterdam": "amsterdamLoc.csv",
+                    "alkmaar": "Alkmaar.csv",
+                    "den haag": "denHaag.csv",
+                    "haarlem": "Haarlem.csv",
+                    "maastricht": "Maastricht.csv",
+                    "rotterdam": "Rotterdam.csv",
+                    "utrecht": "utrechtLoc.csv",
+                }.get(normalise_name(city), ""),
+                "active_shops": summary["active_shops"],
+                "active_listings": summary["active_listings"],
+                "active_strains": summary["active_strains"],
+                "average_strain_price": summary["average_strain_price"],
+            }
+        )
+    location_summaries.sort(key=lambda row: (-int(row["active_listings"]), str(row["name"]).lower()))
+
+    latest_values = [
+        str(
+            row.get("menu_changed_at_utc")
+            or row.get("menu_checked_at_utc")
+            or row.get("last_seen_at_utc")
+            or row.get("updated_at")
+            or ""
+        )
+        for row in browsable
+    ]
+    latest_menu_signal = max((value for value in latest_values if value), default="")
+
+    network = scope_summary(browsable, source_shop_count=len(shops))
+    network["excluded_listings"] = max(0, len(offerings) - len(browsable))
+    amsterdam = scope_summary(amsterdam_rows, source_shop_count=amsterdam_source_shops)
+    if amsterdam_mapped_shops is not None:
+        amsterdam["mapped_shops"] = max(0, int(amsterdam_mapped_shops))
+    amsterdam["excluded_listings"] = max(0, amsterdam_raw_listing_count - len(amsterdam_rows))
+
+    return {
+        "version": 1,
+        "exported_at_utc": exported_at_utc,
+        "latest_menu_signal_utc": latest_menu_signal,
+        "definitions": {
+            "active_shop": "An open, visible shop with at least one current menu listing.",
+            "active_listing": "One current strain-and-price row from an active shop.",
+            "source_shop_record": "A visible shop record before menu-status and source-conflict exclusions.",
+        },
+        "amsterdam": amsterdam,
+        "network": network,
+        "top_strains": common_strains,
+        "rare_strain_count": len(rare_pool),
+        "rare_strains": rare_pool[:30],
+        "locations": location_summaries,
+    }
+
+
+def count_open_map_coffeeshops(path: str) -> Optional[int]:
+    """Count open coffeeshop markers, or return None when the CSV is unavailable."""
+    if not os.path.exists(path):
+        return None
+    try:
+        _fields, rows = read_csv_rows(path, encoding="latin-1")
+    except (OSError, UnicodeError, csv.Error):
+        return None
+    return sum(
+        1
+        for row in rows
+        if parse_csv_bool(row.get("Coffeeshop"), default=False)
+        and not parse_csv_bool(row.get("Closed"), default=False)
+    )
+
+
 def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, Any]:
     """Export DB snapshots as JSON files for static clients.
 
@@ -578,6 +945,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
     - active_offerings.json
     - menu_entries.json
     - strain_index.json
+    - home_summary.json
     - manifest.json
     """
     os.makedirs(out_dir, exist_ok=True)
@@ -831,6 +1199,16 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
     json_dump(os.path.join(out_dir, "active_offerings.json"), active_offerings)
     json_dump(os.path.join(out_dir, "menu_entries.json"), menu_entries)
     json_dump(os.path.join(out_dir, "strain_index.json"), strain_index)
+    mapped_amsterdam_shops = count_open_map_coffeeshops(
+        os.path.join(out_dir, "locations", DEFAULT_LOCATION_FILES["Amsterdam"])
+    )
+    home_summary = _home_summary(
+        shops,
+        active_offerings,
+        exported_at_utc,
+        amsterdam_mapped_shops=mapped_amsterdam_shops,
+    )
+    json_dump(os.path.join(out_dir, "home_summary.json"), home_summary)
 
     manifest = {
         "exported_at_utc": exported_at_utc,
@@ -840,6 +1218,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "active_offerings": len(active_offerings),
             "menu_entries": len(menu_entries),
             "strain_index": len(strain_index),
+            "home_active_shops": home_summary["network"]["active_shops"],
+            "home_active_listings": home_summary["network"]["active_listings"],
         },
         "files": [
             "shops.json",
@@ -848,6 +1228,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "active_offerings.json",
             "menu_entries.json",
             "strain_index.json",
+            "home_summary.json",
         ],
         "linking": {
             "shop_key_note": "Use shops.shop_key as the stable CSV link key.",
@@ -902,6 +1283,29 @@ def db_init(conn: sqlite3.Connection) -> None:
             status TEXT NOT NULL,   -- 'new' | 'processed' | 'error'
             error TEXT DEFAULT '',
             FOREIGN KEY(shop_id) REFERENCES shops(id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS menu_images (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            menu_id INTEGER NOT NULL,
+            position INTEGER NOT NULL,
+            image_url TEXT NOT NULL,
+            local_path TEXT NOT NULL,
+            sha256 TEXT NOT NULL,
+            bytes INTEGER NOT NULL,
+            UNIQUE(menu_id, position),
+            FOREIGN KEY(menu_id) REFERENCES menus(id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS growers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL COLLATE NOCASE UNIQUE,
+            created_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS app_settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL
         );
 
         CREATE TABLE IF NOT EXISTS strains (
@@ -997,6 +1401,7 @@ def db_init(conn: sqlite3.Connection) -> None:
         );
 
         CREATE INDEX IF NOT EXISTS idx_menus_status ON menus(status);
+        CREATE INDEX IF NOT EXISTS idx_menu_images_menu ON menu_images(menu_id, position);
         CREATE INDEX IF NOT EXISTS idx_menu_entries_shop ON menu_entries(shop_id);
         CREATE INDEX IF NOT EXISTS idx_offerings_shop ON shop_offerings(shop_id);
         CREATE INDEX IF NOT EXISTS idx_offerings_status ON shop_offerings(status);
@@ -1041,6 +1446,34 @@ def db_init(conn: sqlite3.Connection) -> None:
             SET package_price_amount = price_amount
             WHERE package_price_amount <= 0;
             """
+        )
+
+    growers_seeded = conn.execute(
+        "SELECT value FROM app_settings WHERE key = 'growers_catalogue_seeded';"
+    ).fetchone()
+    if not growers_seeded:
+        existing_growers = {
+            str(r["grower"]).strip()
+            for r in conn.execute(
+                """
+                SELECT grower FROM menu_entries
+                UNION
+                SELECT grower FROM shop_offerings
+                UNION
+                SELECT grower FROM offering_history;
+                """
+            ).fetchall()
+            if str(r["grower"] or "").strip()
+        }
+        existing_growers.update(KNOWN_GROWERS)
+        now = utc_now_iso()
+        for grower in sorted(existing_growers, key=str.lower):
+            conn.execute(
+                "INSERT OR IGNORE INTO growers(name, created_at) VALUES(?, ?);",
+                (grower, now),
+            )
+        conn.execute(
+            "INSERT INTO app_settings(key, value) VALUES('growers_catalogue_seeded', '1');"
         )
     conn.commit()
 
@@ -1103,9 +1536,10 @@ def resolve_package_weight(package_weight_choice: str, package_weight_custom: st
     """Return the selected package weight in grams."""
     choice = (package_weight_choice or "").strip()
     if choice == "custom":
-        return parse_positive_decimal(package_weight_custom, "Package weight")
+        choice = (package_weight_custom or "").strip()
     if not choice:
         return 1.0
+    choice = re.sub(r"\s*g\s*$", "", choice, flags=re.IGNORECASE)
     return parse_positive_decimal(choice, "Package weight")
 
 
@@ -2353,12 +2787,119 @@ button.danger { border-color: rgba(252,129,129,.45); color: var(--bad); }
 .viewSection.is-hidden { display: none; }
 
 .addEntryPanel {
-  min-height: 220px;
-  max-height: clamp(220px, calc(100vh - 320px), 72vh);
-  overflow: auto;
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 10px;
+  padding: 14px;
+  background: rgba(255,255,255,.015);
+}
+
+.strainNameField {
+  display: block;
+  width: 100%;
+}
+
+.strainNameField input {
+  display: block;
+  width: 100%;
+}
+
+.entryPriceGrid {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr) minmax(100px, .8fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.entryGrowerRow {
+  margin-top: 12px;
+}
+
+.weightField {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.menuPages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.menuPage[hidden] { display: none; }
+
+.menuPageButton.active {
+  border-color: rgba(79,209,197,.65);
+  color: var(--accent);
+}
+
+.entryPage {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.entryPage .container {
+  grid-template-columns: 1.25fr .75fr;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.menuImageCard {
+  position: relative;
+  min-width: 0;
+}
+
+.menuViewport {
+  height: clamp(280px, calc(100vh - 280px), 70vh);
+  overflow: auto;
+  background: rgba(0,0,0,.35);
+}
+
+.menuViewport .menuPage {
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.entryPage .menuViewport .menuImg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.entryControlsCard {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  max-height: calc(100vh - 150px);
+  overflow: auto;
+}
+
+.entryControlsCard > .cardHeader {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  background: rgba(15,23,36,.98);
+}
+
+.menuPageControls {
+  position: static;
+  justify-content: flex-end;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  background: rgba(15,23,36,.82);
+}
+
+.menuZoomDivider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
 }
 
 table { width:100%; border-collapse: collapse; }
@@ -2458,6 +2999,11 @@ pre.log {
   .menuGrid { grid-template-columns: 1fr; }
 }
 
+@media (max-width: 560px) {
+  .entryPriceGrid { grid-template-columns: 70px minmax(100px, 1fr); }
+  .entryPriceGrid .weightField { grid-column: 1 / -1; }
+}
+
 @media (max-height: 820px) {
   .cardBody { padding: 10px; }
   .cardHeader { padding: 10px 12px; }
@@ -2475,7 +3021,7 @@ PAGE_TMPL = """
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>{{ css }}</style>
 </head>
-<body>
+<body class="entryPage">
   <div class="topbar">
     <div class="brand">
       <div class="logo"></div>
@@ -2502,12 +3048,6 @@ PAGE_TMPL = """
 
     <div class="pill">
       Hotkeys:
-      <span class="kbd">1</span> S
-      <span class="kbd">2</span> I
-      <span class="kbd">3</span> H
-      <span class="kbd">4</span> Hash
-      <span class="kbd">5</span> Kush
-      <span class="kbd">6</span> Cali
       <span class="kbd">Enter</span> Save
       <span class="kbd">N</span>/<span class="kbd">P</span> Next/Prev
       <span class="kbd">/</span> Focus
@@ -2524,7 +3064,7 @@ PAGE_TMPL = """
   </script>
 
   <div class="container">
-    <div class="card">
+    <div class="card menuImageCard">
       <div class="cardHeader">
         <div>
           <div style="font-weight:800;">Menu image</div>
@@ -2536,20 +3076,46 @@ PAGE_TMPL = """
         </div>
       </div>
 
-      {% if menu_local_path and menu_file_exists %}
-        <img class="menuImg" src="{{ url_for('serve_menu_file', shop_id=shop_id) }}" alt="menu">
-      {% else %}
-        <div class="cardBody">
-          <div class="msg">
-            <div style="font-weight:800; margin-bottom:6px;">Could not display the menu automatically.</div>
-            <div class="small">Local path: <code>{{ menu_local_path }}</code></div>
-            <div class="small">Image URL: <a href="{{ menu_image_url }}" target="_blank" rel="noreferrer">open</a></div>
-          </div>
+      <div id="menuViewport" class="menuViewport">
+        <div id="menuPages">
+          {% for image in menu_images %}
+            <div class="menuPage" data-menu-page="{{ loop.index0 }}" {% if not loop.first %}hidden{% endif %}>
+              {% if image.file_exists %}
+                <img class="menuImg"
+                     src="{{ url_for('serve_menu_file', shop_id=shop_id, image_index=image.position) }}"
+                     alt="menu image {{ loop.index }} of {{ menu_image_count }}">
+              {% else %}
+                <div class="cardBody">
+                  <div class="msg">
+                    <div style="font-weight:800; margin-bottom:6px;">Could not display this menu image automatically.</div>
+                    <div class="small">Local path: <code>{{ image.local_path }}</code></div>
+                    <div class="small">Image URL: <a href="{{ image.image_url }}" target="_blank" rel="noreferrer">open</a></div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
         </div>
-      {% endif %}
+      </div>
+      <div class="menuPages menuPageControls" aria-label="Menu image controls">
+        {% if menu_image_count > 1 %}
+          <span id="menuPageStatus" class="small">Image 1 of {{ menu_image_count }}</span>
+          {% for image in menu_images %}
+            <button class="ghost menuPageButton {% if loop.first %}active{% endif %}" type="button"
+                    data-menu-page-button="{{ loop.index0 }}" onclick="showMenuPage({{ loop.index0 }})">
+              {{ loop.index }}
+            </button>
+          {% endfor %}
+          <span class="menuZoomDivider" aria-hidden="true"></span>
+        {% endif %}
+        <button class="ghost" type="button" onclick="changeMenuZoom(-0.25)" aria-label="Zoom out">−</button>
+        <span id="menuZoomStatus" class="small">Fit</span>
+        <button class="ghost" type="button" onclick="changeMenuZoom(0.25)" aria-label="Zoom in">+</button>
+        <button class="ghost" type="button" onclick="fitMenuImage()">Fit</button>
+      </div>
     </div>
 
-    <div class="card">
+    <div class="card entryControlsCard">
       <div class="cardHeader">
         <div>
           <div style="font-weight:800;">Add entry</div>
@@ -2598,85 +3164,71 @@ PAGE_TMPL = """
         <div id="sectionAdd" class="viewSection">
           <div id="addEntryPanel" class="addEntryPanel">
             <form id="entryForm" method="post" action="{{ url_for('add_entry', shop_id=shop_id) }}">
-              <div>
+              <div class="strainNameField">
                 <label for="strain_name">Strain name</label>
                 <input id="strain_name" name="strain_name" list="strain_suggestions" autocomplete="off"
-           autocapitalize="none" autocorrect="off" spellcheck="false"
-           placeholder="e.g. Gelato, Amnesia Haze, AK47" required>
+                       autocapitalize="none" autocorrect="off" spellcheck="false"
+                       placeholder="e.g. Gelato, Amnesia Haze, AK47" required>
                 <datalist id="strain_suggestions"></datalist>
+                <div id="type_autofill_hint" class="small" style="margin-top:6px;"></div>
               </div>
 
-              <div class="grid2" style="margin-top:10px;">
-                <div>
-                  <label>Type</label>
-                  <div class="radioGroup">
-                    <label class="radioOption"><input type="radio" name="base_type" value="sativa" required><span>Sativa</span></label>
-                    <label class="radioOption"><input type="radio" name="base_type" value="indica" required><span>Indica</span></label>
-                    <label class="radioOption"><input type="radio" name="base_type" value="hybrid" required><span>Hybrid</span></label>
-                    <label class="radioOption"><input type="radio" name="base_type" value="hash" required><span>Hash</span></label>
-                    <label class="radioOption"><input type="radio" name="base_type" value="kush" required><span>Kush</span></label>
-                    <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
-                    <label class="radioOption"><input type="checkbox" name="is_cali" value="1"><span>Cali</span></label>
-                  </div>
-                  <div class="small">Type is one-of; Cali is an overlay.</div>
-                  <div id="type_autofill_hint" class="small" style="margin-top:6px;"></div>
-                  <label class="radioOption" style="margin-top:8px;">
-                    <input type="checkbox" name="consolidate_type" value="1">
-                    <span>Consolidate this type for the strain everywhere</span>
-                  </label>
-                  <div class="small">Optional: update existing entries and offerings for this strain to the chosen type.</div>
+              <div style="margin-top:12px;">
+                <label>Type</label>
+                <div class="radioGroup">
+                  <label class="radioOption"><input type="radio" name="base_type" value="sativa" required><span>Sativa</span></label>
+                  <label class="radioOption"><input type="radio" name="base_type" value="indica" required><span>Indica</span></label>
+                  <label class="radioOption"><input type="radio" name="base_type" value="hybrid" required><span>Hybrid</span></label>
+                  <label class="radioOption"><input type="radio" name="base_type" value="hash" required><span>Hash</span></label>
+                  <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
+                  <label class="radioOption"><input type="checkbox" name="is_cali" value="1"><span>Cali</span></label>
                 </div>
+                <div class="small">Cali can be combined with any type.</div>
+              </div>
 
-                <div>
-                  <label for="grower_choice">Grower</label>
-                  <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
-                    <select id="grower_choice" name="grower_choice">
-                      <option value="">Unspecified</option>
-                      {% for grower in known_growers %}
-                        <option value="{{ grower }}">{{ grower }}</option>
-                      {% endfor %}
-                      <option value="custom">Other grower...</option>
-                    </select>
-                    <input id="grower_custom" name="grower_custom" placeholder="Grower name" style="display:none;">
-                  </div>
+              <div style="margin-top:12px;">
+                <label>Price and weight</label>
+                <div class="entryPriceGrid">
+                  <select name="price_currency" aria-label="currency">
+                    <option value="€" selected>€</option>
+                    <option value="£">£</option>
+                    <option value="$">$</option>
+                  </select>
+                  <input id="package_price_amount" name="package_price_amount" inputmode="decimal" placeholder="Amount" required>
+                  <input class="weightField" id="package_weight_choice" name="package_weight_choice"
+                         inputmode="decimal" value="1g" aria-label="weight in grams" required>
+                </div>
+                <div id="normalised_price_hint" class="small" style="margin-top:6px;">Price per gram.</div>
+              </div>
+
+              <div class="entryGrowerRow">
+                <label for="grower_choice">Grower <span class="small">(optional)</span></label>
+                <div style="display:grid; grid-template-columns: 1fr; gap:8px;">
+                  <select id="grower_choice" name="grower_choice">
+                    <option value="">Unspecified</option>
+                    {% for grower in known_growers %}
+                      <option value="{{ grower }}">{{ grower }}</option>
+                    {% endfor %}
+                    <option value="custom">Other grower...</option>
+                  </select>
+                  <input id="grower_custom" name="grower_custom" placeholder="Grower name" style="display:none;">
                 </div>
               </div>
 
-              <div class="grid2" style="margin-top:10px;">
-                <div>
-                  <label>Entered price</label>
-                  <div style="display:grid; grid-template-columns: 110px 1fr; gap:10px; align-items:center;">
-                    <select name="price_currency" aria-label="currency">
-                      <option value="€" selected>€ EUR</option>
-                      <option value="£">£ GBP</option>
-                      <option value="$">$ USD</option>
-                    </select>
-                    <input id="package_price_amount" name="package_price_amount" inputmode="decimal" placeholder="e.g. 12 or 50" required>
-                  </div>
-                </div>
-
-                <div>
-                  <label for="package_weight_choice">Sold as</label>
-                  <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
-                    <select id="package_weight_choice" name="package_weight_choice">
-                      <option value="1" selected>1 g</option>
-                      <option value="3.5">3.5 g jar</option>
-                      <option value="custom">Custom weight...</option>
-                    </select>
-                    <input id="package_weight_custom" name="package_weight_custom" inputmode="decimal" placeholder="Weight in grams" style="display:none;">
-                  </div>
-                </div>
+              <div style="margin-top:12px;">
+                <label for="notes">Notes <span class="small">(optional)</span></label>
+                <input id="notes" name="notes" placeholder="e.g. top shelf, citrus, 25%">
               </div>
-              <div id="normalised_price_hint" class="small" style="margin-top:6px;">Comparisons use the equivalent price per gram.</div>
 
-              <div style="margin-top:10px;">
-                <label for="notes">Notes</label>
-                <textarea id="notes" name="notes" placeholder="e.g. top shelf, citrus, 25%"></textarea>
-              </div>
+              <label class="radioOption" style="margin-top:10px;">
+                <input type="checkbox" name="consolidate_type" value="1">
+                <span>Use this type for this strain everywhere</span>
+              </label>
 
               <div class="btnrow" style="margin-top:10px;">
-                <button class="primary" type="submit">Save</button>
+                <button class="primary" type="submit">Save entry</button>
                 <button class="ghost" type="button" onclick="clearForm();">Clear</button>
+                <span class="small">After saving, the strain field is ready for the next row.</span>
               </div>
             </form>
           </div>
@@ -2798,11 +3350,166 @@ PAGE_TMPL = """
 <script>
   function navTo(url) { window.location.href = url; }
 
+  let currentMenuPage = 0;
+  let menuZoom = 1;
+  const menuPageCount = {{ menu_image_count }};
+  const menuPageStorageKey = 'coffeeshop_menu_page_{{ shop_id }}';
+  const menuZoomStorageKey = 'coffeeshop_menu_zoom_{{ shop_id }}';
+  const menuScrollStoragePrefix = 'coffeeshop_menu_scroll_{{ shop_id }}_';
+  const menuZoomMin = 0.5;
+  const menuZoomMax = 4;
+
+  try {
+    const savedZoom = Number(localStorage.getItem(menuZoomStorageKey) || 1);
+    if (Number.isFinite(savedZoom)) {
+      menuZoom = Math.min(menuZoomMax, Math.max(menuZoomMin, savedZoom));
+    }
+  } catch (_err) {
+    menuZoom = 1;
+  }
+
+  function saveMenuZoom() {
+    try {
+      localStorage.setItem(menuZoomStorageKey, String(menuZoom));
+    } catch (_err) {
+      // Storage is optional.
+    }
+  }
+
+  function menuScrollStorageKey(pageIndex = currentMenuPage) {
+    return `${menuScrollStoragePrefix}${pageIndex}`;
+  }
+
+  function saveMenuScroll() {
+    const viewport = document.getElementById('menuViewport');
+    if (!viewport) return;
+    try {
+      localStorage.setItem(
+        menuScrollStorageKey(),
+        JSON.stringify({ left: viewport.scrollLeft, top: viewport.scrollTop }),
+      );
+    } catch (_err) {
+      // Storage is optional.
+    }
+  }
+
+  function restoreMenuScroll() {
+    const viewport = document.getElementById('menuViewport');
+    if (!viewport) return;
+    let saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem(menuScrollStorageKey()) || 'null');
+    } catch (_err) {
+      saved = null;
+    }
+    viewport.scrollTo({
+      left: saved && Number.isFinite(saved.left) ? saved.left : 0,
+      top: saved && Number.isFinite(saved.top) ? saved.top : 0,
+    });
+  }
+
+  function activeMenuImage() {
+    return document.querySelector('.menuPage:not([hidden]) .menuImg');
+  }
+
+  function applyMenuZoom() {
+    const image = activeMenuImage();
+    const viewport = document.getElementById('menuViewport');
+    const zoomStatus = document.getElementById('menuZoomStatus');
+    if (zoomStatus) {
+      zoomStatus.textContent = menuZoom === 1 ? 'Fit' : `${Math.round(menuZoom * 100)}%`;
+    }
+    if (!image || !viewport) return;
+    if (!image.complete || !image.naturalWidth) {
+      image.addEventListener('load', () => {
+        applyMenuZoom();
+        restoreMenuScroll();
+      }, { once: true });
+      return;
+    }
+    const widthScale = Math.max(1, viewport.clientWidth) / image.naturalWidth;
+    const heightScale = Math.max(1, viewport.clientHeight) / image.naturalHeight;
+    const fitScale = Math.min(1, widthScale, heightScale);
+    const fitWidth = image.naturalWidth * fitScale;
+    image.style.maxWidth = 'none';
+    image.style.width = `${Math.max(1, Math.round(fitWidth * menuZoom))}px`;
+    image.style.height = 'auto';
+  }
+
+  function changeMenuZoom(delta) {
+    menuZoom = Math.min(menuZoomMax, Math.max(menuZoomMin, menuZoom + delta));
+    saveMenuZoom();
+    applyMenuZoom();
+  }
+
+  function fitMenuImage() {
+    menuZoom = 1;
+    saveMenuZoom();
+    applyMenuZoom();
+    const viewport = document.getElementById('menuViewport');
+    if (viewport) {
+      viewport.scrollTo({ top: 0, left: 0 });
+      saveMenuScroll();
+    }
+  }
+
+  function showMenuPage(index, persist = true) {
+    if (!menuPageCount) return;
+    if (persist) saveMenuScroll();
+    currentMenuPage = (index + menuPageCount) % menuPageCount;
+    document.querySelectorAll('[data-menu-page]').forEach((page) => {
+      page.hidden = Number(page.dataset.menuPage) !== currentMenuPage;
+    });
+    document.querySelectorAll('[data-menu-page-button]').forEach((button) => {
+      button.classList.toggle('active', Number(button.dataset.menuPageButton) === currentMenuPage);
+    });
+    const status = document.getElementById('menuPageStatus');
+    if (status) status.textContent = `Image ${currentMenuPage + 1} of ${menuPageCount}`;
+    requestAnimationFrame(() => {
+      applyMenuZoom();
+      requestAnimationFrame(restoreMenuScroll);
+    });
+    if (persist) {
+      try {
+        localStorage.setItem(menuPageStorageKey, String(currentMenuPage));
+      } catch (_err) {
+        // Storage is optional; the image switch still works without it.
+      }
+    }
+  }
+
+  function changeMenuPage(delta) {
+    showMenuPage(currentMenuPage + delta);
+  }
+
+  function restoreMenuPage() {
+    let savedPage = 0;
+    try {
+      savedPage = Number(localStorage.getItem(menuPageStorageKey) || 0);
+    } catch (_err) {
+      savedPage = 0;
+    }
+    showMenuPage(Number.isInteger(savedPage) ? savedPage : 0, false);
+  }
+
+  restoreMenuPage();
+  window.addEventListener('resize', applyMenuZoom);
+  const menuViewport = document.getElementById('menuViewport');
+  if (menuViewport) {
+    let scrollSaveTimer = null;
+    menuViewport.addEventListener('scroll', () => {
+      clearTimeout(scrollSaveTimer);
+      scrollSaveTimer = setTimeout(saveMenuScroll, 80);
+    });
+  }
+
   function clearForm() {
     const f = document.getElementById('entryForm');
     if (!f) return;
     f.reset();
     showTypeHint('');
+    syncCustomFieldVisibility();
+    updateNormalisedPriceHint();
     const s = document.getElementById('strain_name');
     if (s) s.focus();
   }
@@ -2926,7 +3633,6 @@ PAGE_TMPL = """
   const strain = document.getElementById('strain_name');
   const priceAmount = document.getElementById('package_price_amount');
   const packageWeightChoice = document.getElementById('package_weight_choice');
-  const packageWeightCustom = document.getElementById('package_weight_custom');
   const growerChoice = document.getElementById('grower_choice');
   const growerCustom = document.getElementById('grower_custom');
   const normalisedPriceHint = document.getElementById('normalised_price_hint');
@@ -2935,17 +3641,12 @@ PAGE_TMPL = """
 
   function selectedPackageWeight() {
     if (!packageWeightChoice) return 1;
-    const raw = packageWeightChoice.value === 'custom'
-      ? (packageWeightCustom ? packageWeightCustom.value : '')
-      : packageWeightChoice.value;
-    const parsed = Number(String(raw || '').replace(',', '.'));
+    const raw = packageWeightChoice.value;
+    const parsed = Number(String(raw || '').trim().replace(/g\\s*$/i, '').replace(',', '.'));
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
   }
 
   function syncCustomFieldVisibility() {
-    if (packageWeightCustom && packageWeightChoice) {
-      packageWeightCustom.style.display = packageWeightChoice.value === 'custom' ? '' : 'none';
-    }
     if (growerCustom && growerChoice) {
       growerCustom.style.display = growerChoice.value === 'custom' ? '' : 'none';
     }
@@ -2962,11 +3663,11 @@ PAGE_TMPL = """
     normalisedPriceHint.textContent = `Comparisons use ${packPrice.toFixed(2)} / ${weight}g = ${(packPrice / weight).toFixed(2)} per g.`;
   }
 
-  [priceAmount, packageWeightChoice, packageWeightCustom].filter(Boolean).forEach((el) => {
+  [priceAmount, packageWeightChoice].filter(Boolean).forEach((el) => {
     el.addEventListener('input', updateNormalisedPriceHint);
     el.addEventListener('change', updateNormalisedPriceHint);
   });
-  [packageWeightChoice, growerChoice].filter(Boolean).forEach((el) => {
+  [growerChoice].filter(Boolean).forEach((el) => {
     el.addEventListener('change', syncCustomFieldVisibility);
   });
   syncCustomFieldVisibility();
@@ -3007,14 +3708,6 @@ PAGE_TMPL = """
       return;
     }
     if (isTyping) return;
-    const caliBox = document.querySelector('input[name="is_cali"]');
-
-    if (e.key === '1') { setBaseType('sativa'); if (priceAmount) priceAmount.focus(); }
-    if (e.key === '2') { setBaseType('indica'); if (priceAmount) priceAmount.focus(); }
-    if (e.key === '3') { setBaseType('hybrid'); if (priceAmount) priceAmount.focus(); }
-    if (e.key === '4') { setBaseType('hash'); if (priceAmount) priceAmount.focus(); }
-    if (e.key === '5') { setBaseType('kush'); if (priceAmount) priceAmount.focus(); }
-    if (e.key === '6') { if (caliBox) caliBox.checked = !caliBox.checked; }
 
     const k = e.key.toLowerCase();
     if (k === 'n') { navTo("{{ url_for('next_shop', shop_id=shop_id) }}"); }
@@ -3114,10 +3807,12 @@ EDIT_TMPL = """
                 <label class="radioOption"><input type="radio" name="base_type" value="indica" {% if entry['base_type']=='indica' %}checked{% endif %} required><span>Indica</span></label>
                 <label class="radioOption"><input type="radio" name="base_type" value="hybrid" {% if entry['base_type']=='hybrid' %}checked{% endif %} required><span>Hybrid</span></label>
                 <label class="radioOption"><input type="radio" name="base_type" value="hash" {% if entry['base_type']=='hash' %}checked{% endif %} required><span>Hash</span></label>
-                <label class="radioOption"><input type="radio" name="base_type" value="kush" {% if entry['base_type']=='kush' %}checked{% endif %} required><span>Kush</span></label>
                 <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
                 <label class="radioOption"><input type="checkbox" name="is_cali" value="1" {% if entry['is_cali'] %}checked{% endif %}><span>Cali</span></label>
               </div>
+              {% if entry['base_type'] == 'kush' %}
+                <div class="small">This legacy entry used “kush”. Choose one of the current types before saving.</div>
+              {% endif %}
             </div>
 
             <div>
@@ -3151,17 +3846,9 @@ EDIT_TMPL = """
             </div>
 
             <div>
-              <label for="package_weight_choice">Sold as</label>
-              <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
-                <select id="package_weight_choice" name="package_weight_choice">
-                  <option value="1" {% if entry['package_weight_g'] == 1 %}selected{% endif %}>1 g</option>
-                  <option value="3.5" {% if entry['package_weight_g'] == 3.5 %}selected{% endif %}>3.5 g jar</option>
-                  <option value="custom" {% if entry['package_weight_g'] not in known_package_weights %}selected{% endif %}>Custom weight...</option>
-                </select>
-                <input id="package_weight_custom" name="package_weight_custom" inputmode="decimal" placeholder="Weight in grams"
-                       value="{% if entry['package_weight_g'] not in known_package_weights %}{{ entry['package_weight_g'] }}{% endif %}"
-                       style="{% if entry['package_weight_g'] in known_package_weights %}display:none;{% endif %}">
-              </div>
+              <label for="package_weight_choice">Weight in grams</label>
+              <input class="weightField" id="package_weight_choice" name="package_weight_choice"
+                     inputmode="decimal" value="{{ entry['package_weight_g'] }}g" required>
             </div>
           </div>
           <div id="normalised_price_hint" class="small" style="margin-top:6px;">Comparisons use the equivalent price per gram.</div>
@@ -3188,23 +3875,17 @@ EDIT_TMPL = """
   <script>
     const packagePriceAmount = document.getElementById('package_price_amount');
     const packageWeightChoice = document.getElementById('package_weight_choice');
-    const packageWeightCustom = document.getElementById('package_weight_custom');
     const growerChoice = document.getElementById('grower_choice');
     const growerCustom = document.getElementById('grower_custom');
     const normalisedPriceHint = document.getElementById('normalised_price_hint');
 
     function selectedPackageWeight() {
-      const raw = packageWeightChoice && packageWeightChoice.value === 'custom'
-        ? (packageWeightCustom ? packageWeightCustom.value : '')
-        : (packageWeightChoice ? packageWeightChoice.value : '1');
-      const parsed = Number(String(raw || '').replace(',', '.'));
+      const raw = packageWeightChoice ? packageWeightChoice.value : '1';
+      const parsed = Number(String(raw || '').trim().replace(/g\\s*$/i, '').replace(',', '.'));
       return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
     }
 
     function syncCustomFieldVisibility() {
-      if (packageWeightCustom && packageWeightChoice) {
-        packageWeightCustom.style.display = packageWeightChoice.value === 'custom' ? '' : 'none';
-      }
       if (growerCustom && growerChoice) {
         growerCustom.style.display = growerChoice.value === 'custom' ? '' : 'none';
       }
@@ -3221,11 +3902,11 @@ EDIT_TMPL = """
       normalisedPriceHint.textContent = `Comparisons use ${packPrice.toFixed(2)} / ${weight}g = ${(packPrice / weight).toFixed(2)} per g.`;
     }
 
-    [packagePriceAmount, packageWeightChoice, packageWeightCustom].filter(Boolean).forEach((el) => {
+    [packagePriceAmount, packageWeightChoice].filter(Boolean).forEach((el) => {
       el.addEventListener('input', updateNormalisedPriceHint);
       el.addEventListener('change', updateNormalisedPriceHint);
     });
-    [packageWeightChoice, growerChoice].filter(Boolean).forEach((el) => {
+    [growerChoice].filter(Boolean).forEach((el) => {
       el.addEventListener('change', syncCustomFieldVisibility);
     });
     syncCustomFieldVisibility();
@@ -3329,6 +4010,7 @@ MAIN_TMPL = """
     <div class="btnrow">
       <a class="pill" href="{{ url_for('start') }}">Go to first new</a>
       <a class="pill" href="{{ url_for('queue') }}">Menu queue</a>
+      <a class="pill" href="{{ url_for('growers') }}">Growers</a>
       <a class="pill" href="{{ url_for('shop_coverage') }}">Shop coverage</a>
       <a class="pill" href="{{ url_for('browse') }}">Browse DB</a>
       <a class="pill" href="{{ url_for('database_explorer') }}">Explorer</a>
@@ -3415,6 +4097,21 @@ MAIN_TMPL = """
       <div class="card">
         <div class="cardHeader">
           <div>
+            <div style="font-weight:800;">Manage growers</div>
+            <div class="small">Control the grower choices shown during data entry.</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="btnrow">
+            <a class="pill" href="{{ url_for('growers') }}">Edit growers</a>
+          </div>
+          <div class="small" style="margin-top:10px;">{{ db_counts.growers }} growers in the entry list.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <div>
             <div style="font-weight:800;">Shop coverage</div>
             <div class="small">Close venues, control visibility, and reconcile map drift.</div>
           </div>
@@ -3425,6 +4122,37 @@ MAIN_TMPL = """
           </div>
           <div class="small" style="margin-top:10px;">
             This is the place to mark shops closed, reactivate them, and add missing live shops to the map.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <div>
+            <div style="font-weight:800;">Update BUD//WATCH</div>
+            <div class="small">Build the current Amsterdam menu package or send it to a connected watch.</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <form method="post" action="{{ url_for('update_watch') }}">
+            <label for="watch-port">Serial port (optional)</label>
+            <input id="watch-port" name="port" placeholder="auto-detect, or /dev/cu.usbmodem…">
+            <div class="btnrow" style="margin-top:10px;">
+              <button class="ghost" type="submit" name="action" value="build">Build package</button>
+              <button class="ghost" type="submit" name="action" value="dry-run">Validate upload</button>
+              <button class="primary" type="submit" name="action" value="upload"
+                      onclick="return confirm('Wake and connect BUD//WATCH, then upload the refreshed menus?');">
+                Build + update watch
+              </button>
+            </div>
+          </form>
+          <div class="small" style="margin-top:10px;">
+            Project: <code>{{ watch_dir }}</code>
+            {% if not watch_ready %}<span class="pill bad" style="margin-left:6px;">not found</span>{% endif %}
+          </div>
+          <div class="small" style="margin-top:6px;">
+            Menu and price changes upload without reflashing. Newly added shop locations are also written to
+            <code>bfwatch_data.h</code> for the next firmware upload.
           </div>
         </div>
       </div>
@@ -3443,7 +4171,7 @@ MAIN_TMPL = """
             </div>
           </form>
           <div class="small" style="margin-top:10px;">Output folder: <code>{{ json_export_dir }}</code></div>
-          <div class="small">Files: <code>manifest.json</code>, <code>shops.json</code>, <code>shop_lookup.json</code>, <code>strains.json</code>, <code>active_offerings.json</code>, <code>menu_entries.json</code>, <code>strain_index.json</code></div>
+          <div class="small">Files: <code>manifest.json</code>, <code>home_summary.json</code>, <code>shops.json</code>, <code>shop_lookup.json</code>, <code>strains.json</code>, <code>active_offerings.json</code>, <code>menu_entries.json</code>, <code>strain_index.json</code></div>
           <div class="small" style="margin-top:8px;">
             Note: these JSON files are export snapshots only; editing them does not update the database.
           </div>
@@ -3461,6 +4189,8 @@ MAIN_TMPL = """
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <span class="pill">shops: {{ db_counts.shops }}</span>
             <span class="pill">menus: {{ db_counts.menus }}</span>
+            <span class="pill">menu images: {{ db_counts.menu_images }}</span>
+            <span class="pill">growers: {{ db_counts.growers }}</span>
             <span class="pill">strains: {{ db_counts.strains }}</span>
             <span class="pill">menu entries: {{ db_counts.menu_entries }}</span>
             <span class="pill">offerings: {{ db_counts.shop_offerings }}</span>
@@ -3472,6 +4202,86 @@ MAIN_TMPL = """
 
     </div>
   </div>
+</body>
+</html>
+"""
+
+GROWERS_TMPL = """
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Manage Growers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>{{ css }}</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        Manage growers
+        <div class="small">The grower list used by add and edit forms</div>
+      </div>
+    </div>
+    <div class="btnrow">
+      <a class="pill" href="{{ url_for('main_menu') }}">Main menu</a>
+      <a class="pill" href="{{ url_for('start') }}">Data entry</a>
+    </div>
+  </div>
+
+  {% if message %}
+    <div id="toast" class="toast {{ message_kind }}">{{ message }}</div>
+  {% endif %}
+
+  <div style="padding:14px; overflow:auto;">
+    <div class="card" style="max-width:760px; margin:0 auto;">
+      <div class="cardHeader">
+        <div>
+          <div style="font-weight:800;">Grower list</div>
+          <div class="small">Removing a grower hides it from future dropdowns; existing menu records keep their saved label.</div>
+        </div>
+        <span class="pill">{{ growers|length }} total</span>
+      </div>
+      <div class="cardBody">
+        <form method="post" action="{{ url_for('add_grower') }}">
+          <label for="grower_name">Add grower</label>
+          <div style="display:grid; grid-template-columns:1fr auto; gap:10px;">
+            <input id="grower_name" name="grower_name" autocomplete="off" placeholder="Grower name" required>
+            <button class="primary" type="submit">Add</button>
+          </div>
+        </form>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Grower</th><th>Used by</th><th>Action</th></tr></thead>
+          <tbody>
+            {% for grower in growers %}
+              <tr>
+                <td>{{ grower.name }}</td>
+                <td class="small">{{ grower.usage_count }} current record{{ '' if grower.usage_count == 1 else 's' }}</td>
+                <td>
+                  <form method="post" action="{{ url_for('delete_grower', grower_id=grower.id) }}"
+                        onsubmit='return confirm({{ ("Remove " ~ grower.name ~ " from the grower dropdown? Existing records will not be changed.")|tojson }});'>
+                    <button class="danger" type="submit">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+            {% if not growers %}
+              <tr><td colspan="3" class="small">No growers configured. You can still enter a one-off grower using “Other grower”.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    const toast = document.getElementById('toast');
+    if (toast) setTimeout(() => { toast.style.display = 'none'; }, 4200);
+    const growerName = document.getElementById('grower_name');
+    if (growerName) growerName.focus();
+  </script>
 </body>
 </html>
 """
@@ -3661,7 +4471,7 @@ SHOP_COVERAGE_TMPL = """
         <div class="cardHeader">
           <div>
             <div style="font-weight:800;">Open map shops not active in the catalog</div>
-            <div class="small">These need a decision: close them, or activate the catalog record if one exists.</div>
+            <div class="small">Promoting a map-only shop creates its catalog row and a manual menu ready for data entry.</div>
           </div>
         </div>
         <div class="cardBody">
@@ -3689,8 +4499,8 @@ SHOP_COVERAGE_TMPL = """
                             <input type="hidden" name="website" value="{{ row.website }}">
                             <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:8px;">
                               <input name="name" value="{{ row.name }}" placeholder="catalog name" required>
-                              <input name="address" placeholder="address" required>
-                              <button class="primary" type="submit">Create catalog</button>
+                              <input name="address" value="{{ row.address or '' }}" placeholder="address" required>
+                              <button class="primary" type="submit">Create + enter menu</button>
                             </div>
                           </form>
                         {% endif %}
@@ -3748,6 +4558,57 @@ SHOP_COVERAGE_TMPL = """
             </table>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+WATCH_UPDATE_TMPL = """
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>BUD//WATCH update</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>{{ css }}</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        BUD//WATCH update
+        <div class="small">Current Budfinder database → watch menu package</div>
+      </div>
+    </div>
+    <div class="btnrow">
+      <a class="pill" href="{{ url_for('main_menu') }}">Main menu</a>
+      <a class="pill" href="{{ url_for('shop_coverage') }}">Shop coverage</a>
+    </div>
+  </div>
+  <div style="padding:14px; overflow:auto;">
+    <div class="card" style="max-width:980px; margin:0 auto;">
+      <div class="cardHeader">
+        <div>
+          <div style="font-weight:800;">{{ 'Completed' if result.ok else 'Update failed' }}</div>
+          <div class="small">Stage: {{ result.stage }} · {{ '%.1f'|format(result.duration_s or 0) }}s</div>
+        </div>
+        <span class="pill {{ 'good' if result.ok else 'bad' }}">
+          {{ 'watch updated' if result.uploaded else ('validated' if result.dry_run and result.ok else ('package ready' if result.ok else 'failed')) }}
+        </span>
+      </div>
+      <div class="cardBody">
+        <div class="small">Project: <code>{{ watch_dir }}</code></div>
+        {% if result.stdout %}
+          <label style="margin-top:14px;">Output</label>
+          <pre style="white-space:pre-wrap; overflow:auto;">{{ result.stdout }}</pre>
+        {% endif %}
+        {% if result.stderr %}
+          <label style="margin-top:14px;">Errors / warnings</label>
+          <pre style="white-space:pre-wrap; overflow:auto; color:var(--bad);">{{ result.stderr }}</pre>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -4291,6 +5152,7 @@ def create_app(
     menus_dir: str,
     scraper_path: Optional[str] = None,
     json_export_dir: Optional[str] = None,
+    watch_dir: Optional[str] = None,
 ) -> Flask:
     """Create the Flask app."""
     app = Flask(__name__)
@@ -4300,6 +5162,7 @@ def create_app(
     app.config["BASE_DIR"] = os.path.dirname(os.path.abspath(__file__))
     app.config["SCRAPER_PATH"] = scraper_path or os.path.join(app.config["BASE_DIR"], DEFAULT_SCRAPER_SCRIPT)
     app.config["JSON_EXPORT_DIR"] = json_export_dir or app.config["BASE_DIR"]
+    app.config["WATCH_DIR"] = os.path.abspath(watch_dir or DEFAULT_BFWATCH_DIR)
 
     def conn() -> sqlite3.Connection:
         """Get a connection and ensure schema exists."""
@@ -4363,6 +5226,8 @@ def create_app(
         return {
             "shops": int(c.execute("SELECT COUNT(*) AS n FROM shops;").fetchone()["n"]),
             "menus": int(c.execute("SELECT COUNT(*) AS n FROM menus;").fetchone()["n"]),
+            "menu_images": int(c.execute("SELECT COUNT(*) AS n FROM menu_images;").fetchone()["n"]),
+            "growers": int(c.execute("SELECT COUNT(*) AS n FROM growers;").fetchone()["n"]),
             "strains": int(c.execute("SELECT COUNT(*) AS n FROM strains;").fetchone()["n"]),
             "menu_entries": int(c.execute("SELECT COUNT(*) AS n FROM menu_entries;").fetchone()["n"]),
             "shop_offerings": int(c.execute("SELECT COUNT(*) AS n FROM shop_offerings;").fetchone()["n"]),
@@ -4384,22 +5249,11 @@ def create_app(
         ).fetchall()
 
     def get_known_growers(c: sqlite3.Connection) -> List[str]:
-        """Return seeded + previously-used grower labels for the dropdowns."""
+        """Return the user-managed grower catalogue used by entry dropdowns."""
         rows = c.execute(
-            """
-            SELECT grower
-            FROM (
-                SELECT grower FROM menu_entries
-                UNION
-                SELECT grower FROM shop_offerings
-            )
-            WHERE TRIM(COALESCE(grower, '')) <> ''
-            ORDER BY LOWER(grower), grower;
-            """
+            "SELECT name FROM growers ORDER BY name COLLATE NOCASE;"
         ).fetchall()
-        values = {str(r["grower"]).strip() for r in rows if str(r["grower"] or "").strip()}
-        values.update(KNOWN_GROWERS)
-        return sorted(values, key=lambda value: value.lower())
+        return [str(r["name"]) for r in rows]
 
     def get_queue_ids(c: sqlite3.Connection) -> List[int]:
         """Shop IDs that are currently 'new' (the processing queue)."""
@@ -4507,17 +5361,44 @@ def create_app(
 
         counts = get_menu_counts(c, only_visible=True)
 
-        local_path = row["local_path"] or ""
-        file_exists = bool(local_path and os.path.exists(local_path))
+        image_rows = c.execute(
+            """
+            SELECT mi.position, mi.image_url, mi.local_path
+            FROM menu_images mi
+            JOIN menus m ON m.id = mi.menu_id
+            WHERE m.shop_id = ?
+            ORDER BY mi.position;
+            """,
+            (shop_id,),
+        ).fetchall()
+        if image_rows:
+            menu_images = [
+                {
+                    "position": int(image["position"]),
+                    "image_url": str(image["image_url"] or ""),
+                    "local_path": str(image["local_path"] or ""),
+                    "file_exists": bool(image["local_path"] and os.path.exists(str(image["local_path"]))),
+                }
+                for image in image_rows
+            ]
+        else:
+            local_path = str(row["local_path"] or "")
+            menu_images = [
+                {
+                    "position": 0,
+                    "image_url": str(row["image_url"] or ""),
+                    "local_path": local_path,
+                    "file_exists": bool(local_path and os.path.exists(local_path)),
+                }
+            ]
 
         return {
             "shop_id": int(row["shop_id"]),
             "shop_name": row["name"],
             "city": row["city"],
-            "menu_local_path": local_path,
-            "menu_image_url": row["image_url"] or "",
+            "menu_images": menu_images,
+            "menu_image_count": len(menu_images),
             "menu_status": row["status"],
-            "menu_file_exists": file_exists,
             "menu_entries": menu_entries,
             "offerings": offerings,
             "menu_entry_count": menu_entry_count,
@@ -4597,7 +5478,9 @@ def create_app(
             "label": "Menus",
             "sql": (
                 "SELECT m.id AS menu_id, s.city AS city, s.name AS shop, "
-                "m.status, m.fetched_at_utc, m.image_url, m.local_path, m.sha256, m.bytes "
+                "m.status, m.fetched_at_utc, "
+                "MAX(1, (SELECT COUNT(*) FROM menu_images mi WHERE mi.menu_id = m.id)) AS image_count, "
+                "m.image_url, m.local_path, m.sha256, m.bytes "
                 "FROM menus m JOIN shops s ON s.id = m.shop_id"
             ),
             "columns": [
@@ -4606,6 +5489,7 @@ def create_app(
                 "shop",
                 "status",
                 "fetched_at_utc",
+                "image_count",
                 "image_url",
                 "local_path",
                 "sha256",
@@ -4823,6 +5707,11 @@ def create_app(
         shops_csv = app.config["SHOPS_CSV"]
         menus_dir = app.config["MENUS_DIR"]
         scraper_path = app.config["SCRAPER_PATH"]
+        watch_dir = app.config["WATCH_DIR"]
+        watch_ready = all(
+            os.path.exists(os.path.join(watch_dir, filename))
+            for filename in ("generate_watch_data.py", "upload_watch_map.py")
+        )
 
         return Response(
             render_template_string(
@@ -4836,8 +5725,84 @@ def create_app(
                 shops_csv=shops_csv,
                 menus_dir=menus_dir,
                 scraper_path=scraper_path,
+                watch_dir=watch_dir,
+                watch_ready=watch_ready,
                 shops_csv_exists=os.path.exists(shops_csv),
                 scraper_exists=os.path.exists(scraper_path),
+            )
+        )
+
+    @app.get("/growers")
+    def growers() -> Response:
+        """Manage the grower catalogue used by data-entry dropdowns."""
+        message = (request.args.get("msg") or "").strip()
+        message_kind = (request.args.get("kind") or "good").strip().lower()
+        if message_kind not in {"good", "bad", "warn"}:
+            message_kind = "good"
+        c = conn()
+        rows = c.execute(
+            """
+            SELECT g.id,
+                   g.name,
+                   (
+                     SELECT COUNT(*) FROM menu_entries me
+                     WHERE LOWER(TRIM(me.grower)) = LOWER(g.name)
+                   ) + (
+                     SELECT COUNT(*) FROM shop_offerings so
+                     WHERE LOWER(TRIM(so.grower)) = LOWER(g.name)
+                   ) AS usage_count
+            FROM growers g
+            ORDER BY g.name COLLATE NOCASE;
+            """
+        ).fetchall()
+        c.close()
+        return Response(
+            render_template_string(
+                GROWERS_TMPL,
+                css=BASE_CSS,
+                growers=rows,
+                message=message,
+                message_kind=message_kind,
+            )
+        )
+
+    @app.post("/growers/add")
+    def add_grower() -> Response:
+        """Add a grower to the managed entry list."""
+        name = re.sub(r"\s+", " ", (request.form.get("grower_name") or "").strip())
+        if not name:
+            return redirect(url_for("growers", kind="bad", msg="Enter a grower name."))
+        if len(name) > 120:
+            return redirect(url_for("growers", kind="bad", msg="Grower names must be 120 characters or fewer."))
+        c = conn()
+        try:
+            c.execute(
+                "INSERT INTO growers(name, created_at) VALUES(?, ?);",
+                (name, utc_now_iso()),
+            )
+            c.commit()
+        except sqlite3.IntegrityError:
+            c.close()
+            return redirect(url_for("growers", kind="warn", msg=f"{name} is already in the grower list."))
+        c.close()
+        return redirect(url_for("growers", msg=f"Added grower: {name}."))
+
+    @app.post("/growers/<int:grower_id>/delete")
+    def delete_grower(grower_id: int) -> Response:
+        """Remove a grower from future dropdowns without rewriting saved records."""
+        c = conn()
+        row = c.execute("SELECT name FROM growers WHERE id = ?;", (grower_id,)).fetchone()
+        if not row:
+            c.close()
+            return redirect(url_for("growers", kind="bad", msg="Grower not found."))
+        name = str(row["name"])
+        c.execute("DELETE FROM growers WHERE id = ?;", (grower_id,))
+        c.commit()
+        c.close()
+        return redirect(
+            url_for(
+                "growers",
+                msg=f"Removed {name} from the dropdown. Existing records were left unchanged.",
             )
         )
 
@@ -4939,7 +5904,7 @@ def create_app(
 
     @app.post("/shops/catalog/create_from_map")
     def create_catalog_shop_from_map() -> Response:
-        """Promote an open map-only coffeeshop into the live catalog."""
+        """Promote a map-only shop and open an editable manual menu for it."""
         city = (request.form.get("map_city") or "").strip()
         website = (request.form.get("website") or "").strip()
         name = (request.form.get("name") or "").strip()
@@ -4977,18 +5942,29 @@ def create_app(
         write_catalog_rows(app.config["SHOPS_CSV"], fieldnames, catalog_rows)
 
         map_row["name"] = name
-        map_row["shop_key"] = derive_shop_key(name, city, website)
+        menu_shop_key = derive_shop_key(name, city, website)
+        ensure_field(map_fields, map_rows, "menu_shop_key", "")
+        if not (map_row.get("shop_key") or "").strip():
+            map_row["shop_key"] = menu_shop_key
+        map_row["menu_shop_key"] = menu_shop_key
         write_location_table(app.config["BASE_DIR"], city, map_fields, map_rows)
 
         c = conn()
         try:
-            upsert_catalog_shop_to_db(c, catalog_row)
+            shop_id = upsert_catalog_shop_to_db(c, catalog_row)
+            ensure_manual_menu_record(c, shop_id, website)
             c.commit()
             export_json_snapshot(c, app.config["JSON_EXPORT_DIR"])
         finally:
             c.close()
 
-        return redirect(url_for("shop_coverage", msg=f"{name} added to the live catalog."))
+        return redirect(
+            url_for(
+                "shop_view",
+                shop_id=shop_id,
+                msg=f"{name} added to the catalog. Enter its current menu, then finish it to publish the offerings.",
+            )
+        )
 
     @app.post("/shops/map/status")
     def map_shop_status() -> Response:
@@ -5255,6 +6231,36 @@ def create_app(
             f"active_offerings={counts.get('active_offerings', 0)})."
         )
         return redirect(url_for("main_menu", msg=msg))
+
+    @app.post("/watch/update")
+    def update_watch() -> Response:
+        """Build the BFWatch menu pack and optionally upload it over USB."""
+        action = (request.form.get("action") or "build").strip().lower()
+        if action not in {"build", "dry-run", "upload"}:
+            return redirect(url_for("main_menu", msg="Unknown BUD//WATCH action."))
+        port = (request.form.get("port") or "").strip()
+        locations_path = os.path.join(
+            app.config["BASE_DIR"],
+            DEFAULT_DATABASE_DIR,
+            "locations",
+            DEFAULT_LOCATION_FILES["Amsterdam"],
+        )
+        result = run_watch_update(
+            app.config["WATCH_DIR"],
+            app.config["DB_PATH"],
+            locations_path,
+            upload=action in {"dry-run", "upload"},
+            dry_run=action == "dry-run",
+            port=port,
+        )
+        return Response(
+            render_template_string(
+                WATCH_UPDATE_TMPL,
+                css=BASE_CSS,
+                result=result,
+                watch_dir=app.config["WATCH_DIR"],
+            )
+        )
 
     @app.get("/queue")
     def queue() -> Response:
@@ -5603,18 +6609,29 @@ def create_app(
 
     @app.get("/shop/<int:shop_id>/menu_file")
     def serve_menu_file(shop_id: int) -> Response:
-        """Serve the locally-downloaded menu image."""
+        """Serve one locally-downloaded image from the current menu."""
+        try:
+            image_index = max(0, int(request.args.get("image_index", "0")))
+        except ValueError:
+            image_index = 0
         c = conn()
         row = c.execute(
             """
-            SELECT m.local_path
+            SELECT CASE
+                     WHEN EXISTS (SELECT 1 FROM menu_images existing WHERE existing.menu_id = m.id)
+                       THEN mi.local_path
+                     ELSE m.local_path
+                   END AS local_path
             FROM menus m
             JOIN shops s ON s.id = m.shop_id
+            LEFT JOIN menu_images mi
+              ON mi.menu_id = m.id
+             AND mi.position = ?
             WHERE m.shop_id = ?
               AND COALESCE(s.show_in_admin, 1) = 1
               AND COALESCE(s.is_closed, 0) = 0;
             """,
-            (shop_id,),
+            (image_index, shop_id),
         ).fetchone()
         c.close()
         if not row:
@@ -5622,7 +6639,7 @@ def create_app(
         path = row["local_path"] or ""
         if not path or not os.path.exists(path):
             return Response("File not found", status=404)
-        return send_file(path, mimetype="image/jpeg", as_attachment=False, download_name=os.path.basename(path))
+        return send_file(path, as_attachment=False, download_name=os.path.basename(path))
 
     @app.post("/shop/<int:shop_id>/add")
     def add_entry(shop_id: int) -> Response:
@@ -6052,6 +7069,11 @@ def main() -> int:
     ap.add_argument("--menus-dir", default=DEFAULT_MENUS_DIR, help="Folder to store downloaded menus.")
     ap.add_argument("--scraper", default="", help="Path to scrape_update_menus.py (optional).")
     ap.add_argument(
+        "--watch-dir",
+        default=DEFAULT_BFWATCH_DIR,
+        help="BFWatch project folder used by the in-app watch updater.",
+    )
+    ap.add_argument(
         "--export-json-dir",
         default="",
         help="Folder for JSON exports. Default for UI/export-only is the database folder.",
@@ -6099,6 +7121,7 @@ def main() -> int:
         menus_dir=menus_dir,
         scraper_path=scraper_path or None,
         json_export_dir=json_export_dir,
+        watch_dir=os.path.abspath(args.watch_dir),
     )
     app.run(host=args.host, port=args.port, debug=False)
     return 0

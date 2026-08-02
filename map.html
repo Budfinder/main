@@ -25,15 +25,15 @@
       ]
     }
   </script>
-  <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
+  <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
 
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
   <!-- Routing Machine CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" integrity="sha384-n6BdBD4Ahcb9IGZDgjgv0hV2a/y2WOCf1n0kEMZDpZySy/Hv1QMAtLIrC3y9oIZD" crossorigin="anonymous" />
 
   <!-- PapaParse for CSV parsing -->
-  <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js"></script>
+  <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js" integrity="sha384-6kRQDsV2kVYRSENnw7WnekWKCx8/Lmv7rFKpDuR2AoIbjlBShlYcs3x0QlE3kuRh" crossorigin="anonymous"></script>
 
   <style>
     :root {
@@ -302,6 +302,10 @@
 
     #map {
       box-sizing: border-box;
+    }
+
+    body.shop-popup-open #map {
+      z-index: 1003;
     }
 
     #instructions {
@@ -879,6 +883,10 @@
       background: linear-gradient(135deg, var(--accent), var(--accent-strong));
       color: var(--button-text, #fffaf4);
       box-shadow: 0 12px 24px rgba(32, 91, 66, 0.18);
+    }
+
+    .selection-actions .selection-link[hidden] {
+      display: none !important;
     }
 
     .selection-actions .ghost-btn {
@@ -3404,8 +3412,9 @@
       height: 34px;
       border-radius: 12px;
       background:
-        linear-gradient(135deg, rgba(249, 198, 93, 0.95), rgba(64, 154, 94, 0.9)),
-        url("images/IMG_5124.ico") center / cover no-repeat;
+        var(--budfinder-brand-mark-image, url("images/budfinder-badge-v3.png"))
+        center / contain
+        no-repeat;
       box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
     }
 
@@ -4308,6 +4317,7 @@
       max-height: 170px;
       overflow-x: hidden;
       overflow-y: auto;
+      scrollbar-gutter: stable;
     }
 
     .popup-strains-count {
@@ -4415,7 +4425,9 @@
     }
 
     .popup-strain-btn {
+      box-sizing: border-box;
       width: 100%;
+      max-width: 100%;
       min-width: 0;
       margin: 0;
       text-align: left;
@@ -6367,7 +6379,7 @@
       color: var(--control-text) !important;
     }
   </style>
-  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260712-3" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260727-ui1" />
   <style>
     .simple-shop-marker {
       position: relative;
@@ -7052,7 +7064,7 @@
   <!-- Top-level controls button -->
   <div id="ui-toggles" data-ready="false">
     <button id="toggle-controls" type="button">Map tools</button>
-    <button id="toggle-shelf" type="button">Map matches</button>
+    <button id="toggle-shelf" type="button">Saved strains</button>
     <button id="clear-selection-toggle" type="button" hidden>Clear Destination</button>
   </div>
   <!-- Main controls panel -->
@@ -7071,7 +7083,7 @@
       <section class="panel-section map-category-shortcuts control-group" aria-labelledby="map-category-title">
         <div class="intent-head">
           <strong id="map-category-title">Show on map</strong>
-          <span>Choose one or more location categories. Swipe sideways to see more.</span>
+          <span>Choose one or more categories to keep the map focused.</span>
         </div>
         <div id="category-filters" role="group" aria-labelledby="map-category-title">
           <!-- Multi-select category controls injected here by JS -->
@@ -7447,9 +7459,9 @@
   </div>
 
   <!-- Leaflet + Routing JS -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-  <script src="scripts/budfinder-logos.js?v=20260720-3"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js" integrity="sha384-Le/Ab4WG5Ezkdf4RS5P5eZrpmvNgcZ4QcTozVDXGoOsTxGroBLM4e9OSqeh6V26n" crossorigin="anonymous"></script>
+  <script src="scripts/budfinder-logos.js?v=20260727-ui1"></script>
   <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
 
   <script>
@@ -7578,7 +7590,9 @@
     let strainCheapestNameCityKeys = null; // Set<string> | null
     let strainCheapestPriceLabel = '';
     let strainIndexRows = null;      // cached JSON strain index
+    let strainIndexRowsPromise = null;
     let activeOfferingsRows = null;  // cached JSON offerings rows
+    let activeOfferingsRowsPromise = null;
     let activeStrainNames = [];      // clickable strain list for UI panel
     let popupStrainsByShopId = new Map();      // shop_id -> [strain names]
     let popupStrainsByNameCity = new Map();    // "name|city" -> [strain names]
@@ -8509,10 +8523,12 @@
       }
       if (window.history && window.history.replaceState) {
         const url = new URL(window.location.href);
-        url.searchParams.set('shops', Array.from(explorerFocusShopIds).join(','));
         url.searchParams.set('source', 'explorer');
         url.searchParams.set('strain', explorerFocusStrainName);
-        url.searchParams.set('strain_shops', Array.from(explorerFocusStrainShopIds).join(','));
+        url.searchParams.delete('shops');
+        url.searchParams.delete('shop_ids');
+        url.searchParams.delete('strain_shops');
+        url.searchParams.delete('all_shops');
         window.history.replaceState({}, document.title, url.href);
       }
       setRouteStatus(`Showing all shops carrying ${explorerFocusStrainName}.`, 'ok');
@@ -9359,8 +9375,7 @@
           hideBtn.textContent = 'Close';
           hideBtn.style.display = 'inline-flex';
         } else {
-          hideBtn.textContent = 'Hide map tools';
-          hideBtn.style.display = 'inline-flex';
+          hideBtn.style.display = 'none';
         }
       }
       updateControlsSummary();
@@ -9586,12 +9601,14 @@
       const explicit = (logoFilename || '').toString().trim();
       if (explicit) filenames.push(explicit);
 
-      [
-        fallbackLogoSlug(loc && loc.shop_key),
-        fallbackLogoSlug(loc && loc.name)
-      ].filter(Boolean).forEach(slug => {
-        filenames.push(`${slug}.png`, `${slug}.jpg`, `${slug}.svg`);
-      });
+      if (options.skipGuesses !== true) {
+        [
+          fallbackLogoSlug(loc && loc.shop_key),
+          fallbackLogoSlug(loc && loc.name)
+        ].filter(Boolean).forEach(slug => {
+          filenames.push(`${slug}.png`, `${slug}.jpg`, `${slug}.svg`);
+        });
+      }
 
       const paths = [];
       const seen = new Set();
@@ -9629,7 +9646,9 @@
     }
 
     function logoCandidates(logoFilename, loc = null, options = {}) {
-      if (window.BudfinderLogos) {
+      const explicitLogo = (logoFilename || '').toString().trim();
+      const localWithoutLogo = !explicitLogo && (loc && loc.shop_key || '').toString().startsWith('ams-');
+      if (window.BudfinderLogos && !localWithoutLogo) {
         return window.BudfinderLogos.candidates({
           filename: logoFilename,
           shopKey: loc && loc.shop_key,
@@ -9637,7 +9656,7 @@
           includeMonogram: options.includeMonogram !== false
         });
       }
-      return fallbackLogoCandidates(logoFilename, loc, options);
+      return fallbackLogoCandidates(logoFilename, loc, { ...options, skipGuesses: localWithoutLogo });
     }
 
     function strainImageCandidates(imageFilename) {
@@ -9752,8 +9771,8 @@
 
     function getSavedToggleHtml(entries, isOpen) {
       const label = isCompactMobileLayout()
-        ? (isOpen ? 'Hide matches' : 'Matches')
-        : (isOpen ? 'Hide map matches' : 'Map matches');
+        ? (isOpen ? 'Hide strains' : 'Strains')
+        : (isOpen ? 'Hide saved strains' : 'Saved strains');
       const visibleEntries = (entries || []).slice(0, 3);
       if (!visibleEntries.length) {
         return `<span class="saved-toggle-content"><span class="saved-toggle-label">${escapeHtml(label)}</span></span>`;
@@ -10455,7 +10474,7 @@
 
       for (const url of candidates) {
         try {
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(url, { cache: 'no-cache' });
           if (!res.ok) continue;
           const data = await res.json();
           let rows = [];
@@ -10495,59 +10514,73 @@
 
     async function loadStrainIndexRows() {
       if (Array.isArray(strainIndexRows)) return strainIndexRows;
+      if (strainIndexRowsPromise) return strainIndexRowsPromise;
 
-      const candidates = [
-        'database/strain_index.json',
-        './database/strain_index.json',
-        '/database/strain_index.json',
-        'strain_index.json',
-        './strain_index.json',
-        '/strain_index.json'
-      ];
-      for (const url of candidates) {
-        try {
-          const res = await fetch(url, { cache: 'no-store' });
-          if (!res.ok) continue;
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            strainIndexRows = data;
-            return strainIndexRows;
+      strainIndexRowsPromise = (async () => {
+        const candidates = [
+          'database/strain_index.json',
+          './database/strain_index.json',
+          '/database/strain_index.json',
+          'strain_index.json',
+          './strain_index.json',
+          '/strain_index.json'
+        ];
+        for (const url of candidates) {
+          try {
+            const res = await fetch(url, { cache: 'no-cache' });
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              strainIndexRows = data;
+              return strainIndexRows;
+            }
+          } catch (_err) {
+            // Try next candidate path.
           }
-        } catch (_err) {
-          // Try next candidate path.
         }
+        throw new Error('No strain index JSON available');
+      })();
+      try {
+        return await strainIndexRowsPromise;
+      } finally {
+        strainIndexRowsPromise = null;
       }
-
-      throw new Error('No strain index JSON available');
     }
 
     async function loadActiveOfferingsRows() {
       if (Array.isArray(activeOfferingsRows)) return activeOfferingsRows;
+      if (activeOfferingsRowsPromise) return activeOfferingsRowsPromise;
 
-      const candidates = [
-        'database/active_offerings.json',
-        './database/active_offerings.json',
-        '/database/active_offerings.json',
-        'active_offerings.json',
-        './active_offerings.json',
-        '/active_offerings.json'
-      ];
-      for (const url of candidates) {
-        try {
-          const res = await fetch(url, { cache: 'no-store' });
-          if (!res.ok) continue;
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            activeOfferingsRows = data;
-            popupMenuBatchSignal = buildPopupMenuBatchSignal(activeOfferingsRows.filter(isActiveOfferingRowAvailable));
-            return activeOfferingsRows;
+      activeOfferingsRowsPromise = (async () => {
+        const candidates = [
+          'database/active_offerings.json',
+          './database/active_offerings.json',
+          '/database/active_offerings.json',
+          'active_offerings.json',
+          './active_offerings.json',
+          '/active_offerings.json'
+        ];
+        for (const url of candidates) {
+          try {
+            const res = await fetch(url, { cache: 'no-cache' });
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              activeOfferingsRows = data;
+              popupMenuBatchSignal = buildPopupMenuBatchSignal(activeOfferingsRows.filter(isActiveOfferingRowAvailable));
+              return activeOfferingsRows;
+            }
+          } catch (_err) {
+            // Try next candidate path.
           }
-        } catch (_err) {
-          // Try next candidate path.
         }
+        throw new Error('No active offerings JSON available');
+      })();
+      try {
+        return await activeOfferingsRowsPromise;
+      } finally {
+        activeOfferingsRowsPromise = null;
       }
-
-      throw new Error('No active offerings JSON available');
     }
 
     function formatPriceAmount(value) {
@@ -11481,10 +11514,18 @@
         const popupRect = popupElement.getBoundingClientRect();
         const mapRect = mapElement.getBoundingClientRect();
         const padding = 12;
-        const leftEdge = mapRect.left + padding;
-        const rightEdge = mapRect.right - padding;
-        const topEdge = mapRect.top + padding;
-        const bottomEdge = mapRect.bottom - padding;
+        const viewportInsets = clampViewportInsets(getMapViewportInsets(), mapRect, {
+          minVisibleWidthRatio: 0.56,
+          minVisibleHeightRatio: 0.54
+        });
+        const leftInset = Math.max(padding, viewportInsets.paddingTopLeft[0]);
+        const topInset = Math.max(padding, viewportInsets.paddingTopLeft[1]);
+        const rightInset = Math.max(padding, viewportInsets.paddingBottomRight[0]);
+        const bottomInset = Math.max(padding, viewportInsets.paddingBottomRight[1]);
+        const leftEdge = mapRect.left + leftInset;
+        const rightEdge = mapRect.right - rightInset;
+        const topEdge = mapRect.top + topInset;
+        const bottomEdge = mapRect.bottom - bottomInset;
         let panX = 0;
         let panY = 0;
 
@@ -12063,25 +12104,28 @@
 
     function bindDbShopIdToLocation(loc) {
       let shopId = null;
+      const locationKey = (loc.shop_key || '').toString().trim();
+      const explicitMenuKey = (loc.menu_shop_key || '').toString().trim();
+      const isLocalOnlyLocation = locationKey.startsWith('ams-') && !explicitMenuKey;
 
-      const byShopKey = (loc.shop_key || '').toString().trim();
+      const byShopKey = explicitMenuKey || (locationKey.startsWith('cs-') ? locationKey : '');
       if (byShopKey && dbByShopKey.has(byShopKey)) {
         shopId = dbByShopKey.get(byShopKey);
       }
 
       const byPath = normaliseUrlPath(loc.website);
-      if (!shopId && byPath && dbByPath.has(byPath)) {
+      if (!shopId && !isLocalOnlyLocation && byPath && dbByPath.has(byPath)) {
         shopId = dbByPath.get(byPath);
       }
 
-      if (!shopId) {
+      if (!shopId && !isLocalOnlyLocation) {
         const nc = normaliseNameCityKey(loc.name, loc.city || '');
         if (dbByNameCity.has(nc)) {
           shopId = dbByNameCity.get(nc);
         }
       }
 
-      if (!shopId) {
+      if (!shopId && !isLocalOnlyLocation) {
         const nk = normaliseText(loc.name);
         if (dbByUniqueName.has(nk)) {
           shopId = dbByUniqueName.get(nk);
@@ -12233,7 +12277,19 @@
         return;
       }
 
-      await applyStrainFilter(explorerFocusStrainName);
+      const applied = await applyStrainFilter(explorerFocusStrainName);
+      if (applied) {
+        const canonicalName = getCanonicalStrainName(explorerFocusStrainName);
+        explorerFocusStrainName = canonicalName || explorerFocusStrainName;
+        if (!(explorerFocusStrainShopIds instanceof Set) || !explorerFocusStrainShopIds.size) {
+          explorerFocusStrainShopIds = strainAllowedShopIds instanceof Set
+            ? new Set(strainAllowedShopIds)
+            : null;
+        }
+        globalSearchAppliedStrainKey = normaliseText(explorerFocusStrainName);
+        const searchInput = document.getElementById('destination-search');
+        if (searchInput) searchInput.value = explorerFocusStrainName;
+      }
       selectInitialExplorerShopIfUnique();
       const isNarrowedExplorerFocus = canShowAllExplorerStrainShops();
       setRouteStatus(
@@ -12561,7 +12617,7 @@
       ];
       for (const url of jsonCandidates) {
         try {
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(url, { cache: 'no-cache' });
           if (!res.ok) continue;
           const data = await res.json();
           const files = Array.isArray(data)
@@ -12590,7 +12646,7 @@
       ];
       for (const url of dirCandidates) {
         try {
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(url);
           if (!res.ok) continue;
           const html = await res.text();
           const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -12714,6 +12770,10 @@
           coords: [parseFloat(r.lat), parseFloat(r.lng)],
           website: r.website,
           shop_key: (r.shop_key || '').toString().trim(),
+          menu_shop_key: (r.menu_shop_key || '').toString().trim(),
+          address: (r.address || '').toString().trim(),
+          source: (r.source || '').toString().trim(),
+          source_url: (r.source_url || '').toString().trim(),
           logo: r.logo,
           visited: false,
           rating: 0,
@@ -12735,7 +12795,7 @@
 
         // Parse other boolean Y/N fields as category flags.
         Object.entries(r).forEach(([k, v]) => {
-          if (['name','lat','lng','website','shop_key','visited','rating','logo'].includes(k)) return;
+          if (['name','lat','lng','website','shop_key','menu_shop_key','address','source','source_url','visited','rating','logo'].includes(k)) return;
           if (typeof v === 'string' && v.trim() !== '') {
             obj[k] = v.toLowerCase() === 'y';
           }
@@ -12798,7 +12858,7 @@
       // Determine which keys are boolean flags (Y/N) and not special fields.
       categoryOptions = Object.keys(locations[0]).filter(
         key =>
-          !['name','coords','website','shop_key','visited','rating','logo','Closed','db_shop_id','db_shop_unavailable'].includes(key) &&
+          !['name','coords','website','shop_key','menu_shop_key','address','source','source_url','visited','rating','logo','Closed','db_shop_id','db_shop_unavailable'].includes(key) &&
           typeof locations[0][key] === 'boolean'
       );
 
@@ -13054,6 +13114,7 @@
           })
           .on('popupopen', () => {
             activePopupLocationIndex = i;
+            document.body.classList.add('shop-popup-open');
             updateControlsSummary();
             syncItineraryActionButtons();
             if (isCoffeeShop) {
@@ -13065,6 +13126,7 @@
               activePopupLocationIndex = null;
               updateControlsSummary();
             }
+            document.body.classList.remove('shop-popup-open');
           });
 
         marker._usesLogoIcon = usesLogoIcon;
@@ -14678,6 +14740,8 @@
     }
 
     function getLocationSourceLabel(loc) {
+      const explicitSource = (loc && loc.source || '').toString().trim();
+      if (explicitSource) return explicitSource;
       const meta = getShopSourceMeta(loc);
       const sourceUrl = meta && (meta.shop_url || meta.image_url);
       if (sourceUrl) {
@@ -14891,6 +14955,7 @@
       const checkedDate = formatDisplayDate(menuUpdatedAt);
       const confidence = getConfidenceInfo(loc);
       const isArea = isAreaLocation(loc);
+      const hasMenuRecord = Number.isFinite(loc.db_shop_id);
 
       if (nameEl) nameEl.textContent = loc.name || 'Destination';
       if (summaryEl) {
@@ -14917,16 +14982,18 @@
           : 0;
         const nearbyCopy = isArea
           ? `${nearbyCoffeeShopCount} coffeeshop${nearbyCoffeeShopCount === 1 ? '' : 's'} near this area anchor. Use search to narrow nearby stops.`
+          : !hasMenuRecord
+          ? `No menu is currently available in Budfinder. Source: ${getLocationSourceLabel(loc)}.`
           : savedMatches.length
           ? `${savedMatches.length} saved strain${savedMatches.length === 1 ? '' : 's'} matched here.`
           : strains.length
           ? `${strains.length} listed strain${strains.length === 1 ? '' : 's'} in the current menu data.`
           : 'Menu matches are still loading for this shop.';
-        metaEl.textContent = isArea
+        metaEl.textContent = isArea || !hasMenuRecord
           ? nearbyCopy
           : `${nearbyCopy} ${priceInsight.text} ${freshnessLabel}${checkedDate ? ` · checked ${checkedDate}` : ' · check date unknown'}. ${confidence.label}; availability is not guaranteed.`;
       }
-      if (cityEl) cityEl.textContent = loc.city || inferCityFromCsvPath(currentCsvPath) || 'Amsterdam';
+      if (cityEl) cityEl.textContent = loc.address || loc.city || inferCityFromCsvPath(currentCsvPath) || 'Amsterdam';
       if (etaEl) etaEl.textContent = etaLabel
         ? `${etaLabel} ${modeText.toLowerCase()}`
         : (lastPosition ? 'Distance ready' : 'Set Starting point');
@@ -16812,7 +16879,7 @@
           freshnessLabel ? `<span class="best-match-badge is-fresh">${escapeHtml(freshnessLabel === 'Fresh' ? 'Fresh data' : freshnessLabel)}</span>` : ''
         ].filter(Boolean).join('');
         const inItinerary = !!item.inItinerary;
-        const researchUrl = Number.isFinite(Number(loc.db_shop_id))
+        const researchUrl = loc.db_shop_id != null && Number.isFinite(Number(loc.db_shop_id))
           ? priceMenusUrl({
               shopId: loc.db_shop_id,
               strain: getCanonicalStrainName(strainFilterText)

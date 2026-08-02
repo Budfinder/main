@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-app-version="1.24" data-app-updated="30 July 2026">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Budfinder | Find the right Amsterdam coffeeshop in minutes</title>
-  <meta name="description" content="Search an Amsterdam strain, coffeeshop or neighbourhood and compare three ranked matches by price, distance and menu freshness." />
+  <meta name="description" content="Search an Amsterdam strain, coffeeshop or neighbourhood and explore every matching place with current price and menu-freshness signals." />
   <link rel="canonical" href="https://budfinder.org/" />
   <meta property="og:title" content="Budfinder | Find the right Amsterdam coffeeshop in minutes" />
-  <meta property="og:description" content="Search a strain, shop or neighbourhood. Compare ranked matches by price, distance and menu freshness." />
+  <meta property="og:description" content="Search a strain, shop or neighbourhood and explore every matching Amsterdam coffeeshop with price and menu-freshness signals." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://budfinder.org/" />
   <meta property="og:image" content="https://budfinder.org/static/images/budfinder-social.png" />
@@ -22,7 +22,7 @@
       "@type": "WebSite",
       "name": "Budfinder",
       "url": "https://budfinder.org/",
-      "description": "Search Amsterdam coffeeshop listings and compare known price, distance and menu-freshness signals.",
+      "description": "Search Amsterdam coffeeshop listings and explore every match using known price, location and menu-freshness signals.",
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
@@ -33,7 +33,7 @@
       }
     }
   </script>
-  <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
+  <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
   <style>
     :root {
       color-scheme: dark;
@@ -1263,6 +1263,85 @@
       align-content: start;
     }
 
+    .location-price-panel {
+      grid-column: 1 / -1;
+    }
+
+    .location-price-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .location-price-head p {
+      max-width: 640px;
+      margin: 0;
+      text-align: right;
+    }
+
+    .location-price-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .location-price-card {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      background: var(--panel-strong);
+      color: var(--ink);
+      text-decoration: none;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+    }
+
+    .location-price-card:hover,
+    .location-price-card:focus-visible {
+      border-color: var(--accent);
+      background: var(--control-bg-hover, var(--panel-alt));
+      transform: translateY(-2px);
+    }
+
+    .location-price-card span,
+    .location-price-card small {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .location-price-card span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .location-price-card strong {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(22px, 2.4vw, 30px);
+    }
+
+    .location-price-card small {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .location-price-empty {
+      grid-column: 1 / -1;
+      margin: 0;
+      padding: 14px;
+      border: 1px dashed var(--panel-border);
+      border-radius: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
     .insight-list {
       display: grid;
       gap: 7px;
@@ -1646,6 +1725,18 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .location-price-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .location-price-head {
+        display: grid;
+      }
+
+      .location-price-head p {
+        text-align: left;
+      }
+
       .board-head {
         display: grid;
       }
@@ -1676,24 +1767,49 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260712-3" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260727-ui1" />
   <style>
     .hero-search-first {
-      min-height: min(820px, calc(100svh - 40px));
-      align-items: center;
+      min-height: auto;
+      grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+      grid-template-rows: auto 1fr;
+      align-items: start;
+      column-gap: clamp(28px, 4.5vw, 62px);
+      row-gap: 0;
       padding-top: 28px;
-      padding-bottom: 54px;
+      padding-bottom: clamp(44px, 6vw, 72px);
+    }
+
+    .hero-brand-row {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px 24px;
+      min-height: 44px;
+      margin-bottom: clamp(22px, 3vw, 36px);
+    }
+
+    .hero-brand-row .brand {
+      color: var(--ink);
+    }
+
+    .hero-brand-row .kicker {
+      flex: 0 0 auto;
     }
 
     .hero-search-first .hero-copy {
+      grid-column: 1;
+      align-self: start;
       max-width: 720px;
     }
 
     .hero-search-first h1 {
-      max-width: 12ch;
-      margin-top: 18px;
-      font-size: clamp(48px, 6.2vw, 86px);
-      line-height: 0.94;
+      max-width: 11.5ch;
+      margin-top: 0;
+      font-size: clamp(48px, 5.6vw, 78px);
+      line-height: 0.96;
+      letter-spacing: -0.025em;
     }
 
     .hero-search-first .lead {
@@ -1706,11 +1822,29 @@
       --muted: #c7d9d0;
       --control-text: #f8fff9;
       --control-muted: #c7d9d0;
-      margin-top: 30px;
+      margin-top: 24px;
       padding: 8px;
       border: 1px solid rgba(153, 255, 203, 0.3);
       background: rgba(4, 14, 12, 0.84);
       box-shadow: 0 18px 54px rgba(0, 0, 0, 0.34), 0 0 32px rgba(77, 244, 154, 0.1);
+    }
+
+    .hero-search-first .hero-media {
+      grid-column: 2;
+      align-self: start;
+      justify-content: flex-start;
+      padding-top: 2px;
+    }
+
+    .hero-search-first .hero-image-card {
+      overflow: hidden;
+      border-radius: 22px;
+      transform: none;
+    }
+
+    .hero-search-first .hero-image-card img {
+      height: clamp(300px, 31vw, 404px);
+      border-radius: 15px;
     }
 
     .hero-search .search-input-label {
@@ -1800,11 +1934,14 @@
     @media (max-width: 900px) {
       .hero-search-first {
         min-height: 0;
+        grid-template-columns: 1fr;
         padding-top: 18px;
       }
 
       .hero-search-first .hero-media {
+        grid-column: 1;
         order: 2;
+        margin-top: 24px;
       }
 
     }
@@ -1834,11 +1971,23 @@
       }
 
       .hero-search-first h1 {
-        font-size: clamp(43px, 13vw, 58px);
+        max-width: 12ch;
+        font-size: clamp(40px, 11.5vw, 52px);
       }
 
       .hero-search-first {
         padding-top: 10px;
+      }
+
+      .hero-brand-row {
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .hero-brand-row .kicker {
+        min-height: 28px;
+        padding: 5px 9px;
+        font-size: 11px;
       }
 
       .hero-search {
@@ -1901,21 +2050,24 @@
 
   <main class="page">
     <section class="hero hero-search-first" aria-labelledby="home-title">
+      <div class="hero-brand-row">
+        <a class="brand budfinder-brand-lockup" href="index.html" aria-label="Budfinder home">
+          <span class="budfinder-brand-mark" aria-hidden="true"></span>
+          <span class="budfinder-brand-name">Budfinder</span>
+        </a>
+        <span class="kicker" id="home-personal-greeting">Netherlands coffeeshop decision engine</span>
+      </div>
       <div class="hero-copy">
-        <div class="brand">
-          <img src="images/IMG_5124.ico" alt="" />
-          <span>Budfinder</span>
-        </div>
-        <span class="kicker" id="home-personal-greeting">Amsterdam coffeeshop decision engine</span>
-        <h1 id="home-title">Find the right Amsterdam coffeeshop—in minutes.</h1>
-        <p class="lead">Search a strain, shop or neighbourhood. Every result shows price, distance and when its menu was last checked.</p>
+        <h1 id="home-title">Find the right coffeeshop in minutes.</h1>
+        <p class="lead">Search a strain, shop or neighbourhood. Explore every match with known prices and clear menu-freshness signals.</p>
 
         <form id="home-search-form" class="home-search hero-search" action="map.html" aria-label="Search Budfinder">
           <label class="search-input-label" for="home-search-input">Strain, shop or neighbourhood</label>
           <div class="search-row">
-            <input id="home-search-input" name="search" type="search" placeholder="Gelato, Family First, De Pijp…" autocomplete="off" enterkeyhint="search" />
-            <button class="primary-btn" id="home-search-submit" type="submit">Show my best matches</button>
+            <input id="home-search-input" name="search" type="search" placeholder="Gelato, Family First, De Pijp…" autocomplete="off" enterkeyhint="search" list="home-search-suggestions" />
+            <button class="primary-btn" id="home-search-submit" type="submit">Explore matching shops</button>
           </div>
+          <datalist id="home-search-suggestions"></datalist>
         </form>
 
         <div class="intent-actions" aria-label="Quick intents">
@@ -1924,16 +2076,18 @@
           <a class="intent-action" href="map.html?source=home&amp;intent=itinerary">Plan a route</a>
         </div>
 
-        <p class="availability-note">Menu availability changes. Budfinder shows planning intelligence, never guaranteed stock. Location stays off until you choose a location feature.</p>
+        <p class="availability-note">Menus change. Use Budfinder to plan, then check before travelling. Location stays off until you choose a location feature.</p>
       </div>
 
       <aside class="hero-media" aria-label="Budfinder map preview">
         <picture class="hero-image-card">
-          <img src="static/images/budfinder-hero.png" width="1672" height="941" loading="eager" alt="Budfinder map showing ranked Amsterdam coffeeshop stops and a walking route." onerror="this.onerror=null; this.src='images/budfinder-hero.png';" />
+          <source srcset="static/images/budfinder-hero.avif" type="image/avif" />
+          <source srcset="static/images/budfinder-hero.webp" type="image/webp" />
+          <img src="static/images/budfinder-hero.png" width="1672" height="941" loading="lazy" fetchpriority="low" alt="Budfinder map showing Amsterdam coffeeshop results and a walking route." onerror="this.onerror=null; this.src='images/budfinder-hero.png';" />
         </picture>
         <div class="hero-caption" aria-hidden="true">
-          <span>Three ranked matches</span>
-          <span>Price · distance · freshness</span>
+          <span>Explore every match</span>
+          <span>Price · location · freshness</span>
         </div>
       </aside>
     </section>
@@ -1950,17 +2104,29 @@
         <article class="insight-panel coverage-panel">
           <span>Data coverage</span>
           <div class="coverage-counts">
-            <span><strong id="catalog-shop-count">Loading…</strong><small id="catalog-shop-label">selected-city coffeeshops</small></span>
-            <span><strong id="catalog-listing-count">Loading…</strong><small>menu listings</small></span>
+            <span><strong id="catalog-shop-count">Loading…</strong><small id="catalog-shop-label">mapped Amsterdam shops</small></span>
+            <span><strong id="catalog-listing-count">Loading…</strong><small>active Amsterdam listings</small></span>
           </div>
-          <p id="coverage-definition">The coffeeshop figure follows the city selected in the map’s location-file setting. One listing is one strain-and-price row in the latest source export.</p>
+          <p id="coverage-definition">A mapped shop is an open Amsterdam coffeeshop marker. One active listing is one current strain-and-price row.</p>
           <p id="coverage-filter-note" class="coverage-filter-note">Current market signals are loading.</p>
         </article>
         <a class="insight-panel market-signal-card" href="database.html" aria-label="Open the strain price guide">
-          <span>Average strain price</span>
+          <span>Nationwide average strain price</span>
           <strong id="home-average-price">Loading…</strong>
           <p>The mean of each strain’s current average price, so heavily stocked strains do not dominate.</p>
         </a>
+        <article class="insight-panel location-price-panel">
+          <div class="location-price-head">
+            <div>
+              <span>Prices around the Netherlands</span>
+              <strong>Five active locations</strong>
+            </div>
+            <p>Each figure is precomputed from that location’s active listings in the same database snapshot.</p>
+          </div>
+          <div id="random-location-prices" class="location-price-grid" aria-live="polite">
+            <p class="location-price-empty">Loading location price averages…</p>
+          </div>
+        </article>
         <article class="insight-panel market-list-card">
           <span>Most commonly stocked strains</span>
           <strong id="home-most-common">Loading…</strong>
@@ -2000,814 +2166,9 @@
     <p class="note">For adults planning responsibly. Follow local laws and coffeeshop rules, and check before travelling across town for a specific item.</p>
   </main>
 
-  <script src="scripts/budfinder-logos.js?v=20260720-3"></script>
+  <script src="scripts/budfinder-logos.js?v=20260727-ui1"></script>
   <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
   <script src="scripts/budfinder-page-settings.js?v=20260720-name2"></script>
-  <script>
-    (() => {
-      const APP_VERSION = '1.21';
-      const APP_UPDATED = '20 July 2026';
-      const state = {
-        shops: [],
-        offerings: [],
-        marketSnapshot: null,
-        shopLogoByKey: new Map(),
-        strainImageByKey: new Map(),
-        shopCards: [],
-        strainCards: []
-      };
-
-      const shopShowcase = document.getElementById('shop-showcase');
-      const strainShowcase = document.getElementById('strain-showcase');
-      const appVersionEl = document.getElementById('app-version');
-      const appUpdatedEl = document.getElementById('app-updated');
-      if (appVersionEl) appVersionEl.textContent = `v${APP_VERSION}`;
-      if (appUpdatedEl) appUpdatedEl.textContent = APP_UPDATED;
-      const showcaseStatus = document.getElementById('showcase-status');
-      const shuffleBtn = document.getElementById('shuffle-showcase-btn');
-      const insightsEl = document.getElementById('amsterdam-insights');
-      const personalGreetingEl = document.getElementById('home-personal-greeting');
-      const homeSearchSubmitEl = document.getElementById('home-search-submit');
-
-      function currentUserName() {
-        return window.BudfinderPersonalisation
-          ? window.BudfinderPersonalisation.userName()
-          : '';
-      }
-
-      function applyHomePersonalisation() {
-        const name = currentUserName();
-        if (personalGreetingEl) {
-          personalGreetingEl.textContent = name
-            ? `Welcome back, ${name}`
-            : 'Amsterdam coffeeshop decision engine';
-        }
-        if (homeSearchSubmitEl) {
-          homeSearchSubmitEl.textContent = name
-            ? `Show best matches for ${name}`
-            : 'Show my best matches';
-        }
-      }
-
-      window.addEventListener('budfinder:namechange', applyHomePersonalisation);
-      applyHomePersonalisation();
-
-      function escapeHtml(value) {
-        return String(value == null ? '' : value)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#39;');
-      }
-
-      function normalise(value) {
-        return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
-      }
-
-      function parseCsvLine(line) {
-        const out = [];
-        let cur = '';
-        let inQuotes = false;
-        for (let i = 0; i < line.length; i += 1) {
-          const ch = line[i];
-          if (ch === '"') {
-            if (inQuotes && line[i + 1] === '"') {
-              cur += '"';
-              i += 1;
-            } else {
-              inQuotes = !inQuotes;
-            }
-          } else if (ch === ',' && !inQuotes) {
-            out.push(cur);
-            cur = '';
-          } else {
-            cur += ch;
-          }
-        }
-        out.push(cur);
-        return out;
-      }
-
-      async function loadJson(path, fallback) {
-        const res = await fetch(path, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`Could not load ${path}`);
-        return res.json();
-      }
-
-      async function loadText(path, fallback = '') {
-        const res = await fetch(path, { cache: 'no-store' });
-        if (!res.ok) return fallback;
-        return res.text();
-      }
-
-      function shuffle(items) {
-        const copy = items.slice();
-        for (let i = copy.length - 1; i > 0; i -= 1) {
-          const j = Math.floor(Math.random() * (i + 1));
-          const tmp = copy[i];
-          copy[i] = copy[j];
-          copy[j] = tmp;
-        }
-        return copy;
-      }
-
-      const rareVisitSeed = `${Date.now()}-${Math.random()}`;
-      const LOCATION_DATA_STORAGE_KEY = 'budfinder_location_data_csv_path';
-
-      function selectedCityFromLocationPreference() {
-        let selectedPath = '';
-        try {
-          const stored = window.localStorage.getItem(LOCATION_DATA_STORAGE_KEY);
-          if (stored) {
-            try {
-              selectedPath = JSON.parse(stored);
-            } catch (_err) {
-              selectedPath = stored;
-            }
-          }
-        } catch (_err) {
-          // Storage is optional; Amsterdam remains the default city.
-        }
-        if (typeof selectedPath !== 'string' || !selectedPath.trim()) return 'Amsterdam';
-        let filename = selectedPath.split(/[?#]/)[0].split('/').pop() || '';
-        try {
-          filename = decodeURIComponent(filename);
-        } catch (_err) {
-          // Keep the original filename if a stored path is malformed.
-        }
-        const city = filename
-          .replace(/\.csv$/i, '')
-          .replace(/([a-z])([A-Z])/g, '$1 $2')
-          .replace(/[_-]+/g, ' ')
-          .replace(/\s+loc(?:ation)?\s*\d*$/i, '')
-          .replace(/\s+/g, ' ')
-          .trim();
-        if (!city) return 'Amsterdam';
-        return city
-          .split(' ')
-          .filter(Boolean)
-          .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-          .join(' ');
-      }
-
-      function formatDate(value) {
-        if (!value) return '';
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return '';
-        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-      }
-
-      function parseTime(value) {
-        const time = new Date(value || '').getTime();
-        return Number.isFinite(time) ? time : null;
-      }
-
-      function offeringDateSource(row) {
-        const source = row || {};
-        const candidates = [
-          source.source_menu_date,
-          source.menu_date,
-          source.listing_date,
-          source.menu_changed_at_utc,
-          source.checked_at,
-          source.checked_at_utc,
-          source.source_checked_at,
-          source.source_updated_at,
-          source.source_seen_at,
-          source.scraped_at,
-          source.scraped_at_utc,
-          source.fetched_at_utc,
-          source.created_at
-        ];
-        return candidates.find(value => parseTime(value) !== null) || '';
-      }
-
-      function latestTrustedDate(items) {
-        return (Array.isArray(items) ? items : [])
-          .map(offeringDateSource)
-          .filter(Boolean)
-          .sort()
-          .pop() || '';
-      }
-
-      function freshnessLabel(value) {
-        if (!value) return 'Menu date unknown';
-        const date = new Date(value);
-        if (Number.isNaN(date.getTime())) return 'Menu date unknown';
-        return `Menu changed ${formatDate(value)}`;
-      }
-
-      function priceLabel(amount, currency, unit) {
-        const numeric = Number(amount);
-        if (!Number.isFinite(numeric) || numeric <= 0) return 'Price unknown';
-        const money = Number.isInteger(numeric) ? String(numeric) : numeric.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
-        const token = currency || 'EUR';
-        const prefix = token === 'EUR' ? 'EUR ' : token;
-        return `From ${prefix}${money}/${unit || 'g'}`;
-      }
-
-      function plainPriceLabel(amount) {
-        const numeric = Number(amount);
-        if (!Number.isFinite(numeric) || numeric <= 0) return 'Price unknown';
-        return `€${numeric.toFixed(Number.isInteger(numeric) ? 0 : 2).replace(/0+$/, '').replace(/\.$/, '')}/g`;
-      }
-
-      function strainMapUrl(card) {
-        const url = new URL('map.html', window.location.href);
-        url.searchParams.set('source', 'home');
-        url.searchParams.set('strain', card.name);
-        if (card.shopIds && card.shopIds.length) url.searchParams.set('strain_shops', card.shopIds.join(','));
-        return url.pathname.split('/').pop() + url.search;
-      }
-
-      function initials(value, fallback) {
-        const parts = String(value || '').trim().split(/\s+/).filter(Boolean);
-        return (parts.slice(0, 2).map(part => part.charAt(0).toUpperCase()).join('') || fallback).slice(0, 2);
-      }
-
-      function displayName(value) {
-        const acronyms = new Set(['ak', 'amg', 'bb', 'bm', 'cbd', 'g13', 'gsc', 'mac', 'og', 'rs11', 'thc']);
-        return String(value || '')
-          .trim()
-          .split(/\s+/)
-          .map(part => {
-            if (/^[A-Z0-9]{2,}$/.test(part)) return part;
-            return part
-              .split('-')
-              .map(piece => {
-                const lower = piece.toLowerCase();
-                if (acronyms.has(lower) || (/\d/.test(piece) && piece.length <= 5)) return piece.toUpperCase();
-                return piece ? piece.charAt(0).toUpperCase() + piece.slice(1).toLowerCase() : piece;
-              })
-              .join('-');
-          })
-          .join(' ');
-      }
-
-      function isRecent(value, days) {
-        const date = new Date(value || '');
-        if (Number.isNaN(date.getTime())) return false;
-        return (Date.now() - date.getTime()) <= days * 86400000;
-      }
-
-      function shopLogoCandidates(shopKey, shopName) {
-        const explicit = state.shopLogoByKey.get(String(shopKey || '').trim());
-        return window.BudfinderLogos
-          ? window.BudfinderLogos.candidates({ filename: explicit, shopKey, shopName })
-          : [];
-      }
-
-      function shopLogoHtml(shop) {
-        const candidates = shopLogoCandidates(shop.shop_key, shop.name);
-        const fallback = `<span class="shop-art-fallback">${escapeHtml(initials(shop.name, 'CS'))}</span>`;
-        if (!candidates.length) return `<span class="shop-art">${fallback}</span>`;
-        return `<span class="shop-art"><img src="${escapeHtml(candidates[0])}" alt="${escapeHtml(shop.name)} logo" data-candidates="${escapeHtml(candidates.join('|'))}" data-idx="0" loading="lazy" onerror="handleHomeShopLogoError(this)" />${fallback}</span>`;
-      }
-
-      function strainImageCandidates(name) {
-        const filename = state.strainImageByKey.get(normalise(name));
-        if (!filename) return [];
-        return Array.from(new Set([
-          `images/strains/${encodeURIComponent(filename)}`,
-          `images/strains/${filename}`
-        ]));
-      }
-
-      function strainArtHtml(name) {
-        const candidates = strainImageCandidates(name);
-        const fallback = `<span class="strain-art-fallback">${escapeHtml(initials(name, 'ST'))}</span>`;
-        if (!candidates.length) return `<span class="strain-art">${fallback}</span>`;
-        return `<span class="strain-art"><img src="${escapeHtml(candidates[0])}" alt="${escapeHtml(name)} strain art" data-candidates="${escapeHtml(candidates.join('|'))}" data-idx="0" loading="lazy" onerror="handleHomeStrainImageError(this)" />${fallback}</span>`;
-      }
-
-      window.handleHomeShopLogoError = img => {
-        if (window.BudfinderLogos && window.BudfinderLogos.advanceImage(img)) return;
-        img.remove();
-      };
-
-      window.handleHomeStrainImageError = window.handleHomeShopLogoError;
-
-      async function loadShopLogoMap() {
-        try {
-          const index = await loadJson('database/locations/index.json', null);
-          const files = Array.isArray(index && index.files) ? index.files : [];
-          const texts = await Promise.all(files.map(file => loadText(`database/locations/${file}`, '')));
-          texts.forEach(csvText => {
-            const lines = String(csvText || '').split(/\r?\n/).filter(line => line.trim());
-            if (lines.length < 2) return;
-            const headers = parseCsvLine(lines[0]).map(normalise);
-            const keyIndex = headers.indexOf('shop_key');
-            const logoIndex = headers.indexOf('logo');
-            if (keyIndex < 0 || logoIndex < 0) return;
-            lines.slice(1).forEach(line => {
-              const cells = parseCsvLine(line);
-              const shopKey = (cells[keyIndex] || '').trim();
-              const logo = (cells[logoIndex] || '').trim();
-              if (shopKey && logo && !state.shopLogoByKey.has(shopKey)) state.shopLogoByKey.set(shopKey, logo);
-            });
-          });
-        } catch (_err) {
-          // Logo hints are optional. Derived filenames still cover many shops.
-        }
-      }
-
-      async function loadStrainImageMap() {
-        const csv = await loadText('database/strain_image_map.csv', '');
-        const lines = String(csv || '').split(/\r?\n/).filter(line => line.trim());
-        lines.slice(1).forEach(line => {
-          const cells = parseCsvLine(line);
-          const name = (cells[0] || '').trim();
-          const image = (cells[1] || '').trim();
-          if (name && image) state.strainImageByKey.set(normalise(name), image);
-        });
-      }
-
-      function buildShowcaseData() {
-        const shopsById = new Map(state.shops.map(shop => [String(shop.shop_id), shop]));
-        const groupedByShop = new Map();
-        const groupedByStrain = new Map();
-
-        state.offerings.forEach(item => {
-          const shop = shopsById.get(String(item.shop_id)) || {
-            shop_id: item.shop_id,
-            shop_key: item.shop_key,
-            name: item.shop_name,
-            city: item.shop_city
-          };
-          const city = shop.city || item.shop_city || '';
-          if (normalise(city) !== 'amsterdam') return;
-          if (Number(shop.is_closed) === 1) return;
-
-          const shopKey = String(shop.shop_id);
-          if (!groupedByShop.has(shopKey)) groupedByShop.set(shopKey, { shop, items: [] });
-          groupedByShop.get(shopKey).items.push(item);
-
-          const strainName = (item.strain_name_normalised || item.strain_name || '').toString().trim();
-          if (!strainName) return;
-          const strainKey = normalise(strainName);
-          if (!groupedByStrain.has(strainKey)) {
-            groupedByStrain.set(strainKey, {
-              name: strainName,
-              baseType: item.base_type || '',
-              items: [],
-              shopIds: new Set()
-            });
-          }
-          const entry = groupedByStrain.get(strainKey);
-          entry.items.push(item);
-          if (item.shop_id) entry.shopIds.add(String(item.shop_id));
-        });
-
-        state.shopCards = Array.from(groupedByShop.values()).map(group => {
-          const prices = group.items.map(item => Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
-          const latest = latestTrustedDate(group.items);
-          const cheapest = prices.length ? Math.min(...prices) : null;
-          const strains = Array.from(new Set(group.items.map(item => item.strain_name_normalised || item.strain_name).filter(Boolean)));
-          return {
-            shop: group.shop,
-            count: strains.length,
-            price: cheapest,
-            latest,
-            badges: [
-              cheapest && cheapest <= 10 ? 'Under EUR10/g' : null,
-              latest ? 'Menu intel' : null
-            ].filter(Boolean)
-          };
-        }).filter(card => card.count > 0);
-
-        state.strainCards = Array.from(groupedByStrain.values()).map(group => {
-          const prices = group.items.map(item => Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
-          const latest = latestTrustedDate(group.items);
-          const cheapest = prices.length ? Math.min(...prices) : null;
-          return {
-            name: group.name,
-            baseType: group.baseType || 'mixed',
-            shopIds: Array.from(group.shopIds),
-            count: group.shopIds.size,
-            price: cheapest,
-            latest
-          };
-        }).filter(card => card.count > 0);
-      }
-
-      function looksLikeHouseExclusive(name) {
-        const text = normalise(name);
-        if (!text) return true;
-        return /\b(coffeeshop|shop|farm|farms|house|special|mix|menu|pre[-\s]?roll|joint|moonrock|moon rock)\b/.test(text) ||
-          /^(amsterdam|ams|cs)\b/.test(text) ||
-          text.length < 4;
-      }
-
-      function weeklySeed() {
-        return Math.floor(Date.now() / (7 * 86400000));
-      }
-
-      function seededNoise(value, salt = '') {
-        const input = `${value || ''}|${salt}|${weeklySeed()}`;
-        let hash = 2166136261;
-        for (let i = 0; i < input.length; i += 1) {
-          hash ^= input.charCodeAt(i);
-          hash = Math.imul(hash, 16777619);
-        }
-        return ((hash >>> 0) % 10000) / 10000;
-      }
-
-      function isClosedMarketShop(shop) {
-        const value = shop && shop.is_closed;
-        return value === true || Number(value) === 1 || normalise(value) === 'true';
-      }
-
-      function isHiddenMarketShop(shop) {
-        if (!shop || shop.show_in_admin == null) return false;
-        const value = shop.show_in_admin;
-        const text = normalise(value);
-        return value === false || Number(value) === 0 || ['false', 'no', 'n', 'off'].includes(text);
-      }
-
-      function hasUnavailableMarketStatus(shop) {
-        const status = normalise(shop && shop.menu_status);
-        return Boolean(status && ['closed', 'archived', 'archive', 'previous', 'old', 'error', 'failed'].includes(status));
-      }
-
-      function marketSourceToken(value) {
-        let decoded = String(value || '');
-        try {
-          decoded = decodeURIComponent(decoded);
-        } catch (_err) {
-          // Keep malformed source text usable for a best-effort comparison.
-        }
-        return decoded
-          .toLowerCase()
-          .replace(/^cs-/, '')
-          .replace(/&/g, 'and')
-          .replace(/[^a-z0-9]+/g, '');
-      }
-
-      function marketShopSourceTokens(shop) {
-        return [
-          marketSourceToken(shop && shop.name),
-          marketSourceToken(String((shop && shop.shop_key) || '').replace(/^cs-/, ''))
-        ].filter(token => token.length >= 5);
-      }
-
-      function buildMarketSnapshot() {
-        const shopById = new Map(state.shops.map(shop => [String(shop.shop_id), shop]));
-        const closedTokens = Array.from(new Set(
-          state.shops
-            .filter(isClosedMarketShop)
-            .flatMap(marketShopSourceTokens)
-        ));
-        const hasSourceConflict = shop => {
-          const source = marketSourceToken(shop && shop.image_url);
-          if (!source) return false;
-          const ownTokens = new Set(marketShopSourceTokens(shop));
-          return closedTokens.some(token => !ownTokens.has(token) && source.includes(token));
-        };
-        const unavailableShopIds = new Set(
-          state.shops
-            .filter(shop => isClosedMarketShop(shop) || isHiddenMarketShop(shop) || hasUnavailableMarketStatus(shop) || hasSourceConflict(shop))
-            .map(shop => String(shop.shop_id || '').trim())
-            .filter(Boolean)
-        );
-        const browsableOfferings = state.offerings.filter(item => {
-          const shopId = String(item && item.shop_id || '').trim();
-          return Boolean(shopId && shopById.has(shopId) && !unavailableShopIds.has(shopId));
-        });
-        const strains = new Map();
-        browsableOfferings.forEach(item => {
-          const name = String(item.strain_name_normalised || item.strain_name || '').trim();
-          const price = Number(item.price_amount);
-          if (!name || !Number.isFinite(price)) return;
-          const key = normalise(name);
-          if (!strains.has(key)) strains.set(key, { name, prices: [], shopIds: new Set() });
-          const strain = strains.get(key);
-          strain.prices.push(price);
-          if (item.shop_id != null) strain.shopIds.add(String(item.shop_id));
-        });
-        const strainRows = Array.from(strains.values()).map(strain => ({
-          ...strain,
-          averagePrice: strain.prices.reduce((sum, price) => sum + price, 0) / strain.prices.length,
-          shopCount: strain.shopIds.size
-        }));
-        const strainAverages = strainRows.map(strain => strain.averagePrice).filter(Number.isFinite);
-        const averagePrice = strainAverages.length
-          ? strainAverages.reduce((sum, price) => sum + price, 0) / strainAverages.length
-          : null;
-        const commonStrains = strainRows
-          .slice()
-          .sort((a, b) => b.shopCount - a.shopCount || a.name.localeCompare(b.name))
-          .slice(0, 5);
-        const allRareStrains = strainRows.filter(strain => strain.shopCount === 2 || strain.shopCount === 3);
-        const readerFriendlyRareStrains = allRareStrains.filter(strain => !looksLikeHouseExclusive(strain.name));
-        const rarePool = readerFriendlyRareStrains.length >= 5 ? readerFriendlyRareStrains : allRareStrains;
-        const rareStrains = rarePool
-          .slice()
-          .sort((a, b) => seededNoise(a.name, rareVisitSeed) - seededNoise(b.name, rareVisitSeed))
-          .slice(0, 5);
-        return {
-          averagePrice,
-          commonStrains,
-          rareStrains,
-          rareCount: allRareStrains.length,
-          browsableListingCount: browsableOfferings.length,
-          representedShopCount: new Set(browsableOfferings.map(item => String(item.shop_id))).size
-        };
-      }
-
-      function renderInsights() {
-        if (!insightsEl) return;
-        state.marketSnapshot = buildMarketSnapshot();
-        const snapshot = state.marketSnapshot;
-        const averageEl = document.getElementById('home-average-price');
-        const commonEl = document.getElementById('home-most-common');
-        const commonNoteEl = document.getElementById('home-most-common-note');
-        const commonListEl = document.getElementById('home-most-common-list');
-        const rareEl = document.getElementById('home-rare-count');
-        const rareListEl = document.getElementById('home-rare-list');
-        const coverageNoteEl = document.getElementById('coverage-filter-note');
-        const strainListHtml = rows => rows.map(strain => {
-          const url = new URL('database.html', window.location.href);
-          url.searchParams.set('search', strain.name);
-          const shopLabel = `${strain.shopCount} shop${strain.shopCount === 1 ? '' : 's'}`;
-          const price = Number.isFinite(strain.averagePrice) ? plainPriceLabel(strain.averagePrice) : '';
-          return `
-            <li class="insight-item">
-              <a href="${escapeHtml(url.pathname.split('/').pop() + url.search)}">
-                <b>${escapeHtml(displayName(strain.name))}</b>
-                <span>${escapeHtml(`${shopLabel}${price ? ` · ${price}` : ''}`)}</span>
-              </a>
-            </li>
-          `;
-        }).join('');
-        if (averageEl) averageEl.textContent = Number.isFinite(snapshot.averagePrice) ? plainPriceLabel(snapshot.averagePrice) : 'Unavailable';
-        if (commonEl) commonEl.textContent = snapshot.commonStrains.length ? `Top ${snapshot.commonStrains.length}` : 'Unavailable';
-        if (commonNoteEl && snapshot.commonStrains.length) {
-          commonNoteEl.textContent = `Ranked across ${snapshot.representedShopCount.toLocaleString()} currently represented shops.`;
-        }
-        if (commonListEl) {
-          commonListEl.innerHTML = snapshot.commonStrains.length
-            ? strainListHtml(snapshot.commonStrains)
-            : '<li class="insight-empty">Current strain rankings are unavailable.</li>';
-        }
-        if (rareEl) rareEl.textContent = `${snapshot.rareCount.toLocaleString()} qualifying strains`;
-        if (rareListEl) {
-          rareListEl.innerHTML = snapshot.rareStrains.length
-            ? strainListHtml(snapshot.rareStrains)
-            : '<li class="insight-empty">No 2–3 shop strains are available in this snapshot.</li>';
-        }
-        if (coverageNoteEl) {
-          const excluded = Math.max(0, state.offerings.length - snapshot.browsableListingCount);
-          coverageNoteEl.textContent = `The selected-city count is separate from the wider market signals, which use ${snapshot.browsableListingCount.toLocaleString()} browsable listings across ${snapshot.representedShopCount.toLocaleString()} represented shops after excluding ${excluded.toLocaleString()} listing${excluded === 1 ? '' : 's'} from unavailable shops.`;
-        }
-      }
-
-      function renderShops() {
-        const recentPool = state.shopCards.filter(card => isRecent(card.latest, 100));
-        const pool = recentPool.length >= 4 ? recentPool : state.shopCards;
-        const picks = shuffle(pool).slice(0, 4);
-        if (!shopShowcase || !picks.length) return;
-        shopShowcase.innerHTML = picks.map(card => {
-          const shop = card.shop;
-          const url = new URL('map.html', window.location.href);
-          url.searchParams.set('source', 'home');
-          url.searchParams.set('shops', String(shop.shop_id || ''));
-          const price = priceLabel(card.price, 'EUR', 'g');
-          const dealClass = card.price && card.price <= 10 ? ' is-deal' : '';
-          return `
-            <a class="shop-card" href="${escapeHtml(url.pathname.split('/').pop() + url.search)}">
-              ${shopLogoHtml(shop)}
-              <span class="card-copy">
-                <strong>${escapeHtml(displayName(shop.name || 'Amsterdam coffeeshop'))}</strong>
-                <span>${escapeHtml(shop.city || 'Amsterdam')} - ${card.count} listed strains</span>
-                <small>${escapeHtml(freshnessLabel(card.latest))}</small>
-                <span class="mini-badges">
-                  <span class="mini-badge${dealClass}">${escapeHtml(price)}</span>
-                </span>
-              </span>
-            </a>
-          `;
-        }).join('');
-      }
-
-      function renderStrains() {
-        const knownPool = state.strainCards
-          .filter(card => state.strainImageByKey.has(normalise(card.name)) && card.count >= 2)
-          .sort((a, b) => b.count - a.count);
-        const fallbackPool = state.strainCards
-          .filter(card => card.count >= 2)
-          .sort((a, b) => b.count - a.count);
-        const pool = (knownPool.length >= 3 ? knownPool : fallbackPool).slice(0, 80);
-        const picks = shuffle(pool).slice(0, 3);
-        if (!strainShowcase || !picks.length) return;
-        strainShowcase.innerHTML = picks.map(card => {
-          const url = new URL('map.html', window.location.href);
-          url.searchParams.set('source', 'home');
-          url.searchParams.set('strain', card.name);
-          if (card.shopIds.length) url.searchParams.set('strain_shops', card.shopIds.join(','));
-          const price = priceLabel(card.price, 'EUR', 'g');
-          const dealClass = card.price && card.price <= 10 ? ' is-deal' : '';
-          return `
-            <a class="strain-card" href="${escapeHtml(url.pathname.split('/').pop() + url.search)}">
-              ${strainArtHtml(card.name)}
-              <span class="card-copy">
-              <strong>${escapeHtml(displayName(card.name))}</strong>
-                <span>${card.count} Amsterdam shop${card.count === 1 ? '' : 's'} - ${escapeHtml(card.baseType || 'mixed')}</span>
-                <small>${escapeHtml(freshnessLabel(card.latest))}</small>
-                <span class="mini-badges">
-                  <span class="mini-badge${dealClass}">${escapeHtml(price)}</span>
-                </span>
-              </span>
-            </a>
-          `;
-        }).join('');
-      }
-
-      function renderShowcase() {
-        renderShops();
-        renderStrains();
-        if (showcaseStatus) {
-          const amsterdamShopCount = state.shopCards.length;
-          const listingCount = state.offerings.filter(item => normalise(item.shop_city) === 'amsterdam').length;
-          const prices = state.offerings
-            .filter(item => normalise(item.shop_city) === 'amsterdam')
-            .map(item => Number(item.price_amount))
-            .filter(value => Number.isFinite(value) && value > 0);
-          const latest = latestTrustedDate(state.offerings.filter(item => normalise(item.shop_city) === 'amsterdam'));
-          const lowest = prices.length ? priceLabel(Math.min(...prices), 'EUR', 'g') : 'Price signals loading';
-          const updated = latest ? freshnessLabel(latest) : 'Data age unknown';
-          showcaseStatus.textContent = `${amsterdamShopCount.toLocaleString()} Amsterdam shops tracked · ${listingCount.toLocaleString()} listings · ${lowest} · ${updated}.`;
-        }
-      }
-
-      function renderFallbackShowcase() {
-        if (showcaseStatus) {
-          showcaseStatus.textContent = 'Popular starting searches while Amsterdam menu data loads.';
-        }
-        if (shopShowcase) {
-          shopShowcase.innerHTML = `
-            <a class="shop-card" href="map.html?source=home&search=Family%20First">
-              <span class="shop-art"><img src="images/logos/family_first.png" alt="Family First logo" /></span>
-              <span class="card-copy">
-                <strong>Family First</strong>
-                <span>Popular starting point</span>
-                <small>Featured search</small>
-              </span>
-            </a>
-            <a class="shop-card" href="map.html?source=home&search=The%20Plug">
-              <span class="shop-art"><img src="images/logos/Plug.png" alt="The Plug logo" /></span>
-              <span class="card-copy">
-                <strong>The Plug</strong>
-                <span>Popular starting point</span>
-                <small>Featured search</small>
-              </span>
-            </a>
-          `;
-        }
-        if (strainShowcase) {
-          strainShowcase.innerHTML = ['Gelato', 'Amnesia Haze', 'Zkittlez'].map(name => {
-            const url = new URL('map.html', window.location.href);
-            url.searchParams.set('source', 'home');
-            url.searchParams.set('strain', name);
-            return `
-              <a class="strain-card" href="${escapeHtml(url.pathname.split('/').pop() + url.search)}">
-                ${strainArtHtml(name)}
-                <span class="card-copy">
-                  <strong>${escapeHtml(name)}</strong>
-                  <span>Featured search</span>
-                </span>
-              </a>
-            `;
-          }).join('');
-        }
-      }
-
-      function updateManifest(manifest) {
-        const snapshotEl = document.getElementById('snapshot-date');
-        const databaseSnapshotEl = document.getElementById('database-snapshot-date');
-        const shopCountEl = document.getElementById('catalog-shop-count');
-        const shopLabelEl = document.getElementById('catalog-shop-label');
-        const listingCountEl = document.getElementById('catalog-listing-count');
-        const coverageDefinitionEl = document.getElementById('coverage-definition');
-        const snapshotDate = formatDate(manifest && manifest.exported_at_utc) || APP_UPDATED;
-        if (snapshotEl) snapshotEl.textContent = snapshotDate;
-        if (databaseSnapshotEl) databaseSnapshotEl.textContent = snapshotDate;
-        const counts = manifest && manifest.counts ? manifest.counts : {};
-        const listings = Number(counts.active_offerings);
-        const selectedCity = selectedCityFromLocationPreference();
-        const selectedCityKey = normalise(selectedCity);
-        const selectedCityShops = state.shops.filter(shop => normalise(shop && shop.city) === selectedCityKey);
-        if (shopCountEl) shopCountEl.textContent = selectedCityShops.length.toLocaleString();
-        if (shopLabelEl) shopLabelEl.textContent = `${selectedCity} coffeeshops`;
-        if (coverageDefinitionEl) {
-          coverageDefinitionEl.textContent = `The coffeeshop figure counts source records for ${selectedCity}, following the city selected in the map’s location-file setting. One listing is one strain-and-price row in the latest source export.`;
-        }
-        if (listingCountEl) listingCountEl.textContent = (Number.isFinite(listings) ? listings : state.offerings.length).toLocaleString();
-      }
-
-      function openSearch(query) {
-        const q = String(query || '').replace(/\s+/g, ' ').trim();
-        const url = new URL('map.html', window.location.href);
-        url.searchParams.set('source', 'home');
-        if (q) url.searchParams.set('search', q);
-        window.location.href = url.pathname.split('/').pop() + url.search;
-      }
-
-      function bindSearch() {
-        const form = document.getElementById('home-search-form');
-        const input = document.getElementById('home-search-input');
-        if (form) {
-          form.addEventListener('submit', event => {
-            event.preventDefault();
-            openSearch(input ? input.value : '');
-          });
-        }
-        document.querySelectorAll('[data-search]').forEach(button => {
-          button.addEventListener('click', () => {
-            const query = button.getAttribute('data-search') || '';
-            if (input) input.value = query;
-            openSearch(query);
-          });
-        });
-      }
-
-      function bindRememberedDetails() {
-        document.querySelectorAll('[data-home-detail]').forEach(detail => {
-          const id = detail.getAttribute('data-home-detail');
-          if (!id) return;
-          const storageKey = `budfinder.home.detail.${id}`;
-          try {
-            const stored = window.localStorage.getItem(storageKey);
-            if (stored === 'open' || stored === 'closed') {
-              detail.open = stored === 'open';
-            }
-          } catch (_err) {
-            // Disclosure memory is a convenience only; keep the page usable.
-          }
-          detail.addEventListener('toggle', () => {
-            try {
-              window.localStorage.setItem(storageKey, detail.open ? 'open' : 'closed');
-            } catch (_err) {
-              // Ignore storage failures.
-            }
-          });
-        });
-      }
-
-      async function init() {
-        bindSearch();
-        bindRememberedDetails();
-        if (shuffleBtn) shuffleBtn.addEventListener('click', renderShowcase);
-        try {
-          const [shops, offerings, manifest] = await Promise.all([
-            loadJson('database/shops.json', []),
-            loadJson('database/active_offerings.json', []),
-            loadJson('database/manifest.json', null).catch(() => null)
-          ]);
-          state.shops = Array.isArray(shops) ? shops : [];
-          state.offerings = Array.isArray(offerings) ? offerings : [];
-          buildShowcaseData();
-          renderShowcase();
-          renderInsights();
-          updateManifest(manifest);
-          Promise.all([loadShopLogoMap(), loadStrainImageMap()])
-            .then(() => {
-              renderShowcase();
-              renderInsights();
-            })
-            .catch(() => {
-              renderShowcase();
-              renderInsights();
-            });
-        } catch (_err) {
-          renderFallbackShowcase();
-          const unavailableIds = [
-            'catalog-shop-count',
-            'catalog-listing-count',
-            'home-average-price',
-            'home-most-common',
-            'home-rare-count'
-          ];
-          unavailableIds.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = 'Unavailable';
-          });
-          const commonNote = document.getElementById('home-most-common-note');
-          const coverageNote = document.getElementById('coverage-filter-note');
-          const commonList = document.getElementById('home-most-common-list');
-          const rareList = document.getElementById('home-rare-list');
-          if (commonNote) commonNote.textContent = 'Current menu data could not be loaded.';
-          if (coverageNote) coverageNote.textContent = 'Refresh the page to try loading the latest source export again.';
-          if (commonList) commonList.innerHTML = '<li class="insight-empty">Current strain rankings are unavailable.</li>';
-          if (rareList) rareList.innerHTML = '<li class="insight-empty">Current 2–3 shop strains are unavailable.</li>';
-          if (showcaseStatus) {
-            showcaseStatus.textContent = 'Amsterdam menu data could not be loaded. Try refreshing the page.';
-          }
-        }
-      }
-
-      init();
-    })();
-  </script>
+  <script src="scripts/budfinder-home.js?v=20260802-summary3"></script>
 </body>
 </html>

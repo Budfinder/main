@@ -25,7 +25,7 @@
       ]
     }
   </script>
-  <link rel="icon" type="image/x-icon" href="images/IMG_5124.ico" />
+  <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
   <style>
     :root {
       --bg-top: #f4e5bf;
@@ -3834,7 +3834,7 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260712-3" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260727-ui1" />
   <style>
     .strain-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4242,11 +4242,20 @@
 
         <div class="filter-grid">
           <div class="field">
+            <label for="location-dataset-filter">Price comparison area</label>
+            <select id="location-dataset-filter">
+              <option value="">Loading location files...</option>
+            </select>
+          </div>
+          <div class="field">
             <label for="city-filter">City</label>
             <select id="city-filter">
               <option value="">All cities</option>
             </select>
           </div>
+        </div>
+
+        <div class="filter-grid">
           <div class="field">
             <label for="type-filter">Type</label>
             <select id="type-filter">
@@ -4440,15 +4449,18 @@
 
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
-  <script src="scripts/budfinder-logos.js?v=20260720-3"></script>
+  <script src="scripts/budfinder-logos.js?v=20260727-ui1"></script>
   <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
   <script src="scripts/budfinder-page-settings.js?v=20260720-name2"></script>
   <script>
     const state = {
+      allOfferings: [],
       offerings: [],
       shops: [],
       shopById: new Map(),
       shopLogoByKey: new Map(),
+      locationDatasets: [],
+      activeLocationDataset: '',
       strainImageByKey: new Map(),
       closedShopSourceTokens: [],
       unavailableShopIds: new Set(),
@@ -4482,6 +4494,7 @@
       searchLabel: document.getElementById('search-label'),
       searchChipRow: document.getElementById('search-chip-row'),
       searchShopsShortcut: document.getElementById('search-shops-shortcut'),
+      locationDataset: document.getElementById('location-dataset-filter'),
       city: document.getElementById('city-filter'),
       type: document.getElementById('type-filter'),
       cali: document.getElementById('cali-filter'),
@@ -5629,7 +5642,7 @@
       let lastError = null;
       for (const url of candidates) {
         try {
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(url, { cache: 'no-cache' });
           if (!res.ok) throw new Error(`${url} returned ${res.status}`);
           return await res.json();
         } catch (err) {
@@ -5644,7 +5657,7 @@
       let lastError = null;
       for (const url of candidates) {
         try {
-          const res = await fetch(url, { cache: 'no-store' });
+          const res = await fetch(url);
           if (!res.ok) throw new Error(`${url} returned ${res.status}`);
           return await res.text();
         } catch (err) {
@@ -5695,32 +5708,168 @@
       return nextMap;
     }
 
-    async function loadShopLogoMap() {
+    function locationDatasetLabel(file) {
+      const filename = String(file || '').split('/').pop() || '';
+      const stem = filename.replace(/\.csv$/i, '');
+      const cleaned = stem
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\b(?:locations?|location)\b/ig, ' ')
+        .replace(/\bloc\s*\d*$/i, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      return cleaned
+        ? cleaned.split(' ').map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join(' ')
+        : filename;
+    }
+
+    function normaliseLocationDatasetPath(pathLike) {
+      const filename = String(pathLike || '').trim().split('/').pop() || '';
+      return filename ? `database/locations/${filename}` : '';
+    }
+
+    function csvValueIsYes(value) {
+      return ['y', 'yes', 'true', '1'].includes(normalise(value));
+    }
+
+    async function loadLocationCatalog() {
       try {
         const index = await loadJson('database/locations/index.json');
         const files = Array.isArray(index && index.files) ? index.files : [];
-        const texts = await Promise.all(
-          files.map(file => loadText(`database/locations/${file}`).catch(() => ''))
+        const sources = await Promise.all(
+          files.map(async file => ({
+            file,
+            path: normaliseLocationDatasetPath(file),
+            text: await loadText(`database/locations/${file}`).catch(() => '')
+          }))
         );
-        const nextMap = new Map();
-        texts.forEach(csvText => {
+        const shopLogoByKey = new Map();
+        const datasets = [];
+
+        sources.forEach(source => {
+          const csvText = source.text;
           const lines = String(csvText || '').split(/\r?\n/).filter(line => line.trim());
           if (lines.length < 2) return;
           const headers = parseCsvLine(lines[0]).map(normalise);
           const keyIndex = headers.indexOf('shop_key');
           const logoIndex = headers.indexOf('logo');
-          if (keyIndex < 0 || logoIndex < 0) return;
+          const nameIndex = headers.indexOf('name');
+          const cityIndex = headers.indexOf('city');
+          const coffeeshopIndex = headers.indexOf('coffeeshop');
+          const closedIndex = headers.indexOf('closed');
+          if (keyIndex < 0 && nameIndex < 0) return;
+
+          const shopKeys = new Set();
+          const nameCityKeys = new Set();
+          const fallbackCity = locationDatasetLabel(source.file);
+
           lines.slice(1).forEach(line => {
             const cells = parseCsvLine(line);
-            const shopKey = (cells[keyIndex] || '').trim();
-            const logo = (cells[logoIndex] || '').trim();
-            if (shopKey && logo && !nextMap.has(shopKey)) nextMap.set(shopKey, logo);
+            const shopKey = keyIndex >= 0 ? (cells[keyIndex] || '').trim() : '';
+            const isCoffeeshop = coffeeshopIndex >= 0
+              ? csvValueIsYes(cells[coffeeshopIndex])
+              : Boolean(shopKey);
+            const isClosed = closedIndex >= 0 && csvValueIsYes(cells[closedIndex]);
+            if (!isCoffeeshop || isClosed) return;
+
+            const logo = logoIndex >= 0 ? (cells[logoIndex] || '').trim() : '';
+            if (shopKey) {
+              shopKeys.add(shopKey);
+              if (logo && !shopLogoByKey.has(shopKey)) shopLogoByKey.set(shopKey, logo);
+            }
+
+            const shopName = nameIndex >= 0 ? (cells[nameIndex] || '').trim() : '';
+            const shopCity = cityIndex >= 0 ? (cells[cityIndex] || '').trim() : fallbackCity;
+            const nameCityKey = `${normalise(shopName)}|${normalise(shopCity)}`;
+            if (shopName && nameCityKey !== '|') nameCityKeys.add(nameCityKey);
           });
+
+          if (shopKeys.size || nameCityKeys.size) {
+            datasets.push({
+              file: source.file,
+              path: source.path,
+              label: locationDatasetLabel(source.file),
+              shopKeys,
+              nameCityKeys
+            });
+          }
         });
-        return nextMap;
+
+        return { shopLogoByKey, datasets };
       } catch (_err) {
-        return new Map();
+        return { shopLogoByKey: new Map(), datasets: [] };
       }
+    }
+
+    function storedLocationDatasetPath() {
+      try {
+        const raw = localStorage.getItem('budfinder_location_data_csv_path');
+        if (!raw) return '';
+        try {
+          return normaliseLocationDatasetPath(JSON.parse(raw));
+        } catch (_err) {
+          return normaliseLocationDatasetPath(raw);
+        }
+      } catch (_err) {
+        return '';
+      }
+    }
+
+    function saveLocationDatasetPath(pathLike) {
+      const path = normaliseLocationDatasetPath(pathLike);
+      if (!path) return;
+      try {
+        localStorage.setItem('budfinder_location_data_csv_path', JSON.stringify(path));
+        localStorage.setItem('budfinder_location_data_user_selected', JSON.stringify(true));
+      } catch (_err) {
+        // Storage is optional; the active page still uses the selected dataset.
+      }
+    }
+
+    function pickDefaultLocationDataset(datasets) {
+      const available = Array.isArray(datasets) ? datasets : [];
+      const stored = storedLocationDatasetPath();
+      const saved = available.find(dataset => dataset.path === stored);
+      if (saved) return saved;
+      return available.find(dataset => normalise(dataset.file) === 'amsterdamloc.csv') || available[0] || null;
+    }
+
+    function activeLocationDataset() {
+      return state.locationDatasets.find(dataset => dataset.path === state.activeLocationDataset) || null;
+    }
+
+    function offeringBelongsToDataset(item, dataset) {
+      if (!dataset) return true;
+      const shopKey = String(item && item.shop_key || '').trim();
+      if (shopKey && dataset.shopKeys.has(shopKey)) return true;
+      const nameCityKey = `${normalise(item && item.shop_name)}|${normalise(item && item.shop_city)}`;
+      return nameCityKey !== '|' && dataset.nameCityKeys.has(nameCityKey);
+    }
+
+    function populateLocationDatasetFilter() {
+      if (!els.locationDataset) return;
+      if (!state.locationDatasets.length) {
+        els.locationDataset.innerHTML = '<option value="">All available data</option>';
+        els.locationDataset.disabled = true;
+        return;
+      }
+      els.locationDataset.disabled = false;
+      els.locationDataset.innerHTML = state.locationDatasets.map(dataset =>
+        `<option value="${escapeHtmlAttr(dataset.path)}"${dataset.path === state.activeLocationDataset ? ' selected' : ''}>${escapeHtml(dataset.label)}</option>`
+      ).join('');
+    }
+
+    function applyLocationDatasetScope(pathLike, options = {}) {
+      const path = normaliseLocationDatasetPath(pathLike);
+      const dataset = state.locationDatasets.find(item => item.path === path) ||
+        pickDefaultLocationDataset(state.locationDatasets);
+      state.activeLocationDataset = dataset ? dataset.path : '';
+      state.offerings = dataset
+        ? state.allOfferings.filter(item => offeringBelongsToDataset(item, dataset))
+        : state.allOfferings.slice();
+      state.listingCheckBatch = buildListingCheckBatchSignal(state.offerings);
+      if (options.persist !== false && dataset) saveLocationDatasetPath(dataset.path);
+      populateLocationDatasetFilter();
     }
 
     function strainImageCandidates(filename) {
@@ -6370,11 +6519,7 @@
       params.set('shops', ids.join(','));
       params.set('source', 'explorer');
       const strainName = String((context && context.strainName) || '').trim();
-      const strainShopIds = (Array.isArray(context && context.strainShopIds) ? context.strainShopIds : [])
-        .map(id => String(id || '').trim())
-        .filter(isBrowsableShopId);
       if (strainName) params.set('strain', strainName);
-      if (strainShopIds.length) params.set('strain_shops', Array.from(new Set(strainShopIds)).join(','));
       return `map.html?${params.toString()}`;
     }
 
@@ -8331,12 +8476,12 @@
 
     async function init() {
       try {
-        const [offerings, shops, manifest, imageMapCsv, shopLogoMap] = await Promise.all([
+        const [offerings, shops, manifest, imageMapCsv, locationCatalog] = await Promise.all([
           loadJson('database/active_offerings.json'),
           loadJson('database/shops.json').catch(() => []),
           loadJson('database/manifest.json').catch(() => null),
           loadText('database/strain_image_map.csv').catch(() => ''),
-          loadShopLogoMap()
+          loadLocationCatalog()
         ]);
         state.snapshotTime = parseTime(manifest && manifest.exported_at_utc) || Date.now();
         const loadedOfferings = Array.isArray(offerings) ? offerings : [];
@@ -8344,11 +8489,18 @@
         state.shopById = new Map(state.shops.map(shop => [String(shop.shop_id), shop]));
         state.closedShopSourceTokens = buildClosedShopSourceTokens(state.shops);
         state.unavailableShopIds = buildUnavailableShopIds(state.shops);
-        state.offerings = loadedOfferings.filter(isBrowsableOffering);
+        state.allOfferings = loadedOfferings.filter(isBrowsableOffering);
+        state.locationDatasets = Array.isArray(locationCatalog && locationCatalog.datasets)
+          ? locationCatalog.datasets
+          : [];
+        const defaultDataset = pickDefaultLocationDataset(state.locationDatasets);
+        applyLocationDatasetScope(defaultDataset && defaultDataset.path, { persist: false });
         state.listingCheckBatch = buildListingCheckBatchSignal(state.offerings);
-        state.hiddenUnavailableListingCount = Math.max(0, loadedOfferings.length - state.offerings.length);
+        state.hiddenUnavailableListingCount = Math.max(0, loadedOfferings.length - state.allOfferings.length);
         state.strainImageByKey = buildStrainImageMap(imageMapCsv);
-        state.shopLogoByKey = shopLogoMap instanceof Map ? shopLogoMap : new Map();
+        state.shopLogoByKey = locationCatalog && locationCatalog.shopLogoByKey instanceof Map
+          ? locationCatalog.shopLogoByKey
+          : new Map();
         buildStats();
         loadSharedShelf();
         state.selectedShopIds = sanitizeShopIds(loadSelectedShopIds());
@@ -8359,10 +8511,16 @@
         const exported = manifest && manifest.exported_at_utc
           ? ` Snapshot ${new Date(manifest.exported_at_utc).toLocaleString()}.`
           : '';
-        const hidden = state.hiddenUnavailableListingCount
-          ? ` Hidden ${state.hiddenUnavailableListingCount.toLocaleString()} listing${state.hiddenUnavailableListingCount === 1 ? '' : 's'} from closed, archived, or inactive shops.`
+        const activeDataset = activeLocationDataset();
+        const datasetLabel = activeDataset?.label || 'all locations';
+        const scopedLoadedListingCount = activeDataset
+          ? loadedOfferings.filter(item => offeringBelongsToDataset(item, activeDataset)).length
+          : loadedOfferings.length;
+        const scopedUnavailableListingCount = Math.max(0, scopedLoadedListingCount - state.offerings.length);
+        const hidden = scopedUnavailableListingCount
+          ? ` Excluded ${scopedUnavailableListingCount.toLocaleString()} unavailable ${datasetLabel} listing${scopedUnavailableListingCount === 1 ? '' : 's'}.`
           : '';
-        els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.${exported}${hidden}${listingCheckBatchNote()}`;
+        els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains in ${datasetLabel}.${exported}${hidden}${listingCheckBatchNote()}`;
         applyInitialUrlState();
         setView(state.view);
         render();
@@ -8408,6 +8566,22 @@
         resetStrainWindow();
         render();
         scheduleMobileResultsScroll({ source: 'chip', delay: 80 });
+      });
+    }
+    if (els.locationDataset) {
+      els.locationDataset.addEventListener('change', () => {
+        applyLocationDatasetScope(els.locationDataset.value);
+        state.activeShopId = '';
+        state.shopMenuExpanded = false;
+        state.detail = null;
+        buildStats();
+        populateFilters();
+        setupPriceBand();
+        resetStrainWindow();
+        const datasetLabel = activeLocationDataset()?.label || 'all locations';
+        els.status.textContent = `Using ${datasetLabel} for price averages: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.`;
+        render();
+        scheduleMobileResultsScroll({ source: 'filter' });
       });
     }
     [els.city, els.type, els.cali, els.sort].forEach(el => el.addEventListener('change', () => {

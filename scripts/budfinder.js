@@ -279,16 +279,20 @@
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
       const locationKey = normaliseKey(row.shop_key);
-      const byName = shopMetaByName.get(nameCityKey(row.name, 'Amsterdam'));
-      const meta = shopMetaByKey.get(locationKey) || byName || {};
-      const metaKey = normaliseKey(meta.shop_key) || locationKey;
+      const explicitMenuKey = normaliseKey(row.menu_shop_key);
+      const legacyMenuKey = locationKey.startsWith('cs-') ? locationKey : '';
+      const requestedMenuKey = explicitMenuKey || legacyMenuKey;
+      const allowNameFallback = !locationKey.startsWith('ams-');
+      const byName = allowNameFallback ? shopMetaByName.get(nameCityKey(row.name, 'Amsterdam')) : null;
+      const meta = shopMetaByKey.get(requestedMenuKey) || byName || {};
+      const metaKey = normaliseKey(meta.shop_key) || requestedMenuKey;
       const rows = [
-        ...(offeringBuckets.get(locationKey) || []),
+        ...(offeringBuckets.get(requestedMenuKey) || []),
         ...(offeringBuckets.get(metaKey) || []),
-        ...(offeringByName.get(nameCityKey(row.name, 'Amsterdam')) || [])
+        ...(allowNameFallback ? (offeringByName.get(nameCityKey(row.name, 'Amsterdam')) || []) : [])
       ];
       const uniqueRows = uniqueOfferings(rows);
-      const key = metaKey || locationKey || `shop-${index}`;
+      const key = locationKey || metaKey || `shop-${index}`;
       const shop = {
         id: Number.isFinite(Number(meta.shop_id)) ? Number(meta.shop_id) : inferShopId(uniqueRows),
         key,
@@ -299,12 +303,16 @@
         lat,
         lng,
         website: clean(row.website || meta.shop_url || ''),
+        address: clean(row.address || ''),
+        sourceUrl: clean(row.source_url || ''),
         logo: clean(row.logo || ''),
         isClosed: yesNo(row.Closed) || Number(meta.is_closed) === 1,
         rating: Number.isFinite(Number(row.rating)) ? Number(row.rating) : null,
         visited: yesNo(row.visited),
         menuStatus: clean(meta.menu_status || ''),
-        source: 'CoffeeshopMenus',
+        menuKey: metaKey,
+        hasMenuRecord: Boolean(metaKey && Object.keys(meta).length),
+        source: clean(row.source || (metaKey ? 'CoffeeshopMenus' : 'Location file')),
         fetchedAt: clean(meta.fetched_at_utc || ''),
         menuImage: clean(meta.image_url || ''),
         offerings: uniqueRows,
@@ -796,7 +804,7 @@
         <span>Cheapest strain <strong>${shop.cheapestOffering ? `${displayStrainName(shop.cheapestOffering.strain_name)} ${priceLabel(Number(shop.cheapestOffering.price_amount))}` : 'Price missing'}</strong></span>
         <span>Menu confidence <strong>${confidenceLabel(shop.confidence)}</strong></span>
       </div>
-      <p class="meta-line"><strong>Address:</strong> Address not in current data. <strong>Source:</strong> ${escapeHtml(shop.source)}. <strong>Types:</strong> ${escapeHtml(typeSummary)}.</p>
+      <p class="meta-line"><strong>Address:</strong> ${escapeHtml(shop.address || 'Address not in current data')}. <strong>Source:</strong> ${escapeHtml(shop.source)}. <strong>Types:</strong> ${escapeHtml(typeSummary)}.</p>
       <div class="shop-detail-actions">
         <button type="button" data-action="save-shop" data-shop-key="${escapeAttr(shop.key)}"><i data-lucide="${isSaved ? 'bookmark-check' : 'bookmark'}" aria-hidden="true"></i>${isSaved ? 'Saved shop' : 'Save shop'}</button>
         <button class="primary-card-action" type="button" data-action="add-route" data-shop-key="${escapeAttr(shop.key)}"><i data-lucide="plus" aria-hidden="true"></i>Add to route</button>
@@ -805,7 +813,7 @@
       </div>
       <h3>Best current finds</h3>
       <div class="offering-list">
-        ${(valuePicks.length ? valuePicks : shop.offerings.slice(0, 5)).map(row => offeringRowHtml(row)).join('')}
+        ${(valuePicks.length ? valuePicks : shop.offerings.slice(0, 5)).map(row => offeringRowHtml(row)).join('') || '<p class="meta-line">No menu is currently available in Budfinder.</p>'}
       </div>
       <p class="meta-line"><strong>Rare finds:</strong> ${rareFinds.length ? rareFinds.join(', ') : 'No rare finds detected yet.'}</p>
       <p class="meta-line"><strong>Wanted-list match:</strong> ${wantedMatches.length ? wantedMatches.join(', ') : 'No saved strains currently match this shop.'}</p>
@@ -1520,6 +1528,7 @@
 
   function badgesForShop(shop) {
     const badges = [];
+    if (!shop.hasMenuRecord) return [{ label: 'No menu available', tone: 'low' }];
     if (shop.freshnessDays <= 7) badges.push({ label: 'Fresh menu', tone: 'good' });
     if (shop.freshnessDays > 45) badges.push({ label: 'Menu may be stale', tone: 'low' });
     if (shop.minPrice !== null && shop.minPrice <= 10) badges.push({ label: 'Budget option', tone: 'good' });
@@ -1542,6 +1551,7 @@
 
   function whyResult(result, parsed) {
     const bits = [];
+    if (!result.shop.hasMenuRecord) return 'Official map location; no menu is currently available in Budfinder.';
     if (result.matchedOfferings.length) bits.push(`matches ${result.matchedOfferings.length} menu item${result.matchedOfferings.length === 1 ? '' : 's'}`);
     if (Number.isFinite(result.bestPrice)) bits.push(`from €${formatPrice(result.bestPrice)}/g`);
     if (result.shop.freshnessDays <= 14) bits.push('recent menu data');
@@ -1561,6 +1571,9 @@
   }
 
   function shopSummary(shop, wantedMatches, rareFinds) {
+    if (!shop.hasMenuRecord) {
+      return 'Available for map and route planning. No menu is currently available in Budfinder.';
+    }
     const goodFor = [];
     if ((shop.typeCounts.sativa || 0) >= 8) goodFor.push('haze and sativa strains');
     if ((shop.typeCounts.hash || 0) >= 6) goodFor.push('hash');

@@ -4,13 +4,14 @@ scrape_update_menus.py
 
 Purpose
 -------
-Checks coffeeshopmenus.org shop pages (from your csd.csv) and keeps ONE most-recent
-menu image per shop in a local folder + SQLite DB.
+Checks coffeeshopmenus.org shop pages (from your csd.csv) and keeps the most-recent
+menu per shop in a local folder + SQLite DB. A menu may contain one or more images.
 
 How "new menus" are detected
 ----------------------------
-We download the menu image and compute sha256. If sha256 differs from the sha256
-already stored for that shop in the DB, we consider it a NEW menu.
+We download all current-menu images and compute a stable combined sha256. If it
+differs from the sha256 already stored for that shop in the DB, we consider it a
+NEW menu.
 
 What happens when a menu changes
 --------------------------------
@@ -139,6 +140,18 @@ def db_init(conn: sqlite3.Connection) -> None:
             FOREIGN KEY(shop_id) REFERENCES shops(id) ON DELETE CASCADE
         );
 
+        CREATE TABLE IF NOT EXISTS menu_images (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            menu_id INTEGER NOT NULL,
+            position INTEGER NOT NULL,
+            image_url TEXT NOT NULL,
+            local_path TEXT NOT NULL,
+            sha256 TEXT NOT NULL,
+            bytes INTEGER NOT NULL,
+            UNIQUE(menu_id, position),
+            FOREIGN KEY(menu_id) REFERENCES menus(id) ON DELETE CASCADE
+        );
+
         -- Global strain dictionary
         CREATE TABLE IF NOT EXISTS strains (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -154,7 +167,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             shop_id INTEGER NOT NULL,
             strain_id INTEGER NOT NULL,
 
-            base_type TEXT NOT NULL,        -- sativa/indica/hybrid/hash/kush
+            base_type TEXT NOT NULL,        -- sativa/indica/hybrid/hash
             is_cali INTEGER NOT NULL DEFAULT 0,
             grower TEXT NOT NULL DEFAULT '',
 
@@ -249,6 +262,7 @@ def db_init(conn: sqlite3.Connection) -> None:
         );
 
         CREATE INDEX IF NOT EXISTS idx_menus_status ON menus(status);
+        CREATE INDEX IF NOT EXISTS idx_menu_images_menu ON menu_images(menu_id, position);
         CREATE INDEX IF NOT EXISTS idx_menu_entries_shop ON menu_entries(shop_id);
         CREATE INDEX IF NOT EXISTS idx_offerings_shop ON shop_offerings(shop_id);
         CREATE INDEX IF NOT EXISTS idx_offerings_status ON shop_offerings(status);
@@ -665,6 +679,33 @@ def upsert_menu(
     conn.commit()
 
 
+def replace_menu_images(
+    conn: sqlite3.Connection,
+    shop_id: int,
+    images: List[Tuple[str, str, str, int]],
+) -> None:
+    """Replace the ordered image set for a shop's current menu."""
+    menu_row = conn.execute(
+        "SELECT id FROM menus WHERE shop_id = ?;",
+        (shop_id,),
+    ).fetchone()
+    if not menu_row:
+        raise ValueError(f"Cannot attach images: no menu row for shop_id={shop_id}")
+    menu_id = int(menu_row["id"])
+    conn.execute("DELETE FROM menu_images WHERE menu_id = ?;", (menu_id,))
+    conn.executemany(
+        """
+        INSERT INTO menu_images(menu_id, position, image_url, local_path, sha256, bytes)
+        VALUES(?, ?, ?, ?, ?, ?);
+        """,
+        [
+            (menu_id, position, image_url, local_path, sha, num_bytes)
+            for position, (image_url, local_path, sha, num_bytes) in enumerate(images)
+        ],
+    )
+    conn.commit()
+
+
 # -----------------------------
 # CSV reading
 # -----------------------------
@@ -842,6 +883,15 @@ def sha256_bytes(data: bytes) -> str:
     return h.hexdigest()
 
 
+def menu_set_sha(image_hashes: List[str]) -> str:
+    """Return a stable menu hash while preserving legacy hashes for one-image menus."""
+    if not image_hashes:
+        return ""
+    if len(image_hashes) == 1:
+        return image_hashes[0]
+    return sha256_bytes("\n".join(image_hashes).encode("ascii"))
+
+
 def slugify(text: str) -> str:
     """Simple filename-safe slug."""
     t = text.lower().strip()
@@ -919,12 +969,28 @@ def extract_menu_image_urls(page_url: str, html: str) -> List[str]:
     return deduped
 
 
+def choose_latest_menu_urls(urls: List[str]) -> List[str]:
+    """
+    Return all images belonging to the current menu, in page order.
+
+    Current-menu images on coffeeshopmenus.org live under /Menus/. Pages such as
+    Barney's place several of them on the latest-menu page. If a page has no such
+    path, retain the old conservative behaviour and use only the first candidate.
+    """
+    menu_urls = [
+        url
+        for url in urls
+        if MENU_PATH_HINT.lower() in urlparse(url).path.lower()
+    ]
+    if menu_urls:
+        return menu_urls
+    return urls[:1]
+
+
 def choose_latest_menu_url(urls: List[str]) -> Optional[str]:
-    """
-    With coffeeshopmenus pages, the first /Menus/ image is typically the best guess.
-    If multiple exist, we take the first.
-    """
-    return urls[0] if urls else None
+    """Backward-compatible single-image helper."""
+    chosen = choose_latest_menu_urls(urls)
+    return chosen[0] if chosen else None
 
 
 def save_image(out_dir: str, city: str, shop: str, sha: str, image_url: str, data: bytes) -> str:
@@ -950,7 +1016,7 @@ def save_image(out_dir: str, city: str, shop: str, sha: str, image_url: str, dat
 # -----------------------------
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Update most recent menu image per shop.")
+    ap = argparse.ArgumentParser(description="Update the most recent menu image set per shop.")
     ap.add_argument("--shops", required=True, help="Path to csd.csv containing shops.")
     ap.add_argument("--db", required=True, help="SQLite DB path (shared with app).")
     ap.add_argument("--out-dir", default="menus_downloaded", help="Folder to store downloaded images.")
@@ -990,16 +1056,22 @@ def main() -> int:
         try:
             html = download_text(shop_url)
             urls = extract_menu_image_urls(shop_url, html)
-            menu_url = choose_latest_menu_url(urls)
-            if not menu_url:
+            menu_urls = choose_latest_menu_urls(urls)
+            if not menu_urls:
                 mark_menu_error(conn, shop_id, source_page_url=shop_url, error_msg="No menu image URL found on page.")
                 errors += 1
                 print("  [WARN] No menu image URL found.")
                 time.sleep(SLEEP_BETWEEN_SHOPS_SEC)
                 continue
 
-            data = download_image_bytes(menu_url)
-            sha = sha256_bytes(data)
+            downloaded_images: List[Tuple[str, bytes, str]] = []
+            for menu_url in menu_urls:
+                data = download_image_bytes(menu_url)
+                downloaded_images.append((menu_url, data, sha256_bytes(data)))
+
+            sha = menu_set_sha([item[2] for item in downloaded_images])
+            total_bytes = sum(len(item[1]) for item in downloaded_images)
+            primary_url, _primary_data, _primary_sha = downloaded_images[0]
             prev_sha = get_existing_menu_sha(conn, shop_id)
             had_known_previous_sha = bool(prev_sha)
 
@@ -1007,22 +1079,48 @@ def main() -> int:
                 # Menu unchanged; preserve queue state, but still record the observation.
                 existing_menu = get_existing_menu(conn, shop_id)
                 existing_local_path = str(existing_menu["local_path"] or "") if existing_menu else ""
+                existing_image_rows = conn.execute(
+                    """
+                    SELECT position, local_path
+                    FROM menu_images
+                    WHERE menu_id = (SELECT id FROM menus WHERE shop_id = ?)
+                    ORDER BY position;
+                    """,
+                    (shop_id,),
+                ).fetchall()
+                existing_paths = [str(row["local_path"] or "") for row in existing_image_rows]
+                stored_images: List[Tuple[str, str, str, int]] = []
+                for position, (image_url, image_data, image_sha) in enumerate(downloaded_images):
+                    local_path = existing_paths[position] if position < len(existing_paths) else ""
+                    if not local_path and position == 0:
+                        local_path = existing_local_path
+                    if not local_path or not os.path.exists(local_path):
+                        local_path = save_image(
+                            args.out_dir,
+                            s.city,
+                            s.shop,
+                            image_sha,
+                            image_url,
+                            image_data,
+                        )
+                    stored_images.append((image_url, local_path, image_sha, len(image_data)))
                 preserved_status = touch_menu_seen(
                     conn,
                     shop_id=shop_id,
                     source_page_url=shop_url,
-                    image_url=menu_url,
+                    image_url=primary_url,
                     sha256=sha,
-                    num_bytes=len(data),
+                    num_bytes=total_bytes,
                 )
+                replace_menu_images(conn, shop_id, stored_images)
                 menu_history_id = record_menu_history(
                     conn,
                     shop_id=shop_id,
                     source_page_url=shop_url,
-                    image_url=menu_url,
-                    local_path=existing_local_path,
+                    image_url=primary_url,
+                    local_path=stored_images[0][1],
                     sha256=sha,
-                    num_bytes=len(data),
+                    num_bytes=total_bytes,
                     event_type="menu_seen",
                     status=preserved_status,
                     error="",
@@ -1035,28 +1133,38 @@ def main() -> int:
                 continue
 
             # New menu discovered
-            local_path = save_image(args.out_dir, s.city, s.shop, sha, menu_url, data)
+            stored_images = [
+                (
+                    image_url,
+                    save_image(args.out_dir, s.city, s.shop, image_sha, image_url, image_data),
+                    image_sha,
+                    len(image_data),
+                )
+                for image_url, image_data, image_sha in downloaded_images
+            ]
+            local_path = stored_images[0][1]
 
             # Update DB menu record and mark NEW
             upsert_menu(
                 conn,
                 shop_id=shop_id,
                 source_page_url=shop_url,
-                image_url=menu_url,
+                image_url=primary_url,
                 local_path=local_path,
                 sha256=sha,
-                num_bytes=len(data),
+                num_bytes=total_bytes,
                 status="new",
                 error="",
             )
+            replace_menu_images(conn, shop_id, stored_images)
             menu_history_id = record_menu_history(
                 conn,
                 shop_id=shop_id,
                 source_page_url=shop_url,
-                image_url=menu_url,
+                image_url=primary_url,
                 local_path=local_path,
                 sha256=sha,
-                num_bytes=len(data),
+                num_bytes=total_bytes,
                 event_type="new_menu",
                 status="new",
                 error="",
@@ -1071,8 +1179,9 @@ def main() -> int:
                     print(f"       archived {archived_count} old active offering(s) for rebuild")
 
             new_count += 1
-            print(f"  [NEW] {menu_url}")
-            print(f"       saved -> {local_path}")
+            print(f"  [NEW] {len(stored_images)} image(s); primary: {primary_url}")
+            for _image_url, saved_path, _image_sha, _image_bytes in stored_images:
+                print(f"       saved -> {saved_path}")
 
         except Exception as e:
             errors += 1

@@ -25,6 +25,7 @@ REQUIRED_JSON = [
     "active_offerings.json",
     "menu_entries.json",
     "strain_index.json",
+    "home_summary.json",
 ]
 
 
@@ -34,9 +35,14 @@ def load_json(path: Path):
 
 
 def read_location_csv(path: Path):
-    with path.open("r", encoding="latin-1", newline="") as f:
-        reader = csv.DictReader(f)
-        return list(reader.fieldnames or []), list(reader)
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as f:
+            reader = csv.DictReader(f)
+            return list(reader.fieldnames or []), list(reader)
+    except UnicodeDecodeError:
+        with path.open("r", encoding="latin-1", newline="") as f:
+            reader = csv.DictReader(f)
+            return list(reader.fieldnames or []), list(reader)
 
 
 def count_json_items(value) -> int:
@@ -93,6 +99,13 @@ def main() -> int:
     print("")
     print("Location CSVs")
     print("-------------")
+    shops_path = DATABASE_DIR / "shops.json"
+    shops_data = load_json(shops_path) if shops_path.exists() else []
+    known_menu_keys = {
+        str(row.get("shop_key") or "").strip()
+        for row in shops_data
+        if isinstance(row, dict) and str(row.get("shop_key") or "").strip()
+    }
     for filename in location_files:
         path = DATABASE_DIR / "locations" / filename
         if not path.exists():
@@ -108,6 +121,20 @@ def main() -> int:
         ]
         duplicate_headers = [name for name, count in Counter(headers).items() if name and count > 1]
         blank_headers = headers.count("")
+        live_keys = [
+            (row.get("shop_key") or "").strip()
+            for row in rows
+            if (row.get("Coffeeshop") or "").strip().lower() == "y"
+            and (row.get("Closed") or "").strip().lower() != "y"
+            and (row.get("shop_key") or "").strip()
+        ]
+        duplicate_live_keys = [key for key, count in Counter(live_keys).items() if count > 1]
+        unknown_menu_keys = sorted({
+            (row.get("menu_shop_key") or "").strip()
+            for row in rows
+            if (row.get("menu_shop_key") or "").strip()
+            and (row.get("menu_shop_key") or "").strip() not in known_menu_keys
+        })
         print(f"{filename}: {len(rows):,} rows, {len(missing_keys):,} missing live shop keys")
 
         if missing_keys:
@@ -116,6 +143,10 @@ def main() -> int:
             warnings.append(f"{filename} has duplicate columns: {', '.join(duplicate_headers)}")
         if blank_headers:
             warnings.append(f"{filename} has {blank_headers} blank column header(s)")
+        if duplicate_live_keys:
+            errors.append(f"{filename} has duplicate live shop keys: {', '.join(duplicate_live_keys)}")
+        if unknown_menu_keys:
+            errors.append(f"{filename} has unknown menu_shop_key values: {', '.join(unknown_menu_keys)}")
 
     active_path = DATABASE_DIR / "active_offerings.json"
     if active_path.exists():
@@ -134,6 +165,31 @@ def main() -> int:
             print(f"Newest active offering update: {latest.date().isoformat()} ({age_days} day(s) ago)")
             if age_days > 14:
                 warnings.append("Newest active offering is more than two weeks old")
+
+        summary_path = DATABASE_DIR / "home_summary.json"
+        if summary_path.exists():
+            summary = load_json(summary_path)
+            network = summary.get("network", {}) if isinstance(summary, dict) else {}
+            amsterdam = summary.get("amsterdam", {}) if isinstance(summary, dict) else {}
+            network_total = int(network.get("active_listings") or 0) + int(network.get("excluded_listings") or 0)
+            amsterdam_rows = [
+                row for row in active
+                if isinstance(row, dict)
+                and str(row.get("shop_city") or "").strip().lower() == "amsterdam"
+            ]
+            amsterdam_total = int(amsterdam.get("active_listings") or 0) + int(amsterdam.get("excluded_listings") or 0)
+            if network_total != len(active):
+                errors.append(
+                    "home_summary network listings do not reconcile with active_offerings.json "
+                    f"({network_total:,} versus {len(active):,})"
+                )
+            if amsterdam_total != len(amsterdam_rows):
+                errors.append(
+                    "home_summary Amsterdam listings do not reconcile with active_offerings.json "
+                    f"({amsterdam_total:,} versus {len(amsterdam_rows):,})"
+                )
+            if summary.get("exported_at_utc") != manifest.get("exported_at_utc"):
+                errors.append("home_summary export timestamp does not match manifest.json")
 
     if warnings:
         print("")
