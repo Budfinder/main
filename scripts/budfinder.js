@@ -370,7 +370,11 @@
             prices: [],
             types: {},
             latest: null,
-            isCali: false
+            caliListingCount: 0,
+            nonCaliListingCount: 0,
+            isCali: false,
+            hasCaliOption: false,
+            caliStatus: 'none'
           });
         }
         const stat = stats.get(key);
@@ -381,7 +385,11 @@
         if (Number.isFinite(price)) stat.prices.push(price);
         const type = normaliseText(row.base_type || 'unknown') || 'unknown';
         stat.types[type] = (stat.types[type] || 0) + 1;
-        stat.isCali = stat.isCali || Number(row.is_cali) === 1;
+        if (Number(row.is_cali) === 1) {
+          stat.caliListingCount += 1;
+        } else {
+          stat.nonCaliListingCount += 1;
+        }
         const seen = parseDate(row.updated_at || row.last_seen_at_utc);
         if (seen && (!stat.latest || seen > stat.latest)) stat.latest = seen;
       });
@@ -393,6 +401,11 @@
       stat.averagePrice = stat.prices.length ? stat.prices.reduce((sum, value) => sum + value, 0) / stat.prices.length : null;
       stat.primaryType = Object.entries(stat.types).sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown';
       stat.freshnessDays = stat.latest ? daysSince(stat.latest) : Infinity;
+      stat.hasCaliOption = stat.caliListingCount > 0;
+      stat.caliStatus = !stat.hasCaliOption
+        ? 'none'
+        : (stat.nonCaliListingCount > 0 ? 'mixed' : 'all');
+      stat.isCali = stat.caliStatus === 'all';
     });
     state.strainStats = stats;
     state.strainList = [...stats.values()].sort((a, b) => {

@@ -45,7 +45,7 @@
     const monogram = logoInitials(label);
     const svg =
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">` +
-        `<rect width="96" height="96" rx="22" fill="#f7fbf8"/>` +
+        `<rect width="96" height="96" rx="22" fill="#ffffff"/>` +
         `<circle cx="48" cy="48" r="35" fill="#183f32"/>` +
         `<text x="48" y="58" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" font-weight="800" fill="#ffffff">${monogram}</text>` +
       `</svg>`;

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "exported_at_utc": "2026-08-02T09:41:57.325658+00:00",
-  "latest_menu_signal_utc": "2026-08-02T09:30:57.756652+00:00",
+  "exported_at_utc": "2026-08-05T08:27:35.025089+00:00",
+  "latest_menu_signal_utc": "2026-08-05T08:27:34.659954+00:00",
   "definitions": {
     "active_shop": "An open, visible shop with at least one current menu listing.",
     "active_listing": "One current strain-and-price row from an active shop.",
@@ -10,18 +10,18 @@
   "amsterdam": {
     "source_shop_records": 179,
     "active_shops": 151,
-    "active_listings": 2513,
-    "active_strains": 1138,
-    "average_strain_price": 16.34,
+    "active_listings": 2530,
+    "active_strains": 1128,
+    "average_strain_price": 16.27,
     "mapped_shops": 164,
     "excluded_listings": 43
   },
   "network": {
     "source_shop_records": 444,
     "active_shops": 239,
-    "active_listings": 4632,
-    "active_strains": 1866,
-    "average_strain_price": 14.83,
+    "active_listings": 4649,
+    "active_strains": 1858,
+    "average_strain_price": 14.77,
     "excluded_listings": 43
   },
   "top_strains": [
@@ -51,7 +51,7 @@
       "average_price": 10.43
     }
   ],
-  "rare_strain_count": 373,
+  "rare_strain_count": 370,
   "rare_strains": [
     {
       "name": "A5 HAZE",
@@ -149,11 +149,6 @@
       "average_price": 12.33
     },
     {
-      "name": "beluga",
-      "shop_count": 2,
-      "average_price": 32.5
-    },
-    {
       "name": "berry kush",
       "shop_count": 2,
       "average_price": 10.5
@@ -162,11 +157,6 @@
       "name": "big apple",
       "shop_count": 2,
       "average_price": 14.0
-    },
-    {
-      "name": "big z",
-      "shop_count": 3,
-      "average_price": 21.9
     },
     {
       "name": "bio amnesia haze",
@@ -202,6 +192,16 @@
       "name": "black cherry guava",
       "shop_count": 2,
       "average_price": 14.0
+    },
+    {
+      "name": "black cherry punch",
+      "shop_count": 3,
+      "average_price": 10.17
+    },
+    {
+      "name": "black diamond",
+      "shop_count": 2,
+      "average_price": 12.0
     }
   ],
   "locations": [
@@ -209,9 +209,9 @@
       "name": "Amsterdam",
       "map_location": "amsterdamLoc.csv",
       "active_shops": 151,
-      "active_listings": 2513,
-      "active_strains": 1138,
-      "average_strain_price": 16.34
+      "active_listings": 2530,
+      "active_strains": 1128,
+      "average_strain_price": 16.27
     },
     {
       "name": "den Haag",

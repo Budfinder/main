@@ -967,10 +967,12 @@ h3 {
 .shop-logo {
   width: 56px;
   height: 56px;
+  box-sizing: border-box;
+  padding: 4px;
   object-fit: contain;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(244, 239, 226, 0.08);
+  background: #fff;
 }
 
 .stat-grid {

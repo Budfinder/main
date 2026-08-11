@@ -3183,7 +3183,7 @@ PAGE_TMPL = """
                   <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
                   <label class="radioOption"><input type="checkbox" name="is_cali" value="1"><span>Cali</span></label>
                 </div>
-                <div class="small">Cali can be combined with any type.</div>
+                <div class="small">Cali can be combined with any type. It applies only to this shop's listing, not to the strain everywhere.</div>
               </div>
 
               <div style="margin-top:12px;">
@@ -3810,6 +3810,7 @@ EDIT_TMPL = """
                 <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
                 <label class="radioOption"><input type="checkbox" name="is_cali" value="1" {% if entry['is_cali'] %}checked{% endif %}><span>Cali</span></label>
               </div>
+              <div class="small">Cali applies only to this shop's listing, not to the strain everywhere.</div>
               {% if entry['base_type'] == 'kush' %}
                 <div class="small">This legacy entry used “kush”. Choose one of the current types before saving.</div>
               {% endif %}

@@ -2317,6 +2317,7 @@
 
     .journey-location-icon.has-logo {
       padding: 2px;
+      background: #fff;
       color: transparent;
       font-size: 0;
     }
@@ -3213,7 +3214,7 @@
       color: var(--control-text) !important;
     }
 
-    :root[data-map-theme-tone="dark"] .controls button:not(.secondary-btn):not(.controls-hide):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action),
+    :root[data-map-theme-tone="dark"] .controls button:not(.secondary-btn):not(.controls-hide):not(.controls-header-main):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action),
     :root[data-map-theme-tone="dark"] .controls .panel-link-button,
     :root[data-map-theme-tone="dark"] .selection-actions button:not(.ghost-btn):not(.neutral-btn),
     :root[data-map-theme-tone="dark"] .destination-card-action.is-primary,
@@ -3225,7 +3226,7 @@
       text-shadow: none !important;
     }
 
-    :root[data-map-theme-tone="dark"] .controls button:not(.secondary-btn):not(.controls-hide):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action):hover,
+    :root[data-map-theme-tone="dark"] .controls button:not(.secondary-btn):not(.controls-hide):not(.controls-header-main):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action):hover,
     :root[data-map-theme-tone="dark"] .controls .panel-link-button:hover,
     :root[data-map-theme-tone="dark"] .destination-card-action.is-primary:hover {
       background: var(--map-primary-button-hover, var(--map-primary-button-bg)) !important;
@@ -3328,6 +3329,10 @@
       font-size: 14px;
       line-height: 1.55;
       color: var(--muted);
+    }
+
+    body.map-is-loading #map {
+      opacity: 0;
     }
 
     .landing-page {
@@ -5890,13 +5895,27 @@
       width: 44px;
       height: 44px;
       overflow: visible;
+      transform-origin: 50% 100%;
+      transition: transform 140ms ease;
+    }
+
+    #map[data-marker-density="wide"] .shop-marker-wrap {
+      transform: scale(0.58);
+    }
+
+    #map[data-marker-density="city"] .shop-marker-wrap {
+      transform: scale(0.7);
+    }
+
+    #map[data-marker-density="neighbourhood"] .shop-marker-wrap {
+      transform: scale(0.84);
     }
 
     .shop-logo-icon {
       width: 44px;
       height: 44px;
       border-radius: 8px;
-      background: rgba(255, 252, 247, 0.98);
+      background: #fff;
       padding: 2px;
       box-sizing: border-box;
       overflow: hidden;
@@ -6186,7 +6205,7 @@
       text-shadow: none;
     }
 
-    .controls button:not(.secondary-btn):not(.controls-hide):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action),
+    .controls button:not(.secondary-btn):not(.controls-hide):not(.controls-header-main):not(.danger-btn):not(.intent-card):not(.strain-item):not(.strain-shelf-chip-btn):not(.popup-strain-btn):not(.map-quick-chip):not(.best-match-action),
     .controls .panel-link-button,
     .selection-actions button:not(.ghost-btn):not(.neutral-btn),
     .destination-card-action.is-primary,
@@ -6939,7 +6958,7 @@
   </style>
 </head>
 
-<body class="hero-popup-hidden">
+<body class="hero-popup-hidden map-is-loading">
   <nav class="app-mode-toggle" aria-label="Switch app view">
     <a href="index.html">Home</a>
     <a class="is-active" href="map.html" aria-current="page">Map</a>
@@ -7470,6 +7489,9 @@
     // =========================================================
 
     let map = null;
+    let baseTileLayer = null;
+    let initialMapReadyFallbackTimer = null;
+    let initialMapPanelHideTimer = null;
     let routingControl = null;
     let lastPosition = null;
     let geolocationWatchId = null;
@@ -8953,6 +8975,15 @@
         map = null;
       }
       routingControl = null;
+      baseTileLayer = null;
+      if (initialMapReadyFallbackTimer) {
+        window.clearTimeout(initialMapReadyFallbackTimer);
+        initialMapReadyFallbackTimer = null;
+      }
+      if (initialMapPanelHideTimer) {
+        window.clearTimeout(initialMapPanelHideTimer);
+        initialMapPanelHideTimer = null;
+      }
       journeyLayerGroup = null;
       markers = [];
       lastPosition = null;
@@ -9502,7 +9533,8 @@
         strainMetaByKey.set(key, {
           name: (displayName || '').toString().trim(),
           typeCounts: { sativa: 0, indica: 0, hybrid: 0, hash: 0, kush: 0 },
-          isCali: false
+          listingCount: 0,
+          caliListingCount: 0
         });
       }
       const meta = strainMetaByKey.get(key);
@@ -9512,7 +9544,7 @@
       return meta;
     }
 
-    function mergeStrainMeta(displayName, baseTypeValue, isCaliValue) {
+    function mergeStrainMeta(displayName, baseTypeValue, isCaliValue, countListing = true) {
       const name = (displayName || '').toString().trim();
       const key = normaliseText(name);
       if (!key) return;
@@ -9523,8 +9555,11 @@
       if (baseType) {
         meta.typeCounts[baseType] = (meta.typeCounts[baseType] || 0) + 1;
       }
-      if (Number(isCaliValue) === 1 || isCaliValue === true) {
-        meta.isCali = true;
+      if (countListing) {
+        meta.listingCount += 1;
+        if (Number(isCaliValue) === 1 || isCaliValue === true) {
+          meta.caliListingCount += 1;
+        }
       }
     }
 
@@ -9545,9 +9580,18 @@
     function getStrainVisualMeta(name) {
       const key = normaliseText(name || '');
       const meta = key ? strainMetaByKey.get(key) : null;
+      const listingCount = Number(meta && meta.listingCount) || 0;
+      const caliListingCount = Number(meta && meta.caliListingCount) || 0;
+      const caliStatus = caliListingCount <= 0
+        ? 'none'
+        : (listingCount > 0 && caliListingCount >= listingCount ? 'all' : 'mixed');
       return {
         baseType: deriveStrainBaseType(meta),
-        isCali: !!(meta && meta.isCali)
+        listingCount,
+        caliListingCount,
+        caliStatus,
+        isCali: caliStatus === 'all',
+        hasCaliOption: caliStatus !== 'none'
       };
     }
 
@@ -9636,7 +9680,7 @@
           .slice(0, 2) || 'CS';
         const svg =
           `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">` +
-            `<rect width="96" height="96" rx="22" fill="#f7fbf8"/>` +
+            `<rect width="96" height="96" rx="22" fill="#ffffff"/>` +
             `<circle cx="48" cy="48" r="35" fill="#183f32"/>` +
             `<text x="48" y="58" text-anchor="middle" font-family="Arial,sans-serif" font-size="30" font-weight="800" fill="#ffffff">${initials}</text>` +
           `</svg>`;
@@ -9879,7 +9923,8 @@
           : 'Ready to scan the map';
         const metaBits = [];
         if (meta.baseType !== 'unknown') metaBits.push(meta.baseType);
-        if (meta.isCali) metaBits.push('Cali');
+        if (meta.caliStatus === 'all') metaBits.push('Cali');
+        if (meta.caliStatus === 'mixed') metaBits.push('Cali option available');
         if (market.matchCount) metaBits.push(`${market.matchCount} sellers`);
         if (market.cheapestShopLine) metaBits.push(`Lowest at ${market.cheapestShopLine}`);
         if (isShelved && !isCurrent) metaBits.push('Saved');
@@ -10350,7 +10395,7 @@
       return `<img src="${first}" alt="" aria-hidden="true"
                   data-candidates="${joined}" data-idx="0"
                   onerror="popupLogoFallback(this)"
-                  style="width:${POPUP_LOGO_SIZE}px;height:${POPUP_LOGO_SIZE}px;object-fit:contain;display:block;margin:8px auto;border-radius:8px;background:white;">`;
+                  style="width:${POPUP_LOGO_SIZE}px;height:${POPUP_LOGO_SIZE}px;box-sizing:border-box;padding:6px;object-fit:contain;display:block;margin:8px auto;border:1px solid rgba(92,107,97,.16);border-radius:8px;background:#fff;">`;
     }
 
     function bestMatchLogoHtml(loc) {
@@ -11212,7 +11257,14 @@
       if (!rawMap.has(locationKey)) rawMap.set(locationKey, new Map());
       const byStrain = rawMap.get(locationKey);
       if (!byStrain.has(strainKey)) {
-        byStrain.set(strainKey, { prices: new Set(), growers: new Set(), notes: new Set(), priceEntries: [] });
+        byStrain.set(strainKey, {
+          prices: new Set(),
+          growers: new Set(),
+          notes: new Set(),
+          priceEntries: [],
+          listingCount: 0,
+          caliListingCount: 0
+        });
       }
       return byStrain.get(strainKey);
     }
@@ -11231,6 +11283,10 @@
       if (!locKey || !strainKey) return;
 
       const entry = ensurePopupStrainDetailEntry(rawMap, locKey, strainKey);
+      entry.listingCount += 1;
+      if (Number(row && row.is_cali) === 1 || (row && row.is_cali) === true) {
+        entry.caliListingCount += 1;
+      }
       const priceEntry = getOfferingPriceEntry(row);
       if (priceEntry) {
         entry.priceEntries.push(priceEntry);
@@ -11258,7 +11314,8 @@
             priceText,
             growerText,
             notesText,
-            priceEntries: Array.isArray(raw.priceEntries) ? raw.priceEntries.slice() : []
+            priceEntries: Array.isArray(raw.priceEntries) ? raw.priceEntries.slice() : [],
+            isCali: Number(raw.caliListingCount) > 0
           });
         });
         if (byStrain.size) out.set(locationKey, byStrain);
@@ -11287,7 +11344,7 @@
           rows.forEach(r => {
             const strainName = ((r && (r.strain_name_display || r.strain_name_normalised)) || '').toString().trim();
             if (!strainName) return;
-            mergeStrainMeta(strainName, '', 0);
+            mergeStrainMeta(strainName, '', 0, false);
             const shops = (r && Array.isArray(r.shops)) ? r.shops : [];
             shops.forEach(s => {
               const id = parseInt(s && s.shop_id, 10);
@@ -11455,7 +11512,7 @@
 
     function getPopupStrainDetail(loc, strainName) {
       const strainKey = normaliseText((strainName || '').toString());
-      if (!loc || !strainKey) return { priceText: '', growerText: '', notesText: '' };
+      if (!loc || !strainKey) return { priceText: '', growerText: '', notesText: '', priceEntries: [], isCali: false };
 
       if (loc.db_shop_id) {
         const byId = popupStrainDetailsByShopId.get(String(loc.db_shop_id));
@@ -11470,7 +11527,7 @@
         return byNameCity.get(strainKey);
       }
 
-      return { priceText: '', growerText: '', notesText: '' };
+      return { priceText: '', growerText: '', notesText: '', priceEntries: [], isCali: false };
     }
 
     function getPopupMenuUpdatedAt(loc) {
@@ -11664,8 +11721,8 @@
         const metaHtml = metaParts.length
           ? `<span class="popup-strain-meta">${metaParts.join('<span class="popup-strain-meta-sep">•</span>')}</span>`
           : '';
-        const caliClass = meta.isCali ? ' is-cali' : '';
-        const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
+        const caliClass = detail && detail.isCali ? ' is-cali' : '';
+        const caliBadge = detail && detail.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
         const cheapestBadge = isCheapest ? '<span class="strain-cheapest-badge">Cheapest</span>' : '';
         const rowHtml = (
           `<li>` +
@@ -11817,11 +11874,13 @@
         if (meta.baseType !== 'unknown') {
           btn.classList.add(`type-${meta.baseType}`);
         }
-        if (meta.isCali) {
+        if (meta.caliStatus === 'all') {
           btn.classList.add('is-cali');
         }
 
-        const caliBadge = meta.isCali ? '<span class="strain-cali-badge">Cali</span>' : '';
+        const caliBadge = meta.caliStatus === 'all'
+          ? '<span class="strain-cali-badge">Cali</span>'
+          : (meta.caliStatus === 'mixed' ? '<span class="strain-cali-badge">Cali option</span>' : '');
         const isShelved = isStrainShelved(name);
         const cheapestBadge = normaliseText(strainFilterText) === normaliseText(name) && strainCheapestPriceLabel
           ? '<span class="strain-cheapest-badge">Cheapest</span>'
@@ -12873,7 +12932,6 @@
       document.getElementById('map').style.display = 'block';
       document.getElementById('ui-toggles').dataset.ready = 'true';
       document.getElementById('ui-toggles').style.display = 'block';
-      setUploadPanelState('', '', false);
 
       setStrainListVisible(false);
       // Start desktop in the primary search panel; keep mobile map-first.
@@ -13006,6 +13064,17 @@
       // Create the Leaflet map
       map = L.map('map').setView([0, 0], 2);
 
+      const syncMarkerDensity = () => {
+        if (!map) return;
+        const container = map.getContainer();
+        const zoom = map.getZoom();
+        container.dataset.markerDensity = zoom <= 13
+          ? 'wide'
+          : (zoom === 14 ? 'city' : (zoom === 15 ? 'neighbourhood' : 'close'));
+      };
+      map.on('zoomend', syncMarkerDensity);
+      syncMarkerDensity();
+
       map.on('click', () => {
         minimiseControlsForMapFocus();
       });
@@ -13016,7 +13085,7 @@
         }
       });
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      baseTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         keepBuffer: 5,
         updateWhenIdle: false,
@@ -13465,6 +13534,29 @@
       return passesCategoryFilter(loc, index);
     }
 
+    function finishInitialMapLoad() {
+      if (initialMapReadyFallbackTimer) {
+        window.clearTimeout(initialMapReadyFallbackTimer);
+        initialMapReadyFallbackTimer = null;
+      }
+      document.body.classList.remove('map-is-loading');
+      if (initialMapPanelHideTimer) window.clearTimeout(initialMapPanelHideTimer);
+      initialMapPanelHideTimer = window.setTimeout(() => {
+        initialMapPanelHideTimer = null;
+        setUploadPanelState('', '', false);
+      }, 220);
+    }
+
+    function waitForInitialMapTiles() {
+      if (!baseTileLayer) {
+        finishInitialMapLoad();
+        return;
+      }
+      baseTileLayer.once('load', finishInitialMapLoad);
+      if (initialMapReadyFallbackTimer) window.clearTimeout(initialMapReadyFallbackTimer);
+      initialMapReadyFallbackTimer = window.setTimeout(finishInitialMapLoad, 1800);
+    }
+
     function focusInitialMapViewport() {
       if (!map || !markers.length) return;
       if (lastPosition) {
@@ -13472,6 +13564,7 @@
           zoom: isCompactMobileLayout() ? 15 : 16,
           animate: false
         });
+        waitForInitialMapTiles();
         return;
       }
       const entries = markers
@@ -13480,11 +13573,13 @@
       const center = mapCenterForEntries(entries);
       if (!center) {
         fitMapToVisibleMarkers();
+        waitForInitialMapTiles();
         return;
       }
       // Keep every marker loaded, but begin one level closer to the city centre
       // so the opening view is useful instead of presenting a wall of markers.
-      map.setView(center, 14, { animate: false });
+      map.setView(center, 15, { animate: false });
+      waitForInitialMapTiles();
     }
 
     function fitMapToVisibleMarkers(options = {}) {
@@ -14404,8 +14499,10 @@
       const baseType = meta.baseType && meta.baseType !== 'unknown'
         ? `${meta.baseType.charAt(0).toUpperCase()}${meta.baseType.slice(1)}`
         : 'Type unknown';
-      if (meta.isCali && meta.baseType !== 'unknown') return `${baseType} · Cali`;
-      if (meta.isCali) return 'Cali cut';
+      if (meta.caliStatus === 'all' && meta.baseType !== 'unknown') return `${baseType} · Cali`;
+      if (meta.caliStatus === 'all') return 'Cali cut';
+      if (meta.caliStatus === 'mixed' && meta.baseType !== 'unknown') return `${baseType} · Cali option available`;
+      if (meta.caliStatus === 'mixed') return 'Cali option available';
       return baseType;
     }
 
@@ -14558,10 +14655,12 @@
     }
 
     function getStrainShelfArtTitle(meta) {
-      if (meta.isCali && meta.baseType !== 'unknown') {
+      if (meta.caliStatus === 'all' && meta.baseType !== 'unknown') {
         return `Cali ${meta.baseType}`;
       }
-      if (meta.isCali) return 'Cali cut';
+      if (meta.caliStatus === 'all') return 'Cali cut';
+      if (meta.caliStatus === 'mixed' && meta.baseType !== 'unknown') return `${meta.baseType} · Cali option`;
+      if (meta.caliStatus === 'mixed') return 'Cali option';
       if (meta.baseType !== 'unknown') return `${meta.baseType} cut`;
       return 'House pick';
     }

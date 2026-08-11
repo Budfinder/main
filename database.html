@@ -391,6 +391,37 @@
       font-size: 12px;
     }
 
+    .discovery-browser-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 7px 12px;
+      border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 10%, var(--panel-strong));
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.2;
+      text-decoration: none;
+      transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+    }
+
+    .discovery-browser-link:hover,
+    .discovery-browser-link:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 17%, var(--panel-strong));
+      outline: none;
+    }
+
+    html[data-budfinder-mode="dark"] .discovery-browser-link {
+      border-color: color-mix(in srgb, var(--accent) 58%, white 18%);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 78%, white), color-mix(in srgb, var(--accent-strong) 62%, #f5d67a));
+      color: #10150f;
+      box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
     .discovery-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -504,6 +535,106 @@
       text-align: center;
     }
 
+    .discovery-browser {
+      width: min(1040px, 100%);
+      margin: 26px auto 0;
+    }
+
+    .discovery-browser[hidden] {
+      display: none !important;
+    }
+
+    .discovery-browser-topbar,
+    .discovery-browser-heading,
+    .discovery-browser-results-head,
+    .discovery-browser-more {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .discovery-browser-topbar {
+      margin-bottom: 18px;
+    }
+
+    .discovery-browser-back {
+      min-height: 42px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-strong);
+      color: var(--ink);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .discovery-browser-heading {
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .discovery-browser-heading h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(25px, 4vw, 38px);
+      letter-spacing: -0.04em;
+    }
+
+    .discovery-browser-heading p,
+    .discovery-browser-results-head {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .discovery-browser-search {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+
+    .discovery-browser-search label {
+      color: var(--ink);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .discovery-browser-search input {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 16px;
+      border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line));
+      border-radius: 16px;
+      background: var(--panel-strong);
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .discovery-browser-results-head {
+      margin-bottom: 10px;
+    }
+
+    .discovery-browser-more {
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .discovery-browser-more button {
+      min-height: 44px;
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel-strong);
+      color: var(--ink);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
     #database-layout,
     .result-toolbar,
     .workflow-strip,
@@ -534,9 +665,14 @@
 
     .database-detail .detail-header,
     .database-detail .detail-section {
+      border: 1px solid var(--panel-border);
       border-radius: 22px;
       background: color-mix(in srgb, var(--panel) 96%, transparent);
       box-shadow: 0 14px 38px rgba(30, 50, 40, 0.08);
+    }
+
+    .database-detail .detail-section {
+      padding: clamp(16px, 3vw, 24px);
     }
 
     .database-detail .detail-header-main .shop-art {
@@ -581,8 +717,18 @@
     body.database-detail-open .topbar,
     body.database-detail-open .database-search-panel,
     body.database-detail-open .discovery-suggestions,
-    body.database-detail-open .discovery-results {
+    body.database-detail-open .discovery-results,
+    body.database-detail-open .discovery-browser {
       display: none !important;
+    }
+
+    body.database-browser-open .topbar,
+    body.database-browser-open .database-search-panel {
+      display: none !important;
+    }
+
+    body.database-browser-open .page-shell {
+      padding-top: 34px;
     }
 
     body.database-detail-open .page-shell {
@@ -633,6 +779,12 @@
 
       .discovery-group + .discovery-group {
         margin-top: 26px;
+      }
+
+      .discovery-group-head,
+      .discovery-browser-heading {
+        align-items: flex-start;
+        flex-direction: column;
       }
 
       .discovery-grid,
@@ -1702,6 +1854,10 @@
       line-height: 1.05;
     }
 
+    .menu-category-head h3 {
+      text-transform: capitalize;
+    }
+
     .price-guide-head p,
     .shop-menu-hero-head p {
       margin: 6px 0 0;
@@ -2741,10 +2897,7 @@
       display: block;
       border-radius: 14px;
       border: 1px solid rgba(92, 107, 97, 0.14);
-      background:
-        rgba(255, 255, 255, 0.82),
-        radial-gradient(circle at 30% 24%, rgba(255, 243, 210, 0.9), transparent 38%),
-        linear-gradient(145deg, rgba(46, 123, 89, 0.16), rgba(222, 160, 82, 0.16));
+      background: #fff;
       color: transparent;
       font-size: 0;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -4202,6 +4355,30 @@
       <div id="discovery-result-groups"></div>
     </section>
 
+    <section id="discovery-browser" class="discovery-browser" aria-live="polite" hidden>
+      <div class="discovery-browser-topbar">
+        <button class="discovery-browser-back" type="button" data-close-discovery-browser>← Back to database home</button>
+      </div>
+      <div class="discovery-browser-heading">
+        <div>
+          <h2 id="discovery-browser-title" tabindex="-1">Browse</h2>
+          <p id="discovery-browser-copy"></p>
+        </div>
+      </div>
+      <div class="discovery-browser-search">
+        <label id="discovery-browser-search-label" for="discovery-browser-search">Filter</label>
+        <input id="discovery-browser-search" type="search" autocomplete="off" />
+      </div>
+      <div class="discovery-browser-results-head">
+        <span id="discovery-browser-count"></span>
+        <span>A–Z</span>
+      </div>
+      <div id="discovery-browser-grid" class="discovery-grid"></div>
+      <div id="discovery-browser-more" class="discovery-browser-more" hidden>
+        <button type="button" data-load-more-discovery-browser>Show more</button>
+      </div>
+    </section>
+
     <section id="detail-view" class="database-detail panel" aria-live="polite" hidden></section>
 
     <div id="database-layout" class="layout">
@@ -4222,7 +4399,7 @@
             <button type="button" data-browse-mode="fresh">Fresh data</button>
             <button type="button" data-browse-mode="under10">Under €10</button>
             <button type="button" data-browse-mode="rare">2-3 shop finds</button>
-            <button type="button" data-browse-mode="cali">Cali</button>
+            <button type="button" data-browse-mode="cali">Cali available</button>
             <button type="button" data-browse-mode="sativa">Sativa</button>
             <button type="button" data-browse-mode="hybrid">Hybrid</button>
             <button type="button" data-browse-mode="indica">Indica</button>
@@ -4481,8 +4658,11 @@
       shopMenuCategory: '',
       shopHideUnknownPrices: false,
       view: 'strains',
+      discoveryBrowser: '',
+      discoveryBrowserLimit: 48,
       detail: null,
       detailReturnSearch: '',
+      detailReturnStack: [],
       detailVisibleLimit: 12
     };
 
@@ -4546,7 +4726,15 @@
       discoveryResults: document.getElementById('discovery-results'),
       discoveryResultsTitle: document.getElementById('discovery-results-title'),
       discoveryResultsCount: document.getElementById('discovery-results-count'),
-      discoveryResultGroups: document.getElementById('discovery-result-groups')
+      discoveryResultGroups: document.getElementById('discovery-result-groups'),
+      discoveryBrowser: document.getElementById('discovery-browser'),
+      discoveryBrowserTitle: document.getElementById('discovery-browser-title'),
+      discoveryBrowserCopy: document.getElementById('discovery-browser-copy'),
+      discoveryBrowserSearchLabel: document.getElementById('discovery-browser-search-label'),
+      discoveryBrowserSearch: document.getElementById('discovery-browser-search'),
+      discoveryBrowserCount: document.getElementById('discovery-browser-count'),
+      discoveryBrowserGrid: document.getElementById('discovery-browser-grid'),
+      discoveryBrowserMore: document.getElementById('discovery-browser-more')
     };
 
     const databasePersonalGreetingEl = document.getElementById('database-personal-greeting');
@@ -4986,7 +5174,7 @@
         ['Stale', buckets.stale],
         ['Unknown', buckets.unknown]
       ].filter(([, count]) => count > 0);
-      return parts.length ? parts.map(([label, count]) => `${label} ${count}`).join(' · ') : 'No menu dates';
+      return parts.length ? parts.map(([label, count]) => `${count} ${label.toLowerCase()}`).join(' · ') : 'No menu dates';
     }
 
     function buildListingCheckBatchSignal(offerings) {
@@ -5485,7 +5673,7 @@
       { key: 'fresh', label: 'Fresh data', summary: 'fresh data' },
       { key: 'under10', label: 'Under €10', summary: 'under €10' },
       { key: 'rare', label: '2–3-shop finds', summary: '2–3-shop' },
-      { key: 'cali', label: 'Cali', summary: 'cali' },
+      { key: 'cali', label: 'Cali available', summary: 'Cali-listing availability' },
       { key: 'sativa', label: 'Sativa', summary: 'sativa' },
       { key: 'hybrid', label: 'Hybrid', summary: 'hybrid' },
       { key: 'indica', label: 'Indica', summary: 'indica' },
@@ -5577,7 +5765,7 @@
 
     function hasExplicitDatabaseUrlState() {
       const params = new URLSearchParams(window.location.search || '');
-      return ['strain', 'search', 'detail', 'mode', 'view', 'shop_id', 'shopId', 'shop', 'shop_name']
+      return ['strain', 'search', 'detail', 'mode', 'view', 'browser', 'shop_id', 'shopId', 'shop', 'shop_name']
         .some(key => params.has(key));
     }
 
@@ -5596,6 +5784,7 @@
         familyFilter: state.familyFilter,
         activeShopId: state.activeShopId,
         shopMenuExpanded: Boolean(state.shopMenuExpanded),
+        discoveryBrowser: state.discoveryBrowser || '',
         detail,
         detailReturnSearch: state.detailReturnSearch || ''
       };
@@ -5615,6 +5804,9 @@
       if (typeof saved.search === 'string' && els.search) els.search.value = saved.search;
       if (BROWSE_MODE_BY_KEY.has(saved.browseMode)) state.browseMode = saved.browseMode;
       if (saved.familyFilter && FAMILY_BY_KEY.has(saved.familyFilter)) state.familyFilter = saved.familyFilter;
+      if (saved.discoveryBrowser === 'shops' || saved.discoveryBrowser === 'strains') {
+        state.discoveryBrowser = saved.discoveryBrowser;
+      }
 
       const shopId = String(saved.activeShopId || '').trim();
       if (shopId && isBrowsableShopId(shopId)) {
@@ -6948,13 +7140,16 @@
       return tokens.length > 1 && tokens.every(token => text.includes(token)) ? 45 : 0;
     }
 
-    function discoveryGroupHtml(title, helper, cards, className = '') {
+    function discoveryGroupHtml(title, helper, cards, className = '', browserAction = null) {
       if (!cards.length) return '';
+      const headerAction = browserAction && browserAction.type && browserAction.label
+        ? `<a class="discovery-browser-link" href="${escapeHtmlAttr(detailUrl({ browser: browserAction.type }))}" data-open-discovery-browser="${escapeHtmlAttr(browserAction.type)}">${escapeHtml(browserAction.label)} →</a>`
+        : (helper ? `<span>${escapeHtml(helper)}</span>` : '');
       return `
         <section class="discovery-group">
           <div class="discovery-group-head">
             <h3>${escapeHtml(title)}</h3>
-            ${helper ? `<span>${escapeHtml(helper)}</span>` : ''}
+            ${headerAction}
           </div>
           <div class="discovery-grid${className ? ` ${escapeHtmlAttr(className)}` : ''}">
             ${cards.join('')}
@@ -7063,18 +7258,109 @@
         .filter(Boolean);
       els.discoverySuggestionGroups.innerHTML = [
         discoveryGroupHtml('Locations', 'Open on the map', selection.areas.map(discoveryAreaCardHtml)),
-        discoveryGroupHtml('Coffeeshops', 'Open a known menu', selectedShops.map(discoveryShopCardHtml)),
-        discoveryGroupHtml('Strains', 'Compare prices and shops', selectedStrains.map(discoveryStrainCardHtml))
+        discoveryGroupHtml('Coffeeshops', '', selectedShops.map(discoveryShopCardHtml), '', { type: 'shops', label: 'Browse all coffeeshops' }),
+        discoveryGroupHtml('Strains', '', selectedStrains.map(discoveryStrainCardHtml), '', { type: 'strains', label: 'Browse all strains' })
       ].join('');
     }
 
+    function renderDiscoveryBrowser() {
+      if (!els.discoveryBrowser || !els.discoveryBrowserGrid) return;
+      const browserType = state.discoveryBrowser;
+      if (browserType !== 'shops' && browserType !== 'strains') {
+        els.discoveryBrowser.hidden = true;
+        els.discoveryBrowserGrid.replaceChildren();
+        return;
+      }
+
+      const isShopBrowser = browserType === 'shops';
+      const query = normaliseSearchText(els.discoveryBrowserSearch ? els.discoveryBrowserSearch.value : '');
+      const allItems = isShopBrowser
+        ? shopRowsFromOfferings(state.offerings)
+        : state.strainStats.slice().sort(compareStrainName);
+      const filteredItems = allItems.filter(item => {
+        if (!query) return true;
+        if (isShopBrowser) {
+          return [item.shopName, item.city, item.shopKey]
+            .some(value => normaliseSearchText(value).includes(query));
+        }
+        return [item.name, item.topType]
+          .some(value => normaliseSearchText(value).includes(query));
+      });
+      const visibleItems = filteredItems.slice(0, state.discoveryBrowserLimit);
+      const remaining = Math.max(0, filteredItems.length - visibleItems.length);
+
+      els.discoveryBrowser.hidden = false;
+      els.discoveryBrowserTitle.textContent = isShopBrowser ? 'Coffeeshop browser' : 'Strain browser';
+      els.discoveryBrowserCopy.textContent = isShopBrowser
+        ? 'Browse coffeeshops A–Z. Select a card to open that shop’s known menu.'
+        : 'Browse every available strain A–Z. Select a card to open prices and stocking shops.';
+      els.discoveryBrowserSearchLabel.textContent = isShopBrowser ? 'Find a coffeeshop' : 'Find a strain';
+      els.discoveryBrowserSearch.placeholder = isShopBrowser
+        ? 'Try Abraxas, Family First, or Amsterdam...'
+        : 'Try Gelato, Haze, or Hybrid...';
+      els.discoveryBrowserCount.textContent = query
+        ? `${filteredItems.length.toLocaleString()} match${filteredItems.length === 1 ? '' : 'es'}`
+        : `${filteredItems.length.toLocaleString()} available`;
+      els.discoveryBrowserGrid.innerHTML = visibleItems.length
+        ? visibleItems.map(isShopBrowser ? discoveryShopCardHtml : discoveryStrainCardHtml).join('')
+        : `<div class="discovery-empty">No ${isShopBrowser ? 'coffeeshops' : 'strains'} match this filter.</div>`;
+      els.discoveryBrowserMore.hidden = remaining === 0;
+      const moreButton = els.discoveryBrowserMore.querySelector('[data-load-more-discovery-browser]');
+      if (moreButton) {
+        moreButton.textContent = `Show ${Math.min(48, remaining).toLocaleString()} more (${remaining.toLocaleString()} left)`;
+      }
+    }
+
+    function openDiscoveryBrowser(type, options = {}) {
+      const browserType = type === 'shops' ? 'shops' : 'strains';
+      state.discoveryBrowser = browserType;
+      state.discoveryBrowserLimit = 48;
+      state.detail = null;
+      state.detailReturnStack = [];
+      if (els.discoveryBrowserSearch) els.discoveryBrowserSearch.value = '';
+      if (options.pushHistory !== false && window.history && window.history.pushState) {
+        window.history.pushState({ browser: browserType }, '', detailUrl({ browser: browserType }));
+      }
+      render();
+      window.setTimeout(() => {
+        if (els.discoveryBrowser) els.discoveryBrowser.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (els.discoveryBrowserTitle) els.discoveryBrowserTitle.focus({ preventScroll: true });
+      }, 0);
+    }
+
+    function closeDiscoveryBrowser() {
+      state.discoveryBrowser = '';
+      state.discoveryBrowserLimit = 48;
+      if (els.discoveryBrowserSearch) els.discoveryBrowserSearch.value = '';
+      if (window.history && window.history.pushState) {
+        window.history.pushState({}, '', detailUrl());
+      }
+      render();
+      window.setTimeout(() => {
+        const target = document.querySelector('.database-search-panel');
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (els.search) els.search.focus({ preventScroll: true });
+      }, 0);
+    }
+
     function renderDiscovery() {
-      if (!els.discoverySuggestions || !els.discoveryResults || !els.discoveryResultGroups) return;
+      if (!els.discoverySuggestions || !els.discoveryResults || !els.discoveryResultGroups || !els.discoveryBrowser) return;
+      document.body.classList.toggle('database-browser-open', Boolean(state.discoveryBrowser && !state.detail));
       if (state.detail) {
         els.discoverySuggestions.hidden = true;
         els.discoveryResults.hidden = true;
+        els.discoveryBrowser.hidden = true;
         return;
       }
+
+      if (state.discoveryBrowser) {
+        els.discoverySuggestions.hidden = true;
+        els.discoveryResults.hidden = true;
+        renderDiscoveryBrowser();
+        return;
+      }
+
+      els.discoveryBrowser.hidden = true;
 
       const query = (els.search && els.search.value || '').replace(/\s+/g, ' ').trim();
       const shopRows = shopRowsFromOfferings(state.offerings);
@@ -7350,12 +7636,58 @@
     function focusDetail() {
       window.setTimeout(() => {
         if (els.detailView) els.detailView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const title = els.detailView ? els.detailView.querySelector('.detail-header h2') : null;
+        if (title) {
+          title.setAttribute('tabindex', '-1');
+          title.focus({ preventScroll: true });
+        }
       }, 0);
+    }
+
+    function rememberDetailReturnContext() {
+      state.detailReturnStack.push({
+        detail: state.detail ? { ...state.detail } : null,
+        discoveryBrowser: state.discoveryBrowser || '',
+        search: els.search ? els.search.value : '',
+        view: state.view
+      });
+    }
+
+    function detailBackLabel(fallbackLabel) {
+      const context = state.detailReturnStack[state.detailReturnStack.length - 1];
+      if (!context) return fallbackLabel;
+      if (context.detail && context.detail.type === 'shop') {
+        const shop = shopRowsFromOfferings(state.offerings)
+          .find(item => item.shopId === String(context.detail.shopId));
+        return `← Back to ${shop ? shop.shopName : 'shop'} menu`;
+      }
+      if (context.detail && context.detail.type === 'strain') {
+        const stat = getStatByKey(context.detail.key);
+        return `← Back to ${stat ? stat.name : 'strain'} profile`;
+      }
+      if (context.discoveryBrowser === 'shops') return '← Back to coffeeshop browser';
+      if (context.discoveryBrowser === 'strains') return '← Back to strain browser';
+      if (context.search) return '← Back to search results';
+      return fallbackLabel;
+    }
+
+    function navigationUrlForCurrentState() {
+      if (state.detail && state.detail.type === 'shop') {
+        return detailUrl({ detail: 'shop', shop_id: state.detail.shopId });
+      }
+      if (state.detail && state.detail.type === 'strain') {
+        const stat = getStatByKey(state.detail.key);
+        return detailUrl({ detail: 'strain', strain: stat ? stat.name : state.detail.key });
+      }
+      if (state.discoveryBrowser) return detailUrl({ browser: state.discoveryBrowser });
+      const search = els.search ? els.search.value.trim() : '';
+      return detailUrl(search ? { search } : {});
     }
 
     function openStrainDetail(key) {
       const stat = getStatByKey(key);
       if (!stat) return;
+      rememberDetailReturnContext();
       state.detailReturnSearch = els.search.value;
       state.detail = { type: 'strain', key: stat.key };
       state.detailVisibleLimit = DETAIL_LISTING_STEP;
@@ -7371,6 +7703,7 @@
     function openShopDetail(shopId) {
       const row = shopRowsFromOfferings(state.offerings).find(item => item.shopId === String(shopId));
       if (!row) return;
+      rememberDetailReturnContext();
       state.detailReturnSearch = els.search.value;
       state.detail = { type: 'shop', shopId: row.shopId };
       state.view = 'shops';
@@ -7386,19 +7719,31 @@
     }
 
     function closeDetail() {
-      const returnSearch = state.detailReturnSearch || '';
-      state.detail = null;
+      const context = state.detailReturnStack.pop() || null;
+      const returnSearch = context ? context.search : (state.detailReturnSearch || '');
+      state.detail = context && context.detail ? { ...context.detail } : null;
+      state.discoveryBrowser = context ? (context.discoveryBrowser || '') : '';
+      state.view = context && context.view ? context.view : state.view;
       state.detailVisibleLimit = DETAIL_LISTING_STEP;
-      state.detailReturnSearch = '';
+      state.detailReturnSearch = context && context.detail ? returnSearch : '';
       els.search.value = returnSearch;
       if (window.history && window.history.pushState) {
-        window.history.pushState({}, '', detailUrl(returnSearch ? { search: returnSearch } : {}));
+        window.history.pushState({}, '', navigationUrlForCurrentState());
       }
       syncUniversalSearchMode();
       render();
       window.setTimeout(() => {
-        const target = document.querySelector('.database-search-panel');
+        const target = state.detail
+          ? els.detailView
+          : (state.discoveryBrowser ? els.discoveryBrowser : document.querySelector('.database-search-panel'));
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const focusTarget = state.detail
+          ? (els.detailView && els.detailView.querySelector('.detail-header h2'))
+          : (state.discoveryBrowser ? els.discoveryBrowserTitle : els.search);
+        if (focusTarget) {
+          if (state.detail) focusTarget.setAttribute('tabindex', '-1');
+          focusTarget.focus({ preventScroll: true });
+        }
       }, 0);
     }
 
@@ -7431,7 +7776,7 @@
         const cities = (stat.cities || []).join(', ') || 'City unknown';
         els.detailView.innerHTML = `
           <div class="detail-topbar">
-            <button type="button" class="detail-back-button" data-close-detail>← Back to results</button>
+            <button type="button" class="detail-back-button" data-close-detail>${escapeHtml(detailBackLabel('← Back to results'))}</button>
             <span class="chip">${shopIds.length.toLocaleString()} shops</span>
           </div>
           <header class="detail-header">
@@ -7498,7 +7843,7 @@
       });
       els.detailView.innerHTML = `
         <div class="detail-topbar">
-          <button type="button" class="detail-back-button" data-close-detail>← Back to shop results</button>
+          <button type="button" class="detail-back-button" data-close-detail>${escapeHtml(detailBackLabel('← Back to shop results'))}</button>
           ${ageBadgeHtml(newestDate)}
         </div>
         <header class="detail-header">
@@ -8428,9 +8773,13 @@
       const strain = (params.get('strain') || params.get('search') || '').trim();
       const detailType = (params.get('detail') || '').trim();
       const mode = (params.get('mode') || '').trim();
+      const browserType = (params.get('browser') || '').trim();
       const shopId = (params.get('shop_id') || params.get('shopId') || '').trim();
       const shopQuery = (params.get('shop') || params.get('shop_name') || '').trim();
       state.detail = null;
+      state.discoveryBrowser = browserType === 'shops' || browserType === 'strains' ? browserType : '';
+      state.discoveryBrowserLimit = 48;
+      state.detailReturnStack = [];
       state.detailReturnSearch = '';
       if (strain) {
         els.search.value = strain;
@@ -8943,6 +9292,12 @@
     }
 
     function handleDiscoveryClick(event) {
+      const browserLink = event.target.closest('[data-open-discovery-browser]');
+      if (browserLink) {
+        event.preventDefault();
+        openDiscoveryBrowser(browserLink.dataset.openDiscoveryBrowser);
+        return;
+      }
       const shopCard = event.target.closest('[data-discovery-shop]');
       if (shopCard) {
         openShopDetail(shopCard.dataset.discoveryShop);
@@ -8959,6 +9314,29 @@
     }
     if (els.discoveryResultGroups) {
       els.discoveryResultGroups.addEventListener('click', handleDiscoveryClick);
+    }
+    if (els.discoveryBrowserGrid) {
+      els.discoveryBrowserGrid.addEventListener('click', handleDiscoveryClick);
+    }
+    if (els.discoveryBrowser) {
+      els.discoveryBrowser.addEventListener('click', event => {
+        const closeButton = event.target.closest('[data-close-discovery-browser]');
+        if (closeButton) {
+          closeDiscoveryBrowser();
+          return;
+        }
+        const moreButton = event.target.closest('[data-load-more-discovery-browser]');
+        if (moreButton) {
+          state.discoveryBrowserLimit += 48;
+          renderDiscoveryBrowser();
+        }
+      });
+    }
+    if (els.discoveryBrowserSearch) {
+      els.discoveryBrowserSearch.addEventListener('input', () => {
+        state.discoveryBrowserLimit = 48;
+        renderDiscoveryBrowser();
+      });
     }
 
     if (els.detailView) {
