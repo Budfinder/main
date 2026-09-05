@@ -66,6 +66,7 @@ import re
 import sqlite3
 import subprocess
 import sys
+import tempfile
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -102,8 +103,26 @@ DEFAULT_LOCATION_FILES = {
     "Haarlem": "Haarlem.csv",
     "Maastricht": "Maastricht.csv",
     "Rotterdam": "Rotterdam.csv",
+    "Tilburg": "Tilburg.csv",
     "Utrecht": "utrechtLoc.csv",
 }
+MASTER_LOCATION_FIELDS = [
+    "shop_id",
+    "name",
+    "lat",
+    "lng",
+    "city",
+    "city_slug",
+    "province",
+    "address",
+    "postcode",
+    "website",
+    "shop_key",
+    "logo",
+    "visited",
+    "rating",
+    "status",
+]
 
 
 # -----------------------------------------------------------------------------
@@ -461,6 +480,265 @@ def write_csv_rows(path: str, fieldnames: List[str], rows: List[Dict[str, str]],
         writer.writerows(rows)
 
 
+def atomic_write_csv_rows(
+    path: str,
+    fieldnames: List[str],
+    rows: List[Dict[str, str]],
+    *,
+    encoding: str,
+) -> None:
+    """Replace a CSV atomically so an interrupted admin save cannot truncate it."""
+    directory = os.path.dirname(os.path.abspath(path))
+    os.makedirs(directory, exist_ok=True)
+    temp_path = ""
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w",
+            encoding=encoding,
+            newline="",
+            dir=directory,
+            prefix=f".{os.path.basename(path)}.",
+            suffix=".tmp",
+            delete=False,
+        ) as f:
+            temp_path = f.name
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(rows)
+        os.replace(temp_path, path)
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            os.unlink(temp_path)
+
+
+def atomic_json_dump(path: str, data: Any) -> None:
+    """Replace a JSON document atomically."""
+    directory = os.path.dirname(os.path.abspath(path))
+    os.makedirs(directory, exist_ok=True)
+    temp_path = ""
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w",
+            encoding="utf-8",
+            dir=directory,
+            prefix=f".{os.path.basename(path)}.",
+            suffix=".tmp",
+            delete=False,
+        ) as f:
+            temp_path = f.name
+            json.dump(data, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+        os.replace(temp_path, path)
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            os.unlink(temp_path)
+
+
+def location_index_path(base_dir: str) -> str:
+    return os.path.join(base_dir, DEFAULT_DATABASE_DIR, "locations", "index.json")
+
+
+def read_location_index(base_dir: str) -> Dict[str, Any]:
+    with open(location_index_path(base_dir), "r", encoding="utf-8") as f:
+        data = json.load(f)
+    if not isinstance(data, dict):
+        raise ValueError("The locations index must be a JSON object.")
+    return data
+
+
+def master_location_catalog_path(base_dir: str) -> str:
+    """Resolve the nationwide catalogue declared by locations/index.json."""
+    index = read_location_index(base_dir)
+    filename = str(index.get("master") or "coffeeshops.csv").strip()
+    if not filename or os.path.basename(filename) != filename:
+        raise ValueError("The master locations filename in index.json is invalid.")
+    return os.path.join(base_dir, DEFAULT_DATABASE_DIR, "locations", filename)
+
+
+def read_master_location_catalog(base_dir: str) -> Tuple[List[str], List[Dict[str, str]]]:
+    """Read the nationwide shop list used by the public map."""
+    fieldnames, rows = read_csv_rows(master_location_catalog_path(base_dir), encoding="utf-8-sig")
+    for field in MASTER_LOCATION_FIELDS:
+        ensure_field(fieldnames, rows, field, "")
+    return fieldnames, rows
+
+
+def clean_location_coordinate(raw: object, *, latitude: bool) -> str:
+    label = "Latitude" if latitude else "Longitude"
+    try:
+        value = float(str(raw or "").strip().replace(",", "."))
+    except ValueError as exc:
+        raise ValueError(f"{label} must be a number.") from exc
+    low, high = (-90.0, 90.0) if latitude else (-180.0, 180.0)
+    if not low <= value <= high:
+        raise ValueError(f"{label} must be between {low:g} and {high:g}.")
+    return f"{value:.8f}".rstrip("0").rstrip(".")
+
+
+def clean_location_logo(raw: object) -> str:
+    """Accept a logo filename, never a path outside images/logos."""
+    value = re.sub(r"\s+", " ", str(raw or "").strip())
+    if not value:
+        return ""
+    if os.path.basename(value) != value or "/" in value or "\\" in value:
+        raise ValueError("Picture must be a filename only, not a folder path.")
+    if not re.fullmatch(r"[^\x00-\x1f]+\.(?:png|jpe?g|webp|svg)", value, flags=re.IGNORECASE):
+        raise ValueError("Picture must be a PNG, JPG, JPEG, WEBP, or SVG filename.")
+    return value
+
+
+def clean_location_website(raw: object) -> str:
+    value = str(raw or "").strip()
+    if not value:
+        return ""
+    parsed = urlparse(value)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise ValueError("Website must be a complete http:// or https:// address.")
+    return value
+
+
+def infer_master_location_province(
+    city_slug: str,
+    rows: List[Dict[str, str]],
+) -> str:
+    for row in rows:
+        if str(row.get("city_slug") or "").strip() == city_slug:
+            province = str(row.get("province") or "").strip()
+            if province:
+                return province
+    return ""
+
+
+def build_master_location_values(
+    values: Dict[str, Any],
+    rows: List[Dict[str, str]],
+    *,
+    current_shop_key: str = "",
+) -> Dict[str, str]:
+    """Validate and normalise editable nationwide-catalogue fields."""
+    name = re.sub(r"\s+", " ", str(values.get("name") or "").strip())
+    city = re.sub(r"\s+", " ", str(values.get("city") or "").strip())
+    if not name:
+        raise ValueError("Shop name is required.")
+    if not city:
+        raise ValueError("Town or city is required.")
+    if len(name) > 120 or len(city) > 80:
+        raise ValueError("Shop name or town is too long.")
+
+    city_slug = slug_token(city)
+    for row in rows:
+        if str(row.get("city_slug") or "").strip() == city_slug:
+            city = str(row.get("city") or city).strip() or city
+            break
+    for row in rows:
+        if str(row.get("shop_key") or "").strip() == current_shop_key:
+            continue
+        if (
+            str(row.get("city_slug") or "").strip() == city_slug
+            and slug_token(str(row.get("name") or "")) == slug_token(name)
+        ):
+            raise ValueError("A shop with that name already exists in this town.")
+    province = re.sub(r"\s+", " ", str(values.get("province") or "").strip())
+    if not province:
+        province = infer_master_location_province(city_slug, rows)
+    if not province:
+        raise ValueError("Province is required when adding the first shop in a new town.")
+
+    website = clean_location_website(values.get("website"))
+    website_key = normalise_url_path(website)
+    if website_key:
+        for row in rows:
+            if str(row.get("shop_key") or "").strip() == current_shop_key:
+                continue
+            if normalise_url_path(row.get("website")) == website_key:
+                raise ValueError("That website is already used by another nationwide shop.")
+
+    return {
+        "name": name,
+        "lat": clean_location_coordinate(values.get("lat"), latitude=True),
+        "lng": clean_location_coordinate(values.get("lng"), latitude=False),
+        "city": city,
+        "city_slug": city_slug,
+        "province": province,
+        "address": re.sub(r"\s+", " ", str(values.get("address") or "").strip())[:180],
+        "postcode": re.sub(r"\s+", " ", str(values.get("postcode") or "").strip()).upper()[:20],
+        "website": website,
+        "logo": clean_location_logo(values.get("logo")),
+    }
+
+
+def sync_location_index_metadata(base_dir: str, rows: List[Dict[str, str]]) -> None:
+    """Keep city counts/centres accurate and register newly entered towns."""
+    index = read_location_index(base_dir)
+    cities = index.get("cities")
+    if not isinstance(cities, list):
+        cities = []
+        index["cities"] = cities
+
+    open_by_slug: Dict[str, List[Dict[str, str]]] = {}
+    all_by_slug: Dict[str, List[Dict[str, str]]] = {}
+    for row in rows:
+        slug = str(row.get("city_slug") or "").strip()
+        if not slug:
+            continue
+        all_by_slug.setdefault(slug, []).append(row)
+        if str(row.get("status") or "open").strip().lower() != "closed":
+            open_by_slug.setdefault(slug, []).append(row)
+
+    registered = {
+        str(city.get("slug") or "").strip(): city
+        for city in cities
+        if isinstance(city, dict) and str(city.get("slug") or "").strip()
+    }
+    for slug, slug_rows in all_by_slug.items():
+        if slug in registered:
+            continue
+        city = {
+            "name": str(slug_rows[0].get("city") or slug).strip(),
+            "slug": slug,
+            "file": "",
+            "shop_count": 0,
+            "center": [0, 0],
+        }
+        cities.append(city)
+        registered[slug] = city
+
+    for slug, city in registered.items():
+        open_rows = open_by_slug.get(slug, [])
+        city["shop_count"] = len(open_rows)
+        coordinates: List[Tuple[float, float]] = []
+        for row in open_rows:
+            try:
+                coordinates.append((float(row.get("lat") or ""), float(row.get("lng") or "")))
+            except ValueError:
+                continue
+        if coordinates:
+            city["center"] = [
+                round(sum(lat for lat, _lng in coordinates) / len(coordinates), 6),
+                round(sum(lng for _lat, lng in coordinates) / len(coordinates), 6),
+            ]
+
+    atomic_json_dump(location_index_path(base_dir), index)
+
+
+def write_master_location_catalog(
+    base_dir: str,
+    fieldnames: List[str],
+    rows: List[Dict[str, str]],
+) -> None:
+    """Save the live nationwide catalogue and its derived location metadata."""
+    for field in MASTER_LOCATION_FIELDS:
+        if field not in fieldnames:
+            fieldnames.append(field)
+    atomic_write_csv_rows(
+        master_location_catalog_path(base_dir),
+        fieldnames,
+        rows,
+        encoding="utf-8-sig",
+    )
+    sync_location_index_metadata(base_dir, rows)
+
+
 def ensure_field(fieldnames: List[str], rows: List[Dict[str, str]], field: str, default: str) -> None:
     """Add a field to an in-memory CSV table if it does not exist yet."""
     if field not in fieldnames:
@@ -527,10 +805,9 @@ def flatten_location_tables(
 
 def build_shop_coverage(
     catalog_rows: List[Dict[str, str]],
-    location_tables: Dict[str, Tuple[List[str], List[Dict[str, str]]]],
+    master_rows: List[Dict[str, str]],
 ) -> Dict[str, Any]:
-    """Summarise catalog ↔ map drift for the admin UI."""
-    location_rows = flatten_location_tables(location_tables)
+    """Summarise csd.csv ↔ nationwide-master drift for the admin UI."""
     active_catalog = [
         row
         for row in catalog_rows
@@ -540,43 +817,85 @@ def build_shop_coverage(
     closed_catalog = [row for row in catalog_rows if parse_csv_bool(row.get("is_closed"), default=False)]
     open_map = [
         row
-        for row in location_rows
-        if parse_csv_bool(row.get("Coffeeshop"), default=False)
-        and not parse_csv_bool(row.get("Closed"), default=False)
+        for row in master_rows
+        if str(row.get("status") or "open").strip().lower() != "closed"
     ]
     closed_map = [
         row
-        for row in location_rows
-        if parse_csv_bool(row.get("Coffeeshop"), default=False)
-        and parse_csv_bool(row.get("Closed"), default=False)
+        for row in master_rows
+        if str(row.get("status") or "open").strip().lower() == "closed"
     ]
 
-    active_by_url = {normalise_url_path(row.get("shop_url")): row for row in active_catalog}
-    open_map_by_url = {normalise_url_path(row.get("website")): row for row in open_map}
-    catalog_by_url = {normalise_url_path(row.get("shop_url")): row for row in catalog_rows}
+    catalog_by_key = {
+        derive_shop_key(row.get("name", ""), row.get("city", ""), row.get("shop_url", "")): row
+        for row in catalog_rows
+    }
+    catalog_by_url = {
+        normalise_url_path(row.get("shop_url")): row
+        for row in catalog_rows
+        if normalise_url_path(row.get("shop_url"))
+    }
+    map_by_key = {
+        str(row.get("shop_key") or "").strip(): row
+        for row in master_rows
+        if str(row.get("shop_key") or "").strip()
+    }
+    map_by_url = {
+        normalise_url_path(row.get("website")): row
+        for row in master_rows
+        if normalise_url_path(row.get("website"))
+    }
 
-    open_map_not_active: List[Dict[str, Any]] = []
-    for key, row in open_map_by_url.items():
-        if key in active_by_url:
+    def master_match(catalog_row: Dict[str, str]) -> Optional[Dict[str, str]]:
+        key = derive_shop_key(
+            catalog_row.get("name", ""),
+            catalog_row.get("city", ""),
+            catalog_row.get("shop_url", ""),
+        )
+        return map_by_key.get(key) or map_by_url.get(normalise_url_path(catalog_row.get("shop_url")))
+
+    def catalog_match(map_row: Dict[str, str]) -> Optional[Dict[str, str]]:
+        key = str(map_row.get("shop_key") or "").strip()
+        return catalog_by_key.get(key) or catalog_by_url.get(normalise_url_path(map_row.get("website")))
+
+    active_missing_from_map: List[Dict[str, Any]] = []
+    for row in active_catalog:
+        match = master_match(row)
+        if match and str(match.get("status") or "open").strip().lower() != "closed":
             continue
         item: Dict[str, Any] = dict(row)
-        catalog_match = catalog_by_url.get(key)
-        if catalog_match:
-            item["catalog_shop_url"] = catalog_match.get("shop_url", "")
-            item["catalog_name"] = catalog_match.get("name", "")
-            item["catalog_city"] = catalog_match.get("city", "")
-            item["catalog_show_in_admin"] = parse_csv_bool(catalog_match.get("show_in_admin"), default=True)
-            item["catalog_is_closed"] = parse_csv_bool(catalog_match.get("is_closed"), default=False)
+        if match:
+            item["map_shop_key"] = str(match.get("shop_key") or "").strip()
+            item["map_status"] = str(match.get("status") or "closed").strip().lower()
+        active_missing_from_map.append(item)
+
+    open_map_not_active: List[Dict[str, Any]] = []
+    for row in open_map:
+        match = catalog_match(row)
+        if (
+            match
+            and parse_csv_bool(match.get("show_in_admin"), default=True)
+            and not parse_csv_bool(match.get("is_closed"), default=False)
+        ):
+            continue
+        item: Dict[str, Any] = dict(row)
+        item["map_city"] = str(row.get("city") or "").strip()
+        if match:
+            item["catalog_shop_url"] = match.get("shop_url", "")
+            item["catalog_name"] = match.get("name", "")
+            item["catalog_city"] = match.get("city", "")
+            item["catalog_show_in_admin"] = parse_csv_bool(match.get("show_in_admin"), default=True)
+            item["catalog_is_closed"] = parse_csv_bool(match.get("is_closed"), default=False)
         open_map_not_active.append(item)
+
+    closed_map_rows = [{**row, "map_city": str(row.get("city") or "").strip()} for row in closed_map]
 
     return {
         "active_catalog": active_catalog,
         "closed_catalog": closed_catalog,
         "open_map": open_map,
-        "closed_map": closed_map,
-        "active_missing_from_map": [
-            row for key, row in active_by_url.items() if key not in open_map_by_url
-        ],
+        "closed_map": closed_map_rows,
+        "active_missing_from_map": active_missing_from_map,
         "open_map_not_active": open_map_not_active,
     }
 
@@ -872,6 +1191,7 @@ def _home_summary(
                     "haarlem": "Haarlem.csv",
                     "maastricht": "Maastricht.csv",
                     "rotterdam": "Rotterdam.csv",
+                    "tilburg": "Tilburg.csv",
                     "utrecht": "utrechtLoc.csv",
                 }.get(normalise_name(city), ""),
                 "active_shops": summary["active_shops"],
@@ -935,6 +1255,140 @@ def count_open_map_coffeeshops(path: str) -> Optional[int]:
     )
 
 
+def build_public_search_index(
+    shops: List[Dict[str, Any]],
+    strain_index: List[Dict[str, Any]],
+    active_offerings: List[Dict[str, Any]],
+    exported_at_utc: str,
+) -> Dict[str, Any]:
+    """Build the compact cross-site search catalogue used by the homepage."""
+    unavailable_statuses = {"closed", "archived", "archive", "previous", "old", "error", "failed"}
+    closed_tokens = {
+        token
+        for row in shops
+        if int(row.get("is_closed") or 0) == 1
+        for token in (
+            _home_source_token(row.get("name")),
+            _home_source_token(str(row.get("shop_key") or "").removeprefix("cs-")),
+        )
+        if len(token) >= 5
+    }
+
+    def source_conflicts(row: Dict[str, Any]) -> bool:
+        source = _home_source_token(row.get("image_url"))
+        if not source:
+            return False
+        own_tokens = {
+            token
+            for token in (
+                _home_source_token(row.get("name")),
+                _home_source_token(str(row.get("shop_key") or "").removeprefix("cs-")),
+            )
+            if len(token) >= 5
+        }
+        return any(token not in own_tokens and token in source for token in closed_tokens)
+
+    def is_browsable_shop(row: Dict[str, Any]) -> bool:
+        return (
+            int(row.get("show_in_admin", 1) or 0) == 1
+            and int(row.get("is_closed", 0) or 0) == 0
+            and str(row.get("menu_status") or "").strip().lower() not in unavailable_statuses
+            and not source_conflicts(row)
+        )
+
+    searchable_shops = [row for row in shops if is_browsable_shop(row)]
+    searchable_shop_ids = {int(row["shop_id"]) for row in searchable_shops}
+    current_offerings = [
+        row
+        for row in active_offerings
+        if int(row.get("shop_id") or 0) in searchable_shop_ids
+        and str(row.get("menu_status") or "").strip().lower() not in unavailable_statuses
+    ]
+
+    strain_shop_counts: Dict[str, set[int]] = {}
+    strain_labels: Dict[str, str] = {}
+    for row in current_offerings:
+        key = str(row.get("strain_name_normalised") or row.get("strain_name") or "").strip()
+        if not key:
+            continue
+        strain_labels.setdefault(key, str(row.get("strain_name") or key).strip())
+        strain_shop_counts.setdefault(key, set()).add(int(row["shop_id"]))
+
+    # Preserve strains that currently have an index entry even if their listing
+    # count is temporarily zero during a menu refresh.
+    for row in strain_index:
+        key = str(row.get("strain_name_normalised") or "").strip()
+        if not key:
+            continue
+        strain_labels.setdefault(key, str(row.get("strain_name_display") or key).strip())
+        strain_shop_counts.setdefault(
+            key,
+            {
+                int(shop.get("shop_id") or 0)
+                for shop in row.get("shops", [])
+                if int(shop.get("shop_id") or 0) in searchable_shop_ids
+                and str(shop.get("menu_status") or "").strip().lower() not in unavailable_statuses
+            },
+        )
+
+    grower_stats: Dict[str, Dict[str, Any]] = {}
+    for row in current_offerings:
+        name = str(row.get("grower") or "").strip()
+        if not name:
+            continue
+        key = name.casefold()
+        entry = grower_stats.setdefault(key, {"name": name, "shops": set(), "strains": set()})
+        entry["shops"].add(int(row["shop_id"]))
+        strain_key = str(row.get("strain_name_normalised") or row.get("strain_name") or "").strip()
+        if strain_key:
+            entry["strains"].add(strain_key)
+
+    city_counts: Dict[str, Dict[str, Any]] = {}
+    for row in searchable_shops:
+        city = str(row.get("city") or "").strip()
+        if not city:
+            continue
+        key = city.casefold()
+        entry = city_counts.setdefault(key, {"name": city, "shops": set()})
+        entry["shops"].add(int(row["shop_id"]))
+
+    return {
+        "version": 1,
+        "exported_at_utc": exported_at_utc,
+        "shops": [
+            {
+                "name": str(row.get("name") or "").strip(),
+                "city": str(row.get("city") or "").strip(),
+                "shop_id": int(row["shop_id"]),
+                "shop_key": str(row.get("shop_key") or "").strip(),
+            }
+            for row in sorted(
+                searchable_shops,
+                key=lambda item: (str(item.get("name") or "").casefold(), str(item.get("city") or "").casefold()),
+            )
+        ],
+        "strains": [
+            {"name": strain_labels[key], "shop_count": len(strain_shop_counts[key])}
+            for key in sorted(strain_labels, key=lambda item: strain_labels[item].casefold())
+        ],
+        "growers": [
+            {
+                "name": row["name"],
+                "shop_count": len(row["shops"]),
+                "strain_count": len(row["strains"]),
+            }
+            for row in sorted(grower_stats.values(), key=lambda item: item["name"].casefold())
+        ],
+        "cities": [
+            {"name": row["name"], "shop_count": len(row["shops"])}
+            for row in sorted(city_counts.values(), key=lambda item: item["name"].casefold())
+        ],
+        "intents": [
+            {"name": "Legal weed", "kind": "legal", "aliases": ["legal cannabis", "state weed", "regulated weed"]}
+        ],
+    }
+
+
 def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, Any]:
     """Export DB snapshots as JSON files for static clients.
 
@@ -945,6 +1399,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
     - active_offerings.json
     - menu_entries.json
     - strain_index.json
+    - search_index.json
     - home_summary.json
     - manifest.json
     """
@@ -1041,6 +1496,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                st.name_normalised AS strain_name_normalised,
                so.base_type,
                so.is_cali,
+               so.is_legal,
                so.grower,
                so.price_currency,
                so.price_amount,
@@ -1085,6 +1541,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "strain_name_normalised": r["strain_name_normalised"],
             "base_type": r["base_type"],
             "is_cali": int(r["is_cali"] or 0),
+            "is_legal": int(r["is_legal"] or 0),
             "grower": r["grower"] or "",
             "price_currency": r["price_currency"],
             "price_amount": float(r["price_amount"]),
@@ -1129,6 +1586,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "strain_name_normalised": r["strain_name_normalised"],
             "base_type": r["base_type"],
             "is_cali": int(r["is_cali"] or 0),
+            "is_legal": int(r["is_legal"] or 0),
             "grower": r["grower"] or "",
             "price_currency": r["price_currency"],
             "price_amount": float(r["price_amount"]),
@@ -1150,6 +1608,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                    st.name_normalised AS strain_name_normalised,
                    me.base_type,
                    me.is_cali,
+                   me.is_legal,
                    me.grower,
                    me.price_currency,
                    me.price_amount,
@@ -1193,12 +1652,37 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
     strain_index = list(strain_index_map.values())
     strain_index.sort(key=lambda x: x["strain_name_normalised"])
 
+    search_index = build_public_search_index(shops, strain_index, active_offerings, exported_at_utc)
+
+    site_updates = [
+        {
+            "id": int(r["id"]),
+            "title": r["title"],
+            "body": r["body"],
+            "category": r["category"],
+            "link_url": r["link_url"],
+            "link_label": r["link_label"],
+            "published_at_utc": r["published_at_utc"],
+        }
+        for r in conn.execute(
+            """
+            SELECT id, title, body, category, link_url, link_label, published_at_utc
+            FROM site_updates
+            WHERE is_published = 1
+            ORDER BY published_at_utc DESC, id DESC
+            LIMIT 20;
+            """
+        ).fetchall()
+    ]
+
     json_dump(os.path.join(out_dir, "shops.json"), shops)
     json_dump(os.path.join(out_dir, "shop_lookup.json"), shop_lookup)
     json_dump(os.path.join(out_dir, "strains.json"), strains)
     json_dump(os.path.join(out_dir, "active_offerings.json"), active_offerings)
     json_dump(os.path.join(out_dir, "menu_entries.json"), menu_entries)
     json_dump(os.path.join(out_dir, "strain_index.json"), strain_index)
+    json_dump(os.path.join(out_dir, "search_index.json"), search_index)
+    json_dump(os.path.join(out_dir, "updates.json"), site_updates)
     mapped_amsterdam_shops = count_open_map_coffeeshops(
         os.path.join(out_dir, "locations", DEFAULT_LOCATION_FILES["Amsterdam"])
     )
@@ -1218,6 +1702,11 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "active_offerings": len(active_offerings),
             "menu_entries": len(menu_entries),
             "strain_index": len(strain_index),
+            "site_updates": len(site_updates),
+            "search_shops": len(search_index["shops"]),
+            "search_strains": len(search_index["strains"]),
+            "search_growers": len(search_index["growers"]),
+            "search_cities": len(search_index["cities"]),
             "home_active_shops": home_summary["network"]["active_shops"],
             "home_active_listings": home_summary["network"]["active_listings"],
         },
@@ -1228,6 +1717,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "active_offerings.json",
             "menu_entries.json",
             "strain_index.json",
+            "search_index.json",
+            "updates.json",
             "home_summary.json",
         ],
         "linking": {
@@ -1308,6 +1799,19 @@ def db_init(conn: sqlite3.Connection) -> None:
             value TEXT NOT NULL
         );
 
+        CREATE TABLE IF NOT EXISTS site_updates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            body TEXT NOT NULL,
+            category TEXT NOT NULL DEFAULT 'News',
+            link_url TEXT NOT NULL DEFAULT '',
+            link_label TEXT NOT NULL DEFAULT '',
+            published_at_utc TEXT NOT NULL,
+            is_published INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+
         CREATE TABLE IF NOT EXISTS strains (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name_normalised TEXT NOT NULL UNIQUE,
@@ -1321,6 +1825,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             strain_id INTEGER NOT NULL,
             base_type TEXT NOT NULL,
             is_cali INTEGER NOT NULL DEFAULT 0,
+            is_legal INTEGER NOT NULL DEFAULT 0,
             grower TEXT NOT NULL DEFAULT '',
             price_currency TEXT NOT NULL,
             price_amount REAL NOT NULL,
@@ -1329,7 +1834,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             package_weight_g REAL NOT NULL DEFAULT 1,
             notes TEXT DEFAULT '',
             created_at TEXT NOT NULL,
-            UNIQUE(shop_id, strain_id),
+            UNIQUE(shop_id, strain_id, package_weight_g, is_legal),
             FOREIGN KEY(shop_id) REFERENCES shops(id) ON DELETE CASCADE,
             FOREIGN KEY(strain_id) REFERENCES strains(id) ON DELETE CASCADE
         );
@@ -1340,6 +1845,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             strain_id INTEGER NOT NULL,
             base_type TEXT NOT NULL,
             is_cali INTEGER NOT NULL DEFAULT 0,
+            is_legal INTEGER NOT NULL DEFAULT 0,
             grower TEXT NOT NULL DEFAULT '',
             price_currency TEXT NOT NULL,
             price_amount REAL NOT NULL,
@@ -1355,7 +1861,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             manual_status_lock INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
-            UNIQUE(shop_id, strain_id),
+            UNIQUE(shop_id, strain_id, package_weight_g, is_legal),
             FOREIGN KEY(shop_id) REFERENCES shops(id) ON DELETE CASCADE,
             FOREIGN KEY(strain_id) REFERENCES strains(id) ON DELETE CASCADE
         );
@@ -1386,6 +1892,7 @@ def db_init(conn: sqlite3.Connection) -> None:
             status TEXT NOT NULL,
             base_type TEXT NOT NULL,
             is_cali INTEGER NOT NULL DEFAULT 0,
+            is_legal INTEGER NOT NULL DEFAULT 0,
             grower TEXT NOT NULL DEFAULT '',
             price_currency TEXT NOT NULL,
             price_amount REAL NOT NULL,
@@ -1409,6 +1916,7 @@ def db_init(conn: sqlite3.Connection) -> None:
         CREATE INDEX IF NOT EXISTS idx_menu_history_sha ON menu_history(sha256);
         CREATE INDEX IF NOT EXISTS idx_offering_history_shop ON offering_history(shop_id, observed_at_utc);
         CREATE INDEX IF NOT EXISTS idx_offering_history_strain ON offering_history(strain_id, observed_at_utc);
+        CREATE INDEX IF NOT EXISTS idx_site_updates_published ON site_updates(is_published, published_at_utc);
         """
     )
     # Backward-compatible migration for existing DBs.
@@ -1423,16 +1931,19 @@ def db_init(conn: sqlite3.Connection) -> None:
             ("grower", "TEXT NOT NULL DEFAULT ''"),
             ("package_price_amount", "REAL NOT NULL DEFAULT 0"),
             ("package_weight_g", "REAL NOT NULL DEFAULT 1"),
+            ("is_legal", "INTEGER NOT NULL DEFAULT 0"),
         ],
         "shop_offerings": [
             ("grower", "TEXT NOT NULL DEFAULT ''"),
             ("package_price_amount", "REAL NOT NULL DEFAULT 0"),
             ("package_weight_g", "REAL NOT NULL DEFAULT 1"),
+            ("is_legal", "INTEGER NOT NULL DEFAULT 0"),
         ],
         "offering_history": [
             ("grower", "TEXT NOT NULL DEFAULT ''"),
             ("package_price_amount", "REAL NOT NULL DEFAULT 0"),
             ("package_weight_g", "REAL NOT NULL DEFAULT 1"),
+            ("is_legal", "INTEGER NOT NULL DEFAULT 0"),
         ],
     }
     for table, columns in migration_columns.items():
@@ -1446,6 +1957,101 @@ def db_init(conn: sqlite3.Connection) -> None:
             SET package_price_amount = price_amount
             WHERE package_price_amount <= 0;
             """
+        )
+
+    # Older databases allowed only one row per shop/strain. Rebuild the two
+    # current-state tables once so each package weight can coexist, while a
+    # regulated-project version remains a distinct option at the same weight.
+    variant_migration = conn.execute(
+        "SELECT value FROM app_settings WHERE key = 'package_variants_v1';"
+    ).fetchone()
+    if not variant_migration:
+        conn.execute("PRAGMA foreign_keys = OFF;")
+        conn.executescript(
+            """
+            ALTER TABLE menu_entries RENAME TO menu_entries_legacy_variants;
+            CREATE TABLE menu_entries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                shop_id INTEGER NOT NULL,
+                strain_id INTEGER NOT NULL,
+                base_type TEXT NOT NULL,
+                is_cali INTEGER NOT NULL DEFAULT 0,
+                is_legal INTEGER NOT NULL DEFAULT 0,
+                grower TEXT NOT NULL DEFAULT '',
+                price_currency TEXT NOT NULL,
+                price_amount REAL NOT NULL,
+                price_unit TEXT NOT NULL,
+                package_price_amount REAL NOT NULL DEFAULT 0,
+                package_weight_g REAL NOT NULL DEFAULT 1,
+                notes TEXT DEFAULT '',
+                created_at TEXT NOT NULL,
+                UNIQUE(shop_id, strain_id, package_weight_g, is_legal),
+                FOREIGN KEY(shop_id) REFERENCES shops(id) ON DELETE CASCADE,
+                FOREIGN KEY(strain_id) REFERENCES strains(id) ON DELETE CASCADE
+            );
+            INSERT INTO menu_entries(
+                id, shop_id, strain_id, base_type, is_cali, is_legal, grower,
+                price_currency, price_amount, price_unit, package_price_amount,
+                package_weight_g, notes, created_at
+            )
+            SELECT id, shop_id, strain_id, base_type, is_cali,
+                   CASE WHEN LOWER(COALESCE(notes, '')) LIKE '%legal flower%' THEN 1 ELSE COALESCE(is_legal, 0) END,
+                   grower, price_currency, price_amount, price_unit,
+                   package_price_amount, package_weight_g, notes, created_at
+            FROM menu_entries_legacy_variants;
+            DROP TABLE menu_entries_legacy_variants;
+            CREATE INDEX idx_menu_entries_shop ON menu_entries(shop_id);
+
+            ALTER TABLE shop_offerings RENAME TO shop_offerings_legacy_variants;
+            CREATE TABLE shop_offerings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                shop_id INTEGER NOT NULL,
+                strain_id INTEGER NOT NULL,
+                base_type TEXT NOT NULL,
+                is_cali INTEGER NOT NULL DEFAULT 0,
+                is_legal INTEGER NOT NULL DEFAULT 0,
+                grower TEXT NOT NULL DEFAULT '',
+                price_currency TEXT NOT NULL,
+                price_amount REAL NOT NULL,
+                price_unit TEXT NOT NULL,
+                package_price_amount REAL NOT NULL DEFAULT 0,
+                package_weight_g REAL NOT NULL DEFAULT 1,
+                notes TEXT DEFAULT '',
+                status TEXT NOT NULL,
+                discontinued_reason TEXT DEFAULT '',
+                discontinued_since_utc TEXT DEFAULT '',
+                discontinued_until_utc TEXT DEFAULT '',
+                last_seen_at_utc TEXT NOT NULL,
+                manual_status_lock INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                UNIQUE(shop_id, strain_id, package_weight_g, is_legal),
+                FOREIGN KEY(shop_id) REFERENCES shops(id) ON DELETE CASCADE,
+                FOREIGN KEY(strain_id) REFERENCES strains(id) ON DELETE CASCADE
+            );
+            INSERT INTO shop_offerings(
+                id, shop_id, strain_id, base_type, is_cali, is_legal, grower,
+                price_currency, price_amount, price_unit, package_price_amount,
+                package_weight_g, notes, status, discontinued_reason,
+                discontinued_since_utc, discontinued_until_utc, last_seen_at_utc,
+                manual_status_lock, created_at, updated_at
+            )
+            SELECT id, shop_id, strain_id, base_type, is_cali,
+                   CASE WHEN LOWER(COALESCE(notes, '')) LIKE '%legal flower%' THEN 1 ELSE COALESCE(is_legal, 0) END,
+                   grower, price_currency, price_amount, price_unit,
+                   package_price_amount, package_weight_g, notes, status,
+                   discontinued_reason, discontinued_since_utc,
+                   discontinued_until_utc, last_seen_at_utc, manual_status_lock,
+                   created_at, updated_at
+            FROM shop_offerings_legacy_variants;
+            DROP TABLE shop_offerings_legacy_variants;
+            CREATE INDEX idx_offerings_shop ON shop_offerings(shop_id);
+            CREATE INDEX idx_offerings_status ON shop_offerings(status);
+            """
+        )
+        conn.execute("PRAGMA foreign_keys = ON;")
+        conn.execute(
+            "INSERT INTO app_settings(key, value) VALUES('package_variants_v1', '1');"
         )
 
     growers_seeded = conn.execute(
@@ -1652,6 +2258,8 @@ def rename_or_merge_strain_id(
                       FROM menu_entries me2
                       WHERE me2.shop_id = menu_entries.shop_id
                         AND me2.strain_id = ?
+                        AND me2.package_weight_g = menu_entries.package_weight_g
+                        AND me2.is_legal = menu_entries.is_legal
                   );
                 """,
                 (current_strain_id, target_id),
@@ -1671,6 +2279,8 @@ def rename_or_merge_strain_id(
                       FROM shop_offerings so2
                       WHERE so2.shop_id = shop_offerings.shop_id
                         AND so2.strain_id = ?
+                        AND so2.package_weight_g = shop_offerings.package_weight_g
+                        AND so2.is_legal = shop_offerings.is_legal
                   );
                 """,
                 (current_strain_id, target_id),
@@ -1721,6 +2331,7 @@ def sync_offering_from_menu_entry(
     strain_id: int,
     base_type: str,
     is_cali: bool,
+    is_legal: bool,
     grower: str,
     price_currency: str,
     price_amount: float,
@@ -1736,7 +2347,7 @@ def sync_offering_from_menu_entry(
         """
         INSERT INTO shop_offerings(
             shop_id, strain_id,
-            base_type, is_cali,
+            base_type, is_cali, is_legal,
             grower,
             price_currency, price_amount, price_unit,
             package_price_amount, package_weight_g,
@@ -1747,10 +2358,11 @@ def sync_offering_from_menu_entry(
             manual_status_lock,
             created_at, updated_at
         )
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', '', '', '', ?, 0, ?, ?)
-        ON CONFLICT(shop_id, strain_id) DO UPDATE SET
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', '', '', '', ?, 0, ?, ?)
+        ON CONFLICT(shop_id, strain_id, package_weight_g, is_legal) DO UPDATE SET
             base_type = excluded.base_type,
             is_cali = excluded.is_cali,
+            is_legal = excluded.is_legal,
             grower = excluded.grower,
             price_currency = excluded.price_currency,
             price_amount = excluded.price_amount,
@@ -1782,6 +2394,7 @@ def sync_offering_from_menu_entry(
             strain_id,
             base_type,
             is_cali_int,
+            1 if bool(is_legal) else 0,
             (grower or "").strip(),
             price_currency,
             float(price_amount),
@@ -1839,6 +2452,7 @@ def record_offering_history(
     status: str,
     base_type: str,
     is_cali: Any,
+    is_legal: Any,
     grower: str,
     price_currency: str,
     price_amount: Any,
@@ -1856,11 +2470,11 @@ def record_offering_history(
         INSERT INTO offering_history(
             shop_id, strain_id, menu_history_id,
             observed_at_utc, event_type, status,
-            base_type, is_cali, grower, price_currency, price_amount, price_unit,
+            base_type, is_cali, is_legal, grower, price_currency, price_amount, price_unit,
             package_price_amount, package_weight_g,
             notes, source, created_at
         )
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """,
         (
             int(shop_id),
@@ -1871,6 +2485,7 @@ def record_offering_history(
             status,
             (base_type or "").strip().lower(),
             1 if bool(is_cali) else 0,
+            1 if bool(is_legal) else 0,
             (grower or "").strip(),
             (price_currency or DEFAULT_CURRENCY).strip() or DEFAULT_CURRENCY,
             float(price_amount),
@@ -1955,6 +2570,7 @@ def add_or_update_menu_entry(
     strain_name: str,
     base_type: str,
     is_cali: bool,
+    is_legal: bool,
     grower_choice: str,
     grower_custom: str,
     price_currency: str,
@@ -1993,16 +2609,17 @@ def add_or_update_menu_entry(
     conn.execute(
         """
         INSERT INTO menu_entries(
-            shop_id, strain_id, base_type, is_cali,
+            shop_id, strain_id, base_type, is_cali, is_legal,
             grower,
             price_currency, price_amount, price_unit,
             package_price_amount, package_weight_g,
             notes, created_at
         )
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(shop_id, strain_id) DO UPDATE SET
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(shop_id, strain_id, package_weight_g, is_legal) DO UPDATE SET
             base_type = excluded.base_type,
             is_cali = excluded.is_cali,
+            is_legal = excluded.is_legal,
             grower = excluded.grower,
             price_currency = excluded.price_currency,
             price_amount = excluded.price_amount,
@@ -2017,6 +2634,7 @@ def add_or_update_menu_entry(
             strain_id,
             base_type,
             is_cali_int,
+            1 if bool(is_legal) else 0,
             grower,
             price_currency,
             price_amount,
@@ -2035,6 +2653,7 @@ def add_or_update_menu_entry(
         strain_id=strain_id,
         base_type=base_type,
         is_cali=bool(is_cali_int),
+        is_legal=bool(is_legal),
         grower=grower,
         price_currency=price_currency,
         price_amount=price_amount,
@@ -2063,6 +2682,7 @@ def update_menu_entry_by_id(
     new_strain_name: str,
     base_type: str,
     is_cali: bool,
+    is_legal: bool,
     grower_choice: str,
     grower_custom: str,
     price_currency: str,
@@ -2142,9 +2762,10 @@ def update_menu_entry_by_id(
         clash = conn.execute(
             """
             SELECT id FROM menu_entries
-            WHERE shop_id = ? AND strain_id = ? AND id != ?;
+            WHERE shop_id = ? AND strain_id = ? AND id != ?
+              AND package_weight_g = ? AND is_legal = ?;
             """,
-            (shop_id, resulting_strain_id, entry_id),
+            (shop_id, resulting_strain_id, entry_id, package_weight_g, 1 if bool(is_legal) else 0),
         ).fetchone()
         if clash:
             # Delete this entry, because the shop already has the merged strain entry.
@@ -2159,6 +2780,7 @@ def update_menu_entry_by_id(
         SET strain_id = ?,
             base_type = ?,
             is_cali = ?,
+            is_legal = ?,
             grower = ?,
             price_currency = ?,
             price_amount = ?,
@@ -2173,6 +2795,7 @@ def update_menu_entry_by_id(
             resulting_strain_id,
             base_type,
             is_cali_int,
+            1 if bool(is_legal) else 0,
             grower,
             price_currency,
             price_amount,
@@ -2193,6 +2816,7 @@ def update_menu_entry_by_id(
         strain_id=resulting_strain_id,
         base_type=base_type,
         is_cali=bool(is_cali_int),
+        is_legal=bool(is_legal),
         grower=grower,
         price_currency=price_currency,
         price_amount=price_amount,
@@ -2208,7 +2832,7 @@ def update_menu_entry_by_id(
         """
         SELECT me.id AS entry_id,
                st.name_display AS strain_name,
-               me.base_type, me.is_cali,
+               me.base_type, me.is_cali, me.is_legal,
                me.grower,
                me.price_currency, me.price_amount, me.price_unit,
                me.package_price_amount, me.package_weight_g,
@@ -2332,8 +2956,12 @@ def count_would_auto_discontinue_for_shop(conn: sqlite3.Connection, shop_id: int
         WHERE shop_id = ?
           AND status = 'active'
           AND manual_status_lock = 0
-          AND strain_id NOT IN (
-              SELECT strain_id FROM menu_entries WHERE shop_id = ?
+          AND NOT EXISTS (
+              SELECT 1 FROM menu_entries me
+              WHERE me.shop_id = ?
+                AND me.strain_id = shop_offerings.strain_id
+                AND me.package_weight_g = shop_offerings.package_weight_g
+                AND me.is_legal = shop_offerings.is_legal
           );
         """,
         (shop_id, shop_id),
@@ -2357,7 +2985,7 @@ def load_menu_entries_from_active_offerings(
 
     rows = conn.execute(
         """
-        SELECT strain_id, base_type, is_cali, grower,
+        SELECT strain_id, base_type, is_cali, is_legal, grower,
                price_currency, price_amount, price_unit,
                package_price_amount, package_weight_g, notes
         FROM shop_offerings
@@ -2371,16 +2999,17 @@ def load_menu_entries_from_active_offerings(
         conn.execute(
             """
             INSERT INTO menu_entries(
-                shop_id, strain_id, base_type, is_cali,
+                shop_id, strain_id, base_type, is_cali, is_legal,
                 grower,
                 price_currency, price_amount, price_unit,
                 package_price_amount, package_weight_g,
                 notes, created_at
             )
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(shop_id, strain_id) DO UPDATE SET
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(shop_id, strain_id, package_weight_g, is_legal) DO UPDATE SET
                 base_type = excluded.base_type,
                 is_cali = excluded.is_cali,
+                is_legal = excluded.is_legal,
                 grower = excluded.grower,
                 price_currency = excluded.price_currency,
                 price_amount = excluded.price_amount,
@@ -2395,6 +3024,7 @@ def load_menu_entries_from_active_offerings(
                 int(r["strain_id"]),
                 r["base_type"],
                 int(r["is_cali"]),
+                int(r["is_legal"] or 0),
                 r["grower"] or "",
                 r["price_currency"],
                 float(r["price_amount"]),
@@ -2417,7 +3047,7 @@ def reconcile_offerings_for_shop(conn: sqlite3.Connection, shop_id: int) -> None
 
     current = conn.execute(
         """
-        SELECT me.strain_id, me.base_type, me.is_cali, me.grower,
+        SELECT me.strain_id, me.base_type, me.is_cali, me.is_legal, me.grower,
                me.price_currency, me.price_amount, me.price_unit,
                me.package_price_amount, me.package_weight_g, me.notes
         FROM menu_entries me
@@ -2437,6 +3067,7 @@ def reconcile_offerings_for_shop(conn: sqlite3.Connection, shop_id: int) -> None
             status="active",
             base_type=r["base_type"],
             is_cali=r["is_cali"],
+            is_legal=r["is_legal"],
             grower=r["grower"] or "",
             price_currency=r["price_currency"],
             price_amount=r["price_amount"],
@@ -2451,7 +3082,7 @@ def reconcile_offerings_for_shop(conn: sqlite3.Connection, shop_id: int) -> None
             """
             INSERT INTO shop_offerings(
                 shop_id, strain_id,
-                base_type, is_cali,
+                base_type, is_cali, is_legal,
                 grower,
                 price_currency, price_amount, price_unit,
                 package_price_amount, package_weight_g,
@@ -2462,10 +3093,11 @@ def reconcile_offerings_for_shop(conn: sqlite3.Connection, shop_id: int) -> None
                 manual_status_lock,
                 created_at, updated_at
             )
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', '', '', '', ?, 0, ?, ?)
-            ON CONFLICT(shop_id, strain_id) DO UPDATE SET
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', '', '', '', ?, 0, ?, ?)
+            ON CONFLICT(shop_id, strain_id, package_weight_g, is_legal) DO UPDATE SET
                 base_type = excluded.base_type,
                 is_cali = excluded.is_cali,
+                is_legal = excluded.is_legal,
                 grower = excluded.grower,
                 price_currency = excluded.price_currency,
                 price_amount = excluded.price_amount,
@@ -2497,6 +3129,7 @@ def reconcile_offerings_for_shop(conn: sqlite3.Connection, shop_id: int) -> None
                 strain_id,
                 r["base_type"],
                 int(r["is_cali"]),
+                int(r["is_legal"] or 0),
                 r["grower"] or "",
                 r["price_currency"],
                 float(r["price_amount"]),
@@ -2512,15 +3145,19 @@ def reconcile_offerings_for_shop(conn: sqlite3.Connection, shop_id: int) -> None
 
     discontinued_rows = conn.execute(
         """
-        SELECT shop_id, strain_id, base_type, is_cali, grower,
+        SELECT shop_id, strain_id, base_type, is_cali, is_legal, grower,
                price_currency, price_amount, price_unit,
                package_price_amount, package_weight_g, notes
         FROM shop_offerings
         WHERE shop_id = ?
           AND status = 'active'
           AND manual_status_lock = 0
-          AND strain_id NOT IN (
-              SELECT strain_id FROM menu_entries WHERE shop_id = ?
+          AND NOT EXISTS (
+              SELECT 1 FROM menu_entries me
+              WHERE me.shop_id = ?
+                AND me.strain_id = shop_offerings.strain_id
+                AND me.package_weight_g = shop_offerings.package_weight_g
+                AND me.is_legal = shop_offerings.is_legal
           );
         """,
         (shop_id, shop_id),
@@ -2536,6 +3173,7 @@ def reconcile_offerings_for_shop(conn: sqlite3.Connection, shop_id: int) -> None
             status="discontinued",
             base_type=r["base_type"],
             is_cali=r["is_cali"],
+            is_legal=r["is_legal"],
             grower=r["grower"] or "",
             price_currency=r["price_currency"],
             price_amount=r["price_amount"],
@@ -2559,8 +3197,12 @@ def reconcile_offerings_for_shop(conn: sqlite3.Connection, shop_id: int) -> None
         WHERE shop_id = ?
           AND status = 'active'
           AND manual_status_lock = 0
-          AND strain_id NOT IN (
-              SELECT strain_id FROM menu_entries WHERE shop_id = ?
+          AND NOT EXISTS (
+              SELECT 1 FROM menu_entries me
+              WHERE me.shop_id = ?
+                AND me.strain_id = shop_offerings.strain_id
+                AND me.package_weight_g = shop_offerings.package_weight_g
+                AND me.is_legal = shop_offerings.is_legal
           );
         """,
         (now, now, shop_id, shop_id),
@@ -2621,6 +3263,37 @@ def set_offering_status(
             (reason or "manual", now, until_utc or "", lock_int, now, shop_id, strain_id),
         )
 
+    if commit:
+        conn.commit()
+
+
+def set_offering_status_by_id(
+    conn: sqlite3.Connection,
+    shop_id: int,
+    offering_id: int,
+    status: str,
+    lock: bool = True,
+    commit: bool = True,
+) -> None:
+    """Set one package variant without changing sibling weights."""
+    if status not in ("active", "discontinued"):
+        raise ValueError("status must be active or discontinued")
+    now = utc_now_iso()
+    if status == "active":
+        conn.execute(
+            """UPDATE shop_offerings SET status='active', discontinued_reason='',
+               discontinued_since_utc='', discontinued_until_utc='',
+               manual_status_lock=?, updated_at=? WHERE id=? AND shop_id=?;""",
+            (1 if lock else 0, now, offering_id, shop_id),
+        )
+    else:
+        conn.execute(
+            """UPDATE shop_offerings SET status='discontinued',
+               discontinued_reason='manual', discontinued_since_utc=?,
+               discontinued_until_utc='', manual_status_lock=?, updated_at=?
+               WHERE id=? AND shop_id=?;""",
+            (now, 1 if lock else 0, now, offering_id, shop_id),
+        )
     if commit:
         conn.commit()
 
@@ -2725,7 +3398,7 @@ body {
 
 label { display:block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
 
-input:not([type="radio"]):not([type="checkbox"]):not([type="range"]),
+input:not([type=radio]):not([type=checkbox]):not([type=range]),
 textarea,
 select {
   width: 100%;
@@ -2933,8 +3606,8 @@ th { color: var(--muted); font-weight: 700; position: sticky; top: 0; background
   line-height: 1.2;
 }
 
-.radioOption input[type="radio"],
-.radioOption input[type="checkbox"] {
+.radioOption input[type=radio],
+.radioOption input[type=checkbox] {
   width: 16px;
   height: 16px;
   margin: 0;
@@ -3182,8 +3855,9 @@ PAGE_TMPL = """
                   <label class="radioOption"><input type="radio" name="base_type" value="hash" required><span>Hash</span></label>
                   <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
                   <label class="radioOption"><input type="checkbox" name="is_cali" value="1"><span>Cali</span></label>
+                  <label class="radioOption"><input type="checkbox" name="is_legal" value="1"><span>Legal project</span></label>
                 </div>
-                <div class="small">Cali can be combined with any type. It applies only to this shop's listing, not to the strain everywhere.</div>
+                <div class="small">Cali and Legal project apply only to this specific shop and pack option.</div>
               </div>
 
               <div style="margin-top:12px;">
@@ -3258,7 +3932,7 @@ PAGE_TMPL = """
                       <td><input type="checkbox" class="entryCheck" value="{{ it['entry_id'] }}" aria-label="select {{ it['strain_name'] }}"></td>
                       <td>{{ it['strain_name'] }}</td>
                       <td>{{ it['grower'] or '—' }}</td>
-                      <td>{{ it['base_type'] }}{% if it['is_cali'] %} (cali){% endif %}</td>
+                      <td>{{ it['base_type'] }}{% if it['is_cali'] %} (cali){% endif %}{% if it['is_legal'] %} · legal project{% endif %}</td>
                       <td>
                         {% if it['package_weight_g'] and it['package_weight_g'] != 1 %}
                           {{ it['price_currency'] }}{{ '%.2f'|format(it['package_price_amount']) }}/{{ it['package_weight_g'] }}g pack ·
@@ -3305,16 +3979,16 @@ PAGE_TMPL = """
                 <tbody>
                   {% for off in offerings %}
                     <tr>
-                      <td>{{ off['strain_name'] }}</td>
+                      <td>{{ off['strain_name'] }} · {{ off['package_weight_g'] }}g{% if off['is_legal'] %} · legal project{% endif %}</td>
                       <td>
                         <div class="radioGroup">
                           <label class="radioOption">
-                            <input type="radio" name="status_{{ off['strain_id'] }}" value="active"
+                            <input type="radio" name="status_{{ off['offering_id'] }}" value="active"
                                    {% if off['status'] == 'active' %}checked{% endif %}>
                             <span>Active</span>
                           </label>
                           <label class="radioOption">
-                            <input type="radio" name="status_{{ off['strain_id'] }}" value="discontinued"
+                            <input type="radio" name="status_{{ off['offering_id'] }}" value="discontinued"
                                    {% if off['status'] != 'active' %}checked{% endif %}>
                             <span>Inactive</span>
                           </label>
@@ -3808,9 +4482,10 @@ EDIT_TMPL = """
                 <label class="radioOption"><input type="radio" name="base_type" value="hybrid" {% if entry['base_type']=='hybrid' %}checked{% endif %} required><span>Hybrid</span></label>
                 <label class="radioOption"><input type="radio" name="base_type" value="hash" {% if entry['base_type']=='hash' %}checked{% endif %} required><span>Hash</span></label>
                 <span style="width:1px; height:18px; background: rgba(255,255,255,.18); display:inline-block; margin:0 6px;"></span>
-                <label class="radioOption"><input type="checkbox" name="is_cali" value="1" {% if entry['is_cali'] %}checked{% endif %}><span>Cali</span></label>
+	                <label class="radioOption"><input type="checkbox" name="is_cali" value="1" {% if entry['is_cali'] %}checked{% endif %}><span>Cali</span></label>
+	                <label class="radioOption"><input type="checkbox" name="is_legal" value="1" {% if entry['is_legal'] %}checked{% endif %}><span>Legal project</span></label>
               </div>
-              <div class="small">Cali applies only to this shop's listing, not to the strain everywhere.</div>
+	              <div class="small">These flags apply only to this shop and pack option.</div>
               {% if entry['base_type'] == 'kush' %}
                 <div class="small">This legacy entry used “kush”. Choose one of the current types before saving.</div>
               {% endif %}
@@ -4012,6 +4687,7 @@ MAIN_TMPL = """
       <a class="pill" href="{{ url_for('start') }}">Go to first new</a>
       <a class="pill" href="{{ url_for('queue') }}">Menu queue</a>
       <a class="pill" href="{{ url_for('growers') }}">Growers</a>
+      <a class="pill" href="{{ url_for('site_updates') }}">Homepage updates</a>
       <a class="pill" href="{{ url_for('shop_coverage') }}">Shop coverage</a>
       <a class="pill" href="{{ url_for('browse') }}">Browse DB</a>
       <a class="pill" href="{{ url_for('database_explorer') }}">Explorer</a>
@@ -4055,6 +4731,19 @@ MAIN_TMPL = """
             Scraper: <code>{{ scraper_path }}</code>
             {% if not scraper_exists %}<span class="pill bad" style="margin-left:6px;">missing</span>{% endif %}
           </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHeader">
+          <div>
+            <div style="font-weight:800;">Homepage updates</div>
+            <div class="small">Publish news, new areas, settings notes, and useful finds.</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="btnrow"><a class="pill" href="{{ url_for('site_updates') }}">Manage updates</a></div>
+          <div class="small" style="margin-top:10px;">{{ db_counts.site_updates }} published update{{ '' if db_counts.site_updates == 1 else 's' }}.</div>
         </div>
       </div>
 
@@ -4113,16 +4802,17 @@ MAIN_TMPL = """
       <div class="card">
         <div class="cardHeader">
           <div>
-            <div style="font-weight:800;">Shop coverage</div>
-            <div class="small">Close venues, control visibility, and reconcile map drift.</div>
+            <div style="font-weight:800;">Coffeeshop management</div>
+            <div class="small">Maintain live map venues and reconcile them with menu coverage.</div>
           </div>
         </div>
         <div class="cardBody">
           <div class="btnrow">
-            <a class="pill" href="{{ url_for('shop_coverage') }}">Open shop coverage</a>
+            <a class="pill" href="{{ url_for('nationwide_shops') }}">Manage nationwide map</a>
+            <a class="pill" href="{{ url_for('shop_coverage') }}">Review menu coverage</a>
           </div>
           <div class="small" style="margin-top:10px;">
-            This is the place to mark shops closed, reactivate them, and add missing live shops to the map.
+            Add or edit a coffeeshop with its coordinates and picture filename, or remove and restore it without losing history.
           </div>
         </div>
       </div>
@@ -4287,6 +4977,272 @@ GROWERS_TMPL = """
 </html>
 """
 
+UPDATES_TMPL = """
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Homepage Updates</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>{{ css }}</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><div class="logo"></div><div>Homepage updates<div class="small">News, useful finds, new areas, and feature notes</div></div></div>
+    <div class="btnrow"><a class="pill" href="{{ url_for('main_menu') }}">Main menu</a></div>
+  </div>
+  {% if message %}<div id="toast" class="toast {{ message_kind }}">{{ message }}</div>{% endif %}
+  <div style="padding:14px; overflow:auto;">
+    <div class="card" style="max-width:980px; margin:0 auto;">
+      <div class="cardHeader"><div><b>Publish an update</b><div class="small">Published entries appear on the public homepage after JSON export.</div></div></div>
+      <div class="cardBody">
+        <form method="post" action="{{ url_for('add_site_update') }}">
+          <div class="grid2">
+            <div><label for="update_title">Title</label><input id="update_title" name="title" maxlength="140" required></div>
+            <div><label for="update_category">Label</label><select id="update_category" name="category"><option>News</option><option>New area</option><option>New feature</option><option>Setting</option><option>Worth a look</option></select></div>
+          </div>
+          <div style="margin-top:10px;"><label for="update_body">Message</label><textarea id="update_body" name="body" rows="4" maxlength="1200" required></textarea></div>
+          <div class="grid2" style="margin-top:10px;">
+            <div><label for="update_link">Optional link</label><input id="update_link" name="link_url" placeholder="https://… or map.html?…"></div>
+            <div><label for="update_link_label">Link label</label><input id="update_link_label" name="link_label" maxlength="60" placeholder="Read more"></div>
+          </div>
+          <label class="radioOption" style="margin-top:10px;"><input type="checkbox" name="is_published" value="1" checked><span>Publish immediately</span></label>
+          <div class="btnrow" style="margin-top:12px;"><button class="primary" type="submit">Save update</button></div>
+        </form>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Update</th><th>Published</th><th>Actions</th></tr></thead>
+          <tbody>
+          {% for item in updates %}
+            <tr>
+              <td><b>{{ item.title }}</b><div class="small">{{ item.category }} · {{ item.published_at_utc }}</div><div style="margin-top:5px;">{{ item.body }}</div></td>
+              <td><span class="pill {{ 'good' if item.is_published else 'warn' }}">{{ 'live' if item.is_published else 'draft' }}</span></td>
+              <td><div class="btnrow">
+                <form method="post" action="{{ url_for('toggle_site_update', update_id=item.id) }}"><button class="ghost" type="submit">{{ 'Unpublish' if item.is_published else 'Publish' }}</button></form>
+                <form method="post" action="{{ url_for('delete_site_update', update_id=item.id) }}" onsubmit="return confirm('Delete this homepage update?');"><button class="danger" type="submit">Delete</button></form>
+              </div></td>
+            </tr>
+          {% endfor %}
+          {% if not updates %}<tr><td colspan="3" class="small">No updates yet.</td></tr>{% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>const toast=document.getElementById('toast');if(toast)setTimeout(()=>toast.style.display='none',4200);document.getElementById('update_title')?.focus();</script>
+</body>
+</html>
+"""
+
+NATIONWIDE_SHOPS_TMPL = """
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Nationwide coffeeshops</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>{{ css }}</style>
+  <style>
+    .locationPage { padding:14px; overflow:auto; }
+    .locationShell { max-width:1180px; margin:0 auto; display:grid; gap:14px; }
+    .locationFormGrid {
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:10px;
+      align-items:end;
+    }
+    .locationSpan2 { grid-column:span 2; }
+    .locationSpan4 { grid-column:1 / -1; }
+    .locationList { display:grid; gap:10px; }
+    .locationItem {
+      min-width:0;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:rgba(255,255,255,.02);
+      overflow:hidden;
+    }
+    .locationSummary {
+      display:grid;
+      grid-template-columns:minmax(180px, 1.2fr) minmax(140px, .8fr) auto;
+      gap:12px;
+      align-items:center;
+      padding:12px 14px;
+      cursor:pointer;
+      list-style:none;
+    }
+    .locationSummary::-webkit-details-marker { display:none; }
+    .locationSummary > * { min-width:0; }
+    .locationName, .locationMeta { overflow-wrap:anywhere; }
+    .locationState { display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap; }
+    .locationEditor { border-top:1px solid var(--border); padding:14px; }
+    .locationHint { margin-top:8px; overflow-wrap:anywhere; }
+    @media (max-width:850px) {
+      .locationFormGrid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+      .locationSummary { grid-template-columns:minmax(0, 1fr) auto; }
+      .locationMeta { grid-column:1 / -1; grid-row:2; }
+    }
+    @media (max-width:560px) {
+      .locationPage { padding:10px; }
+      .locationFormGrid { grid-template-columns:1fr; }
+      .locationSpan2, .locationSpan4 { grid-column:auto; }
+      .locationSummary { grid-template-columns:minmax(0, 1fr); }
+      .locationMeta { grid-column:auto; grid-row:auto; }
+      .locationState { justify-content:flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        Nationwide coffeeshops
+        <div class="small">Add, edit, remove, and restore live map venues</div>
+      </div>
+    </div>
+    <div class="btnrow">
+      <a class="pill" href="{{ url_for('main_menu') }}">Main menu</a>
+      <a class="pill" href="{{ url_for('shop_coverage') }}">Menu coverage</a>
+    </div>
+  </div>
+
+  {% if message %}
+    <div id="toast" class="toast {{ message_kind }}">{{ message }}</div>
+  {% endif %}
+
+  <main class="locationPage">
+    <div class="locationShell">
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <div style="font-weight:800;">Turn on a catalogue shop</div>
+            <div class="small">Choose an active shop from <code>csd.csv</code>, then add its map details.</div>
+          </div>
+          <div class="btnrow">
+            <span class="pill good">{{ open_count }} live</span>
+            <span class="pill warn">{{ closed_count }} removed</span>
+            <span class="pill">{{ city_options|length }} towns</span>
+          </div>
+        </div>
+        <div class="cardBody">
+          {% if catalog_candidates %}
+          <form method="post" action="{{ url_for('add_nationwide_shop') }}">
+            <div class="locationFormGrid">
+              <div class="locationSpan4">
+                <label for="new-shop-catalog">Catalogue shop</label>
+                <select id="new-shop-catalog" name="shop_url" required>
+                  <option value="">Choose a shop not yet on the nationwide map…</option>
+                  {% for shop in catalog_candidates %}
+                    <option value="{{ shop.shop_url }}" data-name="{{ shop.name }}" data-city="{{ shop.city }}" data-address="{{ shop.address }}">{{ shop.city }} — {{ shop.name }}</option>
+                  {% endfor %}
+                </select>
+                <div id="catalog-shop-detail" class="small locationHint">{{ catalog_candidates|length }} active catalogue shops are ready to turn on.</div>
+              </div>
+              <div><label for="new-shop-province">Province</label><input id="new-shop-province" name="province" placeholder="Filled from known town" autocomplete="address-level1"></div>
+              <div><label for="new-shop-lat">Latitude</label><input id="new-shop-lat" name="lat" inputmode="decimal" placeholder="52.37204" required></div>
+              <div><label for="new-shop-lng">Longitude</label><input id="new-shop-lng" name="lng" inputmode="decimal" placeholder="4.89125" required></div>
+              <div><label for="new-shop-logo">Picture filename</label><input id="new-shop-logo" name="logo" placeholder="shop_logo.png"></div>
+              <div><label for="new-shop-postcode">Postcode (optional)</label><input id="new-shop-postcode" name="postcode" autocomplete="postal-code"></div>
+              <div><button class="primary" type="submit">Add to live map</button></div>
+            </div>
+          </form>
+          <div class="small locationHint">
+            Name, town, address, website, and stable link key come from <code>csd.csv</code>. Put picture files in <code>images/logos/</code>.
+            Enter the province only when this is the first mapped shop in a new town.
+          </div>
+          {% else %}
+          <div class="msg small">
+            Every active shop in <code>csd.csv</code> is already represented on the nationwide map.
+            Add or activate a shop in <code>csd.csv</code> and it will appear here automatically, ready for coordinates and a picture.
+          </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div>
+            <div style="font-weight:800;">Manage nationwide list</div>
+            <div class="small">Open a shop to change its details. Removed shops can be restored.</div>
+          </div>
+        </div>
+        <div class="cardBody">
+          <form method="get" action="{{ url_for('nationwide_shops') }}">
+            <div style="display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:10px;">
+              <input name="q" value="{{ q }}" placeholder="Search shop, town, province, postcode, or ID" aria-label="Search nationwide coffeeshops">
+              <button class="primary" type="submit">Search</button>
+            </div>
+          </form>
+
+          <div class="locationList" style="margin-top:12px;">
+            {% for row in shop_rows %}
+              <details class="locationItem">
+                <summary class="locationSummary">
+                  <div class="locationName">
+                    <div style="font-weight:800;">{{ row.name }}</div>
+                    <div class="small">{{ row.shop_key }}</div>
+                  </div>
+                  <div class="locationMeta">
+                    <div>{{ row.city }}{% if row.province %}, {{ row.province }}{% endif %}</div>
+                    <div class="small">{{ row.lat }}, {{ row.lng }}</div>
+                  </div>
+                  <div class="locationState">
+                    <span class="pill {{ 'good' if row.is_open else 'warn' }}">{{ 'live' if row.is_open else 'removed' }}</span>
+                    {% if row.logo and not row.logo_exists %}<span class="pill bad">picture missing</span>{% endif %}
+                    <span class="pill">Edit</span>
+                  </div>
+                </summary>
+                <div class="locationEditor">
+                  <form method="post" action="{{ url_for('edit_nationwide_shop', shop_key=row.shop_key) }}">
+                    <input type="hidden" name="q" value="{{ q }}">
+                    <div class="locationFormGrid">
+                      <div class="locationSpan2"><label>Shop name</label><input name="name" value="{{ row.name }}" required {% if row.catalog_linked %}readonly{% endif %}></div>
+                      <div><label>Town or city</label><input name="city" value="{{ row.city }}" required {% if row.catalog_linked %}readonly{% endif %}></div>
+                      <div><label>Province</label><input name="province" value="{{ row.province }}" required></div>
+                      <div><label>Latitude</label><input name="lat" value="{{ row.lat }}" inputmode="decimal" required></div>
+                      <div><label>Longitude</label><input name="lng" value="{{ row.lng }}" inputmode="decimal" required></div>
+                      <div class="locationSpan2"><label>Picture filename</label><input name="logo" value="{{ row.logo }}" placeholder="shop_logo.png"></div>
+                      <div class="locationSpan2"><label>Address</label><input name="address" value="{{ row.address }}"></div>
+                      <div><label>Postcode</label><input name="postcode" value="{{ row.postcode }}"></div>
+                      <div class="locationSpan2"><label>Website or menu link</label><input name="website" type="url" value="{{ row.website }}" {% if row.catalog_linked %}readonly{% endif %}></div>
+                      <div><button class="primary" type="submit">Save changes</button></div>
+                    </div>
+                  </form>
+                  <div class="btnrow" style="margin-top:12px;">
+                    <form method="post" action="{{ url_for('set_nationwide_shop_status', shop_key=row.shop_key) }}" onsubmit="return confirm('{{ 'Restore this shop to the live map?' if not row.is_open else 'Remove this shop from the live map? Its row and stable ID will be kept.' }}');">
+                      <input type="hidden" name="q" value="{{ q }}">
+                      <input type="hidden" name="action" value="{{ 'reopen' if not row.is_open else 'close' }}">
+                      <button class="{{ 'ghost' if not row.is_open else 'danger' }}" type="submit">{{ 'Restore to live map' if not row.is_open else 'Remove from live map' }}</button>
+                    </form>
+                    {% if row.logo %}<span class="small">Expected picture: <code>images/logos/{{ row.logo }}</code></span>{% endif %}
+                  </div>
+                </div>
+              </details>
+            {% endfor %}
+            {% if not shop_rows %}<div class="msg small">No nationwide shops match that search.</div>{% endif %}
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const toast=document.getElementById('toast');if(toast)setTimeout(()=>toast.style.display='none',4200);
+    const catalogSelect=document.getElementById('new-shop-catalog');
+    const catalogDetail=document.getElementById('catalog-shop-detail');
+    function showCatalogShop(){
+      if(!catalogSelect||!catalogDetail)return;
+      const option=catalogSelect.options[catalogSelect.selectedIndex];
+      catalogDetail.textContent=option&&option.value
+        ? `${option.dataset.name} · ${option.dataset.city}${option.dataset.address ? ` · ${option.dataset.address}` : ''}`
+        : '{{ catalog_candidates|length }} active catalogue shops are ready to turn on.';
+    }
+    catalogSelect?.addEventListener('change',showCatalogShop);
+  </script>
+</body>
+</html>
+"""
+
 SHOP_COVERAGE_TMPL = """
 <!doctype html>
 <html lang="en">
@@ -4307,6 +5263,7 @@ SHOP_COVERAGE_TMPL = """
     </div>
     <div class="btnrow">
       <a class="pill" href="{{ url_for('main_menu') }}">Main menu</a>
+      <a class="pill" href="{{ url_for('nationwide_shops') }}">Nationwide map</a>
       <a class="pill" href="{{ url_for('queue') }}">Menu queue</a>
     </div>
   </div>
@@ -4338,12 +5295,10 @@ SHOP_COVERAGE_TMPL = """
             <span class="pill warn">map-only open: {{ coverage.open_map_not_active|length }}</span>
           </div>
           <div class="small" style="margin-top:10px;">
-            <code>show_in_admin</code> controls whether a catalog shop belongs in the live product.
-            <code>is_closed</code> / <code>Closed</code> records that a venue has shut, without erasing history.
+            Coverage compares <code>csd.csv</code> with the nationwide <code>coffeeshops.csv</code> used by the public map.
+            Stable shop key is matched first, with catalogue URL as a fallback.
           </div>
-          <form method="post" action="{{ url_for('backfill_map_shop_keys') }}" style="margin-top:12px;">
-            <button class="ghost" type="submit">Repair map link keys</button>
-          </form>
+          <div class="btnrow" style="margin-top:12px;"><a class="pill" href="{{ url_for('nationwide_shops') }}">Manage nationwide map</a></div>
         </div>
       </div>
 
@@ -4434,16 +5389,25 @@ SHOP_COVERAGE_TMPL = """
                       <div>{{ row.name }}</div>
                       <div class="small">{{ row.city }}</div>
                     </td>
-                    <td style="min-width:420px;">
-                      <form method="post" action="{{ url_for('add_catalog_shop_to_map') }}">
+                    <td style="min-width:360px;">
+                      {% if row.map_shop_key %}
+                      <form method="post" action="{{ url_for('set_nationwide_shop_status', shop_key=row.map_shop_key) }}">
+                        <input type="hidden" name="action" value="reopen">
+                        <button class="primary" type="submit">Restore to live map</button>
+                      </form>
+                      {% else %}
+                      <form method="post" action="{{ url_for('add_nationwide_shop') }}">
                         <input type="hidden" name="shop_url" value="{{ row.shop_url }}">
-                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:8px;">
-                          <input name="lat" inputmode="decimal" placeholder="lat" required>
-                          <input name="lng" inputmode="decimal" placeholder="lng" required>
-                          <input name="logo" placeholder="logo optional">
-                          <button class="primary" type="submit">Add</button>
+                        <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:8px;">
+                          <input name="lat" inputmode="decimal" placeholder="latitude" aria-label="Latitude" required>
+                          <input name="lng" inputmode="decimal" placeholder="longitude" aria-label="Longitude" required>
+                          <input name="province" placeholder="province if new town" aria-label="Province">
+                          <input name="logo" placeholder="picture filename" aria-label="Picture filename">
+                          <input name="postcode" placeholder="postcode optional" aria-label="Postcode">
+                          <button class="primary" type="submit">Add to live map</button>
                         </div>
                       </form>
+                      {% endif %}
                       <div class="btnrow" style="margin-top:8px;">
                         <form method="post" action="{{ url_for('catalog_shop_status') }}">
                           <input type="hidden" name="shop_url" value="{{ row.shop_url }}">
@@ -4472,7 +5436,7 @@ SHOP_COVERAGE_TMPL = """
         <div class="cardHeader">
           <div>
             <div style="font-weight:800;">Open map shops not active in the catalog</div>
-            <div class="small">Promoting a map-only shop creates its catalog row and a manual menu ready for data entry.</div>
+            <div class="small">These nationwide markers are hidden, closed, or absent in <code>csd.csv</code>.</div>
           </div>
         </div>
         <div class="cardBody">
@@ -4494,22 +5458,18 @@ SHOP_COVERAGE_TMPL = """
                             <input type="hidden" name="action" value="activate">
                             <button class="ghost" type="submit">Activate catalog</button>
                           </form>
-                        {% elif not row.catalog_shop_url %}
-                          <form method="post" action="{{ url_for('create_catalog_shop_from_map') }}" style="display:grid; gap:8px; min-width:360px;">
-                            <input type="hidden" name="map_city" value="{{ row.map_city }}">
-                            <input type="hidden" name="website" value="{{ row.website }}">
-                            <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:8px;">
-                              <input name="name" value="{{ row.name }}" placeholder="catalog name" required>
-                              <input name="address" value="{{ row.address or '' }}" placeholder="address" required>
-                              <button class="primary" type="submit">Create + enter menu</button>
-                            </div>
+                        {% elif row.catalog_shop_url and row.catalog_is_closed %}
+                          <form method="post" action="{{ url_for('catalog_shop_status') }}">
+                            <input type="hidden" name="shop_url" value="{{ row.catalog_shop_url }}">
+                            <input type="hidden" name="action" value="reopen">
+                            <button class="ghost" type="submit">Reopen catalog</button>
                           </form>
+                        {% elif not row.catalog_shop_url %}
+                          <span class="pill warn">not in csd.csv</span>
                         {% endif %}
-                        <form method="post" action="{{ url_for('map_shop_status') }}">
-                          <input type="hidden" name="map_city" value="{{ row.map_city }}">
-                          <input type="hidden" name="website" value="{{ row.website }}">
+                        <form method="post" action="{{ url_for('set_nationwide_shop_status', shop_key=row.shop_key) }}">
                           <input type="hidden" name="action" value="close">
-                          <button class="danger" type="submit">Mark closed</button>
+                          <button class="danger" type="submit">Remove from live map</button>
                         </form>
                       </div>
                     </td>
@@ -4543,11 +5503,9 @@ SHOP_COVERAGE_TMPL = """
                     <td>{{ row.name }}</td>
                     <td class="small">{{ row.map_city }}</td>
                     <td>
-                      <form method="post" action="{{ url_for('map_shop_status') }}">
-                        <input type="hidden" name="map_city" value="{{ row.map_city }}">
-                        <input type="hidden" name="website" value="{{ row.website }}">
+                      <form method="post" action="{{ url_for('set_nationwide_shop_status', shop_key=row.shop_key) }}">
                         <input type="hidden" name="action" value="reopen">
-                        <button class="ghost" type="submit">Reopen</button>
+                        <button class="ghost" type="submit">Restore to live map</button>
                       </form>
                     </td>
                   </tr>
@@ -5229,6 +6187,7 @@ def create_app(
             "menus": int(c.execute("SELECT COUNT(*) AS n FROM menus;").fetchone()["n"]),
             "menu_images": int(c.execute("SELECT COUNT(*) AS n FROM menu_images;").fetchone()["n"]),
             "growers": int(c.execute("SELECT COUNT(*) AS n FROM growers;").fetchone()["n"]),
+            "site_updates": int(c.execute("SELECT COUNT(*) AS n FROM site_updates WHERE is_published = 1;").fetchone()["n"]),
             "strains": int(c.execute("SELECT COUNT(*) AS n FROM strains;").fetchone()["n"]),
             "menu_entries": int(c.execute("SELECT COUNT(*) AS n FROM menu_entries;").fetchone()["n"]),
             "shop_offerings": int(c.execute("SELECT COUNT(*) AS n FROM shop_offerings;").fetchone()["n"]),
@@ -5290,7 +6249,7 @@ def create_app(
             SELECT me.id AS entry_id,
                    me.shop_id, me.strain_id,
                    st.name_display AS strain_name,
-                   me.base_type, me.is_cali,
+                   me.base_type, me.is_cali, me.is_legal,
                    me.grower,
                    me.price_currency, me.price_amount, me.price_unit,
                    me.package_price_amount, me.package_weight_g,
@@ -5322,7 +6281,7 @@ def create_app(
             SELECT me.id AS entry_id,
                    me.strain_id,
                    st.name_display AS strain_name,
-                   me.base_type, me.is_cali,
+                   me.base_type, me.is_cali, me.is_legal,
                    me.grower,
                    me.price_currency, me.price_amount, me.price_unit,
                    me.package_price_amount, me.package_weight_g,
@@ -5337,10 +6296,10 @@ def create_app(
 
         offerings = c.execute(
             """
-            SELECT so.strain_id,
+            SELECT so.id AS offering_id, so.strain_id,
                    st.name_display AS strain_name,
                    so.status, so.last_seen_at_utc, so.manual_status_lock,
-                   so.discontinued_until_utc
+                   so.discontinued_until_utc, so.package_weight_g, so.is_legal
             FROM shop_offerings so
             JOIN strains st ON st.id = so.strain_id
             WHERE so.shop_id = ?
@@ -5807,6 +6766,357 @@ def create_app(
             )
         )
 
+    @app.get("/updates")
+    def site_updates() -> Response:
+        """Manage the editorial cards exported to the public homepage."""
+        message = (request.args.get("msg") or "").strip()
+        message_kind = (request.args.get("kind") or "good").strip().lower()
+        if message_kind not in {"good", "bad", "warn"}:
+            message_kind = "good"
+        c = conn()
+        rows = c.execute(
+            """
+            SELECT id, title, body, category, link_url, link_label,
+                   published_at_utc, is_published
+            FROM site_updates
+            ORDER BY published_at_utc DESC, id DESC;
+            """
+        ).fetchall()
+        c.close()
+        return Response(render_template_string(
+            UPDATES_TMPL,
+            css=BASE_CSS,
+            updates=rows,
+            message=message,
+            message_kind=message_kind,
+        ))
+
+    @app.post("/updates/add")
+    def add_site_update() -> Response:
+        title = re.sub(r"\s+", " ", (request.form.get("title") or "").strip())
+        body = re.sub(r"\s+", " ", (request.form.get("body") or "").strip())
+        category = re.sub(r"\s+", " ", (request.form.get("category") or "News").strip())[:60]
+        link_url = (request.form.get("link_url") or "").strip()
+        link_label = re.sub(r"\s+", " ", (request.form.get("link_label") or "").strip())[:60]
+        is_published = 1 if request.form.get("is_published") == "1" else 0
+        if not title or not body:
+            return redirect(url_for("site_updates", kind="bad", msg="Title and message are required."))
+        if len(title) > 140 or len(body) > 1200:
+            return redirect(url_for("site_updates", kind="bad", msg="That update is too long."))
+        if link_url and not (link_url.startswith(("https://", "http://", "/")) or re.match(r"^[a-zA-Z0-9_.-]+\.html(?:[?#].*)?$", link_url)):
+            return redirect(url_for("site_updates", kind="bad", msg="Use an http(s), root-relative, or local .html link."))
+        now = utc_now_iso()
+        c = conn()
+        c.execute(
+            """
+            INSERT INTO site_updates(
+                title, body, category, link_url, link_label,
+                published_at_utc, is_published, created_at, updated_at
+            ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);
+            """,
+            (title, body, category or "News", link_url, link_label, now, is_published, now, now),
+        )
+        c.commit()
+        export_json_snapshot(c, app.config["JSON_EXPORT_DIR"])
+        c.close()
+        return redirect(url_for("site_updates", msg=f"Saved homepage update: {title}"))
+
+    @app.post("/updates/<int:update_id>/toggle")
+    def toggle_site_update(update_id: int) -> Response:
+        c = conn()
+        c.execute(
+            "UPDATE site_updates SET is_published = CASE is_published WHEN 1 THEN 0 ELSE 1 END, updated_at = ? WHERE id = ?;",
+            (utc_now_iso(), update_id),
+        )
+        c.commit()
+        export_json_snapshot(c, app.config["JSON_EXPORT_DIR"])
+        c.close()
+        return redirect(url_for("site_updates", msg="Homepage update status changed."))
+
+    @app.post("/updates/<int:update_id>/delete")
+    def delete_site_update(update_id: int) -> Response:
+        c = conn()
+        c.execute("DELETE FROM site_updates WHERE id = ?;", (update_id,))
+        c.commit()
+        export_json_snapshot(c, app.config["JSON_EXPORT_DIR"])
+        c.close()
+        return redirect(url_for("site_updates", msg="Homepage update deleted."))
+
+    @app.get("/shops/nationwide")
+    def nationwide_shops() -> Response:
+        """Manage the master coffeeshop list used by the nationwide public map."""
+        q = (request.args.get("q") or "").strip()
+        message = (request.args.get("msg") or "").strip()
+        message_kind = (request.args.get("kind") or "good").strip().lower()
+        if message_kind not in {"good", "bad", "warn"}:
+            message_kind = "good"
+
+        _fieldnames, rows = read_master_location_catalog(app.config["BASE_DIR"])
+        _catalog_fields, catalog_rows = read_catalog_rows(app.config["SHOPS_CSV"])
+        catalog_by_url = {
+            normalise_url_path(row.get("shop_url")): row
+            for row in catalog_rows
+            if normalise_url_path(row.get("shop_url"))
+        }
+        mapped_urls = {
+            normalise_url_path(row.get("website"))
+            for row in rows
+            if normalise_url_path(row.get("website"))
+        }
+        mapped_keys = {str(row.get("shop_key") or "").strip() for row in rows}
+        catalog_candidates: List[Dict[str, str]] = []
+        seen_candidate_urls: set[str] = set()
+        for row in catalog_rows:
+            shop_url = str(row.get("shop_url") or "").strip()
+            url_key = normalise_url_path(shop_url)
+            shop_key = derive_shop_key(row.get("name", ""), row.get("city", ""), shop_url)
+            if (
+                not url_key
+                or url_key in seen_candidate_urls
+                or url_key in mapped_urls
+                or shop_key in mapped_keys
+                or not parse_csv_bool(row.get("show_in_admin"), default=True)
+                or parse_csv_bool(row.get("is_closed"), default=False)
+            ):
+                continue
+            seen_candidate_urls.add(url_key)
+            catalog_candidates.append(
+                {
+                    "name": str(row.get("name") or "").strip(),
+                    "city": str(row.get("city") or "").strip(),
+                    "address": str(row.get("address") or "").strip(),
+                    "shop_url": shop_url,
+                    "shop_key": shop_key,
+                }
+            )
+        catalog_candidates.sort(
+            key=lambda row: (row["city"].casefold(), row["name"].casefold())
+        )
+        city_map: Dict[str, Dict[str, str]] = {}
+        for row in rows:
+            slug = str(row.get("city_slug") or "").strip()
+            if not slug:
+                continue
+            city_map.setdefault(
+                slug,
+                {
+                    "name": str(row.get("city") or slug).strip(),
+                    "province": str(row.get("province") or "").strip(),
+                },
+            )
+
+        q_lower = q.casefold()
+        shop_rows: List[Dict[str, Any]] = []
+        logos_dir = os.path.join(app.config["BASE_DIR"], "images", "logos")
+        for row in rows:
+            haystack = " ".join(
+                str(row.get(field) or "")
+                for field in ("name", "city", "province", "postcode", "website", "shop_key")
+            ).casefold()
+            if q_lower and q_lower not in haystack:
+                continue
+            logo = str(row.get("logo") or "").strip()
+            is_open = str(row.get("status") or "open").strip().lower() != "closed"
+            catalog_linked = normalise_url_path(row.get("website")) in catalog_by_url
+            shop_rows.append(
+                {
+                    **row,
+                    "is_open": is_open,
+                    "catalog_linked": catalog_linked,
+                    "logo_exists": bool(
+                        logo
+                        and os.path.basename(logo) == logo
+                        and os.path.isfile(os.path.join(logos_dir, logo))
+                    ),
+                }
+            )
+        shop_rows.sort(
+            key=lambda row: (
+                not bool(row["is_open"]),
+                str(row.get("city") or "").casefold(),
+                str(row.get("name") or "").casefold(),
+            )
+        )
+
+        return Response(
+            render_template_string(
+                NATIONWIDE_SHOPS_TMPL,
+                css=BASE_CSS,
+                q=q,
+                message=message,
+                message_kind=message_kind,
+                shop_rows=shop_rows,
+                catalog_candidates=catalog_candidates,
+                city_options=sorted(city_map.values(), key=lambda city: city["name"].casefold()),
+                open_count=sum(
+                    str(row.get("status") or "open").strip().lower() != "closed" for row in rows
+                ),
+                closed_count=sum(
+                    str(row.get("status") or "open").strip().lower() == "closed" for row in rows
+                ),
+            )
+        )
+
+    @app.post("/shops/nationwide/add")
+    def add_nationwide_shop() -> Response:
+        """Turn on one csd.csv shop in the nationwide map and database export."""
+        fieldnames, rows = read_master_location_catalog(app.config["BASE_DIR"])
+        shop_url = (request.form.get("shop_url") or "").strip()
+        _catalog_fields, catalog_rows = read_catalog_rows(app.config["SHOPS_CSV"])
+        catalog_row = find_row_by_url(catalog_rows, "shop_url", shop_url)
+        if not catalog_row:
+            return redirect(
+                url_for("nationwide_shops", msg="Choose a shop from the active csd.csv catalogue.", kind="bad")
+            )
+        if (
+            not parse_csv_bool(catalog_row.get("show_in_admin"), default=True)
+            or parse_csv_bool(catalog_row.get("is_closed"), default=False)
+        ):
+            return redirect(
+                url_for("nationwide_shops", msg="That catalogue shop is hidden or closed.", kind="bad")
+            )
+
+        if any(
+            normalise_url_path(row.get("website")) == normalise_url_path(shop_url)
+            for row in rows
+        ):
+            return redirect(
+                url_for("nationwide_shops", q=catalog_row.get("name", ""), msg="That shop is already on the nationwide map.", kind="warn")
+            )
+
+        catalogue_values = {
+            "name": catalog_row.get("name", ""),
+            "city": catalog_row.get("city", ""),
+            "province": request.form.get("province", ""),
+            "lat": request.form.get("lat", ""),
+            "lng": request.form.get("lng", ""),
+            "logo": request.form.get("logo", ""),
+            "address": catalog_row.get("address", ""),
+            "postcode": request.form.get("postcode", ""),
+            "website": shop_url,
+        }
+        try:
+            cleaned = build_master_location_values(catalogue_values, rows)
+        except ValueError as exc:
+            return redirect(url_for("nationwide_shops", msg=str(exc), kind="bad"))
+
+        shop_key = derive_shop_key(cleaned["name"], cleaned["city"], shop_url)
+        if any(str(row.get("shop_key") or "").strip() == shop_key for row in rows):
+            return redirect(
+                url_for("nationwide_shops", msg="That catalogue link key is already used on the map.", kind="bad")
+            )
+        row = {field: "" for field in fieldnames}
+        row.update(cleaned)
+        row.update(
+            {
+                "shop_id": shop_key,
+                "shop_key": shop_key,
+                "visited": "n",
+                "rating": "",
+                "status": "open",
+            }
+        )
+        rows.append(row)
+
+        c = conn()
+        try:
+            upsert_catalog_shop_to_db(c, catalog_row)
+            write_master_location_catalog(app.config["BASE_DIR"], fieldnames, rows)
+            c.commit()
+            export_json_snapshot(c, app.config["JSON_EXPORT_DIR"])
+        finally:
+            c.close()
+
+        logo = cleaned.get("logo", "")
+        logo_missing = bool(
+            logo
+            and not os.path.isfile(os.path.join(app.config["BASE_DIR"], "images", "logos", logo))
+        )
+        message = f"{cleaned['name']} was turned on and linked to its database shop."
+        kind = "good"
+        if logo_missing:
+            message += f" Add {logo} to images/logos/ for its picture to appear."
+            kind = "warn"
+        return redirect(url_for("nationwide_shops", q=cleaned["name"], msg=message, kind=kind))
+
+    @app.post("/shops/nationwide/<shop_key>/edit")
+    def edit_nationwide_shop(shop_key: str) -> Response:
+        """Edit map details while keeping the shop's stable identity unchanged."""
+        q = (request.form.get("q") or "").strip()
+        fieldnames, rows = read_master_location_catalog(app.config["BASE_DIR"])
+        row = next(
+            (item for item in rows if str(item.get("shop_key") or "").strip() == shop_key),
+            None,
+        )
+        if row is None:
+            return redirect(url_for("nationwide_shops", q=q, msg="Nationwide shop not found.", kind="bad"))
+        _catalog_fields, catalog_rows = read_catalog_rows(app.config["SHOPS_CSV"])
+        catalog_row = find_row_by_url(catalog_rows, "shop_url", row.get("website", ""))
+        editable_values = dict(request.form)
+        if catalog_row:
+            editable_values.update(
+                {
+                    "name": catalog_row.get("name", ""),
+                    "city": catalog_row.get("city", ""),
+                    "address": catalog_row.get("address", ""),
+                    "website": catalog_row.get("shop_url", ""),
+                }
+            )
+        try:
+            cleaned = build_master_location_values(
+                editable_values,
+                rows,
+                current_shop_key=shop_key,
+            )
+        except ValueError as exc:
+            return redirect(url_for("nationwide_shops", q=q or shop_key, msg=str(exc), kind="bad"))
+
+        row.update(cleaned)
+        row["shop_id"] = shop_key
+        row["shop_key"] = shop_key
+        if str(row.get("status") or "").strip().lower() not in {"open", "closed"}:
+            row["status"] = "open"
+        write_master_location_catalog(app.config["BASE_DIR"], fieldnames, rows)
+
+        logo = cleaned.get("logo", "")
+        logo_missing = bool(
+            logo
+            and not os.path.isfile(os.path.join(app.config["BASE_DIR"], "images", "logos", logo))
+        )
+        message = f"Saved map details for {cleaned['name']}."
+        kind = "good"
+        if logo_missing:
+            message += f" {logo} is not yet in images/logos/."
+            kind = "warn"
+        return redirect(url_for("nationwide_shops", q=q or shop_key, msg=message, kind=kind))
+
+    @app.post("/shops/nationwide/<shop_key>/status")
+    def set_nationwide_shop_status(shop_key: str) -> Response:
+        """Remove or restore a master shop without deleting its identity/history."""
+        q = (request.form.get("q") or "").strip()
+        action = (request.form.get("action") or "").strip().lower()
+        if action not in {"close", "reopen"}:
+            return redirect(url_for("nationwide_shops", q=q, msg="Unknown map action.", kind="bad"))
+
+        fieldnames, rows = read_master_location_catalog(app.config["BASE_DIR"])
+        row = next(
+            (item for item in rows if str(item.get("shop_key") or "").strip() == shop_key),
+            None,
+        )
+        if row is None:
+            return redirect(url_for("nationwide_shops", q=q, msg="Nationwide shop not found.", kind="bad"))
+        row["status"] = "closed" if action == "close" else "open"
+        row["shop_id"] = shop_key
+        write_master_location_catalog(app.config["BASE_DIR"], fieldnames, rows)
+        verb = "removed from" if action == "close" else "restored to"
+        return redirect(
+            url_for(
+                "nationwide_shops",
+                q=q or shop_key,
+                msg=f"{row.get('name') or shop_key} was {verb} the live map.",
+            )
+        )
+
     @app.get("/shops/coverage")
     def shop_coverage() -> Response:
         """Manage catalog visibility, closures, and map coverage from the app."""
@@ -5817,8 +7127,8 @@ def create_app(
             message_kind = "good"
 
         catalog_fields, catalog_rows = read_catalog_rows(app.config["SHOPS_CSV"])
-        location_tables = read_location_tables(app.config["BASE_DIR"])
-        coverage = build_shop_coverage(catalog_rows, location_tables)
+        _master_fields, master_rows = read_master_location_catalog(app.config["BASE_DIR"])
+        coverage = build_shop_coverage(catalog_rows, master_rows)
 
         q_lower = q.lower()
         catalog_matches: List[Dict[str, Any]] = []
@@ -5885,6 +7195,30 @@ def create_app(
             c.close()
 
         if action in {"close", "reopen"}:
+            master_fields, master_rows = read_master_location_catalog(app.config["BASE_DIR"])
+            catalog_key = derive_shop_key(
+                row.get("name", ""),
+                row.get("city", ""),
+                row.get("shop_url", ""),
+            )
+            catalog_url_key = normalise_url_path(row.get("shop_url"))
+            master_changed = False
+            for master_row in master_rows:
+                if (
+                    str(master_row.get("shop_key") or "").strip() == catalog_key
+                    or (
+                        catalog_url_key
+                        and normalise_url_path(master_row.get("website")) == catalog_url_key
+                    )
+                ):
+                    master_row["status"] = "closed" if action == "close" else "open"
+                    master_changed = True
+            if master_changed:
+                write_master_location_catalog(
+                    app.config["BASE_DIR"], master_fields, master_rows
+                )
+
+            # Keep the legacy town files in step while older tools still consume them.
             location_tables = read_location_tables(app.config["BASE_DIR"])
             touched = sync_matching_map_rows_closed(
                 location_tables,
@@ -6078,6 +7412,8 @@ def create_app(
             "active_offerings",
             "menu_entries",
             "strain_index",
+            "updates",
+            "home_summary",
             "manifest",
         }
         if snapshot_name not in allowed:
@@ -6648,6 +7984,7 @@ def create_app(
         strain_name = request.form.get("strain_name", "")
         base_type = request.form.get("base_type", "")
         is_cali = (request.form.get("is_cali") == "1")
+        is_legal = (request.form.get("is_legal") == "1")
         consolidate_type = (request.form.get("consolidate_type") == "1")
         grower_choice = request.form.get("grower_choice", "")
         grower_custom = request.form.get("grower_custom", "")
@@ -6664,6 +8001,7 @@ def create_app(
             strain_name,
             base_type,
             is_cali,
+            is_legal,
             grower_choice,
             grower_custom,
             price_currency,
@@ -6794,6 +8132,7 @@ def create_app(
         strain_name = request.form.get("strain_name", "")
         base_type = request.form.get("base_type", "")
         is_cali = (request.form.get("is_cali") == "1")
+        is_legal = (request.form.get("is_legal") == "1")
         grower_choice = request.form.get("grower_choice", "")
         grower_custom = request.form.get("grower_custom", "")
         price_currency = request.form.get("price_currency", DEFAULT_CURRENCY)
@@ -6814,6 +8153,7 @@ def create_app(
                 new_strain_name=strain_name,
                 base_type=base_type,
                 is_cali=is_cali,
+                is_legal=is_legal,
                 grower_choice=grower_choice,
                 grower_custom=grower_custom,
                 price_currency=price_currency,
@@ -6851,6 +8191,7 @@ def create_app(
                 "strain_name": strain_name,
                 "base_type": base_type,
                 "is_cali": 1 if is_cali else 0,
+                "is_legal": 1 if is_legal else 0,
                 "grower": grower_value,
                 "price_currency": price_currency,
                 "price_amount": price_amount_float,
@@ -6948,7 +8289,7 @@ def create_app(
         c = conn()
         rows = c.execute(
             """
-            SELECT strain_id, status
+            SELECT id AS offering_id, status
             FROM shop_offerings
             WHERE shop_id = ?;
             """,
@@ -6960,9 +8301,9 @@ def create_app(
 
         changed = 0
         for r in rows:
-            strain_id = int(r["strain_id"])
+            offering_id = int(r["offering_id"])
             current_status = str(r["status"] or "").strip().lower()
-            raw = (request.form.get(f"status_{strain_id}") or "").strip().lower()
+            raw = (request.form.get(f"status_{offering_id}") or "").strip().lower()
 
             if raw in ("inactive", "discontinued"):
                 target_status = "discontinued"
@@ -6975,15 +8316,13 @@ def create_app(
                 continue
 
             if target_status == "active":
-                set_offering_status(c, shop_id, strain_id, status="active", lock=False, commit=False)
+                set_offering_status_by_id(c, shop_id, offering_id, status="active", lock=False, commit=False)
             else:
-                set_offering_status(
+                set_offering_status_by_id(
                     c,
                     shop_id,
-                    strain_id,
+                    offering_id,
                     status="discontinued",
-                    reason="manual",
-                    until_utc="",
                     lock=True,
                     commit=False,
                 )

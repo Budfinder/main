@@ -25,7 +25,9 @@ REQUIRED_JSON = [
     "active_offerings.json",
     "menu_entries.json",
     "strain_index.json",
+    "search_index.json",
     "home_summary.json",
+    "updates.json",
 ]
 
 
@@ -88,7 +90,15 @@ def main() -> int:
         if isinstance(expected, int) and expected != actual:
             errors.append(f"{name} count is {actual:,}, manifest says {expected:,}")
 
+    search_index_path = DATABASE_DIR / "search_index.json"
+    if search_index_path.exists():
+        search_index = load_json(search_index_path)
+        for key in ("shops", "strains", "growers", "cities", "intents"):
+            if not isinstance(search_index.get(key), list):
+                errors.append(f"search_index.json is missing its {key} list")
+
     locations_index = DATABASE_DIR / "locations" / "index.json"
+    locations_data = {}
     if not locations_index.exists():
         errors.append("Missing database/locations/index.json")
         location_files = []
@@ -99,13 +109,104 @@ def main() -> int:
     print("")
     print("Location CSVs")
     print("-------------")
-    shops_path = DATABASE_DIR / "shops.json"
-    shops_data = load_json(shops_path) if shops_path.exists() else []
-    known_menu_keys = {
-        str(row.get("shop_key") or "").strip()
-        for row in shops_data
-        if isinstance(row, dict) and str(row.get("shop_key") or "").strip()
-    }
+    master_filename = str(locations_data.get("master") or "").strip()
+    master_rows: list[dict[str, str]] = []
+    if not master_filename:
+        errors.append("database/locations/index.json does not define a master coffeeshop catalogue")
+    else:
+        master_path = DATABASE_DIR / "locations" / master_filename
+        if not master_path.exists():
+            errors.append(f"database/locations/index.json references missing master {master_filename}")
+        else:
+            master_headers, master_rows = read_location_csv(master_path)
+            required_master_headers = {
+                "shop_id", "name", "lat", "lng", "city", "city_slug",
+                "province", "shop_key", "status",
+            }
+            missing_headers = sorted(required_master_headers.difference(master_headers))
+            if missing_headers:
+                errors.append(
+                    f"{master_filename} is missing required columns: {', '.join(missing_headers)}"
+                )
+
+            master_keys = [(row.get("shop_key") or "").strip() for row in master_rows]
+            blank_keys = sum(not key for key in master_keys)
+            duplicate_keys = sorted(key for key, count in Counter(master_keys).items() if key and count > 1)
+            invalid_identity = [
+                row for row in master_rows
+                if (row.get("shop_id") or "").strip() != (row.get("shop_key") or "").strip()
+            ]
+            missing_place = [
+                row for row in master_rows
+                if not (row.get("name") or "").strip()
+                or not (row.get("city") or "").strip()
+                or not (row.get("city_slug") or "").strip()
+                or not (row.get("province") or "").strip()
+            ]
+            invalid_status = [
+                row for row in master_rows
+                if (row.get("status") or "").strip().lower() not in {"open", "closed"}
+            ]
+            invalid_coords = []
+            for row in master_rows:
+                try:
+                    lat = float((row.get("lat") or "").strip())
+                    lng = float((row.get("lng") or "").strip())
+                    if not (-90 <= lat <= 90 and -180 <= lng <= 180):
+                        invalid_coords.append(row)
+                except ValueError:
+                    invalid_coords.append(row)
+
+            master_city_counts = Counter(
+                (row.get("city_slug") or "").strip()
+                for row in master_rows
+                if (row.get("status") or "").strip().lower() != "closed"
+            )
+            city_entries = locations_data.get("cities", []) if isinstance(locations_data, dict) else []
+            registered_city_slugs = {
+                str(city.get("slug") or "").strip()
+                for city in city_entries
+                if isinstance(city, dict)
+            }
+            unregistered_cities = sorted(set(master_city_counts).difference(registered_city_slugs))
+
+            print(
+                f"{master_filename}: {len(master_rows):,} shops across "
+                f"{len(master_city_counts):,} registered towns and cities"
+            )
+            if blank_keys:
+                errors.append(f"{master_filename} has {blank_keys} row(s) without shop_key")
+            if duplicate_keys:
+                errors.append(f"{master_filename} has duplicate shop keys: {', '.join(duplicate_keys)}")
+            if invalid_identity:
+                errors.append(
+                    f"{master_filename} has {len(invalid_identity)} row(s) where shop_id and shop_key differ"
+                )
+            if missing_place:
+                errors.append(
+                    f"{master_filename} has {len(missing_place)} row(s) missing name, city, city_slug, or province"
+                )
+            if invalid_status:
+                errors.append(f"{master_filename} has {len(invalid_status)} row(s) with invalid status")
+            if invalid_coords:
+                errors.append(f"{master_filename} has {len(invalid_coords)} row(s) with invalid coordinates")
+            if unregistered_cities:
+                errors.append(
+                    f"{master_filename} contains unregistered city slugs: {', '.join(unregistered_cities)}"
+                )
+
+            for city in city_entries:
+                if not isinstance(city, dict):
+                    continue
+                slug = str(city.get("slug") or "").strip()
+                expected_count = city.get("shop_count")
+                actual_count = master_city_counts.get(slug, 0)
+                if isinstance(expected_count, int) and expected_count != actual_count:
+                    errors.append(
+                        f"{city.get('name') or slug} shop_count is {expected_count:,}, "
+                        f"but {master_filename} has {actual_count:,} open shops"
+                    )
+
     for filename in location_files:
         path = DATABASE_DIR / "locations" / filename
         if not path.exists():
@@ -113,40 +214,18 @@ def main() -> int:
             continue
 
         headers, rows = read_location_csv(path)
-        missing_keys = [
-            row for row in rows
-            if (row.get("Coffeeshop") or "").strip().lower() == "y"
-            and (row.get("Closed") or "").strip().lower() != "y"
-            and not (row.get("shop_key") or "").strip()
-        ]
         duplicate_headers = [name for name, count in Counter(headers).items() if name and count > 1]
         blank_headers = headers.count("")
-        live_keys = [
-            (row.get("shop_key") or "").strip()
+        local_place_count = sum(
+            (row.get("Coffeeshop") or "").strip().lower() != "y"
             for row in rows
-            if (row.get("Coffeeshop") or "").strip().lower() == "y"
-            and (row.get("Closed") or "").strip().lower() != "y"
-            and (row.get("shop_key") or "").strip()
-        ]
-        duplicate_live_keys = [key for key, count in Counter(live_keys).items() if count > 1]
-        unknown_menu_keys = sorted({
-            (row.get("menu_shop_key") or "").strip()
-            for row in rows
-            if (row.get("menu_shop_key") or "").strip()
-            and (row.get("menu_shop_key") or "").strip() not in known_menu_keys
-        })
-        print(f"{filename}: {len(rows):,} rows, {len(missing_keys):,} missing live shop keys")
+        )
+        print(f"{filename}: {len(rows):,} rows, {local_place_count:,} local map places")
 
-        if missing_keys:
-            errors.append(f"{filename} has {len(missing_keys)} live coffeeshop rows without shop_key")
         if duplicate_headers:
             warnings.append(f"{filename} has duplicate columns: {', '.join(duplicate_headers)}")
         if blank_headers:
             warnings.append(f"{filename} has {blank_headers} blank column header(s)")
-        if duplicate_live_keys:
-            errors.append(f"{filename} has duplicate live shop keys: {', '.join(duplicate_live_keys)}")
-        if unknown_menu_keys:
-            errors.append(f"{filename} has unknown menu_shop_key values: {', '.join(unknown_menu_keys)}")
 
     active_path = DATABASE_DIR / "active_offerings.json"
     if active_path.exists():

@@ -1,0 +1,324 @@
+﻿shop_id,name,lat,lng,city,city_slug,province,address,postcode,website,shop_key,logo,visited,rating,status
+cs-1e-hulp,1e Hulp,52.37168,4.87595,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-1e-hulp.html,cs-1e-hulp,1e_hulp.png,y,5,open
+cs-420-cafe,420 Cafe (de Kuil),52.37597222,4.89588642,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-420-cafe.html,cs-420-cafe,420_cafe_de_kuil.png,n,,open
+cs-7thheaven,7th Heaven,52.38147,4.88623,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-7thheaven.html,cs-7thheaven,7th_heaven.png,n,,open
+cs-abraxas,Abraxas,52.37204,4.89125,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-abraxas.html,cs-abraxas,abraxas.png,y,5,open
+cs-black-star,African Blackstar,52.37377,4.88255,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-black-star.html,cs-black-star,blackstar.png,n,,open
+cs-aktama2,Aktama 2,52.36963,4.85235,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-aktama2.html,cs-aktama2,aktama_2.png,n,,open
+cs-amnesia,Amnesia,52.37561,4.88902,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-amnesia.html,cs-amnesia,amnesia.png,n,,open
+cs-atlas-ams,Atlas,52.3982,4.94153,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-atlas-ams.html,cs-atlas-ams,atlas.png,n,,open
+cs-babylon,Babylon,52.37478,4.8965,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-babylon.html,cs-babylon,babylon.png,n,,open
+cs-bagheera,Bagheera,52.37004,4.89747,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bagheera.html,cs-bagheera,bagheera.png,y,4,open
+cs-balboa-family,Balboa,52.36684,4.8958,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-balboa-family.html,cs-balboa-family,balboa_family.png,n,,open
+cs-balou,Balou,52.36676,4.89581,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-balou.html,cs-balou,balou.png,y,4,open
+cs-barneys,Barney's,52.3806,4.89101,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-barneys.html,cs-barneys,barneys_farm.png,y,4,open
+cs-barraka,Barraka,52.37428,4.8926,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-barraka.html,cs-barraka,barraka.png,n,,open
+cs-basjoe,Bas Joe,52.37,4.89749,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-basjoe.html,cs-basjoe,basjoe.png,y,3,open
+cs-best-friends-oost,Best Friends,52.36509,4.93965,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-best-friends-oost.html,cs-best-friends-oost,best_friends_centrum.png,n,,open
+ams-best-friends-oud-zuid,Best Friends Oud-Zuid,52.3539285,4.8559835,Amsterdam,amsterdam,Noord-Holland,,,https://bestfriendsamsterdam.com/,ams-best-friends-oud-zuid,best_friends_oost.png,n,,open
+ams-best-friends-zuidoost,Best Friends Zuid-Oost,52.3054726,4.9427027,Amsterdam,amsterdam,Noord-Holland,,,https://bestfriendsamsterdam.com/,ams-best-friends-zuidoost,best_friends_oost.png,n,,open
+cs-bij,Bij,52.36211,4.85548,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bij.html,cs-bij,bij.png,n,,open
+cs-blue-lagoon,Blue Lagoon,52.36059,4.86628,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-blue-lagoon.html,cs-blue-lagoon,blue_lagoon.png,n,,open
+cs-blue-sea,Blue Sea,52.35458,4.90157,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-blue-sea.html,cs-blue-sea,blue_sea.png,n,,open
+cs-bluebird,Bluebird,52.36996,4.90082,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bluebird.html,cs-bluebird,bluebird.png,y,5,open
+cs-boerejongens-cent,Boerejongens Centrum,52.36488,4.89802,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-boerejongens-cent.html,cs-boerejongens-cent,boerejongens_centrum.png,y,3,open
+cs-boerejongens-slot,Boerejongens Sloterdijk,52.39139679,4.829649657,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-boerejongens-slot.html,cs-boerejongens-slot,boerejongens_sloterdijk.png,n,,open
+cs-boerejongens-west,Boerejongens West,52.36234,4.85755,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-boerejongens-west.html,cs-boerejongens-west,boerejongens_centrum.png,y,3,open
+cs-bronx,Bronx,52.37911,4.87954,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bronx.html,cs-bronx,bronx.png,n,,open
+cs-bulldog-no-90,Bulldog 90,52.37366,4.89776,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bulldog-no-90.html,cs-bulldog-no-90,bulldog_no_90.png,y,1,open
+cs-bulldog-energy,Bulldog Energy,52.3725,4.89634,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bulldog-energy.html,cs-bulldog-energy,bulldog_energy.png,n,,open
+cs-bulldog-palace,Bulldog Palace,52.364,4.88315,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bulldog-palace.html,cs-bulldog-palace,bulldog_palace.png,n,,open
+cs-bulldog-rockshop,Bulldog Rock Shop,52.37906,4.89393,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bulldog-rockshop.html,cs-bulldog-rockshop,bulldog_rockshop.png,n,,open
+cs-bullwackie,Bullwackie,52.35206132,4.84752243,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bullwackie.html,cs-bullwackie,bullwackie.png,n,,open
+cs-carmona,Carmona,52.35565,4.9011,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-carmona.html,cs-carmona,carmona.png,n,,open
+cs-catch-33,Catch 33,52.38262,4.8799,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-catch-33.html,cs-catch-33,catch_33.png,n,,open
+cs-central,Central,52.37677344,4.902097395,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-central.html,cs-central,central.png,n,,open
+cs-chapiteau,Chapiteau,52.38244,4.87305,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-chapiteau.html,cs-chapiteau,chapiteau.png,n,,open
+cs-cheech-chongs-2,Cheech & Chong's,52.37126,4.87142,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-cheech-chongs-2.html,cs-cheech-chongs-2,cheech_and_chongs_2.png,n,,open
+cs-city-hall,City Hall,52.37154764,4.895761835,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-city-hall.html,cs-city-hall,cityhall.png,n,,open
+cs-media,Club Media,52.35576,4.89193,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-media.html,cs-media,club_media.png,n,,open
+cs-coffeeshop-amsterdam,CoffeeshopAmsterdam,52.380052,4.892882061,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-coffeeshop-amsterdam.html,cs-coffeeshop-amsterdam,coffeeshopamsterdam.png,n,,open
+cs-greenhouse-cookies,Cookies,52.38026,4.89213,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-greenhouse-cookies.html,cs-greenhouse-cookies,greenhouse_cookies.png,y,4,open
+cs-crash-light,Crash Light,52.35487,4.92227,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-crash-light.html,cs-crash-light,crashlight.png,n,,open
+cs-crush,Crush,52.36576,4.88006,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-crush.html,cs-crush,crush.png,n,,open
+cs-d-l,D&L,52.3572,4.90134,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-d-l.html,cs-d-l,d_and_l.png,n,,open
+cs-bommel,de Bommel,52.3689,4.85363,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bommel.html,cs-bommel,de_bommel.png,n,,open
+cs-dampkring,De Dampkring,52.36773,4.89042,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-dampkring.html,cs-dampkring,dampkring.png,y,5,open
+cs-kade,De Kade,52.3434,4.86436,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-kade.html,cs-kade,de_kade.png,y,4,open
+cs-kroon,De Kroon,52.37596,4.89596,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-kroon.html,cs-kroon,de_kroon.png,n,,open
+cs-overkant-hortus,de Overkant,52.36737,4.90661,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-overkant-hortus.html,cs-overkant-hortus,de_overkant_hortus.png,n,,open
+cs-prijs,De Prijs,52.35798,4.85409,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-prijs.html,cs-prijs,de_prijs.png,n,,open
+cs-supermarkt,de Supermarkt,52.3758,4.87366,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-supermarkt.html,cs-supermarkt,de_supermarkt.png,n,,open
+cs-dna,DNA,52.34495,4.86444,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-dna.html,cs-dna,dna.png,y,3,open
+cs-dolphins,Dolphins,52.3656,4.88518,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-dolphins.html,cs-dolphins,dolphins.png,n,,open
+cs-eastwood,Eastwood,52.36518,4.92802,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-eastwood.html,cs-eastwood,eastwood.png,n,,open
+cs-easy-times,Easy Times,52.36434,4.88517,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-easy-times.html,cs-easy-times,easy_times.png,n,,open
+cs-easytimes2,Easy Times 2,52.36651,4.89022,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-easytimes2.html,cs-easytimes2,easy_times_2.png,n,,open
+cs-marssa,El Marssa,52.36903,4.85918,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-marssa.html,cs-marssa,el_marssa.png,n,,open
+cs-family-first,Family First,52.36701,4.89528,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-family-first.html,cs-family-first,family_first.png,y,3,open
+ams-flash-back,Flash Back,52.3687659,4.8530074,Amsterdam,amsterdam,Noord-Holland,,,https://greenmeister.nl/coffeeshop/flash-back-amsterdam,ams-flash-back,,n,,open
+cs-flower-power,Flower Power,52.37277,4.87857,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-flower-power.html,cs-flower-power,flower_power.png,n,,open
+cs-free-i,Free I,52.36601881,4.893461683,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-free-i.html,cs-free-i,free_i.png,n,,open
+cs-freedom,Freedom,52.38261,4.87117,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-freedom.html,cs-freedom,freedom.png,n,,open
+cs-funnypeople2,Funny People,52.40194,4.8984,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-funnypeople2.html,cs-funnypeople2,funny_people_2.png,n,,open
+cs-get-down,Get Down,52.36394,4.88371,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-get-down.html,cs-get-down,get_down_to_it.png,y,4,open
+cs-goa,Goa,52.37122,4.89865,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-goa.html,cs-goa,goa.png,y,4,open
+cs-green-place,Green Place,52.37206,4.89941,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-green-place.html,cs-green-place,green_place.png,y,3,open
+cs-green-place-2,Green Place 2,52.37938,4.89399,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-green-place-2.html,cs-green-place-2,green_place_2.png,n,,open
+cs-greenhouse-centrum,Greenhouse Centrum,52.37152,4.89569,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-greenhouse-centrum.html,cs-greenhouse-centrum,greenhouse_centrum.png,y,4,open
+cs-greenhouse-effect-1,Greenhouse Effect,52.3728,4.9,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-greenhouse-effect-1.html,cs-greenhouse-effect-1,greenhouse_effect.png,n,,open
+cs-greenhouse-namaste,Greenhouse Namaste,52.36673,4.90222,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-greenhouse-namaste.html,cs-greenhouse-namaste,greenhouse_namaste.png,n,,open
+ams-green-house-tol,Green House Tol,52.3523507,4.9034577,Amsterdam,amsterdam,Noord-Holland,,,https://greenhousebrands.com/gh-coffeeshops-v2/,ams-green-house-tol,greenhouse_namaste.png,n,,open
+cs-grey-area,Grey Area,52.3746,4.88887,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-grey-area.html,cs-grey-area,GreyAreaNew.png,y,4,open
+cs-happy-days-ams,Happy Days,52.34659564,4.911316878,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-happy-days-ams.html,cs-happy-days-ams,happy_days.png,n,,open
+cs-happy-feelings,Happy Feelings,52.3652,4.88581,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-happy-feelings.html,cs-happy-feelings,happy_feelings.png,n,,open
+cs-happy-people,Happy People,52.36526,4.92588,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-happy-people.html,cs-happy-people,happy_people.png,n,,open
+cs-hashtag,Hashtag,52.36392,4.89611,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-hashtag.html,cs-hashtag,hashtag.png,y,3,open
+cs-ballonnetje,Het Ballonnetje,52.36346,4.91067,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-ballonnetje.html,cs-ballonnetje,het_ballonnetje.png,n,,open
+cs-gelderse,het Geldese,52.37493,4.90135,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-gelderse.html,cs-gelderse,het_gelderse.png,n,,open
+cs-huntersdowntown,Hunter's Downtown,52.36549,4.89767,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-huntersdowntown.html,cs-huntersdowntown,hunters_downtown.png,y,4,open
+cs-huntersnorthpapaverweg,Hunter's North - Papaverweg,52.39348794,4.912818423,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-huntersnorthpapaverweg.html,cs-huntersnorthpapaverweg,hunters_north_papaverweg.png,n,,open
+cs-huntersnorthwaterlandplein,Hunter's North - Waterlandplein,52.39224823,4.956230183,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-huntersnorthwaterlandplein.html,cs-huntersnorthwaterlandplein,hunters_north_waterlandplein.png,n,,open
+cs-hunters-mercator,Hunter's West,52.37000103,4.849081757,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-hunters-mercator.html,cs-hunters-mercator,hunters_west.png,n,,open
+cs-ibiza,Ibiza,52.35738,4.90208,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-ibiza.html,cs-ibiza,ibiza.png,n,,open
+cs-johnny,Johnny,52.36995839,4.882074989,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-johnny.html,cs-johnny,johnny.png,n,,open
+cs-jolly-joker,Jolly Joker,52.37303,4.90021,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-jolly-joker.html,cs-jolly-joker,jolly_joker.png,n,,open
+cs-jollygood,Jollygood,52.37188,4.87907,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-jollygood.html,cs-jollygood,Jollygood.png,n,,open
+cs-watersnip,Juice Bar de Watersnip,52.37713679,4.816272572,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-watersnip.html,cs-watersnip,juice_bar_de_watersnip.png,n,,open
+cs-kadinsky,Kadinski,52.37038,4.88942,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-kadinsky.html,cs-kadinsky,kadinsky.png,y,3,open
+cs-kadinsky2,Kadinski 2,52.37422,4.89347,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-kadinsky2.html,cs-kadinsky2,kadinsky_2.png,y,4,open
+cs-kadinsky3,Kadinski 3,52.36932,4.893,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-kadinsky3.html,cs-kadinsky3,kadinsky_3.png,n,,open
+cs-kashmir-coffeeshop,Kashmir,52.36408,4.86301,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-kashmir-coffeeshop.html,cs-kashmir-coffeeshop,kashmir_coffeeshop.png,y,2,open
+cs-katsu,Katsu,52.35491,4.89339,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-katsu.html,cs-katsu,katsu.png,n,,open
+cs-tertulia,La Tertulia,52.36953,4.88237,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-tertulia.html,cs-tertulia,la_tertulia.png,n,,open
+cs-loft,Loft,52.37273477,4.8494308,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-loft.html,cs-loft,loft.png,n,,open
+cs-massawa,Massawa,52.36754915,4.861899338,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-massawa.html,cs-massawa,massawa.png,n,,open
+cs-mediterrane,Mediterrane,52.37556,4.89167,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-mediterrane.html,cs-mediterrane,mediterrane_drewissharing.png,y,4,open
+cs-millennium,Millennium,52.36754,4.86405,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-millennium.html,cs-millennium,millennium.png,n,,open
+cs-nachtegaal,Nachtegaal,52.354,4.9194,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-nachtegaal.html,cs-nachtegaal,nachtegaal.png,n,,open
+cs-new-amsterdam,New Amsterdam,52.36698,4.85282,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-new-amsterdam.html,cs-new-amsterdam,new_amsterdam.png,n,,open
+cs-new-times,New Times,52.37056,4.88913,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-new-times.html,cs-new-times,new_times.png,y,2,open
+cs-newtimes2,New Times 2,52.36622843,4.89937125,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-newtimes2.html,cs-newtimes2,new_times_2.png,n,,open
+ams-nogal-wiedes,Nogal Wiedes,52.3702204,4.9299321,Amsterdam,amsterdam,Noord-Holland,,,https://greenmeister.nl/coffeeshop/nogal-wiedes-amsterdam,ams-nogal-wiedes,,n,,open
+cs-nice-place,Nice Place,52.35341,4.89966,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-nice-place.html,cs-nice-place,nice_place.png,n,,open
+cs-96,NinetySix,52.36357,4.8633,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-96.html,cs-96,96.png,n,,open
+cs-noord,Noord,52.38366,4.91253,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-noord.html,cs-noord,noon.png,n,,open
+cs-oost,Oost,52.35637,4.91633,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-oost.html,cs-oost,coffeeshop_oost.png,n,,open
+cs-pacific,Pacific,52.35309,4.88472,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-pacific.html,cs-pacific,pacific.png,n,,open
+cs-papillon-ams,Papillon,52.3517,4.89459,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-papillon-ams.html,cs-papillon-ams,papillon.png,n,,open
+cs-paradox,Paradox,52.37459,4.88126,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-paradox.html,cs-paradox,paradox.png,n,,open
+cs-popeye,Popeye,52.37998169,4.892841584,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-popeye.html,cs-popeye,popeye.png,n,,open
+cs-prix-d-ami,Prix D' Ami,52.37687,4.89725,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-prix-d-ami.html,cs-prix-d-ami,prix_dami.png,y,5,open
+cs-program,ProGram,52.35612124,4.891036833,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-program.html,cs-program,program.png,n,,open
+cs-reefer,Reefer,52.36971,4.90093,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-reefer.html,cs-reefer,reefer.png,n,,open
+cs-relax-ams,Relax,52.38216,4.88714,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-relax-ams.html,cs-relax-ams,relax.png,n,,open
+cs-relaxzuid,Relax Zuid,52.34842425,4.90552974,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-relaxzuid.html,cs-relaxzuid,relax_zuid.png,n,,open
+cs-republiek,Republiek,52.38218,4.87866,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-republiek.html,cs-republiek,republiek.png,n,,open
+cs-resin,Resin,52.37775345,4.895387373,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-resin.html,cs-resin,resin.png,n,,open
+cs-ricks-cafe,Rick's,52.37171,4.89538,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-ricks-cafe.html,cs-ricks-cafe,ricks_coffeeshop.png,y,1,open
+cs-risky-business,Risky Business,52.38101812,4.855386775,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-risky-business.html,cs-risky-business,risky_business.png,n,,open
+cs-rock-it,Rock-It,52.37284,4.90001,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-rock-it.html,cs-rock-it,rock_it.png,n,,open
+cs-rockland,Rockland,52.37338,4.8884,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-rockland.html,cs-rockland,rockland.png,n,,open
+cs-rookies,Rookies,52.36293,4.88523,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-rookies.html,cs-rookies,rookies.png,n,,open
+cs-roots,Roots,52.31167937,4.948230583,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-roots.html,cs-roots,roots.png,n,,open
+cs-roxy,Roxy,52.35647,4.89556,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-roxy.html,cs-roxy,roxy.png,n,,open
+cs-ruthless,Ruthless,52.36548,4.85328,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-ruthless.html,cs-ruthless,ruthless.png,n,,open
+cs-saint,Saint,52.36687,4.89499,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-saint.html,cs-saint,saint.png,y,3,open
+cs-sativa,Satvia,52.37453,4.89044,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-sativa.html,cs-sativa,sativa.png,y,3,open
+cs-sensemillia1,Sensemillia,52.3751,4.8712,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-sensemillia1.html,cs-sensemillia1,sensemillia.png,n,,open
+cs-sensemillia-2,Sensemillia 2,52.3602182,4.807705019,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-sensemillia-2.html,cs-sensemillia-2,sensemillia.png,n,,open
+cs-siberie,Siberie,52.37896,4.89301,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-siberie.html,cs-siberie,siberie.png,y,4,open
+cs-smokerdam,Smokerdam,52.34597452,4.906435057,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-smokerdam.html,cs-smokerdam,smokerdam.png,n,,open
+cs-smokey-ams,Smokey,52.36576,4.89636,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-smokey-ams.html,cs-smokey-ams,smokey.png,n,,open
+cs-solo,Solo,52.37193,4.90263,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-solo.html,cs-solo,solo.png,n,,open
+cs-speak-easy-ams-2,Speakeasy,52.35589,4.90881,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-speak-easy-ams-2.html,cs-speak-easy-ams-2,speak_easy.png,n,,open
+cs-spirit,Spirit,52.37822,4.88293,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-spirit.html,cs-spirit,spirit.png,n,,open
+cs-stones,Stones,52.35369,4.8871,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-stones.html,cs-stones,stones.png,n,,open
+cs-greenhouse-strain-hunters,Strain Hunters,52.36878,4.88818,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-greenhouse-strain-hunters.html,cs-greenhouse-strain-hunters,greenhouse_strain_hunters.png,n,,open
+cs-superskunk-2,Super Skunk,52.36429,4.8852,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-superskunk-2.html,cs-superskunk-2,superskunk.png,y,2,open
+superfly-amsterdam,SuperFly,52.35122,4.90356,Amsterdam,amsterdam,Noord-Holland,,,https://coffeeshopsuperfly.nl/,superfly-amsterdam,superfly.png,n,,open
+cs-keteltje,t Keteltje,52.37959,4.87973,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-keteltje.html,cs-keteltje,t_keteltje.png,n,,open
+cs-terminator,Terminator,52.37254614,4.859357487,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-terminator.html,cs-terminator,terminator.png,n,,open
+cs-terps-army,Terps Army,52.37534,4.89358,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-terps-army.html,cs-terps-army,terps_army.png,y,4,open
+cs-terps-army-2,Terps Army 2,52.3618,4.88626,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-terps-army-2.html,cs-terps-army-2,terps_army_2.png,y,5,open
+cs-dogghouse,Tha Dogg House,52.37277,4.87605,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-dogghouse.html,cs-dogghouse,tha_dogg_house.png,n,,open
+cs-border,The Border,52.32194956,4.85707335,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-border.html,cs-border,the_border.png,n,,open
+ams-bulldog-port-26,The Bulldog Port 26,52.4053411,4.8582116,Amsterdam,amsterdam,Noord-Holland,,,https://thebulldog.com/locations/,ams-bulldog-port-26,,n,,open
+cs-bushdocter,The Bushdoctor,52.36507,4.89569,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-bushdocter.html,cs-bushdocter,bushdocter.png,n,,open
+cs-corner,The Corner Coffeeshop,52.39186,4.87782,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-corner.html,cs-corner,the_corner.png,n,,open
+cs-hit2,The Hit,52.37008,4.89633,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-hit2.html,cs-hit2,the_hit.png,y,5,open
+cs-old-church-2,The Old Church,52.36704,4.89417,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-old-church-2.html,cs-old-church-2,old_church_2.png,y,4,open
+cs-otherside,The Otherside,52.36684,4.88931,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-otherside.html,cs-otherside,the_otherside.png,y,1,open
+cs-plugstore,The Plug Store,52.37902,4.89386,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-plugstore.html,cs-plugstore,Plug.png,n,,open
+cs-plug-utopia,The Plug Utopia,52.37508,4.89169,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-plug-utopia.html,cs-plug-utopia,Plug.png,n,,open
+cs-plug-west,The Plug West,52.37401,4.87251,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-plug-west.html,cs-plug-west,Plug.png,n,,open
+cs-stud,The Stud,52.35873,4.94089,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-stud.html,cs-stud,stud.png,y,5,open
+cs-trefpunt-ams,Trefpunt,52.36607,4.92987,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-trefpunt-ams.html,cs-trefpunt-ams,trefpunt.png,n,,open
+cs-tweede-kamer,Tweede Kamer,52.36883,4.88841,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-tweede-kamer.html,cs-tweede-kamer,tweede_kamer.png,n,,open
+cs-tyson,Tyson 2.0,52.37149,4.88936,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-tyson.html,cs-tyson,tyson_2_0.png,n,,open
+cs-vondel,Vondel,52.35874,4.85934,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-vondel.html,cs-vondel,vondel.png,y,4,open
+cs-voyagers,Voyagers,52.37646,4.9021,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-voyagers.html,cs-voyagers,voyagers.png,n,,open
+cs-warda-1,Warda 1&2,52.35289,4.90289,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-warda-1.html,cs-warda-1,warda_1_and_2.png,n,,open
+ams-warda-2,Warda 2,52.3636129,4.9366656,Amsterdam,amsterdam,Noord-Holland,,,https://greenmeister.nl/coffeeshop/warda-twee-amsterdam,ams-warda-2,warda_1_and_2.png,n,,open
+cs-yin-yang,Yin Yang,52.39055965,4.878003266,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-yin-yang.html,cs-yin-yang,yin_yang.png,n,,open
+cs-yo-yo,Yo-yo,52.35633,4.90309,Amsterdam,amsterdam,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-yo-yo.html,cs-yo-yo,yo_yo.png,n,,open
+cs-anytime,Any Time,52.62865752,4.752160949,Alkmaar,alkmaar,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-anytime.html,cs-anytime,any_time.png,n,,open
+cs-brug,De Brug,52.63230959,4.753064966,Alkmaar,alkmaar,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-brug.html,cs-brug,de_brug.png,n,,open
+cs-hightime-alk,High-Time,52.63738657,4.741088309,Alkmaar,alkmaar,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-hightime-alk.html,cs-hightime-alk,high_time.png,n,,open
+cs-steppingout,Stepping Out,52.63028432,4.742804153,Alkmaar,alkmaar,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-steppingout.html,cs-steppingout,stepping_out.png,n,,open
+cs-zero-zero-alk,Zero Zero,52.62872337,4.751944953,Alkmaar,alkmaar,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-zero-zero-alk.html,cs-zero-zero-alk,zero_zero.png,n,,open
+cs-walm,de Walm,51.98594072,5.915337492,Arnhem,arnhem,Gelderland,,,https://www.coffeeshopmenus.org/cs-walm.html,cs-walm,de_walm.png,n,,open
+cs-jointventure,Joint Venture,51.98208422,5.90523008,Arnhem,arnhem,Gelderland,,,https://www.coffeeshopmenus.org/cs-jointventure.html,cs-jointventure,joint_venture.png,n,,open
+cs-lucky-luke,Lucky Luke,51.98601912,5.913830329,Arnhem,arnhem,Gelderland,,,https://www.coffeeshopmenus.org/cs-lucky-luke.html,cs-lucky-luke,lucky_luke.png,n,,open
+cs-omigo,Omigo,51.98119918,5.911143819,Arnhem,arnhem,Gelderland,,,https://www.coffeeshopmenus.org/cs-omigo.html,cs-omigo,omigo.png,n,,open
+cs-speakeasy,Speak Easy,51.98182143,5.903929887,Arnhem,arnhem,Gelderland,,,https://www.coffeeshopmenus.org/cs-speakeasy.html,cs-speakeasy,speakeasy_2.png,n,,open
+cs-uncle-sam,Uncle Sam,51.98400028,5.92068953,Arnhem,arnhem,Gelderland,,,https://www.coffeeshopmenus.org/cs-uncle-sam.html,cs-uncle-sam,uncle_sam.png,n,,open
+cs-zero-zero-arn,Zero Zero,51.98631613,5.914184202,Arnhem,arnhem,Gelderland,,,https://www.coffeeshopmenus.org/cs-zero-zero-arn.html,cs-zero-zero-arn,zero_zero.png,n,,open
+cs-baron,de Baron,51.5915016,4.784694854,Breda,breda,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-baron.html,cs-baron,de_baron.png,n,,open
+cs-flynhy,Fly'n'Hy,51.58639001,4.777353663,Breda,breda,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-flynhy.html,cs-flynhy,flynhy.png,n,,open
+cs-majestic,Majestic,51.5911453,4.784137357,Breda,breda,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-majestic.html,cs-majestic,majestic.png,n,,open
+cs-paradijs,Paradijs,51.58868814,4.778188795,Breda,breda,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-paradijs.html,cs-paradijs,paradijs.png,n,,open
+cs-paxdeboot,Pax de Boot,51.59042879,4.766141771,Breda,breda,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-paxdeboot.html,cs-paxdeboot,pax_de_boot.png,n,,open
+cs-purplerain,Purple Rain,51.59349524,4.779788958,Breda,breda,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-purplerain.html,cs-purplerain,purple_rain.png,n,,open
+cs-sky,Sky,51.58437451,4.760080824,Breda,breda,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-sky.html,cs-sky,sky.png,n,,open
+cs-cat,The Cat,51.58701542,4.805175669,Breda,breda,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-cat.html,cs-cat,the_cat.png,n,,open
+cs-boeddha,de Boeddha,52.00641275,4.361432359,Delft,delft,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-boeddha.html,cs-boeddha,de_boeddha.png,n,,open
+cs-vlouw,De Vlouw,52.01268329,4.359058324,Delft,delft,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-vlouw.html,cs-vlouw,de_vlouw.png,n,,open
+cs-future-del,The Future,52.01036058,4.357582322,Delft,delft,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-future-del.html,cs-future-del,the_future.png,n,,open
+cs-game,The Game,52.00835553,4.36120106,Delft,delft,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-game.html,cs-game,the_game.png,n,,open
+cs-cremers,Cremers,52.07927802,4.304944228,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-cremers.html,cs-cremers,cremers.png,n,,open
+cs-mazzelaar,de Mazzelaar,52.0814496,4.295774529,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-mazzelaar.html,cs-mazzelaar,de_mazzelaar.png,n,,open
+cs-tulp,De Tulp,52.06175164,4.330908253,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-tulp.html,cs-tulp,de_tulp.png,n,,open
+cs-demo,Demo,52.08019439,4.317158407,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-demo.html,cs-demo,demo.png,n,,open
+cs-dizzy-duck,Dizzy Duck,52.08381225,4.299086575,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-dizzy-duck.html,cs-dizzy-duck,dizzy_duck.png,n,,open
+cs-dizzy-duck-downtown,Dizzy Duck Downtown,52.08004432,4.318375707,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-dizzy-duck-downtown.html,cs-dizzy-duck-downtown,dizzy_duck_downtown.png,n,,open
+cs-doctor-green,Doctor Green,52.08004234,4.316902765,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-doctor-green.html,cs-doctor-green,doctor_green.png,n,,open
+cs-fly,Fly,52.07903742,4.300515358,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-fly.html,cs-fly,fly.png,n,,open
+cs-galaxy,Galaxy,52.07439094,4.278305077,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-galaxy.html,cs-galaxy,galaxy.png,n,,open
+cs-greenhouse-sf,Green House Secret Farmers,52.08211448,4.300390468,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-greenhouse-sf.html,cs-greenhouse-sf,green_house_secret_farmers.png,n,,open
+cs-happy-smile,Happy Smile,52.06250661,4.31721098,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-happy-smile.html,cs-happy-smile,happy_smile.png,n,,open
+cs-mistral,Le Mistral,52.07217618,4.27465144,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-mistral.html,cs-mistral,le_mistral.png,n,,open
+cs-london,London,52.07879195,4.304224487,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-london.html,cs-london,london.png,n,,open
+cs-magic-haag,Magic,52.07753822,4.310341506,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-magic-haag.html,cs-magic-haag,magic.png,n,,open
+cs-marbellaspecialfarmers,Marbella Special Farmers,52.07455467,4.278778875,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-marbellaspecialfarmers.html,cs-marbellaspecialfarmers,marbella_special_farmers.png,n,,open
+cs-moonlight,Moonlight,52.08010789,4.302123445,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-moonlight.html,cs-moonlight,moonlight.png,n,,open
+cs-nebula,Nebula,52.06362714,4.293971641,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-nebula.html,cs-nebula,nebula.png,n,,open
+cs-no-limit,No Limit,52.0807582,4.296199894,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-no-limit.html,cs-no-limit,no_limit.png,n,,open
+cs-simpel-minds,Simpel Minds,52.06892505,4.28514232,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-simpel-minds.html,cs-simpel-minds,simpel_minds.png,n,,open
+cs-sky-2,Sky 2,52.07753922,4.310331012,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-sky-2.html,cs-sky-2,sky.png,n,,open
+cs-sky-high-1,Sky High 1,52.08002336,4.318343984,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-sky-high-1.html,cs-sky-high-1,sky_high.png,n,,open
+cs-smokey-haag,Smokey,52.0755932,4.3185952,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-smokey-haag.html,cs-smokey-haag,smokeyhaag.png,n,,open
+cs-space-ball,Space Ball,52.07504549,4.314072753,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-space-ball.html,cs-space-ball,space_ball.png,n,,open
+cs-strainfellows,Strain Fellows,52.07789727,4.290191616,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-strainfellows.html,cs-strainfellows,strain_fellows.png,n,,open
+cs-canna-club,The Canna Club,52.07737875,4.308567735,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-canna-club.html,cs-canna-club,the_canna_club.png,n,,open
+cs-crow,The Crow,52.08504776,4.313454731,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-crow.html,cs-crow,the_crow.png,n,,open
+cs-freakbrothers,The Freak Brothers,52.07565171,4.301983114,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-freakbrothers.html,cs-freakbrothers,the_freak_brothers.png,n,,open
+cs-goat,The Goat,52.07557913,4.318570766,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-goat.html,cs-goat,the_goat.png,n,,open
+cs-hit,The Hit,52.07638124,4.275302619,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-hit.html,cs-hit,the_hit.png,n,,open
+cs-waterworld,Waterworld,52.07478706,4.310937329,Den Haag,den-haag,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-waterworld.html,cs-waterworld,waterworld.png,n,,open
+cs-eurogarden,Eurogarden,51.4341114,5.488157949,Eindhoven,eindhoven,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-eurogarden.html,cs-eurogarden,eurogarden.png,n,,open
+cs-new-wave,New Wave,51.43285568,5.484804212,Eindhoven,eindhoven,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-new-wave.html,cs-new-wave,new_wave.png,n,,open
+cs-pink,Pink,51.43833434,5.472762515,Eindhoven,eindhoven,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-pink.html,cs-pink,pink.png,n,,open
+cs-wall,The Wall,51.45144992,5.46331572,Eindhoven,eindhoven,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-wall.html,cs-wall,the_wall.png,n,,open
+cs-upstairs,Upstairs,51.43690596,5.480460044,Eindhoven,eindhoven,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-upstairs.html,cs-upstairs,upstairs.png,n,,open
+cs-driemaster,De Driemaster,53.21837255,6.574551424,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-driemaster.html,cs-driemaster,de_driemaster.png,n,,open
+cs-medley,De Medley,53.21453652,6.56684617,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-medley.html,cs-medley,de_medley.png,n,,open
+cs-schavuit,De Schavuit,53.218148,6.573389939,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-schavuit.html,cs-schavuit,de_schavuit.png,n,,open
+cs-deescafe,Dees Cafe,53.21727477,6.570552653,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-deescafe.html,cs-deescafe,dees_cafe.png,n,,open
+cs-metamorphose,Metamorphose,53.22036076,6.563658614,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-metamorphose.html,cs-metamorphose,metamorphose.png,n,,open
+cs-ragamuffin,Rag-a-Muffin,53.22877324,6.559666319,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-ragamuffin.html,cs-ragamuffin,rag_a_muffin.png,n,,open
+cs-retro,Retro,53.22393866,6.564481407,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-retro.html,cs-retro,retro.png,n,,open
+cs-reykjavik,Reykjavik,53.22169756,6.564852132,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-reykjavik.html,cs-reykjavik,reykjavik.png,n,,open
+cs-vliegende-hollander,Vliegende Hollander,53.21476858,6.566763452,Groningen,groningen,Groningen,,,https://www.coffeeshopmenus.org/cs-vliegende-hollander.html,cs-vliegende-hollander,vliegende_hollander.png,n,,open
+cs-birdy,Birdy,52.3914671,4.6405901,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-birdy.html,cs-birdy,birdy.png,n,,open
+cs-haarlem,Coffeeshop Haarlem,52.377727,4.63067193,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-haarlem.html,cs-haarlem,haarlem.png,n,,open
+cs-kruidenier,De Kruidenier Cannabis Takeaway,52.3838013,4.63328961,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-kruidenier.html,cs-kruidenier,dekruidenier.png,n,,open
+cs-dreamland,Dreamland,52.3813847,4.62169573,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-dreamland.html,cs-dreamland,dreamland.png,n,,open
+cs-easy-max,Easy Max,52.3799021,4.63116174,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-easy-max.html,cs-easy-max,easy_max.png,n,,open
+cs-empire,Empire,52.382993,4.63474697,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-empire.html,cs-empire,empire.png,n,,open
+cs-hunters-ha,Hunters Haarlem,52.3925148,4.64046849,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-hunters-ha.html,cs-hunters-ha,hunters_haarlem.png,n,,open
+cs-joinus2,Join Us 2,52.3752325,4.64365836,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-joinus2.html,cs-joinus2,join_us_2.png,n,,open
+cs-maximillian,Maximillian,52.378139,4.63581327,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-maximillian.html,cs-maximillian,maximillian.png,n,,open
+cs-regine,Regine,52.3815256,4.63194535,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-regine.html,cs-regine,regine.png,n,,open
+cs-sandman,Sandman,52.3766068,4.65028148,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-sandman.html,cs-sandman,sandman.png,n,,open
+cs-greengrocers,The Greengrocers,52.3799244,4.6376232,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-greengrocers.html,cs-greengrocers,the_greengrocers.png,n,,open
+cs-snoop,The Snoop,52.4071242,4.64974447,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-snoop.html,cs-snoop,the_snoop.png,n,,open
+cs-theehuis,Theehuis,52.3823392,4.63630608,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-theehuis.html,cs-theehuis,theehuis.png,n,,open
+cs-ww-indica,Willie Wortel Indica,52.3824049,4.64266223,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-ww-indica.html,cs-ww-indica,willie_wortel_sativa.png,n,,open
+cs-ww-sativa,Willie Wortel Sativa,52.3868987,4.63656054,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-ww-sativa.html,cs-ww-sativa,willie_wortel_indica.png,n,,open
+cs-ww-sinsemilla,Willie Wortel's Sinsemilla,52.375129,4.63053358,Haarlem,haarlem,Noord-Holland,,,https://www.coffeeshopmenus.org/cs-ww-sinsemilla.html,cs-ww-sinsemilla,willie_wortels_sinsemilla.png,n,,open
+cs-7thheavenl,7th Heaven,53.20287992,5.802539577,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-7thheavenl.html,cs-7thheavenl,7th_heaven.png,n,,open
+cs-os,de Os,53.20188978,5.799354032,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-os.html,cs-os,de_os.png,n,,open
+cs-zone,de Zone,53.20213387,5.798327459,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-zone.html,cs-zone,de_zone.png,n,,open
+cs-downtown,Downtown,53.20308512,5.799379198,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-downtown.html,cs-downtown,downtown.png,n,,open
+cs-liberty-l,Liberty,53.20149154,5.795767215,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-liberty-l.html,cs-liberty-l,liberty.png,n,,open
+cs-relax-lee,Relax,53.20314729,5.802361733,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-relax-lee.html,cs-relax-lee,relaxed.png,n,,open
+cs-repelsteeltje,Repelsteeltje,53.2026056,5.796829158,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-repelsteeltje.html,cs-repelsteeltje,repelsteeltje.png,n,,open
+cs-sacramento,Sacramento,53.20149883,5.795775793,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-sacramento.html,cs-sacramento,sacramento.png,n,,open
+cs-utoop,Utoop,53.2022465,5.797200052,Leeuwarden,leeuwarden,Friesland,,,https://www.coffeeshopmenus.org/cs-utoop.html,cs-utoop,utoop.png,n,,open
+cs-blackwidow,Black Widow,50.86244793,5.688187565,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-blackwidow.html,cs-blackwidow,black_widow.png,n,,open
+cs-club69,Club 69,50.84988565,5.685817749,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-club69.html,cs-club69,club_69.png,n,,open
+cs-coolrunning,Cool Running,50.84965109,5.684354212,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-coolrunning.html,cs-coolrunning,cool_running.png,n,,open
+cs-easygoing,Easy Going,50.85123793,5.693412349,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-easygoing.html,cs-easygoing,easy_going.png,n,,open
+cs-fantasia,Fantasia,50.84922318,5.676846857,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-fantasia.html,cs-fantasia,fantasia.png,n,,open
+cs-kosbor,Kosbor,50.85273678,5.693055927,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-kosbor.html,cs-kosbor,kosbor.png,n,,open
+cs-maryjane,Mary Jane,50.84735166,5.701978194,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-maryjane.html,cs-maryjane,mary_jane.png,n,,open
+cs-maxcys,Maxcys,50.8486658,5.698162456,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-maxcys.html,cs-maxcys,maxcys.png,n,,open
+cs-mississippi,Mississippi,50.85334154,5.694595548,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-mississippi.html,cs-mississippi,mississippi.png,n,,open
+cs-missouri,Missouri,50.84729925,5.700380024,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-missouri.html,cs-missouri,missouri.png,n,,open
+cs-rastafarihouseboni,Rastafarihouse Boni,50.84634925,5.692398476,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-rastafarihouseboni.html,cs-rastafarihouseboni,rastafarihouse_boni.png,n,,open
+cs-slowmotion,Slow Motion,50.84875517,5.704203143,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-slowmotion.html,cs-slowmotion,slow_motion.png,n,,open
+cs-smoky,Smoky,50.85296629,5.694591827,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-smoky.html,cs-smoky,smoky.png,n,,open
+cs-roundabout69,The Roundabout 69,50.84960188,5.678887005,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-roundabout69.html,cs-roundabout69,the_roundabout_69.png,n,,open
+cs-wall-street,Wall Street,50.85074344,5.687449091,Maastricht,maastricht,Limburg,,,https://www.coffeeshopmenus.org/cs-wall-street.html,cs-wall-street,wall_street.png,n,,open
+cs-kunsje,'t Kunsje,51.84329539,5.862353804,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-kunsje.html,cs-kunsje,t_kunsje.png,n,,open
+cs-buggy,Buggy,51.84754344,5.865395027,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-buggy.html,cs-buggy,buggy.png,n,,open
+cs-dakota,Dakota,51.84847534,5.855989057,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-dakota.html,cs-dakota,dakota.png,n,,open
+cs-wedren,De Wedren,51.83852952,5.869460513,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-wedren.html,cs-wedren,de_wedren.png,n,,open
+cs-dreadlock,Dreadlock,51.84362914,5.862852158,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-dreadlock.html,cs-dreadlock,dreadlock.png,n,,open
+cs-headshop,Headshop,51.84616398,5.870673498,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-headshop.html,cs-headshop,headshop.png,n,,open
+cs-jamaica,Jamaica,51.8430368,5.862795187,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-jamaica.html,cs-jamaica,jamaica.png,n,,open
+cs-ketama,Ketama,51.8380765,5.857859769,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-ketama.html,cs-ketama,ketama.png,n,,open
+cs-kronkel,Kronkel,51.84367136,5.862773041,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-kronkel.html,cs-kronkel,kronkel.png,n,,open
+cs-kruidentuin,Kruidentuin,51.84797341,5.864004243,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-kruidentuin.html,cs-kruidentuin,kruidentuin.png,n,,open
+cs-luckylukenij,Lucky Luke,51.84332169,5.861865787,Nijmegen,nijmegen,Gelderland,,,https://www.coffeeshopmenus.org/cs-luckylukenij.html,cs-luckylukenij,lucky_luke.png,n,,open
+cs-geeltje,'t Geeltje,51.91389782,4.459975001,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-geeltje.html,cs-geeltje,t_geeltje.png,n,,open
+cs-amigo-rot,Amigo,51.91308129,4.463942368,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-amigo-rot.html,cs-amigo-rot,amigo.png,n,,open
+cs-bambu-high-tea,Bambu High Tea,51.93312048,4.472787122,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-bambu-high-tea.html,cs-bambu-high-tea,bambu_high_tea.png,n,,open
+cs-bobmarley,Bob Marley,51.91090747,4.451744134,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-bobmarley.html,cs-bobmarley,bob_marley.png,n,,open
+cs-charlois,Charlois,51.89207425,4.48092419,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-charlois.html,cs-charlois,charlois.png,n,,open
+cs-dreams,Dreams,51.89747991,4.511420788,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-dreams.html,cs-dreams,dreams.png,n,,open
+cs-huntersrotterdam,Hunter's Rotterdam,51.9196598,4.46312682,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-huntersrotterdam.html,cs-huntersrotterdam,hunters_rotterdam.png,n,,open
+cs-mon-camarade,Mon Camarade,51.91971406,4.46594372,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-mon-camarade.html,cs-mon-camarade,mon_camarade.png,n,,open
+cs-newyork-rot,New York,51.90216855,4.502781409,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-newyork-rot.html,cs-newyork-rot,new_york.png,n,,open
+cs-outoftime,Out Of Time,51.91179428,4.453316277,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-outoftime.html,cs-outoftime,out_of_time.png,n,,open
+cs-pluto,Pluto,51.91611232,4.469149744,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-pluto.html,cs-pluto,pluto.png,n,,open
+cs-sensi-smile,Sensi Smile,51.91969175,4.463097961,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-sensi-smile.html,cs-sensi-smile,sensi_smile.png,n,,open
+cs-seven,Seven,51.91599747,4.45827275,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-seven.html,cs-seven,seven.png,n,,open
+cs-sky-high-rot,Sky High,51.9164653,4.469971906,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-sky-high-rot.html,cs-sky-high-rot,sky_high.png,n,,open
+cs-sultan,Sultan,51.88979863,4.474274167,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-sultan.html,cs-sultan,sultan.png,n,,open
+cs-4-floors,The 4 Floors,51.91526912,4.475015216,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-4-floors.html,cs-4-floors,the_4_floors.png,n,,open
+cs-reef,The Reef,51.92283129,4.48302138,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-reef.html,cs-reef,the_reef.png,n,,open
+cs-trefpunt-rot,Trefpunt,51.9236145,4.485851477,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-trefpunt-rot.html,cs-trefpunt-rot,trefpunt_rotterdam.png,n,,open
+cs-witte-de-with,Witte De With,51.91518203,4.475591083,Rotterdam,rotterdam,Zuid-Holland,,,https://www.coffeeshopmenus.org/cs-witte-de-with.html,cs-witte-de-with,witte_de_with.png,n,,open
+cs-africa,Africa,51.55318872,5.090522594,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-africa.html,cs-africa,africa.png,n,,open
+cs-crackers,Crackers,51.55576385,5.071003333,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-crackers.html,cs-crackers,crackers.png,n,,open
+cs-muze,de Muze,51.55745259,5.085612449,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-muze.html,cs-muze,de_muze.png,n,,open
+cs-level013,Level013,51.55383135,5.079253037,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-level013.html,cs-level013,level013.png,n,,open
+cs-maximillian-til,Maximillian,51.55009716,5.069850703,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-maximillian-til.html,cs-maximillian-til,maximillian.png,n,,open
+cs-pasja,Pasja,51.55564849,5.07248638,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-pasja.html,cs-pasja,pasja.png,n,,open
+cs-shiva,Shiva,51.56644353,5.095209278,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-shiva.html,cs-shiva,shiva.png,n,,open
+cs-grasscompany,The Grass Company,51.55981184,5.086882797,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-grasscompany.html,cs-grasscompany,the_grass_company.png,n,,open
+cs-grasscompany2,The Grass Company 2,51.55046828,5.088646217,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-grasscompany2.html,cs-grasscompany2,the_grass_company_2.png,n,,open
+cs-toermalijn,Toermalijn,51.56298439,5.090896852,Tilburg,tilburg,Noord-Brabant,,,https://www.coffeeshopmenus.org/cs-toermalijn.html,cs-toermalijn,toermalijn.png,n,,open
+cs-208,Coffeeshop 208,52.08885,5.12149,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-208.html,cs-208,208.png,n,,open
+cs-andersom,Andersom,52.0905,5.12051,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-andersom.html,cs-andersom,andersom.png,n,,open
+cs-colorado,Gallery Colorado,52.10643,5.08248,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-colorado.html,cs-colorado,gallery_colorado.png,n,,open
+cs-culture-boat,Culture Boat,52.09694,5.12688,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-culture-boat.html,cs-culture-boat,culture_boat.png,y,4,open
+cs-freak,Freak,52.09538,5.12134,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-freak.html,cs-freak,freak.png,n,,open
+cs-grasje,t Grasje,52.09553,5.12936,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-grasje.html,cs-grasje,t_grasje.jpg,n,,open
+cs-griffioen,Griffioen,52.05718,5.10461,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-griffioen.html,cs-griffioen,griffioen.png,n,,open
+cs-hilo,HiLo,52.08371,5.10973,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-hilo.html,cs-hilo,hilo.png,n,,open
+cs-pleasure,Pleasure,52.09511,5.12272,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-pleasure.html,cs-pleasure,pleasure.png,n,,open
+cs-vip,VIP Shop,52.09735,5.1051,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-vip.html,cs-vip,v_i_p_shop.png,n,,open
+cs-wietstock,Wietstok,52.09511,5.12273,Utrecht,utrecht,Utrecht,,,https://www.coffeeshopmenus.org/cs-wietstock.html,cs-wietstock,wietstok.png,y,3,open

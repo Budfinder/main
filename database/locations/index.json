@@ -1,12 +1,38 @@
 {
+  "master": "coffeeshops.csv",
   "files": [
     "Alkmaar.csv",
     "amsterdamLoc.csv",
     "amsterdamLoc2.csv",
+    "Arnhem.csv",
+    "Breda.csv",
+    "Delft.csv",
     "denHaag.csv",
+    "Eindhoven.csv",
+    "Gronigen.csv",
     "Haarlem.csv",
+    "Leeuwarden.csv",
     "Maastricht.csv",
+    "Nijmegen.csv",
     "Rotterdam.csv",
+    "Tilburg.csv",
     "utrechtLoc.csv"
+  ],
+  "cities": [
+    { "name": "Alkmaar", "slug": "alkmaar", "file": "Alkmaar.csv", "shop_count": 5, "center": [52.631472, 4.748213] },
+    { "name": "Amsterdam", "slug": "amsterdam", "file": "amsterdamLoc.csv", "shop_count": 163, "center": [52.368175, 4.889208] },
+    { "name": "Arnhem", "slug": "arnhem", "file": "Arnhem.csv", "shop_count": 7, "center": [51.983912, 5.912049] },
+    { "name": "Breda", "slug": "breda", "file": "Breda.csv", "shop_count": 8, "center": [51.58913, 4.779445] },
+    { "name": "Delft", "slug": "delft", "file": "Delft.csv", "shop_count": 4, "center": [52.009453, 4.359819] },
+    { "name": "Den Haag", "slug": "den-haag", "file": "denHaag.csv", "shop_count": 30, "center": [52.076401, 4.303512] },
+    { "name": "Eindhoven", "slug": "eindhoven", "file": "Eindhoven.csv", "shop_count": 5, "center": [51.438731, 5.4779] },
+    { "name": "Groningen", "slug": "groningen", "file": "Gronigen.csv", "shop_count": 9, "center": [53.219763, 6.567196] },
+    { "name": "Haarlem", "slug": "haarlem", "file": "Haarlem.csv", "shop_count": 17, "center": [52.383242, 4.636927] },
+    { "name": "Leeuwarden", "slug": "leeuwarden", "file": "Leeuwarden.csv", "shop_count": 9, "center": [53.202331, 5.798615] },
+    { "name": "Maastricht", "slug": "maastricht", "file": "Maastricht.csv", "shop_count": 15, "center": [50.850684, 5.691621] },
+    { "name": "Nijmegen", "slug": "nijmegen", "file": "Nijmegen.csv", "shop_count": 11, "center": [51.843974, 5.863275] },
+    { "name": "Rotterdam", "slug": "rotterdam", "file": "Rotterdam.csv", "shop_count": 19, "center": [51.913098, 4.472643] },
+    { "name": "Tilburg", "slug": "tilburg", "file": "Tilburg.csv", "shop_count": 10, "center": [51.556569, 5.083036] },
+    { "name": "Utrecht", "slug": "utrecht", "file": "utrechtLoc.csv", "shop_count": 11, "center": [52.091099, 5.115177] }
   ]
 }

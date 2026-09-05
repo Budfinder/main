@@ -1,16 +1,26 @@
 (() => {
-  const APP_VERSION = document.documentElement.dataset.appVersion || '1.24';
-  const APP_UPDATED = document.documentElement.dataset.appUpdated || '30 July 2026';
+  // Keep release metadata here as the single source of truth. The homepage
+  // script URL in index.html is cache-busted whenever these values change.
+  const APP_VERSION = '1.30';
+  const APP_UPDATED = '30 August 2026';
   const SUMMARY_URL = 'database/home_summary.json';
   const MANIFEST_URL = 'database/manifest.json';
+  const SEARCH_INDEX_URL = 'database/search_index.json';
+  const UPDATES_URL = 'database/updates.json';
+  const HOME_AREAS = ['De Pijp', 'Jordaan', 'Centrum', 'Oud-West', 'Oost', 'Noord'];
 
   const byId = id => document.getElementById(id);
   const summaryRegion = byId('amsterdam-insights');
   const searchForm = byId('home-search-form');
   const searchInput = byId('home-search-input');
   const searchSubmit = byId('home-search-submit');
-  const searchSuggestions = byId('home-search-suggestions');
+  const searchResults = byId('home-search-results');
+  const searchStatus = byId('home-search-status');
   const personalGreeting = byId('home-personal-greeting');
+  let searchCandidates = [];
+  let visibleSearchResults = [];
+  let activeSearchResult = -1;
+  let searchRenderTimer = 0;
 
   function escapeHtml(value) {
     return String(value == null ? '' : value)
@@ -67,11 +77,21 @@
     return copy;
   }
 
-  function openSearch(query) {
-    const value = String(query || '').replace(/\s+/g, ' ').trim();
+  function candidateCity(candidate) {
+    if (!candidate) return '';
+    if (candidate.kind === 'shop') return candidate.city || '';
+    if (candidate.kind === 'city') return candidate.name || '';
+    if (candidate.kind === 'area') return 'Amsterdam';
+    return 'Netherlands';
+  }
+
+  function openSearch(query, candidate = null) {
+    const value = String(candidate && candidate.name || query || '').replace(/\s+/g, ' ').trim();
     const url = new URL('map.html', window.location.href);
     url.searchParams.set('source', 'home');
     if (value) url.searchParams.set('search', value);
+    const city = candidateCity(candidate) || (value ? 'Netherlands' : 'Amsterdam');
+    url.searchParams.set('city', city);
     window.location.href = `${url.pathname.split('/').pop()}${url.search}`;
   }
 
@@ -82,7 +102,7 @@
     if (personalGreeting) {
       personalGreeting.textContent = name
         ? `Welcome back, ${name}`
-        : 'Amsterdam coffeeshop decision engine';
+        : 'Dutch coffeeshop decision engine';
     }
     if (searchSubmit) {
       searchSubmit.textContent = name
@@ -95,26 +115,183 @@
     if (searchForm) {
       searchForm.addEventListener('submit', event => {
         event.preventDefault();
-        openSearch(searchInput ? searchInput.value : '');
+        const query = searchInput ? searchInput.value : '';
+        const active = visibleSearchResults[activeSearchResult];
+        openSearch(query, active || pickSubmitCandidate(query));
       });
     }
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        window.clearTimeout(searchRenderTimer);
+        searchRenderTimer = window.setTimeout(() => renderSearchResults(searchInput.value), 60);
+      });
+      searchInput.addEventListener('focus', () => renderSearchResults(searchInput.value));
+      searchInput.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+          hideSearchResults();
+          return;
+        }
+        if (!visibleSearchResults.length || !['ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) return;
+        if (event.key === 'Enter' && activeSearchResult < 0) return;
+        event.preventDefault();
+        if (event.key === 'Enter') {
+          const candidate = visibleSearchResults[activeSearchResult];
+          openSearch(candidate.name, candidate);
+          return;
+        }
+        const direction = event.key === 'ArrowDown' ? 1 : -1;
+        activeSearchResult = (activeSearchResult + direction + visibleSearchResults.length) % visibleSearchResults.length;
+        syncActiveSearchResult();
+      });
+    }
+    if (searchResults) {
+      searchResults.addEventListener('click', event => {
+        const button = event.target.closest('[data-search-result-index]');
+        if (!button) return;
+        const candidate = visibleSearchResults[Number(button.dataset.searchResultIndex)];
+        if (candidate) openSearch(candidate.name, candidate);
+      });
+    }
+    document.addEventListener('click', event => {
+      if (searchForm && !searchForm.contains(event.target)) hideSearchResults();
+    });
     document.querySelectorAll('[data-search]').forEach(button => {
       button.addEventListener('click', () => openSearch(button.getAttribute('data-search') || ''));
     });
   }
 
-  function updateSuggestions(summary) {
-    if (!searchSuggestions) return;
-    const common = [
-      'Gelato',
-      'Family First',
-      'De Pijp',
-      'Jordaan',
-      ...(Array.isArray(summary.top_strains) ? summary.top_strains.map(row => displayName(row.name)) : [])
-    ];
-    searchSuggestions.innerHTML = Array.from(new Set(common))
-      .map(value => `<option value="${escapeHtml(value)}"></option>`)
-      .join('');
+  function kindLabel(kind) {
+    return {
+      strain: 'Strain',
+      grower: 'Grower',
+      shop: 'Coffeeshop',
+      city: 'Town',
+      area: 'Area',
+      legal: 'Legal project'
+    }[kind] || 'Result';
+  }
+
+  function resultMeta(candidate) {
+    const shops = Number(candidate.shopCount || 0);
+    const strains = Number(candidate.strainCount || 0);
+    if (candidate.kind === 'shop') return displayCity(candidate.city) || 'Coffeeshop';
+    if (candidate.kind === 'strain') return shops ? `Available at ${shops.toLocaleString()} shop${shops === 1 ? '' : 's'}` : 'Strain in the menu database';
+    if (candidate.kind === 'grower') return `${strains.toLocaleString()} strain${strains === 1 ? '' : 's'} across ${shops.toLocaleString()} shop${shops === 1 ? '' : 's'}`;
+    if (candidate.kind === 'city') return `${shops.toLocaleString()} indexed coffeeshop${shops === 1 ? '' : 's'}`;
+    if (candidate.kind === 'area') return 'Amsterdam neighbourhood';
+    if (candidate.kind === 'legal') return 'Regulated-project listings nationwide';
+    return '';
+  }
+
+  function buildSearchCandidates(index = {}, summary = {}) {
+    const candidates = [];
+    const add = (kind, rows, mapper) => (Array.isArray(rows) ? rows : []).forEach(row => {
+      const candidate = mapper(row);
+      if (candidate.name) candidates.push({ kind, aliases: [], ...candidate });
+    });
+    add('shop', index.shops, row => ({ name: row.name, city: row.city, shopId: row.shop_id, shopKey: row.shop_key }));
+    add('strain', index.strains, row => ({ name: row.name, shopCount: row.shop_count }));
+    add('grower', index.growers, row => ({ name: row.name, shopCount: row.shop_count, strainCount: row.strain_count }));
+    add('city', index.cities, row => ({ name: displayCity(row.name), shopCount: row.shop_count }));
+    add('legal', index.intents, row => ({ name: row.name, aliases: row.aliases || [] }));
+    HOME_AREAS.forEach(name => candidates.push({ kind: 'area', name, city: 'Amsterdam', aliases: [] }));
+
+    if (!candidates.some(candidate => candidate.kind === 'strain')) {
+      (Array.isArray(summary.top_strains) ? summary.top_strains : []).forEach(row => {
+        candidates.push({ kind: 'strain', name: displayName(row.name), shopCount: row.shop_count, aliases: [] });
+      });
+    }
+    if (!candidates.some(candidate => candidate.kind === 'legal')) {
+      candidates.push({ kind: 'legal', name: 'Legal weed', aliases: ['legal cannabis', 'state weed', 'regulated weed'] });
+    }
+    searchCandidates = candidates;
+    if (searchInput && searchInput.value.trim()) renderSearchResults(searchInput.value);
+  }
+
+  function rankedCandidates(query, limit = 8) {
+    const value = String(query || '').trim();
+    if (!value || !window.BudfinderSearch) return [];
+    const priority = { shop: 0, city: 1, area: 2, grower: 3, strain: 4, legal: 5 };
+    return window.BudfinderSearch.rank(value, searchCandidates, {
+      getLabel: candidate => candidate.name,
+      getAliases: candidate => candidate.aliases,
+      threshold: value.length < 3 ? 0.86 : 0.70
+    }).map(result => ({
+      ...result,
+      rankScore: result.score + (result.item.kind === 'strain'
+        ? Math.min(0.08, Math.log10(Number(result.item.shopCount || 0) + 1) * 0.035)
+        : 0)
+    })).sort((left, right) => (
+      right.rankScore - left.rankScore ||
+      Number(right.item.shopCount || 0) - Number(left.item.shopCount || 0) ||
+      (priority[left.item.kind] ?? 9) - (priority[right.item.kind] ?? 9) ||
+      left.item.name.localeCompare(right.item.name, undefined, { sensitivity: 'base' })
+    )).slice(0, limit);
+  }
+
+  function pickSubmitCandidate(query) {
+    const ranked = rankedCandidates(query, 3);
+    if (!ranked.length) return null;
+    const [top, next] = ranked;
+    if (next && top.score === next.score &&
+        window.BudfinderSearch.normalise(top.item.name) === window.BudfinderSearch.normalise(next.item.name)) {
+      return null;
+    }
+    if (top.score >= 0.98 || !next || top.rankScore - next.rankScore >= 0.07) return top.item;
+    if (top.item.kind === 'strain' && top.score >= 0.78 &&
+        Number(top.item.shopCount || 0) >= Math.max(2, Number(next.item.shopCount || 0) * 1.5)) {
+      return top.item;
+    }
+    return null;
+  }
+
+  function hideSearchResults() {
+    visibleSearchResults = [];
+    activeSearchResult = -1;
+    if (searchResults) searchResults.hidden = true;
+    if (searchInput) {
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function syncActiveSearchResult() {
+    if (!searchResults) return;
+    searchResults.querySelectorAll('[data-search-result-index]').forEach((button, index) => {
+      const selected = index === activeSearchResult;
+      button.setAttribute('aria-selected', selected ? 'true' : 'false');
+      if (selected && searchInput) searchInput.setAttribute('aria-activedescendant', button.id);
+    });
+  }
+
+  function renderSearchResults(query) {
+    if (!searchResults || !searchInput) return;
+    const value = String(query || '').replace(/\s+/g, ' ').trim();
+    if (!value) {
+      hideSearchResults();
+      if (searchStatus) searchStatus.textContent = '';
+      return;
+    }
+    visibleSearchResults = rankedCandidates(value).map(result => result.item);
+    activeSearchResult = -1;
+    searchResults.innerHTML = visibleSearchResults.length
+      ? visibleSearchResults.map((candidate, index) => `
+          <button id="home-search-result-${index}" class="home-search-result" type="button" role="option" aria-selected="false" data-search-result-index="${index}">
+            <span class="home-search-result-copy">
+              <strong>${escapeHtml(candidate.name)}</strong>
+              <span>${escapeHtml(resultMeta(candidate))}</span>
+            </span>
+            <span class="home-search-result-kind">${escapeHtml(kindLabel(candidate.kind))}</span>
+          </button>
+        `).join('')
+      : '<p class="home-search-empty">No close suggestion yet. Press search to check the nationwide map.</p>';
+    searchResults.hidden = false;
+    searchInput.setAttribute('aria-expanded', 'true');
+    if (searchStatus) {
+      searchStatus.textContent = visibleSearchResults.length
+        ? `${visibleSearchResults.length} search suggestion${visibleSearchResults.length === 1 ? '' : 's'} available.`
+        : 'No close suggestion. Your search can still be checked nationwide.';
+    }
   }
 
   function strainList(rows) {
@@ -136,13 +313,13 @@
   function renderLocations(rows) {
     const container = byId('random-location-prices');
     if (!container) return;
-    const available = (Array.isArray(rows) ? rows : [])
-      .filter(row => Number.isFinite(Number(row.average_strain_price)))
+    const available = shuffled((Array.isArray(rows) ? rows : [])
+      .filter(row => Number.isFinite(Number(row.average_strain_price))))
       .slice(0, 5);
     container.innerHTML = available.map(row => {
       const url = new URL('map.html', window.location.href);
       url.searchParams.set('source', 'home');
-      if (row.map_location) url.searchParams.set('location', row.map_location);
+      url.searchParams.set('city', row.name);
       return `
         <a class="location-price-card" href="${escapeHtml(`${url.pathname.split('/').pop()}${url.search}`)}" aria-label="Open ${escapeHtml(displayCity(row.name))} on the map">
           <span>${escapeHtml(displayCity(row.name))}</span>
@@ -185,7 +362,6 @@
       `${menuCoveredAmsterdamShops.toLocaleString()} of ${mappedAmsterdamShops.toLocaleString()} mapped Amsterdam shops currently have browsable menu listings. Amsterdam excludes ${Number(amsterdam.excluded_listings || 0).toLocaleString()} unavailable listing${Number(amsterdam.excluded_listings || 0) === 1 ? '' : 's'}. Nationwide signals use ${Number(network.active_listings || 0).toLocaleString()} active listings across ${Number(network.active_shops || 0).toLocaleString()} active shops after excluding ${Number(network.excluded_listings || 0).toLocaleString()} unavailable listing${Number(network.excluded_listings || 0) === 1 ? '' : 's'}.`;
 
     renderLocations(summary.locations);
-    updateSuggestions(summary);
   }
 
   function renderUnavailable(message) {
@@ -203,6 +379,30 @@
     });
     const note = byId('coverage-filter-note');
     if (note) note.textContent = message || 'The lightweight homepage summary could not be loaded. Search and map browsing are still available.';
+  }
+
+  function renderUpdates(rows) {
+    const container = byId('home-updates');
+    if (!container) return;
+    const updates = (Array.isArray(rows) ? rows : []).slice(0, 6);
+    if (!updates.length) {
+      container.innerHTML = '<p class="updates-empty">No published updates yet. Check back soon.</p>';
+      return;
+    }
+    container.innerHTML = updates.map(item => {
+      const link = String(item.link_url || '').trim();
+      const linkHtml = link
+        ? `<a href="${escapeHtml(link)}"${/^https?:\/\//i.test(link) ? ' target="_blank" rel="noopener noreferrer"' : ''}>${escapeHtml(item.link_label || 'Open update')} →</a>`
+        : '';
+      return `
+        <article class="update-card">
+          <div class="update-meta"><span>${escapeHtml(item.category || 'News')}</span><time datetime="${escapeHtml(item.published_at_utc || '')}">${escapeHtml(formatDate(item.published_at_utc))}</time></div>
+          <h3>${escapeHtml(item.title || 'Budfinder update')}</h3>
+          <p>${escapeHtml(item.body || '')}</p>
+          ${linkHtml}
+        </article>
+      `;
+    }).join('');
   }
 
   async function loadJson(url, label) {
@@ -224,10 +424,19 @@
     applyPersonalisation();
     window.addEventListener('budfinder:namechange', applyPersonalisation);
 
-    const [summaryResult, manifestResult] = await Promise.allSettled([
+    const [summaryResult, manifestResult, searchIndexResult, updatesResult] = await Promise.allSettled([
       loadJson(SUMMARY_URL, 'Homepage summary'),
-      loadJson(MANIFEST_URL, 'Database manifest')
+      loadJson(MANIFEST_URL, 'Database manifest'),
+      loadJson(SEARCH_INDEX_URL, 'Search index'),
+      loadJson(UPDATES_URL, 'Homepage updates')
     ]);
+
+    renderUpdates(updatesResult.status === 'fulfilled' ? updatesResult.value : []);
+
+    buildSearchCandidates(
+      searchIndexResult.status === 'fulfilled' ? searchIndexResult.value : {},
+      summaryResult.status === 'fulfilled' ? summaryResult.value : {}
+    );
 
     try {
       if (summaryResult.status !== 'fulfilled') throw summaryResult.reason;

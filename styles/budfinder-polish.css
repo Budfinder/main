@@ -19,6 +19,31 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Keep long names, prices, and action labels contained across every live page. */
+:where(main, section, article, aside, nav, header, footer, form, fieldset, div, li) {
+  min-width: 0;
+}
+
+:where(h1, h2, h3, h4, p, li, dt, dd, label, strong, small, a, button) {
+  overflow-wrap: anywhere;
+}
+
+:where(input, select, textarea, button) {
+  max-width: 100%;
+}
+
+/* Author-level display rules can otherwise override the browser's hidden state. */
+[hidden] {
+  display: none !important;
+}
+
+/* Headings are focused after in-page navigation so screen readers announce the
+   new view. They are not interactive controls, so suppress the browser's raw
+   blue focus rectangle while retaining focus styling on links and buttons. */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
 .budfinder-brand-lockup {
   display: inline-flex;
   align-items: center;

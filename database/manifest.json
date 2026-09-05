@@ -1,13 +1,18 @@
 {
-  "exported_at_utc": "2026-08-05T08:27:35.025089+00:00",
+  "exported_at_utc": "2026-09-01T17:23:59.083463+00:00",
   "counts": {
     "shops": 444,
-    "strains": 1866,
-    "active_offerings": 4692,
-    "menu_entries": 4707,
-    "strain_index": 1866,
-    "home_active_shops": 239,
-    "home_active_listings": 4649
+    "strains": 2024,
+    "active_offerings": 6434,
+    "menu_entries": 6447,
+    "strain_index": 2024,
+    "site_updates": 3,
+    "search_shops": 306,
+    "search_strains": 2024,
+    "search_growers": 19,
+    "search_cities": 15,
+    "home_active_shops": 302,
+    "home_active_listings": 6391
   },
   "files": [
     "shops.json",
@@ -16,6 +21,8 @@
     "active_offerings.json",
     "menu_entries.json",
     "strain_index.json",
+    "search_index.json",
+    "updates.json",
     "home_summary.json"
   ],
   "linking": {

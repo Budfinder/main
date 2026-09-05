@@ -1,0 +1,6 @@
+name,lat,lng,website,shop_key,logo,visited,rating,Coffeeshop,Transport,Bar,Food,Attraction,Shopping,Closed
+Eurogarden,51.4341114,5.488157949,https://www.coffeeshopmenus.org/cs-eurogarden.html,cs-eurogarden,eurogarden.png,,,y,n,n,n,n,n,n
+New Wave,51.43285568,5.484804212,https://www.coffeeshopmenus.org/cs-new-wave.html,cs-new-wave,new_wave.png,,,y,n,n,n,n,n,n
+Pink,51.43833434,5.472762515,https://www.coffeeshopmenus.org/cs-pink.html,cs-pink,pink.png,,,y,n,n,n,n,n,n
+The Wall,51.45144992,5.46331572,https://www.coffeeshopmenus.org/cs-wall.html,cs-wall,the_wall.png,,,y,n,n,n,n,n,n
+Upstairs,51.43690596,5.480460044,https://www.coffeeshopmenus.org/cs-upstairs.html,cs-upstairs,upstairs.png,,,y,n,n,n,n,n,n

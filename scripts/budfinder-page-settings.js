@@ -12,14 +12,36 @@
     'locate3_strain_shelf',
     'budfinder_saved_journeys',
     'budfinder_map_focus_shops',
+    'budfinder_map_sessions_v1',
     'budfinder_explorer_selected_shops',
     'budfinder_database_navigation_state'
   ];
   const DEFAULT_PERSONALISATION = {
     displayName: 'Explorer',
     accent: 'kings-juice',
+    defaultCity: 'amsterdamLoc.csv',
+    distanceUnit: 'metric',
+    reduceMotion: false,
     showIntroPopupOnLoad: false
   };
+  const LOCATION_OPTIONS = [
+    ['coffeeshops.csv', 'All Netherlands'],
+    ['Alkmaar.csv', 'Alkmaar'],
+    ['amsterdamLoc.csv', 'Amsterdam'],
+    ['Arnhem.csv', 'Arnhem'],
+    ['Breda.csv', 'Breda'],
+    ['Delft.csv', 'Delft'],
+    ['denHaag.csv', 'Den Haag'],
+    ['Eindhoven.csv', 'Eindhoven'],
+    ['Gronigen.csv', 'Groningen'],
+    ['Haarlem.csv', 'Haarlem'],
+    ['Leeuwarden.csv', 'Leeuwarden'],
+    ['Maastricht.csv', 'Maastricht'],
+    ['Nijmegen.csv', 'Nijmegen'],
+    ['Rotterdam.csv', 'Rotterdam'],
+    ['Tilburg.csv', 'Tilburg'],
+    ['utrechtLoc.csv', 'Utrecht']
+  ];
 
   function parseJson(key) {
     try {
@@ -173,6 +195,38 @@
         text-transform: none;
       }
 
+      .site-settings-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        color: var(--ink, #233126);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .site-settings-check input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent, #2e7b59);
+      }
+
+      .site-settings-appearance summary {
+        cursor: pointer;
+        color: var(--ink, #233126);
+        font-size: 1.17em;
+        font-weight: 900;
+      }
+
+      html[data-budfinder-reduced-motion="true"] *,
+      html[data-budfinder-reduced-motion="true"] *::before,
+      html[data-budfinder-reduced-motion="true"] *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+
       .site-settings-field input::placeholder {
         color: var(--control-muted, var(--muted, #667567));
         opacity: 0.82;
@@ -237,6 +291,11 @@
         font-weight: 800;
       }
 
+      .site-settings-panel > .site-settings-status {
+        margin: 0;
+        padding: 12px 18px 18px;
+      }
+
       @media (max-width: 640px) {
         .site-settings-backdrop {
           align-items: start;
@@ -268,15 +327,26 @@
         <div class="site-settings-head">
           <div>
             <h2 id="site-settings-title" tabindex="-1">Settings</h2>
-            <p>Preferences, filters, display, and data tools in one place.</p>
+            <p>Practical preferences, filters, data tools, and appearance.</p>
           </div>
           <button class="site-settings-button site-settings-close" type="button" data-site-settings-close aria-label="Close settings">&times;</button>
         </div>
 
         <section class="site-settings-section" aria-labelledby="site-settings-preferences-title">
           <h3 id="site-settings-preferences-title">Preferences</h3>
+          <label class="site-settings-field" for="site-settings-city">
+            Default map area
+            <select id="site-settings-city"></select>
+          </label>
+          <label class="site-settings-field" for="site-settings-distance-unit">
+            Distance units
+            <select id="site-settings-distance-unit">
+              <option value="metric">Metric (km / m)</option>
+              <option value="miles">Miles (mi)</option>
+            </select>
+          </label>
           <label class="site-settings-field" for="site-settings-name">
-            Your name
+            Your name (optional)
             <input id="site-settings-name" type="text" maxlength="24" placeholder="Explorer" />
           </label>
         </section>
@@ -292,9 +362,9 @@
 
         <section class="site-settings-section" aria-labelledby="site-settings-data-title">
           <h3 id="site-settings-data-title">Data</h3>
-          <p>Location files and the database explorer stay available without moving this Settings button away from your current page.</p>
+          <p>Map areas and the nationwide database explorer stay available without moving this Settings button away from your current page.</p>
           <div class="site-settings-actions">
-            <a class="site-settings-link" href="map.html#settings">Choose location file</a>
+            <a class="site-settings-link" href="map.html#settings">Choose map area</a>
             <a class="site-settings-link" href="database.html">Open database</a>
             <button id="site-clear-data" class="site-settings-button danger" type="button">Clear saved data</button>
           </div>
@@ -305,17 +375,21 @@
           <p class="site-settings-note">Saved shops, ratings, notes, recent Destinations, Wanted strains, and saved itineraries live on this device.</p>
         </section>
 
-        <section class="site-settings-section" aria-labelledby="site-settings-display-title">
-          <h3 id="site-settings-display-title">Display</h3>
+        <details class="site-settings-section site-settings-appearance">
+          <summary id="site-settings-display-title">Appearance</summary>
           <label class="site-settings-field" for="site-settings-vibe">
             Colour theme
             <select id="site-settings-vibe" data-budfinder-vibe-selector></select>
           </label>
+          <label class="site-settings-check" for="site-settings-reduce-motion">
+            <input id="site-settings-reduce-motion" type="checkbox" />
+            Reduce animation and motion
+          </label>
           <div class="site-settings-actions">
-            <button id="site-reset-display" class="site-settings-button" type="button">Reset display</button>
+            <button id="site-reset-display" class="site-settings-button" type="button">Reset all preferences</button>
           </div>
-          <div id="site-settings-status" class="site-settings-status" role="status" aria-live="polite"></div>
-        </section>
+        </details>
+        <div id="site-settings-status" class="site-settings-status" role="status" aria-live="polite"></div>
       </aside>
     `;
     document.body.appendChild(panel);
@@ -329,7 +403,10 @@
     ensureStyles();
     const panel = createPanel();
     const nameInput = panel.querySelector('#site-settings-name');
+    const citySelect = panel.querySelector('#site-settings-city');
+    const distanceUnitSelect = panel.querySelector('#site-settings-distance-unit');
     const vibeSelect = panel.querySelector('#site-settings-vibe');
+    const reduceMotionInput = panel.querySelector('#site-settings-reduce-motion');
     const status = panel.querySelector('#site-settings-status');
     const confirmWrap = panel.querySelector('#site-clear-confirm');
     let previouslyFocusedElement = null;
@@ -342,9 +419,19 @@
     function syncForm() {
       const personalisation = readPersonalisation();
       if (nameInput) nameInput.value = personalisation.displayName || '';
+      if (citySelect) citySelect.value = personalisation.defaultCity || DEFAULT_PERSONALISATION.defaultCity;
+      if (distanceUnitSelect) distanceUnitSelect.value = personalisation.distanceUnit === 'miles' ? 'miles' : 'metric';
+      if (reduceMotionInput) reduceMotionInput.checked = personalisation.reduceMotion === true;
+      document.documentElement.setAttribute('data-budfinder-reduced-motion', personalisation.reduceMotion === true ? 'true' : 'false');
       if (window.BudfinderTheme) {
         window.BudfinderTheme.applyTheme(personalisation.accent || 'kings-juice', { save: false, dispatch: false });
       }
+    }
+
+    if (citySelect) {
+      citySelect.innerHTML = LOCATION_OPTIONS
+        .map(([value, label]) => `<option value="${value}">${label}</option>`)
+        .join('');
     }
 
     function openPanel() {
@@ -427,6 +514,26 @@
       setStatus('Preferences saved.');
     });
 
+    citySelect.addEventListener('change', event => {
+      const personalisation = readPersonalisation();
+      personalisation.defaultCity = event.target.value || DEFAULT_PERSONALISATION.defaultCity;
+      savePersonalisation(personalisation);
+      try {
+        localStorage.setItem('budfinder_location_data_csv_path', JSON.stringify(`database/locations/${personalisation.defaultCity}`));
+        localStorage.setItem('budfinder_location_data_user_selected', JSON.stringify(true));
+      } catch (_err) {
+        // The preference still applies to this settings form when storage is limited.
+      }
+      setStatus('Default map area saved.');
+    });
+
+    distanceUnitSelect.addEventListener('change', event => {
+      const personalisation = readPersonalisation();
+      personalisation.distanceUnit = event.target.value === 'miles' ? 'miles' : 'metric';
+      savePersonalisation(personalisation);
+      setStatus('Distance units saved.');
+    });
+
     vibeSelect.addEventListener('change', event => {
       const personalisation = readPersonalisation();
       personalisation.accent = event.target.value || DEFAULT_PERSONALISATION.accent;
@@ -437,11 +544,20 @@
       setStatus('Display saved.');
     });
 
+    reduceMotionInput.addEventListener('change', event => {
+      const personalisation = readPersonalisation();
+      personalisation.reduceMotion = event.target.checked === true;
+      savePersonalisation(personalisation);
+      document.documentElement.setAttribute('data-budfinder-reduced-motion', personalisation.reduceMotion ? 'true' : 'false');
+      setStatus('Motion preference saved.');
+    });
+
     panel.querySelector('#site-reset-filters').addEventListener('click', () => {
       removeStorageKey('budfinder_map_focus_shops');
+      removeStorageKey('budfinder_map_sessions_v1');
       removeStorageKey('budfinder_explorer_selected_shops');
       removeStorageKey('budfinder_database_navigation_state');
-      setStatus('Stored map handoff filters reset.');
+      setStatus('Stored map filters and handoffs reset.');
     });
 
     panel.querySelector('#site-clear-data').addEventListener('click', () => {
@@ -462,12 +578,18 @@
 
     panel.querySelector('#site-reset-display').addEventListener('click', () => {
       savePersonalisation(DEFAULT_PERSONALISATION);
+      try {
+        localStorage.setItem('budfinder_location_data_csv_path', JSON.stringify('database/locations/amsterdamLoc.csv'));
+        localStorage.setItem('budfinder_location_data_user_selected', JSON.stringify(true));
+      } catch (_err) {
+        // The visible form still resets when storage is limited.
+      }
       if (window.BudfinderTheme) {
         window.BudfinderTheme.applyTheme(DEFAULT_PERSONALISATION.accent);
       }
       syncForm();
       dispatchPersonalisationChange();
-      setStatus('Display reset.');
+      setStatus('Preferences and appearance reset.');
     });
 
     window.addEventListener('budfinder:vibechange', event => {

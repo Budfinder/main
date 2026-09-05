@@ -348,6 +348,25 @@
       display: none;
     }
 
+    .search-scope-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .search-scope-row > span { color: var(--muted); font-size: 13px; font-weight: 800; }
+    .search-scope-row button {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--muted);
+      background: var(--panel-alt);
+      font-weight: 800;
+    }
+    .search-scope-row button.is-active { color: #fff; border-color: var(--accent); background: var(--accent); }
+
     .discovery-suggestions,
     .discovery-results {
       width: min(880px, 100%);
@@ -615,13 +634,95 @@
       font-weight: 700;
     }
 
+    .discovery-browser-filters {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
+    }
+
+    .discovery-browser-filter {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .discovery-browser-filter select {
+      width: 100%;
+      min-height: 42px;
+      padding: 0 34px 0 11px;
+      border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+      border-radius: 12px;
+      background: var(--panel-strong);
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .discovery-browser-filter-reset {
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .discovery-browser-filter-status {
+      grid-column: 1 / -1;
+      min-height: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
     .discovery-browser-results-head {
       margin-bottom: 10px;
+    }
+
+    @media (max-width: 860px) {
+      .discovery-browser-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .discovery-browser-filter-reset {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .discovery-browser-filters {
+        grid-template-columns: 1fr;
+      }
+
+      .discovery-browser-filter-reset,
+      .discovery-browser-filter-status {
+        grid-column: 1;
+      }
     }
 
     .discovery-browser-more {
       justify-content: center;
       margin-top: 18px;
+    }
+
+    .discovery-browser-more[hidden] {
+      display: none !important;
     }
 
     .discovery-browser-more button {
@@ -3987,7 +4088,7 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260727-ui1" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260829-tlc1" />
   <style>
     .strain-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4298,6 +4399,192 @@
       }
     }
   </style>
+  <style id="budfinder-database-tlc">
+    /* Long product, grower, and shop names should expand cards, never escape them. */
+    body .database-search-panel {
+      padding: clamp(14px, 2vw, 20px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+    }
+
+    .page-shell,
+    .layout,
+    .main-stack,
+    .panel,
+    .database-detail,
+    .database-search-panel,
+    .discovery-card,
+    .discovery-card-copy,
+    .strain-card,
+    .strain-card-copy,
+    .shop-card,
+    .shop-card-copy,
+    .fresh-shop-row,
+    .fresh-shop-copy,
+    .listing-card,
+    .menu-listing-card,
+    .menu-listing-main,
+    .comparison-card,
+    .comparison-card-copy,
+    .selected-pill,
+    .selected-pill-main,
+    .common-shop-card,
+    .quick-answer-row {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .page-shell,
+    .database-detail,
+    .panel {
+      overflow-x: clip;
+    }
+
+    .discovery-card-copy strong,
+    .fresh-shop-name,
+    .fresh-shop-meta,
+    .fresh-shop-date strong,
+    .fresh-shop-date span,
+    .fresh-shop-menu-preview strong,
+    .fresh-shop-menu-preview span,
+    .shop-card-copy strong,
+    .shop-card-meta,
+    .strain-card h3,
+    .menu-listing-title,
+    .listing-card strong,
+    .menu-listing-card strong,
+    .listing-card-meta,
+    .menu-listing-meta,
+    .selected-pill-main,
+    .selected-pill-main > span,
+    .comparison-card h3 {
+      max-width: 100%;
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .listing-card-price,
+    .menu-listing-price,
+    .price-judgement,
+    .average-comparison,
+    .strain-menu-chip,
+    .shop-card-metrics span {
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .card-actions,
+    .listing-card-actions,
+    .shop-card-actions,
+    .quick-answer-actions,
+    .common-shop-card-actions,
+    .side-action-row {
+      min-width: 0;
+    }
+
+    .card-actions > *,
+    .listing-card-actions > *,
+    .shop-card-actions > *,
+    .quick-answer-actions > *,
+    .common-shop-card-actions > *,
+    .side-action-row > * {
+      min-width: 0;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+
+    .search-scope-row {
+      display: grid;
+      grid-template-columns: auto minmax(220px, 1fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-scope-row label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .search-scope-row select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 38px 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background-color: var(--panel-alt);
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .location-filter-field {
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 680px) {
+      body .database-search-panel {
+        padding: 12px;
+        border-radius: 18px;
+      }
+
+      .search-scope-row {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        gap: 7px;
+      }
+
+      .search-scope-row select {
+        min-height: 46px;
+        border-radius: 14px;
+      }
+
+      .discovery-card {
+        align-items: center;
+        height: auto;
+        min-height: 76px;
+      }
+
+      .discovery-card-copy strong {
+        line-height: 1.25;
+      }
+
+      .listing-card-head,
+      .shop-card-head,
+      .strain-card-head,
+      .price-guide-head,
+      .shop-menu-hero-head {
+        min-width: 0;
+      }
+
+      .listing-card-price,
+      .menu-listing-price {
+        align-self: flex-start;
+        line-height: 1.35;
+      }
+
+      .availability-tags,
+      .listing-card-actions,
+      .shop-card-actions,
+      .common-shop-card-actions,
+      .quick-answer-actions {
+        width: 100%;
+      }
+
+      .availability-tags .strain-menu-chip {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .database-search-field input {
+        min-width: 0;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav class="app-mode-toggle" aria-label="Switch app view">
@@ -4316,7 +4603,7 @@
     <header class="topbar">
       <div class="brand">
         <span class="kicker" id="database-personal-greeting">Explore the database</span>
-        <h1>Find a shop, strain or area</h1>
+        <h1>Find a coffeeshop, strain, grower or area</h1>
         <p class="intro-copy">Start with a name. Budfinder will keep everything else out of the way until you need it.</p>
       </div>
     </header>
@@ -4325,20 +4612,26 @@
       <div class="database-search-head">
         <div class="database-search-title">
           <strong id="database-search-title">What are you looking for?</strong>
-          <span>Search areas, coffeeshops and strains.</span>
+          <span>Search strains, growers, coffeeshops, towns, and areas.</span>
         </div>
       </div>
       <div class="field database-search-field">
-        <label id="search-label" for="search">Search areas, coffeeshops and strains</label>
-        <input id="search" type="search" placeholder="Try Abraxas, Lemon or Jordaan..." autocomplete="off" />
+        <label id="search-label" for="search">Search strains, growers, coffeeshops, towns, and areas</label>
+        <input id="search" type="search" placeholder="Amnesia Haze, Karma, De Wedren, Nijmegen…" autocomplete="off" />
         <div id="search-chip-row" class="database-quick-chips" aria-label="Quick searches">
           <button type="button" data-search-chip="Gelato">Gelato</button>
           <button type="button" data-search-chip="Amnesia Haze">Amnesia Haze</button>
-          <button type="button" data-search-chip="The Plug">The Plug</button>
+          <button type="button" data-search-chip="Karma">Karma</button>
           <button type="button" data-search-chip="Family First">Family First</button>
-          <button type="button" data-search-chip="Zkittlez">Zkittlez</button>
+          <button type="button" data-search-chip="Legal weed">Legal weed</button>
         </div>
-        <div class="field-note">Shop names open the menu browser automatically.</div>
+        <div class="field-note">Coffeeshop names open the menu browser automatically.</div>
+        <div class="search-scope-row">
+          <label for="search-city-scope">Search in</label>
+          <select id="search-city-scope">
+            <option value="">All Netherlands</option>
+          </select>
+        </div>
       </div>
     </section>
 
@@ -4369,9 +4662,48 @@
         <label id="discovery-browser-search-label" for="discovery-browser-search">Filter</label>
         <input id="discovery-browser-search" type="search" autocomplete="off" />
       </div>
+      <div class="discovery-browser-filters" aria-label="Browse filters">
+        <label class="discovery-browser-filter" for="discovery-browser-sort">
+          Sort by
+          <select id="discovery-browser-sort"></select>
+        </label>
+        <label class="discovery-browser-filter" for="discovery-browser-freshness">
+          Menu age
+          <select id="discovery-browser-freshness">
+            <option value="all">Any menu age</option>
+            <option value="fresh">Fresh · 0–14 days</option>
+            <option value="ageing">Ageing · 15–60 days</option>
+            <option value="stale">Stale · over 60 days</option>
+            <option value="unknown">Unknown date</option>
+          </select>
+        </label>
+        <label class="discovery-browser-filter" for="discovery-browser-price">
+          Average price
+          <select id="discovery-browser-price">
+            <option value="all">Any price</option>
+            <option value="under10">Under €10/g</option>
+            <option value="under15">Under €15/g</option>
+            <option value="under20">Under €20/g</option>
+            <option value="over20">€20/g and over</option>
+            <option value="unknown">Price unknown</option>
+          </select>
+        </label>
+        <label class="discovery-browser-filter" for="discovery-browser-type">
+          Type
+          <select id="discovery-browser-type">
+            <option value="all">All types</option>
+            <option value="sativa">Sativa</option>
+            <option value="indica">Indica</option>
+            <option value="hybrid">Hybrid</option>
+            <option value="hash">Hash</option>
+          </select>
+        </label>
+        <button id="discovery-browser-filter-reset" class="discovery-browser-filter-reset" type="button">Reset filters</button>
+        <div id="discovery-browser-filter-status" class="discovery-browser-filter-status" role="status" aria-live="polite"></div>
+      </div>
       <div class="discovery-browser-results-head">
         <span id="discovery-browser-count"></span>
-        <span>A–Z</span>
+        <span id="discovery-browser-order">A–Z</span>
       </div>
       <div id="discovery-browser-grid" class="discovery-grid"></div>
       <div id="discovery-browser-more" class="discovery-browser-more" hidden>
@@ -4396,7 +4728,7 @@
           <div id="browse-mode-grid" class="browse-mode-grid" role="group" aria-label="Browse mode">
             <button class="is-active" type="button" data-browse-mode="value">Best value</button>
             <button type="button" data-browse-mode="available">Most stocked</button>
-            <button type="button" data-browse-mode="fresh">Fresh data</button>
+            <button type="button" data-browse-mode="fresh">Fresh menus</button>
             <button type="button" data-browse-mode="under10">Under €10</button>
             <button type="button" data-browse-mode="rare">2-3 shop finds</button>
             <button type="button" data-browse-mode="cali">Cali available</button>
@@ -4417,17 +4749,11 @@
           </div>
         </div>
 
-        <div class="filter-grid">
-          <div class="field">
-            <label for="location-dataset-filter">Price comparison area</label>
+        <div class="filter-grid location-filter-grid">
+          <div class="field location-filter-field">
+            <label for="location-dataset-filter">Town or city</label>
             <select id="location-dataset-filter">
-              <option value="">Loading location files...</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="city-filter">City</label>
-            <select id="city-filter">
-              <option value="">All cities</option>
+              <option value="">All Netherlands</option>
             </select>
           </div>
         </div>
@@ -4437,6 +4763,14 @@
             <label for="type-filter">Type</label>
             <select id="type-filter">
               <option value="">All types</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="legal-filter">Legal project</label>
+            <select id="legal-filter">
+              <option value="">All products</option>
+              <option value="1">Legal-project products</option>
+              <option value="0">Other products</option>
             </select>
           </div>
         </div>
@@ -4601,7 +4935,7 @@
       </div>
     </div>
 
-    <p id="status" class="status">Loading Amsterdam menu data...</p>
+    <p id="status" class="status">Loading nationwide menu data...</p>
 
     <details class="workflow-strip launch-notes" aria-label="Database workflow">
       <summary>Data notes</summary>
@@ -4626,9 +4960,10 @@
 
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
-  <script src="scripts/budfinder-logos.js?v=20260727-ui1"></script>
+  <script src="scripts/budfinder-logos.js?v=20260830-missing1"></script>
   <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
-  <script src="scripts/budfinder-page-settings.js?v=20260720-name2"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260829-areas1"></script>
+  <script src="scripts/budfinder-search.js?v=20260830-search1"></script>
   <script>
     const state = {
       allOfferings: [],
@@ -4636,8 +4971,11 @@
       shops: [],
       shopById: new Map(),
       shopLogoByKey: new Map(),
+      shopCoordinatesByKey: new Map(),
+      shopCoordinatesByNameCity: new Map(),
       locationDatasets: [],
       activeLocationDataset: '',
+      searchScope: 'all',
       strainImageByKey: new Map(),
       closedShopSourceTokens: [],
       unavailableShopIds: new Set(),
@@ -4660,6 +4998,11 @@
       view: 'strains',
       discoveryBrowser: '',
       discoveryBrowserLimit: 48,
+      discoveryBrowserSort: 'name',
+      discoveryBrowserFreshness: 'all',
+      discoveryBrowserPrice: 'all',
+      discoveryBrowserType: 'all',
+      discoveryBrowserPosition: null,
       detail: null,
       detailReturnSearch: '',
       detailReturnStack: [],
@@ -4673,10 +5016,11 @@
       search: document.getElementById('search'),
       searchLabel: document.getElementById('search-label'),
       searchChipRow: document.getElementById('search-chip-row'),
+      searchCityScope: document.getElementById('search-city-scope'),
       searchShopsShortcut: document.getElementById('search-shops-shortcut'),
       locationDataset: document.getElementById('location-dataset-filter'),
-      city: document.getElementById('city-filter'),
       type: document.getElementById('type-filter'),
+      legal: document.getElementById('legal-filter'),
       cali: document.getElementById('cali-filter'),
       sort: document.getElementById('sort-filter'),
       browseModeGrid: document.getElementById('browse-mode-grid'),
@@ -4732,6 +5076,13 @@
       discoveryBrowserCopy: document.getElementById('discovery-browser-copy'),
       discoveryBrowserSearchLabel: document.getElementById('discovery-browser-search-label'),
       discoveryBrowserSearch: document.getElementById('discovery-browser-search'),
+      discoveryBrowserSort: document.getElementById('discovery-browser-sort'),
+      discoveryBrowserFreshness: document.getElementById('discovery-browser-freshness'),
+      discoveryBrowserPrice: document.getElementById('discovery-browser-price'),
+      discoveryBrowserType: document.getElementById('discovery-browser-type'),
+      discoveryBrowserFilterReset: document.getElementById('discovery-browser-filter-reset'),
+      discoveryBrowserFilterStatus: document.getElementById('discovery-browser-filter-status'),
+      discoveryBrowserOrder: document.getElementById('discovery-browser-order'),
       discoveryBrowserCount: document.getElementById('discovery-browser-count'),
       discoveryBrowserGrid: document.getElementById('discovery-browser-grid'),
       discoveryBrowserMore: document.getElementById('discovery-browser-more')
@@ -4775,6 +5126,7 @@
     }
 
     function normaliseSearchText(value) {
+      if (window.BudfinderSearch) return window.BudfinderSearch.normalise(value);
       return normalise(value)
         .replace(/[^a-z0-9]+/g, ' ')
         .replace(/\s+/g, ' ')
@@ -4782,6 +5134,9 @@
     }
 
     function fieldMatchesSearch(value, query) {
+      if (window.BudfinderSearch) {
+        return window.BudfinderSearch.matches(value, query, { threshold: 0.72 });
+      }
       const text = normaliseSearchText(value);
       const q = normaliseSearchText(query);
       if (!q) return true;
@@ -4796,15 +5151,47 @@
       });
     }
 
+    function resolvedGrowerForSearch(query) {
+      if (!window.BudfinderSearch) return '';
+      const q = normaliseSearchText(query);
+      if (!q) return '';
+      const sourceOfferings = state.allOfferings.length ? state.allOfferings : state.offerings;
+      const cacheKey = `${q}|${sourceOfferings.length}`;
+      if (resolvedGrowerForSearch.cache && resolvedGrowerForSearch.cache.key === cacheKey) {
+        return resolvedGrowerForSearch.cache.value;
+      }
+      const growers = Array.from(new Set(sourceOfferings
+        .map(item => String(item && item.grower || '').replace(/\s+/g, ' ').trim())
+        .filter(Boolean)));
+      const ranked = window.BudfinderSearch.rank(q, growers, { threshold: 0.86, limit: 2 });
+      const winner = ranked[0];
+      if (!winner) {
+        resolvedGrowerForSearch.cache = { key: cacheKey, value: '' };
+        return '';
+      }
+      const isConfident = winner.score >= 0.94 || ranked.length === 1 || winner.score - ranked[1].score >= 0.1;
+      const value = isConfident ? winner.item : '';
+      resolvedGrowerForSearch.cache = { key: cacheKey, value };
+      return value;
+    }
+
     function offeringMatchesSearch(item, query) {
+      const resolvedGrower = resolvedGrowerForSearch(query);
+      if (resolvedGrower) {
+        return normaliseSearchText(item && item.grower) === normaliseSearchText(resolvedGrower);
+      }
       return [
         item.strain_name,
         item.strain_name_normalised,
         item.shop_name,
         item.shop_city,
         item.base_type,
+        item.grower,
         item.notes
-      ].some(value => fieldMatchesSearch(value, query));
+      ].some(value => fieldMatchesSearch(value, query)) || (
+        Number(item.is_legal) === 1 && ['legal', 'legal weed', 'regulated', 'experiment', 'wietexperiment']
+          .some(value => fieldMatchesSearch(value, query))
+      );
     }
 
     function shopMatchesSearch(shop, query) {
@@ -4826,6 +5213,9 @@
     }
 
     function scoreShopNameTextMatch(value, query) {
+      if (window.BudfinderSearch) {
+        return Math.round(window.BudfinderSearch.score(value, query) * 7);
+      }
       const text = normaliseSearchText(value);
       const q = normaliseSearchText(query);
       if (!q || !text) return 0;
@@ -4889,6 +5279,10 @@
       if (!q) return 0;
       let score = 0;
       state.strainStats.forEach(stat => {
+        if (window.BudfinderSearch) {
+          score = Math.max(score, Math.round(window.BudfinderSearch.score(stat.name, q, [stat.key]) * 5));
+          return;
+        }
         const name = normaliseSearchText(stat.name);
         const key = normaliseSearchText(stat.key);
         [name, key].filter(Boolean).forEach(text => {
@@ -4904,9 +5298,33 @@
     function universalSearchIntent(query) {
       const q = normaliseSearchText(query);
       if (!q) return '';
+      if (window.BudfinderSearch) {
+        const shopNames = Array.from(new Set([
+          ...state.shops.map(shop => shop && (shop.shop_name || shop.name || shop.shopName)),
+          ...state.offerings.map(item => item && item.shop_name)
+        ].filter(Boolean)));
+        const growers = Array.from(new Set(state.offerings.map(item => item && item.grower).filter(Boolean)));
+        const shopMatch = window.BudfinderSearch.rank(q, shopNames, { threshold: 0.72, limit: 1 })[0];
+        const strainMatch = window.BudfinderSearch.rank(q, state.strainStats, {
+          getLabel: stat => stat && stat.name,
+          getAliases: stat => [stat && stat.key],
+          threshold: 0.72,
+          limit: 1
+        })[0];
+        const growerMatch = window.BudfinderSearch.rank(q, growers, { threshold: 0.72, limit: 1 })[0];
+        const shopScore = shopMatch ? shopMatch.score : 0;
+        const strainScore = strainMatch ? strainMatch.score : 0;
+        const growerScore = growerMatch ? growerMatch.score : 0;
+        if (growerScore >= Math.max(0.72, shopScore, strainScore)) return 'strains';
+        if (strainScore >= 0.72 && strainScore >= shopScore - 0.03) return 'strains';
+        if (shopScore >= 0.72) return 'shops';
+        return '';
+      }
       const shopScore = scoreShopSearchMatch(q);
       const strainScore = scoreStrainSearchMatch(q);
+      const growerScore = state.offerings.reduce((score, item) => Math.max(score, scoreShopNameTextMatch(item && item.grower, q)), 0);
       if (shopScore >= 3 && shopScore >= strainScore) return 'shops';
+      if (growerScore >= 2) return 'strains';
       if (strainScore >= 2) return 'strains';
       if (shopScore >= 2) return 'shops';
       return '';
@@ -4953,6 +5371,25 @@
       if (!Number.isFinite(amount)) return '--';
       const display = amount % 1 === 0 ? amount.toFixed(0) : amount.toFixed(2);
       return `${currency || '€'}${display}/${unit || 'g'}`;
+    }
+
+    function packageWeightLabel(value) {
+      const weight = Number(value);
+      if (!Number.isFinite(weight) || weight <= 0) return '';
+      return `${Number.isInteger(weight) ? weight.toFixed(0) : weight.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}g`;
+    }
+
+    function packageListingPriceLabel(item) {
+      const perGram = Number(item && item.price_amount);
+      const packPrice = Number(item && item.package_price_amount);
+      const weight = Number(item && item.package_weight_g);
+      const currency = String(item && item.price_currency || '€');
+      if (Number.isFinite(packPrice) && packPrice > 0 && Number.isFinite(weight) && weight > 0) {
+        const amount = packPrice % 1 === 0 ? packPrice.toFixed(0) : packPrice.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+        const comparison = Number.isFinite(perGram) ? ` · ${money(perGram, currency, 'g')}` : '';
+        return `${currency}${amount} · ${packageWeightLabel(weight)} pack${comparison}`;
+      }
+      return Number.isFinite(perGram) ? money(perGram, currency, item && item.price_unit) : 'Price unknown';
     }
 
     function formatDate(value) {
@@ -5069,9 +5506,7 @@
     }
 
     function listingPriceLabel(item) {
-      return Number.isFinite(Number(item && item.price_amount))
-        ? money(item.price_amount, item.price_currency, item.price_unit)
-        : 'Price unknown';
+      return packageListingPriceLabel(item);
     }
 
     function listingUpdatedLabel(item) {
@@ -5083,20 +5518,19 @@
       if (!Number.isFinite(time)) return null;
       const days = ageDaysFromTime(time);
       if (days <= 14) return { label: 'Fresh', className: 'is-fresh' };
-      if (days <= 60) return { label: 'Likely', className: 'is-likely' };
-      return { label: 'Old intel', className: 'is-old-intel' };
+      if (days <= 60) return { label: 'Ageing', className: 'is-likely' };
+      return { label: 'Stale', className: 'is-old-intel' };
     }
 
     function menuAgeInfo(value) {
       const time = parseTime(value);
       if (!Number.isFinite(time)) {
-        return { label: 'Unknown age', display: 'Unknown age', className: 'age-unknown', bucket: 'unknown', days: Infinity, sourceField: '' };
+        return { label: 'Unknown', display: 'Unknown · no reliable date', className: 'age-unknown', bucket: 'unknown', days: Infinity, sourceField: '' };
       }
       const days = ageDaysFromTime(time);
       const suffix = days === 0 ? 'today' : `${days} day${days === 1 ? '' : 's'} old`;
-      if (days <= 7) return { label: 'Fresh', display: `Fresh · ${suffix}`, className: 'age-fresh', bucket: 'fresh', days, sourceField: '' };
-      if (days <= 30) return { label: 'Recent', display: `Recent · ${suffix}`, className: 'age-recent', bucket: 'recent', days, sourceField: '' };
-      if (days <= 90) return { label: 'Older', display: `Older · ${suffix}`, className: 'age-older', bucket: 'older', days, sourceField: '' };
+      if (days <= 14) return { label: 'Fresh', display: `Fresh · ${suffix}`, className: 'age-fresh', bucket: 'fresh', days, sourceField: '' };
+      if (days <= 60) return { label: 'Ageing', display: `Ageing · ${suffix}`, className: 'age-older', bucket: 'ageing', days, sourceField: '' };
       return { label: 'Stale', display: `Stale · ${suffix}`, className: 'age-stale', bucket: 'stale', days, sourceField: '' };
     }
 
@@ -5158,7 +5592,7 @@
     }
 
     function ageBreakdownForListings(listings) {
-      const buckets = { fresh: 0, recent: 0, older: 0, stale: 0, unknown: 0 };
+      const buckets = { fresh: 0, ageing: 0, stale: 0, unknown: 0 };
       (Array.isArray(listings) ? listings : []).forEach(item => {
         const bucket = menuAgeInfo(displayListingDateValue(item)).bucket;
         buckets[bucket] = (buckets[bucket] || 0) + 1;
@@ -5169,8 +5603,7 @@
     function ageBreakdownLabel(buckets) {
       const parts = [
         ['Fresh', buckets.fresh],
-        ['Recent', buckets.recent],
-        ['Older', buckets.older],
+        ['Ageing', buckets.ageing],
         ['Stale', buckets.stale],
         ['Unknown', buckets.unknown]
       ].filter(([, count]) => count > 0);
@@ -5231,7 +5664,7 @@
       const trusted = batch.trustedDateCount
         ? ` Listings with explicit source check dates still show their own age.`
         : ` Rows from that shared refresh window show unknown data age until a shop has its own later check signal.`;
-      return ` Most shop listing timestamps in the current dataset come from a shared refresh on ${formatDate(batch.date)}, so the page does not label that batch as shop-specific Fresh data.${trusted}`;
+      return ` Most shop listing timestamps in the current dataset come from a shared refresh on ${formatDate(batch.date)}, so the page does not label that batch as shop-specific Fresh.${trusted}`;
     }
 
     function priceProfileForListings(listings) {
@@ -5305,6 +5738,17 @@
     }
 
     function alternativeStrainsForQuery(query, pool, limit = 4) {
+      if (window.BudfinderSearch) {
+        return window.BudfinderSearch.rank(query, pool || [], {
+          getLabel: stat => stat && stat.name,
+          getAliases: stat => [stat && stat.key],
+          threshold: 0.68,
+          limit: Math.max(limit * 3, limit)
+        })
+          .sort((a, b) => b.score - a.score || (b.item.shopCount || 0) - (a.item.shopCount || 0))
+          .slice(0, limit)
+          .map(result => result.item);
+      }
       const q = normaliseSearchText(query);
       const queryTokens = new Set(q.split(' ').filter(token => token.length >= 3));
       const querySignals = new Set(strainSignalTokens(query));
@@ -5670,7 +6114,7 @@
     const BROWSE_MODES = [
       { key: 'value', label: 'Best value', summary: 'best value' },
       { key: 'available', label: 'Most stocked', summary: 'most stocked' },
-      { key: 'fresh', label: 'Fresh data', summary: 'fresh data' },
+      { key: 'fresh', label: 'Fresh menus', summary: 'fresh menus' },
       { key: 'under10', label: 'Under €10', summary: 'under €10' },
       { key: 'rare', label: '2–3-shop finds', summary: '2–3-shop' },
       { key: 'cali', label: 'Cali available', summary: 'Cali-listing availability' },
@@ -5915,9 +6359,25 @@
         : filename;
     }
 
+    function cityScopeSlug(value) {
+      const slug = String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      if (slug === 'gronigen') return 'groningen';
+      return slug;
+    }
+
     function normaliseLocationDatasetPath(pathLike) {
-      const filename = String(pathLike || '').trim().split('/').pop() || '';
-      return filename ? `database/locations/${filename}` : '';
+      const raw = String(pathLike || '').trim();
+      if (!raw) return '';
+      if (/^city:/i.test(raw)) return `city:${cityScopeSlug(raw.slice(5))}`;
+      const filename = raw.split('/').pop() || '';
+      const label = /\.csv$/i.test(filename) ? locationDatasetLabel(filename) : raw;
+      const slug = cityScopeSlug(label);
+      return slug ? `city:${slug}` : '';
     }
 
     function csvValueIsYes(value) {
@@ -5927,75 +6387,81 @@
     async function loadLocationCatalog() {
       try {
         const index = await loadJson('database/locations/index.json');
-        const files = Array.isArray(index && index.files) ? index.files : [];
-        const sources = await Promise.all(
-          files.map(async file => ({
-            file,
-            path: normaliseLocationDatasetPath(file),
-            text: await loadText(`database/locations/${file}`).catch(() => '')
-          }))
-        );
+        const masterFile = String(index && index.master || 'coffeeshops.csv').trim();
+        const csvText = await loadText(`database/locations/${masterFile}`);
+        const lines = String(csvText || '').split(/\r?\n/).filter(line => line.trim());
+        if (lines.length < 2) throw new Error('Nationwide coffeeshop master is empty.');
+        const headers = parseCsvLine(lines[0]).map(value => normalise(String(value || '').replace(/^\uFEFF/, '')));
+        const keyIndex = headers.indexOf('shop_key');
+        const logoIndex = headers.indexOf('logo');
+        const nameIndex = headers.indexOf('name');
+        const cityIndex = headers.indexOf('city');
+        const citySlugIndex = headers.indexOf('city_slug');
+        const latIndex = headers.indexOf('lat');
+        const lngIndex = headers.indexOf('lng');
+        const statusIndex = headers.indexOf('status');
+        if (keyIndex < 0 || nameIndex < 0 || cityIndex < 0) {
+          throw new Error('Nationwide coffeeshop master is missing required columns.');
+        }
         const shopLogoByKey = new Map();
-        const datasets = [];
+        const shopCoordinatesByKey = new Map();
+        const shopCoordinatesByNameCity = new Map();
+        const datasetsBySlug = new Map();
+        const masterShops = [];
 
-        sources.forEach(source => {
-          const csvText = source.text;
-          const lines = String(csvText || '').split(/\r?\n/).filter(line => line.trim());
-          if (lines.length < 2) return;
-          const headers = parseCsvLine(lines[0]).map(normalise);
-          const keyIndex = headers.indexOf('shop_key');
-          const logoIndex = headers.indexOf('logo');
-          const nameIndex = headers.indexOf('name');
-          const cityIndex = headers.indexOf('city');
-          const coffeeshopIndex = headers.indexOf('coffeeshop');
-          const closedIndex = headers.indexOf('closed');
-          if (keyIndex < 0 && nameIndex < 0) return;
-
-          const shopKeys = new Set();
-          const nameCityKeys = new Set();
-          const fallbackCity = locationDatasetLabel(source.file);
-
-          lines.slice(1).forEach(line => {
-            const cells = parseCsvLine(line);
-            const shopKey = keyIndex >= 0 ? (cells[keyIndex] || '').trim() : '';
-            const isCoffeeshop = coffeeshopIndex >= 0
-              ? csvValueIsYes(cells[coffeeshopIndex])
-              : Boolean(shopKey);
-            const isClosed = closedIndex >= 0 && csvValueIsYes(cells[closedIndex]);
-            if (!isCoffeeshop || isClosed) return;
-
-            const logo = logoIndex >= 0 ? (cells[logoIndex] || '').trim() : '';
-            if (shopKey) {
-              shopKeys.add(shopKey);
-              if (logo && !shopLogoByKey.has(shopKey)) shopLogoByKey.set(shopKey, logo);
-            }
-
-            const shopName = nameIndex >= 0 ? (cells[nameIndex] || '').trim() : '';
-            const shopCity = cityIndex >= 0 ? (cells[cityIndex] || '').trim() : fallbackCity;
-            const nameCityKey = `${normalise(shopName)}|${normalise(shopCity)}`;
-            if (shopName && nameCityKey !== '|') nameCityKeys.add(nameCityKey);
-          });
-
-          if (shopKeys.size || nameCityKeys.size) {
-            datasets.push({
-              file: source.file,
-              path: source.path,
-              label: locationDatasetLabel(source.file),
-              shopKeys,
-              nameCityKeys
+        lines.slice(1).forEach(line => {
+          const cells = parseCsvLine(line);
+          const status = statusIndex >= 0 ? (cells[statusIndex] || '').trim().toLowerCase() : 'open';
+          if (status === 'closed') return;
+          const shopKey = (cells[keyIndex] || '').trim();
+          const shopName = (cells[nameIndex] || '').trim();
+          const shopCity = (cells[cityIndex] || '').trim();
+          const citySlug = cityScopeSlug(citySlugIndex >= 0 ? cells[citySlugIndex] : shopCity);
+          if (!shopKey || !shopName || !shopCity || !citySlug) return;
+          const logo = logoIndex >= 0 ? (cells[logoIndex] || '').trim() : '';
+          const latitude = latIndex >= 0 ? Number(cells[latIndex]) : NaN;
+          const longitude = lngIndex >= 0 ? Number(cells[lngIndex]) : NaN;
+          const coordinates = Number.isFinite(latitude) && Number.isFinite(longitude)
+            ? [latitude, longitude]
+            : null;
+          const nameCityKey = `${normalise(shopName)}|${normalise(shopCity)}`;
+          if (!datasetsBySlug.has(citySlug)) {
+            datasetsBySlug.set(citySlug, {
+              file: masterFile,
+              path: `city:${citySlug}`,
+              label: shopCity,
+              slug: citySlug,
+              shopKeys: new Set(),
+              nameCityKeys: new Set()
             });
           }
+          const dataset = datasetsBySlug.get(citySlug);
+          dataset.shopKeys.add(shopKey);
+          dataset.nameCityKeys.add(nameCityKey);
+          if (logo) shopLogoByKey.set(shopKey, logo);
+          if (coordinates) {
+            shopCoordinatesByKey.set(shopKey, coordinates);
+            shopCoordinatesByNameCity.set(nameCityKey, coordinates);
+          }
+          masterShops.push({ shopKey, name: shopName, city: shopCity, citySlug, coordinates, logo });
         });
 
-        return { shopLogoByKey, datasets };
+        const datasets = Array.from(datasetsBySlug.values())
+          .sort((a, b) => compareText(a.label, b.label));
+        return { shopLogoByKey, shopCoordinatesByKey, shopCoordinatesByNameCity, datasets, masterShops };
       } catch (_err) {
-        return { shopLogoByKey: new Map(), datasets: [] };
+        return {
+          shopLogoByKey: new Map(),
+          shopCoordinatesByKey: new Map(),
+          shopCoordinatesByNameCity: new Map(),
+          datasets: []
+        };
       }
     }
 
     function storedLocationDatasetPath() {
       try {
-        const raw = localStorage.getItem('budfinder_location_data_csv_path');
+        const raw = localStorage.getItem('budfinder_database_city_scope');
         if (!raw) return '';
         try {
           return normaliseLocationDatasetPath(JSON.parse(raw));
@@ -6009,10 +6475,9 @@
 
     function saveLocationDatasetPath(pathLike) {
       const path = normaliseLocationDatasetPath(pathLike);
-      if (!path) return;
       try {
-        localStorage.setItem('budfinder_location_data_csv_path', JSON.stringify(path));
-        localStorage.setItem('budfinder_location_data_user_selected', JSON.stringify(true));
+        if (path) localStorage.setItem('budfinder_database_city_scope', JSON.stringify(path));
+        else localStorage.removeItem('budfinder_database_city_scope');
       } catch (_err) {
         // Storage is optional; the active page still uses the selected dataset.
       }
@@ -6022,8 +6487,7 @@
       const available = Array.isArray(datasets) ? datasets : [];
       const stored = storedLocationDatasetPath();
       const saved = available.find(dataset => dataset.path === stored);
-      if (saved) return saved;
-      return available.find(dataset => normalise(dataset.file) === 'amsterdamloc.csv') || available[0] || null;
+      return saved || null;
     }
 
     function activeLocationDataset() {
@@ -6039,29 +6503,53 @@
     }
 
     function populateLocationDatasetFilter() {
-      if (!els.locationDataset) return;
-      if (!state.locationDatasets.length) {
-        els.locationDataset.innerHTML = '<option value="">All available data</option>';
-        els.locationDataset.disabled = true;
-        return;
-      }
-      els.locationDataset.disabled = false;
-      els.locationDataset.innerHTML = state.locationDatasets.map(dataset =>
+      const options = '<option value="">All Netherlands</option>' + state.locationDatasets.map(dataset =>
         `<option value="${escapeHtmlAttr(dataset.path)}"${dataset.path === state.activeLocationDataset ? ' selected' : ''}>${escapeHtml(dataset.label)}</option>`
       ).join('');
+      [els.locationDataset, els.searchCityScope].filter(Boolean).forEach(select => {
+        select.innerHTML = options;
+        select.value = state.activeLocationDataset || '';
+        select.disabled = !state.locationDatasets.length;
+      });
     }
 
     function applyLocationDatasetScope(pathLike, options = {}) {
       const path = normaliseLocationDatasetPath(pathLike);
-      const dataset = state.locationDatasets.find(item => item.path === path) ||
-        pickDefaultLocationDataset(state.locationDatasets);
+      const dataset = state.locationDatasets.find(item => item.path === path) || null;
       state.activeLocationDataset = dataset ? dataset.path : '';
+      state.searchScope = dataset ? 'city' : 'all';
       state.offerings = dataset
         ? state.allOfferings.filter(item => offeringBelongsToDataset(item, dataset))
         : state.allOfferings.slice();
       state.listingCheckBatch = buildListingCheckBatchSignal(state.offerings);
-      if (options.persist !== false && dataset) saveLocationDatasetPath(dataset.path);
+      if (options.persist !== false) saveLocationDatasetPath(dataset ? dataset.path : '');
       populateLocationDatasetFilter();
+    }
+
+    function syncSearchScopeControls() {
+      [els.locationDataset, els.searchCityScope].filter(Boolean).forEach(select => {
+        select.value = state.activeLocationDataset || '';
+      });
+    }
+
+    function setSearchScope(pathLike) {
+      applyLocationDatasetScope(pathLike, { persist: true });
+      state.activeShopId = '';
+      state.shopMenuExpanded = false;
+      state.detail = null;
+      discoverySuggestionSelection = null;
+      buildStats();
+      populateFilters();
+      setupPriceBand();
+      resetStrainWindow();
+      syncSearchScopeControls();
+      render();
+      if (els.status) {
+        const scopeLabel = state.searchScope === 'all'
+          ? 'all Netherlands'
+          : (activeLocationDataset()?.label || 'the selected city');
+        els.status.textContent = `Searching ${scopeLabel}: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.`;
+      }
     }
 
     function strainImageCandidates(filename) {
@@ -6190,9 +6678,7 @@
     }
 
     function populateFilters() {
-      const cities = unique(state.offerings.map(item => item.shop_city)).sort(compareText);
       const types = unique(state.offerings.map(item => item.base_type)).sort(compareText);
-      els.city.innerHTML = '<option value="">All cities</option>' + cities.map(city => `<option value="${escapeHtml(city)}">${escapeHtml(city)}</option>`).join('');
       els.type.innerHTML = '<option value="">All types</option>' + types.map(type => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join('');
     }
 
@@ -6232,8 +6718,9 @@
       syncPriceBandLabels();
       return {
         q: normalise(els.search.value),
-        city: els.city.value,
+        city: '',
         type: els.type.value,
+        legal: els.legal.value,
         cali: els.cali.value,
         priceMin: Number(els.priceMin.value),
         priceMax: Number(els.priceMax.value),
@@ -6246,6 +6733,7 @@
     function offeringMatchesBaseFilters(item, filters) {
       if (filters.city && item.shop_city !== filters.city) return false;
       if (filters.type && item.base_type !== filters.type) return false;
+      if (filters.legal !== '' && String(Number(item.is_legal) || 0) !== filters.legal) return false;
       if (filters.cali !== '' && String(Number(item.is_cali) || 0) !== filters.cali) return false;
       const amount = Number(item.price_amount);
       if (Number.isFinite(amount)) {
@@ -6423,7 +6911,9 @@
         item && item.shop_id,
         item && (item.strain_id || item.strain_name_normalised || item.strain_name),
         item && item.price_amount,
-        item && item.price_unit
+        item && item.price_unit,
+        item && item.package_weight_g,
+        item && item.is_legal
       ].map(value => String(value || '').trim()).join('|');
     }
 
@@ -6710,6 +7200,10 @@
       const params = new URLSearchParams();
       params.set('shops', ids.join(','));
       params.set('source', 'explorer');
+      const requestedCity = String((context && context.city) || '').trim();
+      const cities = unique(ids.map(id => getShopMeta(id).city).filter(Boolean));
+      const city = requestedCity || (cities.length === 1 ? cities[0] : '');
+      if (city) params.set('city', city);
       const strainName = String((context && context.strainName) || '').trim();
       if (strainName) params.set('strain', strainName);
       return `map.html?${params.toString()}`;
@@ -6718,8 +7212,10 @@
     function buildShopMapLink(shopId, context = {}) {
       const id = String(shopId || '').trim();
       if (!id || !isBrowsableShopId(id)) return 'map.html';
+      const meta = getShopMeta(id);
       return mapUrlForShopIds([id], {
         ...context,
+        city: context.city || meta.city || '',
         strainShopIds: Array.isArray(context.strainShopIds) ? context.strainShopIds : [id]
       }).replace('source=explorer', 'source=database');
     }
@@ -6742,61 +7238,11 @@
 
     function updateMapToggleHref() {
       if (!els.mapToggle) return;
-
-      const detailStrain = state.detail && state.detail.type === 'strain'
-        ? getStatByKey(state.detail.key)
-        : null;
-      const query = els.search ? els.search.value.trim() : '';
-      const queryStrain = !detailStrain && query && universalSearchIntent(query) !== 'shops'
-        ? pickPriceGuideStat(getFilteredStats())
-        : null;
-      const selectedStrain = !detailStrain && !queryStrain && state.selected.length === 1
-        ? getStatByKey(state.selected[0])
-        : null;
-      const activeStrain = detailStrain || queryStrain || selectedStrain;
-      const strainShopIds = activeStrain
-        ? shopIdsForListings(visibleOfferingsForStat(activeStrain))
-        : [];
-      const strainContext = activeStrain
-        ? { strainName: activeStrain.name, strainShopIds }
-        : {};
-      const activeShopId = state.detail && state.detail.type === 'shop'
-        ? String(state.detail.shopId || '')
-        : state.view === 'shops'
-          ? String(state.activeShopId || '')
-          : '';
-
-      if (activeShopId && isBrowsableShopId(activeShopId)) {
-        els.mapToggle.href = buildShopMapLink(activeShopId, strainContext);
-        const shop = getShopMeta(activeShopId);
-        els.mapToggle.title = activeStrain
-          ? `Continue with ${activeStrain.name} at ${shop.name || 'this coffeeshop'} on the map`
-          : `View ${shop.name || 'this coffeeshop'} on the map`;
-        return;
-      }
-
-      if (activeStrain && strainShopIds.length) {
-        els.mapToggle.href = mapUrlForShopIds(strainShopIds, strainContext);
-        els.mapToggle.title = `Continue with ${activeStrain.name} on the map`;
-        return;
-      }
-
-      if (state.selectedShopIds.length) {
-        els.mapToggle.href = mapUrlForShopIds(state.selectedShopIds);
-        els.mapToggle.title = `Continue with ${state.selectedShopIds.length} shortlisted coffeeshop${state.selectedShopIds.length === 1 ? '' : 's'} on the map`;
-        return;
-      }
-
-      if (state.selected.length) {
-        const wantedStats = selectedStats();
-        const wantedShopIds = sanitizeShopIds(wantedStats.flatMap(stat => shopIdsForListings(visibleOfferingsForStat(stat))));
-        els.mapToggle.href = mapUrlForShopIds(wantedShopIds);
-        els.mapToggle.title = `Show matches for ${state.selected.length} saved strain${state.selected.length === 1 ? '' : 's'} on the map`;
-        return;
-      }
-
+      // The primary navigation returns to the user's previous map session.
+      // Contextual actions such as "View on map" continue to use explicit
+      // shop/strain handoffs through mapUrlForShopIds().
       els.mapToggle.href = 'map.html';
-      els.mapToggle.title = 'Open the full map';
+      els.mapToggle.title = 'Return to your previous map view';
     }
 
     function goToMapWithSelectedShops() {
@@ -6919,6 +7365,15 @@
       const q = normaliseSearchText(els.search.value);
       if (!q) return null;
       const pool = Array.isArray(filteredStats) && filteredStats.length ? filteredStats : state.strainStats;
+      if (window.BudfinderSearch) {
+        const best = window.BudfinderSearch.rank(q, pool, {
+          getLabel: stat => stat && stat.name,
+          getAliases: stat => [stat && stat.key],
+          threshold: 0.72,
+          limit: 1
+        })[0];
+        return best ? best.item : null;
+      }
       return pool.find(stat => normaliseSearchText(stat.name) === q || normaliseSearchText(stat.key) === q) ||
         pool.find(stat => normaliseSearchText(stat.name).startsWith(q)) ||
         pool.find(stat => normaliseSearchText(stat.name).includes(q)) ||
@@ -6938,13 +7393,12 @@
     function listingCardHtml(item, profile, options = {}) {
       const shopId = String(item.shop_id || '');
       const price = pricePerGram(item);
-      const priceLabel = Number.isFinite(price)
-        ? money(price, item.price_currency, item.price_unit)
-        : 'Price unknown';
+      const priceLabel = packageListingPriceLabel(item);
       const meta = [
         item.shop_city || '',
         item.base_type || '',
         Number(item.is_cali) === 1 ? 'Cali' : '',
+        Number(item.is_legal) === 1 ? 'Legal project' : '',
         item.grower ? `Grower: ${item.grower}` : ''
       ].filter(Boolean).join(' · ');
       const notes = String(item.notes || '').trim();
@@ -6972,6 +7426,7 @@
             ${priceJudgementBadgeHtml(price, profile && profile.median)}
             ${ageBadgeHtml(displayListingDateValue(item))}
             ${item.strain_name ? `<span class="chip">${escapeHtml(item.strain_name)}</span>` : ''}
+            ${Number(item.is_legal) === 1 ? '<span class="chip deal-chip">Legal project</span>' : ''}
           </div>
           ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
           <div class="listing-card-actions">
@@ -7103,32 +7558,66 @@
         const shopId = String(item.shop_id || `${item.shop_name}-${item.shop_city}`);
         const shopMeta = state.shopById.get(String(item.shop_id)) || {};
         if (!grouped.has(shopId)) {
+          const shopName = item.shop_name || shopMeta.name || 'Unknown shop';
+          const city = item.shop_city || shopMeta.city || 'Unknown city';
+          const shopKey = item.shop_key || shopMeta.shop_key || '';
+          const nameCityKey = `${normalise(shopName)}|${normalise(city)}`;
           grouped.set(shopId, {
             shopId,
-            shopName: item.shop_name || shopMeta.name || 'Unknown shop',
-            city: item.shop_city || shopMeta.city || 'Unknown city',
-            shopKey: item.shop_key || shopMeta.shop_key || '',
+            shopName,
+            city,
+            shopKey,
             shopUrl: shopMeta.shop_url || '',
+            coordinates: state.shopCoordinatesByKey.get(shopKey) || state.shopCoordinatesByNameCity.get(nameCityKey) || null,
             offerings: []
           });
         }
         grouped.get(shopId).offerings.push(item);
       });
-      return Array.from(grouped.values()).sort(compareShopName);
+      return Array.from(grouped.values()).map(row => {
+        const priced = row.offerings.map(pricePerGram).filter(Number.isFinite);
+        const latestTime = latestListingTime(row.offerings);
+        return {
+          ...row,
+          averagePrice: priced.length ? average(priced) : null,
+          latestTime,
+          latestDate: latestTime ? new Date(latestTime).toISOString() : '',
+          freshness: menuAgeInfo(latestTime ? new Date(latestTime).toISOString() : '')
+        };
+      }).sort(compareShopName);
     }
 
-    const DISCOVERY_AREAS = [
+    const AMSTERDAM_DISCOVERY_AREAS = [
       { name: 'Centrum', city: 'Amsterdam', note: 'Canals, old centre and central station' },
       { name: 'Jordaan', city: 'Amsterdam', note: 'West of the canal ring' },
       { name: 'De Pijp', city: 'Amsterdam', note: 'South of the centre' },
       { name: 'Oud-West', city: 'Amsterdam', note: 'West of Vondelpark' },
       { name: 'Oost', city: 'Amsterdam', note: 'East Amsterdam' },
-      { name: 'Noord', city: 'Amsterdam', note: 'Across the IJ' },
-      { name: 'Alkmaar', city: 'Alkmaar', note: 'Explore the Alkmaar map' },
-      { name: 'Utrecht', city: 'Utrecht', note: 'Explore the Utrecht map' }
+      { name: 'Noord', city: 'Amsterdam', note: 'Across the IJ' }
     ];
 
+    function discoveryAreasForScope() {
+      const dataset = activeLocationDataset();
+      if (dataset) {
+        if (dataset.slug === 'amsterdam') return AMSTERDAM_DISCOVERY_AREAS;
+        return [{
+          name: dataset.label,
+          city: dataset.label,
+          note: `Explore the ${dataset.label} map`
+        }];
+      }
+      const cityAreas = state.locationDatasets.map(city => ({
+        name: city.label,
+        city: city.label,
+        note: `Explore the ${city.label} map`
+      }));
+      return [...AMSTERDAM_DISCOVERY_AREAS, ...cityAreas.filter(city => city.city !== 'Amsterdam')];
+    }
+
     function discoveryMatchScore(value, query) {
+      if (window.BudfinderSearch) {
+        return Math.round(window.BudfinderSearch.score(value, query) * 100);
+      }
       const text = normaliseSearchText(value);
       const q = normaliseSearchText(query);
       if (!text || !q) return 0;
@@ -7200,12 +7689,16 @@
     }
 
     function discoveryShopCardHtml(row) {
+      const averagePrice = row.averagePrice != null && Number.isFinite(Number(row.averagePrice)) ? `Avg ${money(row.averagePrice)}` : 'Price unknown';
+      const freshness = row.freshness || menuAgeInfo(row.latestDate);
+      const distance = Number.isFinite(row.distanceMeters) ? ` · ${formatDiscoveryDistance(row.distanceMeters)}` : '';
       return `
         <button class="discovery-card" type="button" data-discovery-shop="${escapeHtmlAttr(row.shopId)}">
           ${getShopLogoHtml(row.shopKey, row.shopName)}
           <span class="discovery-card-copy">
             <strong>${escapeHtml(row.shopName)}</strong>
             <small>${escapeHtml(row.city || 'City unknown')} · ${row.offerings.length.toLocaleString()} known listing${row.offerings.length === 1 ? '' : 's'}</small>
+            <small>${escapeHtml(averagePrice)} · ${escapeHtml(freshness.label)}${escapeHtml(distance)}</small>
             ${categoryPillsHtml(row)}
           </span>
         </button>
@@ -7213,17 +7706,120 @@
     }
 
     function discoveryStrainCardHtml(stat) {
-      const averagePrice = Number.isFinite(Number(stat.avg)) ? money(stat.avg) : 'Price unknown';
+      const averagePrice = stat.avg != null && Number.isFinite(Number(stat.avg)) ? money(stat.avg) : 'Price unknown';
       const typeLabel = stat.topType ? ` · ${stat.topType}` : '';
+      const freshness = stat.freshness || menuAgeInfo(stat.latestDate || '');
       return `
         <button class="discovery-card" type="button" data-discovery-strain="${escapeHtmlAttr(stat.key)}">
           ${getStrainImageHtml(stat.name)}
           <span class="discovery-card-copy">
             <strong>${escapeHtml(stat.name)}</strong>
             <small>${stat.shopCount.toLocaleString()} shop${stat.shopCount === 1 ? '' : 's'} · Avg ${escapeHtml(averagePrice)}${escapeHtml(typeLabel)}</small>
+            <small>${escapeHtml(freshness.label)} menu signal</small>
           </span>
         </button>
       `;
+    }
+
+    function discoveryGrowerCardHtml(row) {
+      return `
+        <button class="discovery-card" type="button" data-discovery-grower="${escapeHtmlAttr(row.name)}">
+          <span class="discovery-area-icon" aria-hidden="true">◎</span>
+          <span class="discovery-card-copy">
+            <strong>${escapeHtml(row.name)}</strong>
+            <small>Grower · ${row.strainCount.toLocaleString()} strain${row.strainCount === 1 ? '' : 's'}</small>
+            <small>${row.shopCount.toLocaleString()} shop${row.shopCount === 1 ? '' : 's'} in this search area</small>
+          </span>
+        </button>
+      `;
+    }
+
+    function discoveryDistanceMetres(from, to) {
+      if (!Array.isArray(from) || !Array.isArray(to) || from.length < 2 || to.length < 2) return Infinity;
+      const radians = value => Number(value) * Math.PI / 180;
+      const lat1 = radians(from[0]);
+      const lat2 = radians(to[0]);
+      const deltaLat = radians(Number(to[0]) - Number(from[0]));
+      const deltaLng = radians(Number(to[1]) - Number(from[1]));
+      const value = Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2;
+      return 6371e3 * 2 * Math.atan2(Math.sqrt(value), Math.sqrt(1 - value));
+    }
+
+    function discoveryDistanceUnit() {
+      const preference = window.BudfinderPersonalisation && window.BudfinderPersonalisation.read
+        ? window.BudfinderPersonalisation.read().distanceUnit
+        : '';
+      return preference === 'miles' ? 'miles' : 'metric';
+    }
+
+    function formatDiscoveryDistance(metres) {
+      if (!Number.isFinite(metres)) return '';
+      if (discoveryDistanceUnit() === 'miles') return `${(metres / 1609.344).toFixed(1)} mi`;
+      return metres >= 1000 ? `${(metres / 1000).toFixed(1)} km` : `${Math.round(metres)} m`;
+    }
+
+    function discoveryAveragePrice(item, isShopBrowser) {
+      const raw = isShopBrowser ? item.averagePrice : item.avg;
+      return raw == null || raw === '' ? NaN : Number(raw);
+    }
+
+    function discoveryFreshness(item, isShopBrowser) {
+      if (isShopBrowser) return item.freshness || menuAgeInfo(item.latestDate || '');
+      const latestTime = latestListingTime(item.offerings || []);
+      return menuAgeInfo(latestTime ? new Date(latestTime).toISOString() : '');
+    }
+
+    function discoveryTypeMatches(item, isShopBrowser, type) {
+      if (!type || type === 'all') return true;
+      if (isShopBrowser) return (item.offerings || []).some(row => normalise(row.base_type) === type);
+      return normalise(item.topType) === type || (item.types instanceof Map && item.types.has(type));
+    }
+
+    function discoveryPriceMatches(item, isShopBrowser, priceFilter) {
+      if (!priceFilter || priceFilter === 'all') return true;
+      const price = discoveryAveragePrice(item, isShopBrowser);
+      if (priceFilter === 'unknown') return !Number.isFinite(price);
+      if (!Number.isFinite(price)) return false;
+      if (priceFilter === 'under10') return price < 10;
+      if (priceFilter === 'under15') return price < 15;
+      if (priceFilter === 'under20') return price < 20;
+      if (priceFilter === 'over20') return price >= 20;
+      return true;
+    }
+
+    function syncDiscoveryBrowserSortOptions(isShopBrowser) {
+      if (!els.discoveryBrowserSort) return;
+      const options = isShopBrowser
+        ? [
+          ['name', 'Name · A–Z'],
+          ['freshness', 'Menu age · freshest'],
+          ['price-low', 'Average price · low to high'],
+          ['price-high', 'Average price · high to low'],
+          ['stocked', 'Menu size · most listings'],
+          ['distance', 'Distance · nearest to me']
+        ]
+        : [
+          ['name', 'Name · A–Z'],
+          ['freshness', 'Menu age · freshest'],
+          ['price-low', 'Average price · low to high'],
+          ['price-high', 'Average price · high to low'],
+          ['stocked', 'Availability · most shops']
+        ];
+      if (!options.some(([value]) => value === state.discoveryBrowserSort)) state.discoveryBrowserSort = 'name';
+      els.discoveryBrowserSort.innerHTML = options
+        .map(([value, label]) => `<option value="${value}"${value === state.discoveryBrowserSort ? ' selected' : ''}>${label}</option>`)
+        .join('');
+    }
+
+    function discoverySortLabel(sort) {
+      return {
+        name: 'A–Z',
+        freshness: 'Freshest first',
+        'price-low': 'Lowest average price first',
+        'price-high': 'Highest average price first',
+        stocked: 'Most stocked first',
+        distance: 'Nearest first'
+      }[sort] || 'A–Z';
     }
 
     let discoverySuggestionSelection = null;
@@ -7240,7 +7836,7 @@
     function ensureDiscoverySuggestionSelection(shopRows) {
       if (discoverySuggestionSelection) return discoverySuggestionSelection;
       discoverySuggestionSelection = {
-        areas: randomSample(DISCOVERY_AREAS, 3),
+        areas: randomSample(discoveryAreasForScope(), 3),
         shopIds: randomSample(shopRows.filter(row => row.offerings.length), 3).map(row => row.shopId),
         strainKeys: randomSample(state.strainStats.filter(stat => stat.shopCount > 0), 3).map(stat => stat.key)
       };
@@ -7273,18 +7869,55 @@
       }
 
       const isShopBrowser = browserType === 'shops';
+      syncDiscoveryBrowserSortOptions(isShopBrowser);
       const query = normaliseSearchText(els.discoveryBrowserSearch ? els.discoveryBrowserSearch.value : '');
-      const allItems = isShopBrowser
+      const allItems = (isShopBrowser
         ? shopRowsFromOfferings(state.offerings)
-        : state.strainStats.slice().sort(compareStrainName);
+        : state.strainStats.map(stat => {
+          const latestTime = latestListingTime(stat.offerings || []);
+          return {
+            ...stat,
+            latestTime,
+            latestDate: latestTime ? new Date(latestTime).toISOString() : '',
+            freshness: menuAgeInfo(latestTime ? new Date(latestTime).toISOString() : '')
+          };
+        }))
+        .map(item => isShopBrowser && state.discoveryBrowserPosition && Array.isArray(item.coordinates)
+          ? { ...item, distanceMeters: discoveryDistanceMetres(state.discoveryBrowserPosition, item.coordinates) }
+          : item);
       const filteredItems = allItems.filter(item => {
-        if (!query) return true;
-        if (isShopBrowser) {
-          return [item.shopName, item.city, item.shopKey]
-            .some(value => normaliseSearchText(value).includes(query));
+        const searchMatches = !query || (isShopBrowser
+          ? [item.shopName, item.city, item.shopKey].some(value => normaliseSearchText(value).includes(query))
+          : [item.name, item.topType].some(value => normaliseSearchText(value).includes(query)));
+        if (!searchMatches) return false;
+        const freshness = discoveryFreshness(item, isShopBrowser);
+        if (state.discoveryBrowserFreshness !== 'all' && freshness.bucket !== state.discoveryBrowserFreshness) return false;
+        if (!discoveryPriceMatches(item, isShopBrowser, state.discoveryBrowserPrice)) return false;
+        return discoveryTypeMatches(item, isShopBrowser, state.discoveryBrowserType);
+      }).sort((a, b) => {
+        const sort = state.discoveryBrowserSort;
+        if (sort === 'freshness') {
+          return discoveryFreshness(a, isShopBrowser).days - discoveryFreshness(b, isShopBrowser).days ||
+            (isShopBrowser ? compareShopName(a, b) : compareStrainName(a, b));
         }
-        return [item.name, item.topType]
-          .some(value => normaliseSearchText(value).includes(query));
+        if (sort === 'price-low' || sort === 'price-high') {
+          const aPrice = discoveryAveragePrice(a, isShopBrowser);
+          const bPrice = discoveryAveragePrice(b, isShopBrowser);
+          const aComparable = Number.isFinite(aPrice) ? aPrice : (sort === 'price-low' ? Infinity : -Infinity);
+          const bComparable = Number.isFinite(bPrice) ? bPrice : (sort === 'price-low' ? Infinity : -Infinity);
+          const difference = sort === 'price-low' ? aComparable - bComparable : bComparable - aComparable;
+          return difference || (isShopBrowser ? compareShopName(a, b) : compareStrainName(a, b));
+        }
+        if (sort === 'stocked') {
+          const difference = isShopBrowser
+            ? b.offerings.length - a.offerings.length
+            : b.shopCount - a.shopCount;
+          return difference || (isShopBrowser ? compareShopName(a, b) : compareStrainName(a, b));
+        }
+        if (sort === 'distance') {
+          return (a.distanceMeters ?? Infinity) - (b.distanceMeters ?? Infinity) || compareShopName(a, b);
+        }
+        return isShopBrowser ? compareShopName(a, b) : compareStrainName(a, b);
       });
       const visibleItems = filteredItems.slice(0, state.discoveryBrowserLimit);
       const remaining = Math.max(0, filteredItems.length - visibleItems.length);
@@ -7292,8 +7925,8 @@
       els.discoveryBrowser.hidden = false;
       els.discoveryBrowserTitle.textContent = isShopBrowser ? 'Coffeeshop browser' : 'Strain browser';
       els.discoveryBrowserCopy.textContent = isShopBrowser
-        ? 'Browse coffeeshops A–Z. Select a card to open that shop’s known menu.'
-        : 'Browse every available strain A–Z. Select a card to open prices and stocking shops.';
+        ? 'Browse every coffeeshop, then sort and filter the full set without leaving the database.'
+        : 'Browse every available strain, then sort and filter the full set without leaving the database.';
       els.discoveryBrowserSearchLabel.textContent = isShopBrowser ? 'Find a coffeeshop' : 'Find a strain';
       els.discoveryBrowserSearch.placeholder = isShopBrowser
         ? 'Try Abraxas, Family First, or Amsterdam...'
@@ -7301,6 +7934,10 @@
       els.discoveryBrowserCount.textContent = query
         ? `${filteredItems.length.toLocaleString()} match${filteredItems.length === 1 ? '' : 'es'}`
         : `${filteredItems.length.toLocaleString()} available`;
+      if (els.discoveryBrowserOrder) els.discoveryBrowserOrder.textContent = discoverySortLabel(state.discoveryBrowserSort);
+      if (els.discoveryBrowserFreshness) els.discoveryBrowserFreshness.value = state.discoveryBrowserFreshness;
+      if (els.discoveryBrowserPrice) els.discoveryBrowserPrice.value = state.discoveryBrowserPrice;
+      if (els.discoveryBrowserType) els.discoveryBrowserType.value = state.discoveryBrowserType;
       els.discoveryBrowserGrid.innerHTML = visibleItems.length
         ? visibleItems.map(isShopBrowser ? discoveryShopCardHtml : discoveryStrainCardHtml).join('')
         : `<div class="discovery-empty">No ${isShopBrowser ? 'coffeeshops' : 'strains'} match this filter.</div>`;
@@ -7315,6 +7952,10 @@
       const browserType = type === 'shops' ? 'shops' : 'strains';
       state.discoveryBrowser = browserType;
       state.discoveryBrowserLimit = 48;
+      state.discoveryBrowserSort = 'name';
+      state.discoveryBrowserFreshness = 'all';
+      state.discoveryBrowserPrice = 'all';
+      state.discoveryBrowserType = 'all';
       state.detail = null;
       state.detailReturnStack = [];
       if (els.discoveryBrowserSearch) els.discoveryBrowserSearch.value = '';
@@ -7341,6 +7982,43 @@
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         if (els.search) els.search.focus({ preventScroll: true });
       }, 0);
+    }
+
+    function setDiscoveryBrowserFilterStatus(message) {
+      if (els.discoveryBrowserFilterStatus) els.discoveryBrowserFilterStatus.textContent = message || '';
+    }
+
+    function requestDiscoveryBrowserPosition() {
+      if (!navigator.geolocation) {
+        state.discoveryBrowserSort = 'name';
+        setDiscoveryBrowserFilterStatus('Distance sorting is unavailable in this browser.');
+        renderDiscoveryBrowser();
+        return;
+      }
+      setDiscoveryBrowserFilterStatus('Getting your location for distance sorting…');
+      navigator.geolocation.getCurrentPosition(position => {
+        state.discoveryBrowserPosition = [position.coords.latitude, position.coords.longitude];
+        state.discoveryBrowserSort = 'distance';
+        state.discoveryBrowserLimit = 48;
+        setDiscoveryBrowserFilterStatus('Using your current location for this browser view only.');
+        renderDiscoveryBrowser();
+      }, () => {
+        state.discoveryBrowserSort = 'name';
+        if (els.discoveryBrowserSort) els.discoveryBrowserSort.value = 'name';
+        setDiscoveryBrowserFilterStatus('Location was not available, so results remain A–Z.');
+        renderDiscoveryBrowser();
+      }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+    }
+
+    function resetDiscoveryBrowserFilters() {
+      state.discoveryBrowserSort = 'name';
+      state.discoveryBrowserFreshness = 'all';
+      state.discoveryBrowserPrice = 'all';
+      state.discoveryBrowserType = 'all';
+      state.discoveryBrowserLimit = 48;
+      if (els.discoveryBrowserSearch) els.discoveryBrowserSearch.value = '';
+      setDiscoveryBrowserFilterStatus('Filters reset.');
+      renderDiscoveryBrowser();
     }
 
     function renderDiscovery() {
@@ -7374,7 +8052,7 @@
       els.discoverySuggestions.hidden = true;
       els.discoveryResults.hidden = false;
 
-      const areaMatches = DISCOVERY_AREAS
+      const areaMatches = discoveryAreasForScope()
         .map(area => ({
           area,
           score: Math.max(
@@ -7400,21 +8078,44 @@
         .sort((a, b) => b.score - a.score || b.row.offerings.length - a.row.offerings.length || compareShopName(a.row, b.row))
         .map(match => match.row);
 
+      const legalQuery = ['legal', 'legal weed', 'legal cannabis', 'regulated', 'wietexperiment']
+        .includes(normaliseSearchText(query));
+      const resolvedGrower = resolvedGrowerForSearch(query);
+      const resolvedGrowerKey = normaliseSearchText(resolvedGrower);
       const strainMatches = state.strainStats
         .map(stat => ({
           stat,
           score: Math.max(
-            discoveryMatchScore(stat.name, query),
-            discoveryMatchScore(stat.topType, query)
+            resolvedGrower
+              ? (stat.offerings.some(item => normaliseSearchText(item && item.grower) === resolvedGrowerKey) ? 96 : 0)
+              : discoveryMatchScore(stat.name, query),
+            resolvedGrower ? 0 : discoveryMatchScore(stat.topType, query),
+            legalQuery && stat.offerings.some(item => Number(item && item.is_legal) === 1) ? 65 : 0
           )
         }))
         .filter(match => match.score > 0)
         .sort((a, b) => b.score - a.score || b.stat.shopCount - a.stat.shopCount || compareStrainName(a.stat, b.stat))
         .map(match => match.stat);
 
+      const growers = new Map();
+      state.offerings.forEach(item => {
+        const name = String(item && item.grower || '').trim();
+        if (!name || (resolvedGrower
+          ? normaliseSearchText(name) !== resolvedGrowerKey
+          : discoveryMatchScore(name, query) <= 0)) return;
+        const key = normaliseSearchText(name);
+        if (!growers.has(key)) growers.set(key, { name, shops: new Set(), strains: new Set() });
+        const row = growers.get(key);
+        row.shops.add(String(item.shop_id || `${item.shop_name}|${item.shop_city}`));
+        row.strains.add(item.strain_name_normalised || normalise(item.strain_name));
+      });
+      const growerMatches = Array.from(growers.values())
+        .map(row => ({ name: row.name, shopCount: row.shops.size, strainCount: row.strains.size }))
+        .sort((a, b) => b.shopCount - a.shopCount || compareText(a.name, b.name));
+
       const visibleShopMatches = shopMatches.slice(0, 20);
       const visibleStrainMatches = strainMatches.slice(0, 100);
-      const totalMatches = areaMatches.length + shopMatches.length + strainMatches.length;
+      const totalMatches = areaMatches.length + shopMatches.length + strainMatches.length + growerMatches.length;
       if (els.discoveryResultsTitle) els.discoveryResultsTitle.textContent = `Matches for “${query}”`;
       if (els.discoveryResultsCount) {
         els.discoveryResultsCount.textContent = `${totalMatches.toLocaleString()} result${totalMatches === 1 ? '' : 's'}`;
@@ -7431,6 +8132,12 @@
           'is-results'
         ),
         discoveryGroupHtml(
+          'Growers',
+          `${growerMatches.length.toLocaleString()} found`,
+          growerMatches.slice(0, 30).map(discoveryGrowerCardHtml),
+          'is-results'
+        ),
+        discoveryGroupHtml(
           'Strains',
           strainMatches.length > visibleStrainMatches.length
             ? `Showing ${visibleStrainMatches.length} of ${strainMatches.length}`
@@ -7442,7 +8149,7 @@
 
       els.discoveryResultGroups.innerHTML = groups.length
         ? groups.join('')
-        : '<div class="discovery-empty">No locations, coffeeshops or strains match yet. Try a shorter name.</div>';
+        : '<div class="discovery-empty">No locations, coffeeshops, growers or strains match yet. Try a shorter name.</div>';
     }
 
     function shopBrowserRows() {
@@ -7496,12 +8203,11 @@
       const stat = getStatByKey(item.strain_name_normalised || normalise(item.strain_name));
       const profile = priceProfileForListings(stat ? stat.offerings : [item]);
       const price = pricePerGram(item);
-      const priceLabel = Number.isFinite(price)
-        ? money(price, item.price_currency, item.price_unit)
-        : 'Price unknown';
+      const priceLabel = packageListingPriceLabel(item);
       const meta = [
         item.base_type || 'Unknown category',
         Number(item.is_cali) === 1 ? 'Cali' : '',
+        Number(item.is_legal) === 1 ? 'Legal project' : '',
         item.grower ? `Grower: ${item.grower}` : ''
       ].filter(Boolean).join(' · ');
       const notes = String(item.notes || '').trim();
@@ -7520,6 +8226,7 @@
           <div class="chip-row">
             ${averageComparisonBadgeHtml(price, profile.average)}
             ${ageBadgeHtml(displayListingDateValue(item))}
+            ${Number(item.is_legal) === 1 ? '<span class="chip deal-chip">Legal project</span>' : ''}
           </div>
           ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
         </article>
@@ -7900,7 +8607,7 @@
 
       if (!Number.isFinite(newestTime) || newestTime <= 0) {
         els.strainsSummary.textContent = 'No strains in the current filters have a known menu-change date yet.';
-        els.strainGrid.innerHTML = '<div class="empty">Fresh-data mode only uses known menu-change dates. Try another filter, or switch to Best value to browse all known strains.</div>';
+        els.strainGrid.innerHTML = '<div class="empty">Fresh mode only uses known menu-change dates. Try another filter, or switch to Best value to browse all known strains.</div>';
         return;
       }
 
@@ -7961,7 +8668,7 @@
             </div>
             <div class="fresh-shop-date">
               <strong>${escapeHtml(formatDate(row.latestDate))}</strong>
-              <span>${freshness ? escapeHtml(freshness.label) : 'Fresh data drop'}</span>
+              <span>${freshness ? escapeHtml(freshness.label) : 'Newest data drop'}</span>
             </div>
             <div class="fresh-shop-menu-preview">
               <strong>${escapeHtml(shopsLabel)}</strong>
@@ -8550,7 +9257,7 @@
             const grower = String(item.grower || '').trim();
             const notes = String(item.notes || '').trim();
             const price = Number.isFinite(Number(item.price_amount))
-              ? money(item.price_amount, item.price_currency, item.price_unit)
+              ? packageListingPriceLabel(item)
               : '';
             const inlinePrice = price ? ` · ${price}` : '';
             if (!grower && !notes) {
@@ -8563,6 +9270,7 @@
             const freshness = freshnessBadgeInfo(displayListingDateValue(item));
             const meta = [
               grower ? `Grower: ${grower}` : '',
+              Number(item.is_legal) === 1 ? 'Legal project' : '',
               notes ? `Note: ${notes}` : '',
               price,
               freshness ? freshness.label : '',
@@ -8677,12 +9385,12 @@
     }
 
     function syncModeSearchCopy() {
-      if (els.searchLabel) els.searchLabel.textContent = 'Search areas, coffeeshops and strains';
+      if (els.searchLabel) els.searchLabel.textContent = 'Search strains, growers, coffeeshops, towns, and areas';
       if (els.search) {
-        els.search.placeholder = 'Try Abraxas, Lemon or Jordaan...';
+        els.search.placeholder = 'Amnesia Haze, Karma, De Wedren, Nijmegen…';
       }
       if (els.searchChipRow) {
-        const chips = ['Gelato', 'Amnesia Haze', 'The Plug', 'Family First', 'Zkittlez', 'Terps Army'];
+        const chips = ['Gelato', 'Amnesia Haze', 'Karma', 'Family First', 'Legal weed', 'Terps Army'];
         els.searchChipRow.innerHTML = chips
           .map(label => `<button type="button" data-search-chip="${escapeHtmlAttr(label)}">${escapeHtml(label)}</button>`)
           .join('');
@@ -8833,8 +9541,22 @@
           loadLocationCatalog()
         ]);
         state.snapshotTime = parseTime(manifest && manifest.exported_at_utc) || Date.now();
-        const loadedOfferings = Array.isArray(offerings) ? offerings : [];
-        state.shops = Array.isArray(shops) ? shops : [];
+        const catalogCityLabels = new Map(
+          (Array.isArray(locationCatalog && locationCatalog.datasets) ? locationCatalog.datasets : [])
+            .map(dataset => [dataset.slug, dataset.label])
+        );
+        const canonicalCatalogCity = value => (
+          catalogCityLabels.get(cityScopeSlug(value)) || String(value || '').trim()
+        );
+        const loadedOfferings = (Array.isArray(offerings) ? offerings : []).map(item => ({
+          ...item,
+          shop_city: canonicalCatalogCity(item && item.shop_city)
+        }));
+        state.shops = (Array.isArray(shops) ? shops : []).map(shop => ({
+          ...shop,
+          city: canonicalCatalogCity(shop && (shop.city || shop.shop_city)),
+          shop_city: canonicalCatalogCity(shop && (shop.shop_city || shop.city))
+        }));
         state.shopById = new Map(state.shops.map(shop => [String(shop.shop_id), shop]));
         state.closedShopSourceTokens = buildClosedShopSourceTokens(state.shops);
         state.unavailableShopIds = buildUnavailableShopIds(state.shops);
@@ -8842,13 +9564,25 @@
         state.locationDatasets = Array.isArray(locationCatalog && locationCatalog.datasets)
           ? locationCatalog.datasets
           : [];
-        const defaultDataset = pickDefaultLocationDataset(state.locationDatasets);
-        applyLocationDatasetScope(defaultDataset && defaultDataset.path, { persist: false });
+        const requestedCity = new URLSearchParams(window.location.search || '').get('city') || '';
+        const requestedCitySlug = cityScopeSlug(requestedCity);
+        const requestedDataset = requestedCitySlug
+          ? state.locationDatasets.find(dataset => dataset.slug === requestedCitySlug)
+          : null;
+        const savedDataset = pickDefaultLocationDataset(state.locationDatasets);
+        applyLocationDatasetScope((requestedDataset || savedDataset)?.path || '', { persist: false });
+        syncSearchScopeControls();
         state.listingCheckBatch = buildListingCheckBatchSignal(state.offerings);
         state.hiddenUnavailableListingCount = Math.max(0, loadedOfferings.length - state.allOfferings.length);
         state.strainImageByKey = buildStrainImageMap(imageMapCsv);
         state.shopLogoByKey = locationCatalog && locationCatalog.shopLogoByKey instanceof Map
           ? locationCatalog.shopLogoByKey
+          : new Map();
+        state.shopCoordinatesByKey = locationCatalog && locationCatalog.shopCoordinatesByKey instanceof Map
+          ? locationCatalog.shopCoordinatesByKey
+          : new Map();
+        state.shopCoordinatesByNameCity = locationCatalog && locationCatalog.shopCoordinatesByNameCity instanceof Map
+          ? locationCatalog.shopCoordinatesByNameCity
           : new Map();
         buildStats();
         loadSharedShelf();
@@ -8861,25 +9595,27 @@
           ? ` Snapshot ${new Date(manifest.exported_at_utc).toLocaleString()}.`
           : '';
         const activeDataset = activeLocationDataset();
-        const datasetLabel = activeDataset?.label || 'all locations';
+        const datasetLabel = activeDataset?.label || 'the Netherlands';
         const scopedLoadedListingCount = activeDataset
           ? loadedOfferings.filter(item => offeringBelongsToDataset(item, activeDataset)).length
           : loadedOfferings.length;
         const scopedUnavailableListingCount = Math.max(0, scopedLoadedListingCount - state.offerings.length);
         const hidden = scopedUnavailableListingCount
-          ? ` Excluded ${scopedUnavailableListingCount.toLocaleString()} unavailable ${datasetLabel} listing${scopedUnavailableListingCount === 1 ? '' : 's'}.`
+          ? (activeDataset
+              ? ` Excluded ${scopedUnavailableListingCount.toLocaleString()} unavailable ${datasetLabel} listing${scopedUnavailableListingCount === 1 ? '' : 's'}.`
+              : ` Excluded ${scopedUnavailableListingCount.toLocaleString()} unavailable listing${scopedUnavailableListingCount === 1 ? '' : 's'} nationwide.`)
           : '';
         els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains in ${datasetLabel}.${exported}${hidden}${listingCheckBatchNote()}`;
         applyInitialUrlState();
         setView(state.view);
         render();
       } catch (err) {
-        els.status.innerHTML = '<span class="error">Amsterdam menu data could not be loaded.</span> Try refreshing the page.';
+        els.status.innerHTML = '<span class="error">Nationwide menu data could not be loaded.</span> Try refreshing the page.';
         els.metricAverage.textContent = 'Unavailable';
         els.metricMostStocked.textContent = 'Unavailable';
         els.metricRare.textContent = 'Unavailable';
         els.metricShops.textContent = 'Unavailable';
-        if (els.resultContext) els.resultContext.textContent = 'Amsterdam menu data could not be loaded. Try refreshing the page.';
+        if (els.resultContext) els.resultContext.textContent = 'Nationwide menu data could not be loaded. Try refreshing the page.';
       }
     }
 
@@ -8917,23 +9653,19 @@
         scheduleMobileResultsScroll({ source: 'chip', delay: 80 });
       });
     }
-    if (els.locationDataset) {
-      els.locationDataset.addEventListener('change', () => {
-        applyLocationDatasetScope(els.locationDataset.value);
-        state.activeShopId = '';
-        state.shopMenuExpanded = false;
-        state.detail = null;
-        buildStats();
-        populateFilters();
-        setupPriceBand();
-        resetStrainWindow();
-        const datasetLabel = activeLocationDataset()?.label || 'all locations';
-        els.status.textContent = `Using ${datasetLabel} for price averages: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.`;
-        render();
+    if (els.searchCityScope) {
+      els.searchCityScope.addEventListener('change', () => {
+        setSearchScope(els.searchCityScope.value);
         scheduleMobileResultsScroll({ source: 'filter' });
       });
     }
-    [els.city, els.type, els.cali, els.sort].forEach(el => el.addEventListener('change', () => {
+    if (els.locationDataset) {
+      els.locationDataset.addEventListener('change', () => {
+        setSearchScope(els.locationDataset.value);
+        scheduleMobileResultsScroll({ source: 'filter' });
+      });
+    }
+    [els.type, els.legal, els.cali, els.sort].forEach(el => el.addEventListener('change', () => {
       renderAfterFilterChange();
       scheduleMobileResultsScroll({ source: 'filter' });
     }));
@@ -9306,6 +10038,14 @@
       const strainCard = event.target.closest('[data-discovery-strain]');
       if (strainCard) {
         openStrainDetail(strainCard.dataset.discoveryStrain);
+        return;
+      }
+      const growerCard = event.target.closest('[data-discovery-grower]');
+      if (growerCard && els.search) {
+        els.search.value = growerCard.dataset.discoveryGrower || '';
+        state.view = 'strains';
+        resetStrainWindow();
+        render();
       }
     }
 
@@ -9337,6 +10077,35 @@
         state.discoveryBrowserLimit = 48;
         renderDiscoveryBrowser();
       });
+    }
+    if (els.discoveryBrowserSort) {
+      els.discoveryBrowserSort.addEventListener('change', () => {
+        const nextSort = els.discoveryBrowserSort.value || 'name';
+        if (nextSort === 'distance' && !state.discoveryBrowserPosition) {
+          requestDiscoveryBrowserPosition();
+          return;
+        }
+        state.discoveryBrowserSort = nextSort;
+        state.discoveryBrowserLimit = 48;
+        setDiscoveryBrowserFilterStatus('');
+        renderDiscoveryBrowser();
+      });
+    }
+    [
+      [els.discoveryBrowserFreshness, 'discoveryBrowserFreshness'],
+      [els.discoveryBrowserPrice, 'discoveryBrowserPrice'],
+      [els.discoveryBrowserType, 'discoveryBrowserType']
+    ].forEach(([control, stateKey]) => {
+      if (!control) return;
+      control.addEventListener('change', () => {
+        state[stateKey] = control.value || 'all';
+        state.discoveryBrowserLimit = 48;
+        setDiscoveryBrowserFilterStatus('');
+        renderDiscoveryBrowser();
+      });
+    });
+    if (els.discoveryBrowserFilterReset) {
+      els.discoveryBrowserFilterReset.addEventListener('click', resetDiscoveryBrowserFilters);
     }
 
     if (els.detailView) {

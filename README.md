@@ -18,8 +18,11 @@ Then open `http://localhost:8000/index.html`.
 - `database.html` is the strain explorer and comparison view.
 - `coffeeshop_menu_app.py` maintains the SQLite/menu-entry workflow and exports the static JSON snapshot.
 - `database/*.json`, `database/*.csv`, and `database/*.sqlite` hold the menu data assets.
-- `database/locations/*.csv` controls the city map rows. Live coffeeshop rows should have a stable Budfinder `shop_key`.
-- A map location does not need a CoffeeshopMenus record. Use a local key such as `ams-shop-name`, leave `menu_shop_key` blank, and populate `address`, `source`, and `source_url`.
+- `database/locations/coffeeshops.csv` is the nationwide coffeeshop catalogue. Every shop needs a stable `shop_id`/`shop_key`, a canonical `city` and `city_slug`, valid coordinates, and a `status`.
+- `database/locations/index.json` registers the master catalogue plus each available city map. Add a city there when its local map file is ready.
+- The individual city CSVs now supply local non-shop places such as areas and landmarks. Coffeeshop markers come from the master catalogue so the database and every map use the same identity, city, coordinates, logo, and status.
+- The map keeps the nationwide catalogue loaded. Its town selector changes the camera and opening view rather than replacing the coffeeshop dataset; Amsterdam remains the default opening view.
+- A local map place does not need a CoffeeshopMenus record. Use a stable local `shop_key`, leave `menu_shop_key` blank, and populate `address`, `source`, and `source_url`.
 - For menu-backed locations, `menu_shop_key` optionally links the location to `database/shops.json`. Existing `cs-*` values in `shop_key` remain supported as legacy menu links.
 - In **Shop coverage**, **Create + enter menu** promotes a map-only venue into
   `csd.csv`, creates its SQLite shop and manual menu record, preserves its local
@@ -42,7 +45,7 @@ Before publishing, run:
 python3 data_quality_report.py
 ```
 
-The report checks required JSON files, manifest counts, city CSV link keys, and menu freshness.
+The report checks required JSON files, manifest counts, the nationwide coffeeshop catalogue, city CSV link keys, and menu freshness.
 
 The JSON export also writes `database/home_summary.json`. The homepage loads only this
 small aggregate; the full offerings dataset is reserved for map and menu exploration.
@@ -54,6 +57,12 @@ When uploading a refreshed snapshot, upload the generated data files first and
 `database/manifest.json` last. The manifest is the completion marker for one export.
 Always include `database/home_summary.json`; its `exported_at_utc` must match the
 manifest. Running `data_quality_report.py` before upload checks this.
+
+Homepage posts are managed from **Homepage updates** in the admin. Published posts are
+exported to `database/updates.json` and appear in the “From Budfinder” panel on the
+homepage. Menu entries can keep more than one pack size for the same shop and strain;
+enter the pack price and weight for each option. Use **Legal project** for products that
+are part of the regulated project so the map and database can label and filter them.
 
 ## BUD//WATCH workflow
 
