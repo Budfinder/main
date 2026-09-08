@@ -62,9 +62,11 @@
   }
 
   function price(value) {
+    if (value == null || String(value).trim() === '') return 'Unavailable';
     const numeric = Number(value);
-    if (!Number.isFinite(numeric)) return 'Unavailable';
-    const amount = numeric.toFixed(Number.isInteger(numeric) ? 0 : 2).replace(/0+$/, '').replace(/\.$/, '');
+    if (!Number.isFinite(numeric) || numeric < 0) return 'Unavailable';
+    // Strip fractional zeroes only: €10 and €20 must keep their final digit.
+    const amount = numeric.toFixed(2).replace(/\.?0+$/, '');
     return `€${amount}/g`;
   }
 
@@ -102,7 +104,7 @@
     if (personalGreeting) {
       personalGreeting.textContent = name
         ? `Welcome back, ${name}`
-        : 'Dutch coffeeshop decision engine';
+        : 'Dutch coffeeshop guide';
     }
     if (searchSubmit) {
       searchSubmit.textContent = name
@@ -123,13 +125,19 @@
     if (searchInput) {
       searchInput.addEventListener('input', () => {
         window.clearTimeout(searchRenderTimer);
+        // A selection belongs to the old query until new suggestions render.
+        hideSearchResults();
         searchRenderTimer = window.setTimeout(() => renderSearchResults(searchInput.value), 60);
       });
       searchInput.addEventListener('focus', () => renderSearchResults(searchInput.value));
       searchInput.addEventListener('keydown', event => {
+        if (event.isComposing) return;
         if (event.key === 'Escape') {
           hideSearchResults();
           return;
+        }
+        if (['ArrowDown', 'ArrowUp'].includes(event.key) && searchResults.hidden) {
+          renderSearchResults(searchInput.value);
         }
         if (!visibleSearchResults.length || !['ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) return;
         if (event.key === 'Enter' && activeSearchResult < 0) return;
@@ -140,16 +148,25 @@
           return;
         }
         const direction = event.key === 'ArrowDown' ? 1 : -1;
-        activeSearchResult = (activeSearchResult + direction + visibleSearchResults.length) % visibleSearchResults.length;
+        activeSearchResult = activeSearchResult < 0
+          ? (direction === 1 ? 0 : visibleSearchResults.length - 1)
+          : (activeSearchResult + direction + visibleSearchResults.length) % visibleSearchResults.length;
         syncActiveSearchResult();
       });
     }
     if (searchResults) {
+      // Options use the combobox's keyboard focus; pointer selection still works.
+      searchResults.addEventListener('mousedown', event => event.preventDefault());
       searchResults.addEventListener('click', event => {
         const button = event.target.closest('[data-search-result-index]');
         if (!button) return;
         const candidate = visibleSearchResults[Number(button.dataset.searchResultIndex)];
         if (candidate) openSearch(candidate.name, candidate);
+      });
+    }
+    if (searchForm) {
+      searchForm.addEventListener('focusout', event => {
+        if (!searchForm.contains(event.relatedTarget)) hideSearchResults();
       });
     }
     document.addEventListener('click', event => {
@@ -175,7 +192,7 @@
     const shops = Number(candidate.shopCount || 0);
     const strains = Number(candidate.strainCount || 0);
     if (candidate.kind === 'shop') return displayCity(candidate.city) || 'Coffeeshop';
-    if (candidate.kind === 'strain') return shops ? `Available at ${shops.toLocaleString()} shop${shops === 1 ? '' : 's'}` : 'Strain in the menu database';
+    if (candidate.kind === 'strain') return shops ? `Listed by ${shops.toLocaleString()} shop${shops === 1 ? '' : 's'}` : 'Strain in the menu database';
     if (candidate.kind === 'grower') return `${strains.toLocaleString()} strain${strains === 1 ? '' : 's'} across ${shops.toLocaleString()} shop${shops === 1 ? '' : 's'}`;
     if (candidate.kind === 'city') return `${shops.toLocaleString()} indexed coffeeshop${shops === 1 ? '' : 's'}`;
     if (candidate.kind === 'area') return 'Amsterdam neighbourhood';
@@ -205,7 +222,9 @@
       candidates.push({ kind: 'legal', name: 'Legal weed', aliases: ['legal cannabis', 'state weed', 'regulated weed'] });
     }
     searchCandidates = candidates;
-    if (searchInput && searchInput.value.trim()) renderSearchResults(searchInput.value);
+    if (searchInput && document.activeElement === searchInput && searchInput.value.trim()) {
+      renderSearchResults(searchInput.value);
+    }
   }
 
   function rankedCandidates(query, limit = 8) {
@@ -246,9 +265,11 @@
   }
 
   function hideSearchResults() {
+    window.clearTimeout(searchRenderTimer);
     visibleSearchResults = [];
     activeSearchResult = -1;
     if (searchResults) searchResults.hidden = true;
+    if (searchStatus) searchStatus.textContent = '';
     if (searchInput) {
       searchInput.setAttribute('aria-expanded', 'false');
       searchInput.removeAttribute('aria-activedescendant');
@@ -260,11 +281,15 @@
     searchResults.querySelectorAll('[data-search-result-index]').forEach((button, index) => {
       const selected = index === activeSearchResult;
       button.setAttribute('aria-selected', selected ? 'true' : 'false');
-      if (selected && searchInput) searchInput.setAttribute('aria-activedescendant', button.id);
+      if (selected && searchInput) {
+        searchInput.setAttribute('aria-activedescendant', button.id);
+        button.scrollIntoView({ block: 'nearest' });
+      }
     });
   }
 
   function renderSearchResults(query) {
+    window.clearTimeout(searchRenderTimer);
     if (!searchResults || !searchInput) return;
     const value = String(query || '').replace(/\s+/g, ' ').trim();
     if (!value) {
@@ -274,9 +299,10 @@
     }
     visibleSearchResults = rankedCandidates(value).map(result => result.item);
     activeSearchResult = -1;
+    searchInput.removeAttribute('aria-activedescendant');
     searchResults.innerHTML = visibleSearchResults.length
       ? visibleSearchResults.map((candidate, index) => `
-          <button id="home-search-result-${index}" class="home-search-result" type="button" role="option" aria-selected="false" data-search-result-index="${index}">
+          <button id="home-search-result-${index}" class="home-search-result" type="button" role="option" tabindex="-1" aria-selected="false" data-search-result-index="${index}">
             <span class="home-search-result-copy">
               <strong>${escapeHtml(candidate.name)}</strong>
               <span>${escapeHtml(resultMeta(candidate))}</span>
@@ -314,17 +340,21 @@
     const container = byId('random-location-prices');
     if (!container) return;
     const available = shuffled((Array.isArray(rows) ? rows : [])
-      .filter(row => Number.isFinite(Number(row.average_strain_price))))
+      .filter(row => price(row.average_strain_price) !== 'Unavailable'))
       .slice(0, 5);
+    if (!available.length) {
+      container.innerHTML = '<p class="location-price-empty">Location price averages are unavailable in this snapshot.</p>';
+      return;
+    }
     container.innerHTML = available.map(row => {
       const url = new URL('map.html', window.location.href);
       url.searchParams.set('source', 'home');
       url.searchParams.set('city', row.name);
       return `
-        <a class="location-price-card" href="${escapeHtml(`${url.pathname.split('/').pop()}${url.search}`)}" aria-label="Open ${escapeHtml(displayCity(row.name))} on the map">
+        <a class="location-price-card" href="${escapeHtml(`${url.pathname.split('/').pop()}${url.search}`)}">
           <span>${escapeHtml(displayCity(row.name))}</span>
           <strong>${escapeHtml(price(row.average_strain_price))}</strong>
-          <small>${Number(row.active_strains || 0).toLocaleString()} active strains · ${Number(row.active_shops || 0).toLocaleString()} active shops</small>
+          <small>${Number(row.active_strains || 0).toLocaleString()} listed strains · ${Number(row.active_shops || 0).toLocaleString()} shops with menus</small>
         </a>
       `;
     }).join('');
@@ -346,7 +376,7 @@
     byId('home-average-price').textContent = price(network.average_strain_price);
     byId('home-most-common').textContent = topStrains.length ? `Top ${topStrains.length}` : 'Unavailable';
     byId('home-most-common-note').textContent =
-      `Ranked across ${Number(network.active_shops || 0).toLocaleString()} active shops nationwide.`;
+      `Ranked across ${Number(network.active_shops || 0).toLocaleString()} shops with menu listings nationwide.`;
     byId('home-most-common-list').innerHTML = topStrains.length
       ? strainList(topStrains)
       : '<li class="insight-empty">Current strain rankings are unavailable.</li>';
@@ -357,9 +387,9 @@
       : '<li class="insight-empty">No 2–3 shop strains are available in this snapshot.</li>';
 
     byId('coverage-definition').textContent =
-      'A mapped shop is an open Amsterdam coffeeshop marker. One active listing is one current strain-and-price row.';
+      'Mapped shops are marked open in our Amsterdam catalogue. A menu listing is one strain-and-price entry retained in the latest database.';
     byId('coverage-filter-note').textContent =
-      `${menuCoveredAmsterdamShops.toLocaleString()} of ${mappedAmsterdamShops.toLocaleString()} mapped Amsterdam shops currently have browsable menu listings. Amsterdam excludes ${Number(amsterdam.excluded_listings || 0).toLocaleString()} unavailable listing${Number(amsterdam.excluded_listings || 0) === 1 ? '' : 's'}. Nationwide signals use ${Number(network.active_listings || 0).toLocaleString()} active listings across ${Number(network.active_shops || 0).toLocaleString()} active shops after excluding ${Number(network.excluded_listings || 0).toLocaleString()} unavailable listing${Number(network.excluded_listings || 0) === 1 ? '' : 's'}.`;
+      `${menuCoveredAmsterdamShops.toLocaleString()} of ${mappedAmsterdamShops.toLocaleString()} mapped Amsterdam shops have menu listings. Amsterdam excludes ${Number(amsterdam.excluded_listings || 0).toLocaleString()} listing${Number(amsterdam.excluded_listings || 0) === 1 ? '' : 's'} marked unavailable. Nationwide figures use ${Number(network.active_listings || 0).toLocaleString()} listings across ${Number(network.active_shops || 0).toLocaleString()} shops, after excluding ${Number(network.excluded_listings || 0).toLocaleString()} listing${Number(network.excluded_listings || 0) === 1 ? '' : 's'} marked unavailable.`;
 
     renderLocations(summary.locations);
   }
@@ -378,7 +408,11 @@
       if (element) element.textContent = 'Unavailable';
     });
     const note = byId('coverage-filter-note');
-    if (note) note.textContent = message || 'The lightweight homepage summary could not be loaded. Search and map browsing are still available.';
+    if (note) note.textContent = message || 'The menu summary could not be loaded. Search and map browsing are still available.';
+    byId('home-most-common-note').textContent = 'Strain rankings could not be loaded. Explore Price & Menus to try again.';
+    byId('home-most-common-list').innerHTML = '<li class="insight-empty">Strain rankings are currently unavailable.</li>';
+    byId('home-rare-list').innerHTML = '<li class="insight-empty">The current selection could not be loaded.</li>';
+    renderLocations([]);
   }
 
   function renderUpdates(rows) {
@@ -406,9 +440,15 @@
   }
 
   async function loadJson(url, label) {
-    const response = await fetch(url, { cache: 'no-cache' });
-    if (!response.ok) throw new Error(`${label} returned ${response.status}`);
-    return response.json();
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(url, { cache: 'no-cache', signal: controller.signal });
+      if (!response.ok) throw new Error(`${label} returned ${response.status}`);
+      return await response.json();
+    } finally {
+      window.clearTimeout(timeout);
+    }
   }
 
   function appendPublicationNote(message) {
@@ -431,7 +471,11 @@
       loadJson(UPDATES_URL, 'Homepage updates')
     ]);
 
-    renderUpdates(updatesResult.status === 'fulfilled' ? updatesResult.value : []);
+    if (updatesResult.status === 'fulfilled') {
+      renderUpdates(updatesResult.value);
+    } else {
+      byId('home-updates').innerHTML = '<p class="updates-empty">Updates could not be loaded. Please try again later.</p>';
+    }
 
     buildSearchCandidates(
       searchIndexResult.status === 'fulfilled' ? searchIndexResult.value : {},
@@ -451,16 +495,16 @@
         const manifestSnapshot = String(manifestResult.value && manifestResult.value.exported_at_utc || '').trim();
         if (!manifestSnapshot || summarySnapshot !== manifestSnapshot) {
           appendPublicationNote(
-            'These homepage figures use the latest available summary while the matching database completion marker is still being published.'
+            'These figures use the latest available summary while the rest of the database refresh finishes publishing.'
           );
         }
       } else {
         appendPublicationNote(
-          'The database completion marker could not be checked, so confirm a specific menu before travelling.'
+          'The database refresh could not be fully verified. Check an individual menu before travelling.'
         );
       }
     } catch (error) {
-      renderUnavailable('The lightweight homepage summary could not be loaded. Search and map browsing are still available.');
+      renderUnavailable('The menu summary could not be loaded. Search and map browsing are still available.');
     }
 
     if (summaryRegion) summaryRegion.dataset.ready = 'true';

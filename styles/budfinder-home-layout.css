@@ -1,0 +1,95 @@
+/* Final containment pass: preserve the composition without sacrificing copy. */
+.page,
+.hero,
+.hero-brand-row,
+.hero-copy,
+.hero-media,
+.hero-image-card,
+.home-search,
+.market-card,
+.update-card,
+.about-card,
+.journey-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.hero-caption {
+  flex-wrap: wrap;
+}
+
+.hero-caption > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.location-price-card span,
+.location-price-card small,
+.insight-item b {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.location-price-card small {
+  line-height: 1.35;
+}
+
+.insight-item a {
+  align-items: flex-start;
+}
+
+.insight-item span {
+  min-width: 0;
+  text-align: right;
+  white-space: normal;
+}
+
+.primary-btn,
+.secondary-btn,
+.tertiary-btn,
+.showcase-button,
+.card-link,
+.intent-action {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+
+.version-box strong,
+.update-card,
+.update-card a,
+.market-card p,
+.note {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 680px) {
+  .hero-search-first,
+  .hero-search-first .hero-copy,
+  .hero-search,
+  .search-row,
+  .updates-panel,
+  .market-snapshot,
+  .insights-panel,
+  .release-status {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .location-price-card {
+    align-content: start;
+    min-height: 0;
+  }
+
+  .insight-item a {
+    flex-wrap: wrap;
+  }
+
+  .insight-item span {
+    flex: 1 1 100%;
+    text-align: left;
+  }
+}

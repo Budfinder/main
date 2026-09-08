@@ -89,8 +89,27 @@ body {
 }
 
 :where(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid var(--accent, #4df49a);
   outline: 3px solid color-mix(in srgb, var(--accent, #4df49a) 72%, white);
   outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  z-index: 10000;
+  padding: 12px 18px;
+  border: 2px solid var(--accent, #4df49a);
+  border-radius: 10px;
+  background: var(--page-bg, #06100e);
+  color: var(--ink, #f4fff8);
+  font-weight: 800;
+  transform: translateY(calc(-100% - 24px));
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 :where(button, [role="button"]) {

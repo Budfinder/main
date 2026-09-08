@@ -1,0 +1,276 @@
+    /* Keep dense map controls readable without letting copy escape its card. */
+    .landing-shell,
+    .landing-hero,
+    .landing-copy,
+    .landing-actions,
+    .controls,
+    .controls-content,
+    .panel-section,
+    .intent-head,
+    .best-match-card,
+    .best-match-main,
+    .destination-card,
+    .destination-card-main,
+    .overlay-card,
+    .selection-card-head,
+    .selection-card-head-copy,
+    .selection-actions,
+    .leaflet-popup-content,
+    .popup-card,
+    .popup-strain-row,
+    .popup-strain-meta,
+    .stash-bag,
+    .stash-bag-main {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .landing-copy,
+    .landing-actions,
+    .controls-title,
+    .controls-summary,
+    .intent-head span,
+    .best-match-name,
+    .best-match-reason,
+    .destination-card-name,
+    .destination-card-reason,
+    #selected-destination-meta,
+    .popup-strain-meta,
+    .popup-strain-notes,
+    .popup-strain-grower,
+    .popup-strain-price,
+    .stash-bag-name,
+    .stash-bag-meta {
+      overflow-wrap: anywhere;
+    }
+
+    .landing-actions > *,
+    .guide-actions > *,
+    .best-match-actions > *,
+    .destination-card-actions > *,
+    .selection-actions > * {
+      min-width: 0;
+      max-width: 100%;
+      white-space: normal;
+      text-align: center;
+    }
+
+    .selection-actions [hidden] {
+      display: none !important;
+    }
+
+    @media (min-width: 768px) {
+      .map-category-shortcuts #category-filters {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+        padding: 2px 0 4px;
+        overflow: visible;
+        scroll-snap-type: none;
+      }
+
+      .map-category-shortcuts #category-filters label {
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+    }
+
+    @media (max-width: 767px), (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+      .landing-shell,
+      .landing-hero,
+      .landing-copy,
+      .landing-actions {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      #selected-destination-meta,
+      body.compact-layout #selected-destination-meta {
+        display: block;
+        overflow: visible;
+        -webkit-line-clamp: unset;
+      }
+
+      .selection-actions #selection-center-btn,
+      body.compact-layout .selection-actions #selection-center-btn {
+        grid-column: 1 / -1;
+      }
+
+      .selection-actions .selection-link,
+      body.compact-layout .selection-actions .selection-link {
+        grid-column: auto;
+      }
+
+      .selection-actions button,
+      .selection-actions a,
+      body.compact-layout .selection-actions button,
+      body.compact-layout .selection-actions a {
+        overflow: visible;
+        text-overflow: clip;
+      }
+
+      .leaflet-popup-content-wrapper,
+      .leaflet-popup-content,
+      .popup-card {
+        max-width: calc(100vw - 28px);
+      }
+
+      .popup-strain-btn,
+      .popup-strain-actions,
+      .popup-strain-actions > * {
+        min-width: 0;
+        max-width: 100%;
+      }
+    }
+  
+/* Keep each venue as an individual logo; only size and screen spacing change. */
+.bf-marker-content {
+  position: relative;
+  z-index: 2;
+  transform-origin: 0 0;
+  pointer-events: auto;
+}
+
+.bf-marker-content .shop-marker-wrap {
+  transform: none !important;
+  transition: none;
+}
+
+.bf-marker-leader {
+  position: absolute;
+  height: calc(1px * var(--bf-marker-detail-scale, 1));
+  opacity: var(--bf-marker-line-opacity, 1);
+  background: rgba(22, 64, 48, 0.22);
+  transform-origin: 0 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bf-marker-point {
+  position: absolute;
+  width: calc(3px * var(--bf-marker-detail-scale, 1));
+  height: calc(3px * var(--bf-marker-detail-scale, 1));
+  margin: calc(-1.5px * var(--bf-marker-detail-scale, 1));
+  opacity: var(--bf-marker-line-opacity, 1);
+  border-radius: 50%;
+  background: #163f30;
+  box-shadow: 0 0 0 calc(1px * var(--bf-marker-detail-scale, 1)) rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+}
+
+.is-selected-place .bf-marker-leader,
+.leaflet-marker-icon:focus-visible .bf-marker-leader {
+  background: rgba(22, 64, 48, 0.8);
+}
+
+#map .shop-logo-icon {
+  box-shadow: 0 1px 4px rgba(20, 45, 32, 0.25);
+  border-width: 2px;
+}
+
+#map .is-selected-place .shop-logo-icon,
+#map .leaflet-marker-icon:focus-visible .shop-logo-icon {
+  outline: 3px solid #123e2e;
+  outline-offset: 1px;
+}
+
+#map .leaflet-marker-icon:focus-visible {
+  outline: calc(2px * var(--bf-marker-detail-scale, 1)) solid #fff;
+  outline-offset: calc(2px * var(--bf-marker-detail-scale, 1));
+}
+
+/* Child decoration scales with its logo; root-level filters do not. */
+#map[data-marker-layout-mode="scaled"] .leaflet-marker-icon {
+  filter: none;
+}
+
+#map[data-marker-layout-mode="scaled"] .map-scope-note span {
+  display: none;
+}
+
+.map-scope-note {
+  max-width: min(300px, calc(100vw - 76px));
+  padding: 8px 11px;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  color: var(--ink);
+  background: var(--panel-strong, #10221c);
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.map-scope-note strong,
+.map-scope-note span {
+  display: block;
+}
+
+.map-scope-note span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+body .controls,
+body .selection-card,
+body .settings-card {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+body .controls-title {
+  font-size: 23px;
+  line-height: 1.2;
+}
+
+body .controls .control-group {
+  box-shadow: none;
+}
+
+.map-category-shortcuts > summary {
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.map-category-shortcuts > summary small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.map-category-shortcuts:not([open]) {
+  padding-bottom: 0;
+}
+
+/* Match the selected theme instead of washing dark popup text over pale cards. */
+#map .shop-popup-card {
+  background: var(--panel-strong, #10221c);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+#map .popup-strains-box {
+  background: var(--control-bg-strong);
+  border-color: var(--control-border);
+  color: var(--control-text);
+}
+
+#map .shop-popup-card a {
+  color: var(--control-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+#map .fav-btn {
+  min-height: 40px;
+  margin: 8px 0;
+  padding: 8px 14px;
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  background: var(--control-bg-strong);
+  color: var(--control-text);
+  font: inherit;
+  cursor: pointer;
+}

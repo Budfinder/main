@@ -14,8 +14,17 @@ Then open `http://localhost:8000/index.html`.
 
 ## Data Workflow
 
-- `index.html` is the public homepage and map app.
+- `index.html` is the public homepage; `map.html` is the interactive map app.
 - `database.html` is the strain explorer and comparison view.
+- Homepage behaviour lives in `scripts/budfinder-home.js`; map behaviour lives in
+  `scripts/budfinder-map.js` and its marker positioning helper,
+  `scripts/budfinder-marker-layout.js`; explorer behaviour lives in
+  `scripts/budfinder-database.js`.
+- Page styles live in `styles/budfinder-home-{base,search,layout}.css`,
+  `styles/budfinder-map-{base,layout,refinements}.css`, and
+  `styles/budfinder-database.css` plus `styles/budfinder-database-refinements.css`.
+  `styles/budfinder-polish.css` supplies shared improvements. Keep stylesheet and
+  script order in each HTML page when editing or publishing these assets.
 - `coffeeshop_menu_app.py` maintains the SQLite/menu-entry workflow and exports the static JSON snapshot.
 - `database/*.json`, `database/*.csv`, and `database/*.sqlite` hold the menu data assets.
 - `database/locations/coffeeshops.csv` is the nationwide coffeeshop catalogue. Every shop needs a stable `shop_id`/`shop_key`, a canonical `city` and `city_slug`, valid coordinates, and a `status`.
@@ -45,7 +54,17 @@ Before publishing, run:
 python3 data_quality_report.py
 ```
 
-The report checks required JSON files, manifest counts, the nationwide coffeeshop catalogue, city CSV link keys, and menu freshness.
+The report checks required JSON files, manifest counts, the nationwide coffeeshop
+catalogue, city CSV references and headers, and menu source-date coverage. Freshness
+is reported for every active listing: 0–14 days, 15–60 days, over 60 days, or unknown.
+It also reports each shop's newest usable source date. A recent menu at one shop
+does not hide old or undated rows elsewhere in the listing distribution.
+
+Source/menu observation dates follow the map and explorer's date precedence.
+`menu_checked_at_utc`, `last_seen_at_utc`, `last_seen_at`, and `updated_at` are bulk
+refresh context and never make an undated menu look fresh. Future source dates count
+as unknown. Age and missing-date warnings are informational; structural errors and
+manifest mismatches still fail QA. The report never changes the data.
 
 The JSON export also writes `database/home_summary.json`. The homepage loads only this
 small aggregate; the full offerings dataset is reserved for map and menu exploration.
@@ -76,6 +95,51 @@ separate `menu_shop_key`, the watch uses it to find menu data while retaining th
 local `shop_key` used for favourites and map identity. A changed shop/location list is
 also written to `bfwatch_data.h` and takes effect after the next firmware upload; menu
 and price changes can be uploaded immediately with the in-app watch updater.
+
+## Website regression checks
+
+Run the complete publication check with Python 3.10+ and Node.js 18+ (no packages
+required):
+
+```sh
+python3 scripts/check_website.py
+```
+
+If Node.js is not on your PATH, pass its executable explicitly:
+
+```sh
+python3 scripts/check_website.py --node /path/to/node
+```
+
+The runner checks the homepage, map, and explorer for duplicate HTML IDs and missing
+local assets, resolves image URLs from the external stylesheets, validates inline
+JSON and JavaScript syntax, and checks scripts in `scripts/` and the project root.
+It discovers Node regression tests in `tests/`, runs Python `test_*.py` fixtures, and
+finishes with the existing static data QA. It returns a failing exit code for a
+failed check; freshness warnings remain informational. It does not install tools,
+fetch remote assets, modify data, or deploy files.
+
+To run the homepage checks separately:
+
+```sh
+node --test tests/home-regressions.cjs
+```
+
+They exercise the shipped homepage and search scripts, including price formatting,
+keyboard suggestions, fast edits, failed requests, and loading timeouts.
+`tests/test_data_quality.py` covers mostly stale data, undated menus, bulk refreshes,
+source-date precedence, and UTC age boundaries using isolated fixtures. For UI
+changes, also preview the homepage, map, and explorer at desktop and mobile widths;
+check Settings with Tab/Escape, profile navigation with browser Back, and loading
+more listings. Run the data quality report above before publishing.
+
+For a website code release, upload the new or changed files in `styles/` and
+`scripts/` **before** uploading `index.html`, `map.html`, and `database.html` that
+reference them. Preserve the script/stylesheet ordering and update the `?v=` cache
+version on changed assets. Keep earlier assets available while cached pages may
+still reference them. Then verify the live homepage, map search and marker clicks,
+route building, and explorer navigation. Data snapshot uploads still use
+`database/manifest.json` last, as described above.
 
 ## HTTPS and response headers
 

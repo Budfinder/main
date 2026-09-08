@@ -30,6 +30,15 @@ REQUIRED_JSON = [
     "updates.json",
 ]
 
+# Keep the same source-date precedence as the map and menu explorer. Export and
+# bulk check timestamps describe the dataset, not when a menu was observed.
+SOURCE_DATE_FIELDS = (
+    "source_menu_date", "menu_date", "listing_date", "menu_changed_at_utc",
+    "checked_at", "checked_at_utc", "source_checked_at", "source_updated_at",
+    "source_seen_at", "scraped_at", "scraped_at_utc", "fetched_at_utc", "created_at",
+)
+BATCH_DATE_FIELDS = ("menu_checked_at_utc", "last_seen_at_utc", "last_seen_at", "updated_at")
+
 
 def load_json(path: Path):
     with path.open("r", encoding="utf-8") as f:
@@ -56,13 +65,109 @@ def count_json_items(value) -> int:
 
 
 def parse_iso(value: str) -> datetime | None:
-    raw = (value or "").strip()
+    raw = str(value or "").strip()
     if not raw:
         return None
     try:
-        return datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone(timezone.utc)
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        # A date without a timezone is a UTC calendar date, independent of the
+        # computer running the publication check.
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(timezone.utc)
     except ValueError:
         return None
+
+
+def source_date(row: dict) -> tuple[str, datetime | None]:
+    for field in SOURCE_DATE_FIELDS:
+        parsed = parse_iso(row.get(field))
+        if parsed is not None:
+            return field, parsed
+    return "", None
+
+
+def freshness_summary(rows: list[dict], now: datetime | None = None) -> dict:
+    reference = (now or datetime.now(timezone.utc)).astimezone(timezone.utc).date()
+    buckets = Counter({"fresh": 0, "ageing": 0, "stale": 0, "unknown": 0})
+    fields: Counter = Counter()
+    latest_by_shop: dict[str, datetime | None] = {}
+    latest = None
+    batch_only = future_dates = total = 0
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        total += 1
+        field, date = source_date(row)
+        if date and date.date() > reference:
+            future_dates += 1
+            date = None
+        if date:
+            days = (reference - date.date()).days
+            bucket = "fresh" if days <= 14 else "ageing" if days <= 60 else "stale"
+            fields[field] += 1
+            latest = max(latest, date) if latest else date
+        else:
+            bucket = "unknown"
+            if not field and any(parse_iso(row.get(key)) for key in BATCH_DATE_FIELDS):
+                batch_only += 1
+        buckets[bucket] += 1
+        identity = row.get("shop_id") or row.get("shop_key")
+        if identity is None and row.get("shop_name"):
+            identity = f"{row['shop_name']}|{row.get('shop_city', '')}"
+        if identity is not None:
+            key = str(identity)
+            previous = latest_by_shop.get(key)
+            latest_by_shop[key] = max(previous, date) if previous and date else previous or date
+
+    shop_buckets = Counter({"fresh": 0, "ageing": 0, "stale": 0, "unknown": 0})
+    for date in latest_by_shop.values():
+        days = (reference - date.date()).days if date else None
+        bucket = "unknown" if days is None else "fresh" if days <= 14 else "ageing" if days <= 60 else "stale"
+        shop_buckets[bucket] += 1
+    return {
+        "total": total, "buckets": dict(buckets), "source_fields": dict(fields),
+        "batch_only": batch_only, "future_dates": future_dates, "latest": latest,
+        "shop_total": len(latest_by_shop), "shop_buckets": dict(shop_buckets),
+    }
+
+
+def report_freshness(rows: list[dict], warnings: list[str], now: datetime | None = None) -> None:
+    current = now or datetime.now(timezone.utc)
+    report = freshness_summary(rows, current)
+    total = report["total"]
+    print("\nMenu source-date coverage")
+    print("-------------------------")
+    print("Source/observed dates only; bulk menu checks, last-seen and export updates do not reset menu age.")
+    print("Age is measured by UTC calendar day; source age does not guarantee current stock.")
+    for bucket, label in (("fresh", "0–14 days"), ("ageing", "15–60 days"), ("stale", "Over 60 days"), ("unknown", "Unknown date")):
+        count = report["buckets"][bucket]
+        percentage = count / total * 100 if total else 0
+        print(f"{label}: {count:,} of {total:,} listings ({percentage:.1f}%)")
+    shop_counts = report["shop_buckets"]
+    print(
+        f"Shops with active listings: {report['shop_total']:,}; newest usable source date per shop: "
+        f"{shop_counts['fresh']:,} within 14 days, {shop_counts['ageing']:,} 15–60 days, "
+        f"{shop_counts['stale']:,} over 60 days, {shop_counts['unknown']:,} unknown."
+    )
+    if report["batch_only"]:
+        print(f"Bulk timestamps only: {report['batch_only']:,} listings (included in unknown, not fresh).")
+    if report["source_fields"]:
+        print("Usable date fields: " + ", ".join(f"{field} ({count:,})" for field, count in sorted(report["source_fields"].items())))
+    latest = report["latest"]
+    if latest:
+        age_days = (current.astimezone(timezone.utc).date() - latest.date()).days
+        print(f"Newest active offering source date: {latest.date().isoformat()} ({age_days} day(s) ago)")
+        if age_days > 14:
+            warnings.append("Newest dated active offering source is more than two weeks old")
+    older = report["buckets"]["ageing"] + report["buckets"]["stale"]
+    if older:
+        warnings.append(f"{older:,} of {total:,} active listings ({older / total:.1%}) have source dates older than 14 days; {report['buckets']['stale']:,} are over 60 days old")
+    unknown = report["buckets"]["unknown"]
+    if unknown:
+        warnings.append(f"{unknown:,} of {total:,} active listings ({unknown / total:.1%}) have unknown source age; bulk refresh dates are not menu verification")
+    if report["future_dates"]:
+        warnings.append(f"{report['future_dates']:,} listings have future source dates and are counted as unknown")
 
 
 def main() -> int:
@@ -230,20 +335,7 @@ def main() -> int:
     active_path = DATABASE_DIR / "active_offerings.json"
     if active_path.exists():
         active = load_json(active_path)
-        dates = [
-            dt for dt in (
-                parse_iso(str(row.get("updated_at") or row.get("last_seen_at_utc") or ""))
-                for row in active if isinstance(row, dict)
-            )
-            if dt is not None
-        ]
-        if dates:
-            latest = max(dates)
-            age_days = (datetime.now(timezone.utc) - latest).days
-            print("")
-            print(f"Newest active offering update: {latest.date().isoformat()} ({age_days} day(s) ago)")
-            if age_days > 14:
-                warnings.append("Newest active offering is more than two weeks old")
+        report_freshness(active, warnings)
 
         summary_path = DATABASE_DIR / "home_summary.json"
         if summary_path.exists():

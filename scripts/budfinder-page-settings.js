@@ -131,7 +131,9 @@
       .site-settings-panel {
         width: min(420px, 100%);
         max-height: calc(100vh - 96px);
+        max-height: calc(100dvh - 96px);
         overflow: auto;
+        overscroll-behavior: contain;
         border: 1px solid var(--panel-border, rgba(32, 91, 66, 0.18));
         border-radius: 18px;
         background: var(--panel-strong, rgba(255, 252, 246, 0.96));
@@ -216,6 +218,11 @@
         color: var(--ink, #233126);
         font-size: 1.17em;
         font-weight: 900;
+      }
+
+      .site-settings-panel :where(button, a, input, select, summary):focus-visible {
+        outline: 3px solid var(--accent, #2e7b59);
+        outline-offset: 3px;
       }
 
       html[data-budfinder-reduced-motion="true"] *,
@@ -305,6 +312,7 @@
         .site-settings-panel {
           width: 100%;
           max-height: calc(100vh - 104px);
+          max-height: calc(100dvh - 104px);
           border-radius: 14px;
         }
 
@@ -327,7 +335,7 @@
         <div class="site-settings-head">
           <div>
             <h2 id="site-settings-title" tabindex="-1">Settings</h2>
-            <p>Practical preferences, filters, data tools, and appearance.</p>
+            <p>Your map preferences, saved data and appearance.</p>
           </div>
           <button class="site-settings-button site-settings-close" type="button" data-site-settings-close aria-label="Close settings">&times;</button>
         </div>
@@ -352,27 +360,27 @@
         </section>
 
         <section class="site-settings-section" aria-labelledby="site-settings-filters-title">
-          <h3 id="site-settings-filters-title">Filters</h3>
-          <p>Reset stored map handoffs here. Live map category filters are still controlled on the map.</p>
+          <h3 id="site-settings-filters-title">Map filters</h3>
+          <p>Reset filters and shop selections carried between the map and database. Change map category filters on the map itself.</p>
           <div class="site-settings-actions">
-            <button id="site-reset-filters" class="site-settings-button" type="button">Reset filters</button>
+            <button id="site-reset-filters" class="site-settings-button" type="button">Reset saved map filters</button>
             <a class="site-settings-link" href="map.html#settings">Open map filters</a>
           </div>
         </section>
 
         <section class="site-settings-section" aria-labelledby="site-settings-data-title">
-          <h3 id="site-settings-data-title">Data</h3>
-          <p>Map areas and the nationwide database explorer stay available without moving this Settings button away from your current page.</p>
+          <h3 id="site-settings-data-title">Saved data</h3>
+          <p>Choose a map area, browse nationwide menus or clear the data saved on this device.</p>
           <div class="site-settings-actions">
             <a class="site-settings-link" href="map.html#settings">Choose map area</a>
             <a class="site-settings-link" href="database.html">Open database</a>
-            <button id="site-clear-data" class="site-settings-button danger" type="button">Clear saved data</button>
+            <button id="site-clear-data" class="site-settings-button danger" type="button" aria-controls="site-clear-confirm" aria-expanded="false">Clear saved data</button>
           </div>
           <div id="site-clear-confirm" class="site-settings-confirm" hidden>
             <button id="site-confirm-clear-data" class="site-settings-button danger" type="button">Confirm clear</button>
             <button id="site-cancel-clear-data" class="site-settings-button" type="button">Cancel</button>
           </div>
-          <p class="site-settings-note">Saved shops, ratings, notes, recent Destinations, Wanted strains, and saved itineraries live on this device.</p>
+          <p class="site-settings-note">Saved shops, saved strains, routes, ratings, notes and recent destinations are stored on this device.</p>
         </section>
 
         <details class="site-settings-section site-settings-appearance">
@@ -409,7 +417,12 @@
     const reduceMotionInput = panel.querySelector('#site-settings-reduce-motion');
     const status = panel.querySelector('#site-settings-status');
     const confirmWrap = panel.querySelector('#site-clear-confirm');
+    const clearDataButton = panel.querySelector('#site-clear-data');
+    const cancelClearButton = panel.querySelector('#site-cancel-clear-data');
+    const heading = panel.querySelector('#site-settings-title');
     let previouslyFocusedElement = null;
+    let previousHash = '';
+    let backgroundElements = [];
 
     function setStatus(message) {
       if (!status) return;
@@ -434,31 +447,42 @@
         .join('');
     }
 
-    function openPanel() {
-      previouslyFocusedElement = document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
+    function openPanel(opener) {
+      if (!panel.hidden) return;
+      previouslyFocusedElement = opener instanceof HTMLElement
+        ? opener
+        : (document.activeElement instanceof HTMLElement && document.activeElement !== document.body
+          ? document.activeElement
+          : toggles[0]);
+      previousHash = window.location.hash.toLowerCase() === '#settings' ? '' : window.location.hash;
       syncForm();
       panel.hidden = false;
       document.body.classList.add('has-site-settings-open');
       toggles.forEach(toggle => toggle.setAttribute('aria-expanded', 'true'));
       if (window.history && window.history.replaceState) {
-        window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}#settings`);
+        window.history.replaceState(window.history.state, document.title, `${window.location.pathname}${window.location.search}#settings`);
       }
-      window.setTimeout(() => {
-        const heading = panel.querySelector('#site-settings-title');
-        if (heading) heading.focus({ preventScroll: true });
-      }, 0);
+      heading.focus({ preventScroll: true });
+      // A modal must also keep the page behind it out of the accessibility tree.
+      // Preserve elements that were already inert for another part of the app.
+      backgroundElements = Array.from(document.body.children).filter(element => (
+        element !== panel && !element.hasAttribute('inert')
+      ));
+      backgroundElements.forEach(element => element.setAttribute('inert', ''));
     }
 
     function closePanel() {
+      if (panel.hidden) return;
       panel.hidden = true;
       document.body.classList.remove('has-site-settings-open');
       confirmWrap.hidden = true;
+      clearDataButton.setAttribute('aria-expanded', 'false');
+      backgroundElements.forEach(element => element.removeAttribute('inert'));
+      backgroundElements = [];
       setStatus('');
       toggles.forEach(toggle => toggle.setAttribute('aria-expanded', 'false'));
       if ((window.location.hash || '').toLowerCase() === '#settings' && window.history && window.history.replaceState) {
-        window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
+        window.history.replaceState(window.history.state, document.title, `${window.location.pathname}${window.location.search}${previousHash}`);
       }
       if (previouslyFocusedElement && document.contains(previouslyFocusedElement)) {
         previouslyFocusedElement.focus({ preventScroll: true });
@@ -469,9 +493,10 @@
     toggles.forEach(toggle => {
       toggle.setAttribute('aria-controls', panel.id);
       toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-haspopup', 'dialog');
       toggle.addEventListener('click', event => {
         event.preventDefault();
-        openPanel();
+        openPanel(toggle);
       });
     });
 
@@ -484,15 +509,20 @@
     document.addEventListener('keydown', event => {
       if (panel.hidden) return;
       if (event.key === 'Escape') {
+        event.preventDefault();
         closePanel();
         return;
       }
       if (event.key !== 'Tab') return;
 
       const focusable = Array.from(panel.querySelectorAll(
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      )).filter(element => !element.hidden && element.getClientRects().length > 0);
-      if (!focusable.length) return;
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]'
+      )).filter(element => element.tabIndex >= 0 && !element.closest('[hidden], [inert]') && element.getClientRects().length > 0);
+      if (!focusable.length) {
+        event.preventDefault();
+        heading.focus({ preventScroll: true });
+        return;
+      }
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
@@ -557,22 +587,28 @@
       removeStorageKey('budfinder_map_sessions_v1');
       removeStorageKey('budfinder_explorer_selected_shops');
       removeStorageKey('budfinder_database_navigation_state');
-      setStatus('Stored map filters and handoffs reset.');
+      setStatus('Saved map filters and shared shop selections reset.');
     });
 
-    panel.querySelector('#site-clear-data').addEventListener('click', () => {
+    clearDataButton.addEventListener('click', () => {
       confirmWrap.hidden = false;
+      clearDataButton.setAttribute('aria-expanded', 'true');
       setStatus('Confirm below to clear saved local data.');
+      cancelClearButton.focus();
     });
 
-    panel.querySelector('#site-cancel-clear-data').addEventListener('click', () => {
+    cancelClearButton.addEventListener('click', () => {
       confirmWrap.hidden = true;
+      clearDataButton.setAttribute('aria-expanded', 'false');
+      clearDataButton.focus();
       setStatus('');
     });
 
     panel.querySelector('#site-confirm-clear-data').addEventListener('click', () => {
       SAVED_DATA_STORAGE_KEYS.forEach(removeStorageKey);
       confirmWrap.hidden = true;
+      clearDataButton.setAttribute('aria-expanded', 'false');
+      clearDataButton.focus();
       setStatus('Saved local data cleared.');
     });
 
@@ -601,6 +637,7 @@
 
     window.addEventListener('hashchange', () => {
       if ((window.location.hash || '').toLowerCase() === '#settings') openPanel();
+      else if (!panel.hidden) closePanel();
     });
 
     syncForm();

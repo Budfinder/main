@@ -1,0 +1,556 @@
+    .simple-shop-marker {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 3px solid #07100f;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4df49a, #d7ed70);
+      color: #07100f;
+      box-shadow: 0 7px 16px rgba(0, 0, 0, 0.38);
+    }
+
+    .simple-shop-marker::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      width: 9px;
+      height: 9px;
+      background: #b6e878;
+      transform: rotate(45deg);
+      z-index: -1;
+    }
+
+    .simple-shop-marker > span {
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .simple-shop-marker > b {
+      position: absolute;
+      top: -13px;
+      right: -16px;
+      min-width: 38px;
+      padding: 3px 5px;
+      border-radius: 999px;
+      background: #f0b854;
+      color: #07100f;
+      font-size: 9px;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .journey-progressive,
+    .destination-picker-progressive,
+    .destination-results-progressive {
+      border: 1px solid var(--control-border, rgba(153, 255, 203, 0.18));
+      border-radius: 12px;
+      background: var(--control-bg-strong, rgba(7, 18, 16, 0.78));
+    }
+
+    .journey-progressive-summary,
+    .destination-picker-progressive > summary,
+    .destination-results-progressive > summary {
+      min-height: 44px;
+      padding: 13px 14px;
+      color: var(--control-text, #f4fff8);
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .journey-progressive-content,
+    .destination-picker-progressive > label,
+    .destination-picker-progressive > select,
+    .destination-results-progressive > :not(summary) {
+      margin: 0 12px 12px;
+    }
+
+    .journey-progressive .journey-planner-head {
+      display: none;
+    }
+
+    /* Simplified sidebar: primary decisions stay visible; supporting tools open on demand. */
+    .route-panel-topline { order: 0; }
+    .map-mode-strip { order: 1; }
+    #journey-planner-card { order: 2; }
+    #destination-picker-wrap { order: 3; }
+    #destination-card-deck { order: 4; }
+    .route-secondary-tools { order: 5; }
+    #route-status { order: 6; }
+
+    .map-quick-searches,
+    .route-secondary-tools,
+    .journey-save-progressive,
+    .wanted-list-panel {
+      border: 1px solid var(--control-border, rgba(153, 255, 203, 0.18));
+      border-radius: 12px;
+      background: var(--control-bg-strong, rgba(7, 18, 16, 0.78));
+      overflow: hidden;
+    }
+
+    .map-quick-searches > summary,
+    .route-secondary-tools > summary,
+    .journey-save-progressive > summary,
+    .sidebar-drawer-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 44px;
+      padding: 12px 14px;
+      color: var(--control-text, #f4fff8);
+      font-weight: 850;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .map-quick-searches > summary::-webkit-details-marker,
+    .route-secondary-tools > summary::-webkit-details-marker,
+    .journey-save-progressive > summary::-webkit-details-marker,
+    .journey-progressive-summary::-webkit-details-marker,
+    .sidebar-drawer-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .map-quick-searches > summary::after,
+    .route-secondary-tools > summary::after,
+    .journey-save-progressive > summary::after,
+    .journey-progressive-summary::after,
+    .sidebar-drawer-summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .map-quick-searches[open] > summary::after,
+    .route-secondary-tools[open] > summary::after,
+    .journey-save-progressive[open] > summary::after,
+    .journey-progressive[open] > .journey-progressive-summary::after,
+    .wanted-list-panel[open] > .sidebar-drawer-summary::after {
+      content: "−";
+    }
+
+    .map-quick-searches .map-quick-chips,
+    .route-secondary-tools-content,
+    .journey-save-progressive-content,
+    .sidebar-drawer-content {
+      margin: 0;
+      padding: 0 12px 12px;
+    }
+
+    .journey-progressive-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      list-style: none;
+    }
+
+    .journey-progressive-summary > span,
+    .sidebar-drawer-summary > span {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .journey-progressive-summary strong,
+    .sidebar-drawer-summary strong {
+      color: var(--control-text, var(--ink));
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .journey-progressive-summary small,
+    .sidebar-drawer-summary small {
+      color: var(--control-muted, var(--muted));
+      font-size: 11px;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .journey-progressive-content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .journey-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .journey-save-progressive {
+      background: var(--control-bg, rgba(255, 255, 255, 0.38));
+    }
+
+    .journey-save-progressive-content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .route-secondary-tools-content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .route-secondary-tools .control-divider {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .wanted-list-panel {
+      display: block;
+      padding: 0 !important;
+    }
+
+    .sidebar-drawer-content {
+      display: grid;
+      gap: 12px;
+    }
+
+    .settings-panel[hidden] {
+      display: none !important;
+    }
+
+    .settings-panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .best-match-action {
+      min-height: 44px;
+    }
+
+    @media (max-width: 767px), (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+      body {
+        --app-mobile-nav-clearance: calc(82px + env(safe-area-inset-bottom));
+        padding-bottom: calc(76px + env(safe-area-inset-bottom));
+      }
+
+      .app-mode-toggle {
+        position: fixed !important;
+        top: auto !important;
+        right: max(10px, env(safe-area-inset-right)) !important;
+        bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        left: max(10px, env(safe-area-inset-left)) !important;
+        justify-content: stretch;
+        border-radius: 18px;
+      }
+
+      .app-mode-toggle a,
+      .app-mode-toggle button {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 48px;
+        padding: 0 7px;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      #map {
+        bottom: var(--app-mobile-nav-clearance) !important;
+      }
+
+      #ui-toggles {
+        bottom: calc(var(--app-mobile-nav-clearance) + 8px);
+      }
+
+      #selection-card,
+      body.compact-layout #selection-card,
+      body.compact-landscape-layout #selection-card,
+      #stash-shelf,
+      body.compact-layout #stash-shelf {
+        bottom: var(--app-mobile-nav-clearance) !important;
+      }
+
+      .controls {
+        bottom: var(--app-mobile-nav-clearance) !important;
+        max-height: var(--app-mobile-controls-max-height) !important;
+      }
+
+      body.mobile-selection-visible #map,
+      body.compact-layout.mobile-selection-visible #map {
+        bottom: calc(var(--app-mobile-nav-clearance) + 160px) !important;
+      }
+
+      body.compact-landscape-layout.mobile-selection-visible #map {
+        bottom: calc(var(--app-mobile-nav-clearance) + 176px) !important;
+      }
+
+      body.selection-card-collapsed.mobile-selection-visible #map,
+      body.compact-layout.selection-card-collapsed.mobile-selection-visible #map {
+        bottom: calc(var(--app-mobile-nav-clearance) + 56px) !important;
+      }
+
+      body.compact-landscape-layout.selection-card-collapsed.mobile-selection-visible #map {
+        bottom: calc(var(--app-mobile-nav-clearance) + 92px) !important;
+      }
+
+      body.mobile-shelf-open #map,
+      body.compact-layout.mobile-shelf-open #map {
+        bottom: calc(min(56dvh, 460px) + var(--app-mobile-nav-clearance) + 8px) !important;
+      }
+    }
+
+    /* Mobile map chrome: keep the navigation and map actions in separate,
+       space-efficient rows, and make saved matches scan like a list. */
+    body.compact-layout {
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+
+    body.compact-layout #map,
+    body.compact-layout #instructions,
+    body.compact-layout .controls,
+    body.compact-layout #selection-card,
+    body.compact-layout #stash-shelf,
+    body.compact-layout #ui-toggles {
+      position: fixed;
+    }
+
+    body.compact-layout #map {
+      bottom: calc(var(--app-mobile-nav-clearance) + 66px) !important;
+    }
+
+    body.compact-layout.mobile-selection-visible #map {
+      bottom: calc(var(--app-mobile-nav-clearance) + 226px) !important;
+    }
+
+    body.compact-layout.selection-card-collapsed.mobile-selection-visible #map {
+      bottom: calc(var(--app-mobile-nav-clearance) + 122px) !important;
+    }
+
+    body.compact-layout.mobile-controls-open #map,
+    body.compact-layout.mobile-directions-open #map,
+    body.compact-layout.mobile-shelf-open.shelf-open #map {
+      bottom: var(--app-mobile-nav-clearance) !important;
+    }
+
+    body.compact-layout .app-mode-toggle {
+      box-sizing: border-box;
+    }
+
+    body.compact-layout #ui-toggles {
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
+      bottom: calc(var(--app-mobile-nav-clearance) + 8px);
+      width: auto;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    body.compact-layout #ui-toggles button,
+    body.compact-layout #ui-toggles button + button {
+      width: 100%;
+      min-width: 0;
+      min-height: 48px;
+      margin: 0;
+      padding: 7px 8px;
+      font-size: 12px;
+      line-height: 1.1;
+    }
+
+    body.compact-layout #toggle-shelf {
+      min-width: 0;
+      padding-inline: 8px !important;
+    }
+
+    body.compact-layout .saved-toggle-content {
+      justify-content: center;
+      gap: 0;
+      width: 100%;
+    }
+
+    body.compact-layout .saved-toggle-thumbs {
+      display: none;
+    }
+
+    body.compact-layout #stash-shelf {
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
+      bottom: var(--app-mobile-nav-clearance);
+      width: auto;
+      max-width: none;
+      max-height: min(50dvh, 410px);
+      padding: 10px;
+      border-radius: 20px;
+    }
+
+    body.compact-layout #stash-shelf .selection-eyebrow {
+      display: none;
+    }
+
+    body.compact-layout #stash-shelf h3 {
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    body.compact-layout .stash-shelf-summary {
+      display: -webkit-box;
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.35;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+    body.compact-layout .stash-shelf-close {
+      min-height: 40px;
+      padding-inline: 12px;
+    }
+
+    body.compact-layout .stash-shelf-stage {
+      margin-top: 8px;
+      padding: 8px;
+    }
+
+    body.compact-layout .stash-shelf-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      max-height: min(34dvh, 286px);
+      padding-right: 0;
+      overflow-x: hidden;
+    }
+
+    body.compact-layout .stash-bag {
+      box-sizing: border-box;
+      min-height: 0;
+      padding: 8px;
+      border-radius: 14px;
+    }
+
+    body.compact-layout .stash-bag::before,
+    body.compact-layout .stash-bag::after {
+      display: none;
+    }
+
+    body.compact-layout .stash-bag-main {
+      display: grid;
+      grid-template-columns: 88px minmax(0, 1fr);
+      grid-template-rows: repeat(4, auto);
+      column-gap: 10px;
+      align-content: center;
+      overflow: hidden;
+    }
+
+    body.compact-layout .stash-bag-art,
+    body.compact-layout .stash-bag.has-art .stash-bag-art {
+      grid-column: 1;
+      grid-row: 1 / 5;
+      min-height: 88px;
+      height: 100%;
+      padding: 8px;
+      border-radius: 12px;
+    }
+
+    body.compact-layout .stash-bag-ribbon {
+      top: 6px;
+      right: 6px;
+      min-height: 18px;
+      padding-inline: 6px;
+      font-size: 8px;
+    }
+
+    body.compact-layout .stash-bag-art-title {
+      font-size: 11px;
+    }
+
+    body.compact-layout .stash-bag-art-sub {
+      margin-top: 2px;
+      font-size: 9px;
+      line-height: 1.2;
+    }
+
+    body.compact-layout .stash-bag-name,
+    body.compact-layout .stash-bag-city,
+    body.compact-layout .stash-bag-meta,
+    body.compact-layout .stash-bag-price {
+      grid-column: 2;
+      min-width: 0;
+    }
+
+    body.compact-layout .stash-bag-name {
+      margin-top: 0;
+      padding-right: 28px;
+      font-size: 17px;
+      line-height: 1.1;
+    }
+
+    body.compact-layout .stash-bag-city {
+      margin-top: 3px;
+      font-size: 9px;
+      line-height: 1.2;
+    }
+
+    body.compact-layout .stash-bag-meta {
+      margin-top: 4px;
+      overflow: hidden;
+      font-size: 10px;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.compact-layout .stash-bag-price {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      margin-top: 5px;
+      padding: 4px 7px;
+      overflow: hidden;
+      font-size: 9px;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.compact-layout .stash-bag-footer {
+      display: none;
+    }
+
+    body.compact-layout .leaflet-popup-content {
+      width: min(304px, calc(100vw - 82px));
+      min-width: min(276px, calc(100vw - 82px));
+      max-height: min(50dvh, 350px);
+      margin: 12px 14px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body.compact-layout .stash-bag-remove {
+      top: 8px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    #map .leaflet-control-zoom a {
+      width: 44px;
+      height: 44px;
+      line-height: 44px;
+    }
+  
