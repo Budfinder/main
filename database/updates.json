@@ -1,5 +1,23 @@
 [
   {
+    "id": 7,
+    "title": "New homepage layout and database search functionality",
+    "body": "Nothing much more than that, nothing changed under the hood. Considering adding a blog for my trips...",
+    "category": "News",
+    "link_url": "",
+    "link_label": "",
+    "published_at_utc": "2026-10-28T13:12:11.855510+00:00"
+  },
+  {
+    "id": 6,
+    "title": "Up To Date",
+    "body": "Finally got round to updating all of the menus. Now to work on the site",
+    "category": "News",
+    "link_url": "",
+    "link_label": "",
+    "published_at_utc": "2026-10-28T13:10:43.089251+00:00"
+  },
+  {
     "id": 3,
     "title": "Version 1.28",
     "body": "Quite a meaningful update. I've simplified the backend which should improve the search-ability.",

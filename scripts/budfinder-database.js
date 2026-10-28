@@ -3244,37 +3244,117 @@ function averageComparisonBadgeHtml(price, averagePrice) {
   return `<span class="price-judgement average-comparison is-above">${rounded}% above average</span>`;
 }
 
-function menuListingCardHtml(item) {
+function menuPriceParts(item) {
+  const currency = String(item.price_currency || '€');
+  const perGram = item.price_amount == null || String(item.price_amount).trim() === '' ? null : pricePerGram(item);
+  const packPrice = Number(item.package_price_amount);
+  const weight = Number(item.package_weight_g);
+  if (Number.isFinite(packPrice) && packPrice > 0 && Number.isFinite(weight) && weight > 0) {
+    if (weight === 1) return { primary: money(packPrice, currency), secondary: '' };
+    const amount = packPrice % 1 === 0 ? packPrice.toFixed(0) : packPrice.toFixed(2);
+    return {
+      primary: `${currency}${amount} / ${packageWeightLabel(weight)}`,
+      secondary: Number.isFinite(perGram) && perGram > 0 ? money(perGram, currency) : ''
+    };
+  }
+  return { primary: Number.isFinite(perGram) && perGram > 0 ? money(perGram, currency) : 'Price unknown', secondary: '' };
+}
+
+function commonMenuDateItem(listings) {
+  const first = listings[0];
+  if (!first || !displayListingDateValue(first)) return null;
+  const label = listingUpdatedLabel(first);
+  return listings.every(item => displayListingDateValue(item) && listingUpdatedLabel(item) === label) ? first : null;
+}
+
+function menuListingCardHtml(item, { showAge = true } = {}) {
   const stat = getStatByKey(item.strain_name_normalised || normalise(item.strain_name));
   const profile = priceProfileForListings(stat ? stat.offerings : [item]);
   const price = pricePerGram(item);
-  const priceLabel = packageListingPriceLabel(item);
+  const priceParts = menuPriceParts(item);
   const meta = [
-    item.base_type || 'Unknown category',
     Number(item.is_cali) === 1 ? 'Cali' : '',
     Number(item.is_legal) === 1 ? 'Legal project' : '',
     item.grower ? `Grower: ${item.grower}` : ''
   ].filter(Boolean).join(' · ');
   const notes = String(item.notes || '').trim();
   return `
-    <article class="menu-listing-card">
-      <div class="listing-card-head">
-        <div class="menu-listing-main">
-          ${getStrainImageHtml(item.strain_name || 'Unknown strain')}
-          <div>
-            <button type="button" class="menu-listing-title" data-open-strain-detail="${escapeHtmlAttr(item.strain_name_normalised || normalise(item.strain_name))}">${escapeHtml(item.strain_name || 'Unknown strain')}</button>
-            <div class="menu-listing-meta">${escapeHtml(meta)}</div>
-          </div>
+    <article class="menu-listing-card menu-row">
+      <div class="menu-listing-main">
+        ${getStrainImageHtml(item.strain_name || 'Unknown strain')}
+        <div class="menu-row-copy">
+          <button type="button" class="menu-listing-title" data-open-strain-detail="${escapeHtmlAttr(item.strain_name_normalised || normalise(item.strain_name))}">${escapeHtml(item.strain_name || 'Unknown strain')}</button>
         </div>
-        <span class="menu-listing-price">${escapeHtml(priceLabel)}</span>
       </div>
-      <div class="chip-row">
-        ${averageComparisonBadgeHtml(price, profile.average)}
-        ${ageBadgeHtml(displayListingDateValue(item), item)}
-        ${Number(item.is_legal) === 1 ? '<span class="chip deal-chip">Legal project</span>' : ''}
+      <div class="menu-listing-price">
+        <strong>${escapeHtml(priceParts.primary)}</strong>
+        ${priceParts.secondary ? `<small>${escapeHtml(priceParts.secondary)}</small>` : ''}
+      </div>
+      <div class="menu-row-signals">
+        ${meta ? `<span class="menu-listing-meta">${escapeHtml(meta)}</span>` : ''}
+        ${item.price_amount != null && String(item.price_amount).trim() !== '' && Number.isFinite(price) && price > 0 ? averageComparisonBadgeHtml(price, profile.average) : ''}
+        ${showAge ? ageBadgeHtml(displayListingDateValue(item), item) : ''}
       </div>
       ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
     </article>
+  `;
+}
+
+function shopMenuHeaderHtml(row, listings, { detail = false, visibleCount = listings.length } = {}) {
+  const prices = listings.map(pricePerGram).filter(value => Number.isFinite(value) && value > 0);
+  const newestTime = latestListingTime(listings);
+  const newestDate = newestTime ? new Date(newestTime).toISOString() : '';
+  const heading = detail ? 'h2' : 'h3';
+  const selected = isShopSelected(row.shopId);
+  const mapUrl = buildShopMapLink(row.shopId);
+  const count = `${listings.length.toLocaleString()} menu item${listings.length === 1 ? '' : 's'}`;
+  return `
+    <header class="${detail ? 'detail-header' : 'shop-menu-hero'} shop-menu-header">
+      <div class="shop-menu-identity">
+        ${getShopLogoHtml(row.shopKey, row.shopName)}
+        <div class="shop-menu-copy">
+          <p class="shop-menu-eyebrow">Coffeeshop menu</p>
+          <${heading} class="shop-menu-name">${escapeHtml(row.shopName)}</${heading}>
+          <p class="shop-menu-location">${escapeHtml(row.city || 'City unknown')} · ${escapeHtml(count)}</p>
+        </div>
+        ${ageBadgeHtml(newestDate, commonMenuDateItem(listings))}
+      </div>
+      <div class="shop-menu-actions">
+        <a href="${escapeHtmlAttr(mapUrl)}">View on map</a>
+        <a href="${escapeHtmlAttr(row.shopUrl || shopLinkForId(row.shopId))}" target="_blank" rel="noopener noreferrer">Source menu</a>
+        <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${selected ? 'is-active' : ''}" aria-pressed="${selected}">${selected ? 'Saved shop' : 'Save shop'}</button>
+      </div>
+      <details class="shop-menu-overview">
+        <summary>Menu details${prices.length ? ` <span>· from ${escapeHtml(money(Math.min(...prices)))}</span>` : ''}</summary>
+        <div class="shop-menu-summary-grid">
+          ${statTileHtml('Menu items', listings.length.toLocaleString(), `${visibleCount.toLocaleString()} visible`)}
+          ${statTileHtml('Priced items', prices.length.toLocaleString(), prices.length ? `Low ${money(Math.min(...prices))}` : 'No usable prices')}
+          ${statTileHtml('Average price', prices.length ? money(average(prices)) : 'Unknown', 'Known shop listings')}
+          ${statTileHtml('Latest menu date', newestDate ? formatDate(newestDate) : 'Unknown', ageBreakdownLabel(ageBreakdownForListings(listings)))}
+        </div>
+      </details>
+    </header>
+  `;
+}
+
+function shopMenuSectionsHtml(groups, prefix, { detail = false, sharedDateItem = null } = {}) {
+  const order = ['sativa', 'indica', 'hybrid', 'hash'];
+  const rank = category => { const index = order.indexOf(normalise(category)); return index < 0 ? order.length : index; };
+  const categories = Array.from(groups.entries()).sort(([a], [b]) => rank(a) - rank(b) || compareText(a, b));
+  const label = category => category.charAt(0).toUpperCase() + category.slice(1);
+  return `
+    ${categories.length > 1 ? `<nav class="shop-menu-jumps" aria-label="Jump to menu category">
+      ${categories.map(([category, items], index) => `<a href="#${escapeHtmlAttr(prefix)}-${index}">${escapeHtml(label(category))}<span>${items.length.toLocaleString()}</span></a>`).join('')}
+    </nav>` : ''}
+    ${categories.map(([category, items], index) => `
+      <section class="${detail ? 'detail-section ' : ''}menu-category-group shop-menu-category" aria-labelledby="${escapeHtmlAttr(prefix)}-${index}">
+        <div class="menu-category-head">
+          <h3 id="${escapeHtmlAttr(prefix)}-${index}" tabindex="-1">${escapeHtml(label(category))}</h3>
+          <span>${items.length.toLocaleString()} item${items.length === 1 ? '' : 's'}</span>
+        </div>
+        <div class="shop-menu-list">${items.map(item => menuListingCardHtml(item, { showAge: !sharedDateItem })).join('')}</div>
+      </section>
+    `).join('')}
   `;
 }
 
@@ -3321,58 +3401,15 @@ function renderShopMenuBrowser() {
     return compareStrainName(a, b);
   });
 
-  const prices = allListings.map(pricePerGram).filter(Number.isFinite);
-  const newestTime = latestListingTime(allListings);
-  const newestDate = newestTime ? new Date(newestTime).toISOString() : '';
-  const batchOnlyContext = state.listingCheckBatch && state.listingCheckBatch.isSharedBatch && !newestDate;
-  const newestSignalLabel = batchOnlyContext ? 'Data refresh' : 'Latest menu date';
-  const newestSignalHelper = batchOnlyContext
-    ? 'Shared data refresh; menu date unknown'
-    : ageBreakdownLabel(ageBreakdownForListings(allListings));
   const groups = new Map();
   sorted.forEach(item => {
     const category = item.base_type || 'Unknown category';
     if (!groups.has(category)) groups.set(category, []);
     groups.get(category).push(item);
   });
-  const href = row.shopUrl || shopLinkForId(row.shopId);
-  const selected = isShopSelected(row.shopId);
-  const mapUrl = buildShopMapLink(row.shopId);
   els.shopMenuBrowser.innerHTML = `
-    <div class="shop-menu-hero">
-      <div class="shop-menu-hero-head">
-        <a class="shop-card-main shop-menu-map-link" href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(row.shopName)} on map">
-          ${getShopLogoHtml(row.shopKey, row.shopName)}
-          <div class="shop-card-copy">
-            <h3>${escapeHtml(row.shopName)}</h3>
-            <p>${escapeHtml(row.city || 'City unknown')} · ${allListings.length.toLocaleString()} known menu listing${allListings.length === 1 ? '' : 's'}.</p>
-          </div>
-        </a>
-        ${ageBadgeHtml(newestDate)}
-      </div>
-      <div class="shop-menu-summary-grid">
-        ${statTileHtml('Known listings', allListings.length.toLocaleString(), `${filtered.length.toLocaleString()} visible`)}
-        ${statTileHtml('Priced listings', prices.length.toLocaleString(), prices.length ? `Low ${money(Math.min(...prices))}` : 'No usable prices')}
-        ${statTileHtml('Average price', prices.length ? money(average(prices)) : 'Unknown', 'Visible shop menu')}
-        ${statTileHtml(newestSignalLabel, newestDate ? formatDate(newestDate) : 'Unknown', newestSignalHelper)}
-      </div>
-      <div class="listing-card-actions">
-        <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${selected ? 'is-active' : ''}">${selected ? 'Remove saved shop' : 'Save shop'}</button>
-        <a href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(row.shopName)} on map">View on map</a>
-        <a href="${escapeHtmlAttr(href)}" target="_blank" rel="noopener noreferrer">Source menu</a>
-      </div>
-    </div>
-    ${groups.size ? Array.from(groups.entries()).map(([category, items]) => `
-      <section class="menu-category-group">
-        <div class="menu-category-head">
-          <h3>${escapeHtml(category)}</h3>
-          <span>${items.length.toLocaleString()} listing${items.length === 1 ? '' : 's'}</span>
-        </div>
-        <div class="menu-listing-grid">
-          ${items.map(menuListingCardHtml).join('')}
-        </div>
-      </section>
-    `).join('') : '<div class="empty">No menu listings match these shop menu filters.</div>'}
+    ${shopMenuHeaderHtml(row, allListings, { visibleCount: filtered.length })}
+    ${groups.size ? shopMenuSectionsHtml(groups, `browser-menu-${row.shopId}`, { sharedDateItem: commonMenuDateItem(allListings) }) : '<div class="empty">No menu listings match these shop menu filters.</div>'}
   `;
 }
 
@@ -3545,6 +3582,7 @@ function renderDetailContents() {
   if (!els.detailView || !els.databaseLayout) return;
   const detail = state.detail;
   document.body.classList.toggle('database-detail-open', Boolean(detail));
+  els.detailView.classList.toggle('shop-menu-detail', Boolean(detail && detail.type === 'shop'));
   els.detailView.hidden = !detail;
   els.databaseLayout.hidden = Boolean(detail);
   if (!detail) {
@@ -3625,10 +3663,6 @@ function renderDetailContents() {
     return;
   }
   const listings = row.offerings.slice().sort(compareStrainName);
-  const prices = listings.map(pricePerGram).filter(Number.isFinite);
-  const newestTime = latestListingTime(listings);
-  const newestDate = newestTime ? new Date(newestTime).toISOString() : '';
-  const mapUrl = buildShopMapLink(row.shopId);
   const categories = new Map();
   listings.forEach(item => {
     const category = item.base_type || 'Other';
@@ -3638,41 +3672,9 @@ function renderDetailContents() {
   els.detailView.innerHTML = `
     <div class="detail-topbar">
       <button type="button" class="detail-back-button" data-close-detail>${escapeHtml(detailBackLabel('← Back to shop results'))}</button>
-      ${ageBadgeHtml(newestDate)}
     </div>
-    <header class="detail-header">
-      <div class="detail-header-main">
-        ${getShopLogoHtml(row.shopKey, row.shopName)}
-        <div class="detail-header-copy">
-          <p class="detail-eyebrow">Coffeeshop menu</p>
-          <h2>${escapeHtml(row.shopName)}</h2>
-          <p>${escapeHtml(row.city || 'City unknown')} · full current menu snapshot. Select any strain to open its price profile and every known stocking shop.</p>
-          ${categoryPillsHtml(row, 6)}
-        </div>
-      </div>
-      <div class="shop-menu-summary-grid">
-        ${statTileHtml('Known listings', listings.length.toLocaleString(), `${categories.size.toLocaleString()} categories`)}
-        ${statTileHtml('Priced listings', prices.length.toLocaleString(), prices.length ? `Low ${money(Math.min(...prices))}` : 'No usable prices')}
-        ${statTileHtml('Average price', prices.length ? money(average(prices)) : 'Unknown', 'Visible shop menu')}
-        ${statTileHtml('Latest menu date', newestDate ? formatDate(newestDate) : 'Unknown', ageBreakdownLabel(ageBreakdownForListings(listings)))}
-      </div>
-      <div class="detail-actions">
-        <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${isShopSelected(row.shopId) ? 'is-active' : ''}">${isShopSelected(row.shopId) ? 'Remove saved shop' : 'Save shop'}</button>
-        <a href="${escapeHtmlAttr(mapUrl)}">View on map</a>
-        <a href="${escapeHtmlAttr(row.shopUrl || shopLinkForId(row.shopId))}" target="_blank" rel="noopener noreferrer">Source menu</a>
-      </div>
-    </header>
-    ${Array.from(categories.entries()).map(([category, items]) => `
-      <section class="detail-section menu-category-group">
-        <div class="menu-category-head">
-          <h3>${escapeHtml(category)}</h3>
-          <span>${items.length.toLocaleString()} listing${items.length === 1 ? '' : 's'}</span>
-        </div>
-        <div class="detail-listing-grid">
-          ${items.map(menuListingCardHtml).join('')}
-        </div>
-      </section>
-    `).join('')}
+    ${shopMenuHeaderHtml(row, listings, { detail: true })}
+    ${shopMenuSectionsHtml(categories, `detail-menu-${row.shopId}`, { detail: true, sharedDateItem: commonMenuDateItem(listings) })}
   `;
 }
 

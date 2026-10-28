@@ -21,6 +21,7 @@
   let visibleSearchResults = [];
   let activeSearchResult = -1;
   let searchRenderTimer = 0;
+  let updatesResizeObserver;
 
   function escapeHtml(value) {
     return String(value == null ? '' : value)
@@ -107,9 +108,7 @@
         : 'Dutch coffeeshop guide';
     }
     if (searchSubmit) {
-      searchSubmit.textContent = name
-        ? `Explore matches for ${name}`
-        : 'Explore matching shops';
+      searchSubmit.textContent = 'Search';
     }
   }
 
@@ -415,16 +414,49 @@
     renderLocations([]);
   }
 
+  function sizeUpdatesViewport() {
+    const container = byId('home-updates');
+    if (!container || container.dataset.scrollable !== 'true') return;
+    const cards = Array.from(container.querySelectorAll('.update-card')).slice(0, 3);
+    if (!cards.length) return;
+    // Measure complete cards rather than truncating text. On desktop these are
+    // one row; on phones they stack. Subtracting the first top also works while
+    // the reader is scrolled further down the panel.
+    const top = cards[0].getBoundingClientRect().top;
+    const bottom = Math.max(...cards.map(card => card.getBoundingClientRect().bottom));
+    container.style.maxHeight = `${Math.ceil(bottom - top + 4)}px`;
+  }
+
   function renderUpdates(rows) {
     const container = byId('home-updates');
     if (!container) return;
-    const updates = (Array.isArray(rows) ? rows : []).slice(0, 6);
+    const updates = (Array.isArray(rows) ? rows : []).filter(item => item && typeof item === 'object');
+    const scrollable = updates.length > 3;
+    const help = byId('home-updates-help');
+    container.dataset.scrollable = String(scrollable);
+    container.style.maxHeight = '';
+    if (scrollable) {
+      container.setAttribute('tabindex', '0');
+      container.setAttribute('aria-describedby', 'home-updates-help');
+    } else {
+      container.removeAttribute('tabindex');
+      container.removeAttribute('aria-describedby');
+    }
+    if (help) {
+      help.hidden = !scrollable;
+      help.textContent = scrollable ? `Latest 3 of ${updates.length.toLocaleString()} updates · Scroll inside for older updates ↓` : '';
+    }
     if (!updates.length) {
       container.innerHTML = '<p class="updates-empty">No published updates yet. Check back soon.</p>';
       return;
     }
     container.innerHTML = updates.map(item => {
-      const link = String(item.link_url || '').trim();
+      const rawLink = String(item.link_url || '').trim();
+      let link = '';
+      try {
+        const url = new URL(rawLink, window.location.href);
+        if (rawLink && ['http:', 'https:'].includes(url.protocol)) link = rawLink;
+      } catch (_) { /* Keep the update readable if its optional link is invalid. */ }
       const linkHtml = link
         ? `<a href="${escapeHtml(link)}"${/^https?:\/\//i.test(link) ? ' target="_blank" rel="noopener noreferrer"' : ''}>${escapeHtml(item.link_label || 'Open update')} →</a>`
         : '';
@@ -437,6 +469,13 @@
         </article>
       `;
     }).join('');
+    sizeUpdatesViewport();
+    if (typeof ResizeObserver === 'function') {
+      if (updatesResizeObserver) updatesResizeObserver.disconnect();
+      updatesResizeObserver = new ResizeObserver(sizeUpdatesViewport);
+      Array.from(container.querySelectorAll('.update-card')).slice(0, 3)
+        .forEach(card => updatesResizeObserver.observe(card));
+    }
   }
 
   async function loadJson(url, label) {
@@ -463,6 +502,7 @@
     bindSearch();
     applyPersonalisation();
     window.addEventListener('budfinder:namechange', applyPersonalisation);
+    window.addEventListener('resize', sizeUpdatesViewport);
 
     const [summaryResult, manifestResult, searchIndexResult, updatesResult] = await Promise.allSettled([
       loadJson(SUMMARY_URL, 'Homepage summary'),

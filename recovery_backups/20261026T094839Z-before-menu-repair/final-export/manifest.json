@@ -1,0 +1,32 @@
+{
+  "exported_at_utc": "2026-10-26T10:02:38.519195+00:00",
+  "counts": {
+    "shops": 444,
+    "strains": 1828,
+    "active_offerings": 5564,
+    "menu_entries": 5574,
+    "strain_index": 1828,
+    "site_updates": 3,
+    "search_shops": 306,
+    "search_strains": 1828,
+    "search_growers": 14,
+    "search_cities": 15,
+    "home_active_shops": 269,
+    "home_active_listings": 5557
+  },
+  "files": [
+    "shops.json",
+    "shop_lookup.json",
+    "strains.json",
+    "active_offerings.json",
+    "menu_entries.json",
+    "strain_index.json",
+    "search_index.json",
+    "updates.json",
+    "home_summary.json"
+  ],
+  "linking": {
+    "shop_key_note": "Use shops.shop_key as the stable CSV link key.",
+    "recommended_csv_column": "shop_key"
+  }
+}

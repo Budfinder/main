@@ -75,11 +75,12 @@ test('extracted database assets load in the original cascade and classic script 
   assert.equal((html.match(/<script>/g) || []).length, 0);
   const assets = [...html.matchAll(/(?:href|src)="([^"?]+)(?:\?[^"]*)?"/g)].map(([, asset]) => asset);
   for (const asset of ['styles/budfinder-database.css', 'styles/budfinder-polish.css',
-    'styles/budfinder-database-refinements.css', 'scripts/budfinder-database.js']) {
+    'styles/budfinder-database-refinements.css', 'styles/budfinder-menu.css', 'scripts/budfinder-database.js']) {
     assert.ok(fs.existsSync(path.join(root, asset)), asset);
   }
   assert.ok(assets.indexOf('styles/budfinder-database.css') < assets.indexOf('styles/budfinder-polish.css'));
   assert.ok(assets.indexOf('styles/budfinder-polish.css') < assets.indexOf('styles/budfinder-database-refinements.css'));
+  assert.ok(assets.indexOf('styles/budfinder-database-refinements.css') < assets.indexOf('styles/budfinder-menu.css'));
   assert.ok(assets.indexOf('scripts/budfinder-search.js') < assets.indexOf('scripts/budfinder-database.js'));
   assert.match(html, /<script src="scripts\/budfinder-database\.js\?[^"\n]+"><\/script>/);
 });
@@ -155,4 +156,112 @@ test('freshness labels retain date priority, age boundaries and unknown batch da
   assert.equal(c.listingUpdatedLabel(batchOnly), 'Menu date unknown');
   assert.equal(c.menuAgeInfo('').bucket, 'unknown');
   assert.equal(c.menuAgeInfo('').days, Infinity);
+});
+
+test('menu prices show one-gram amounts once and retain real pack totals and currencies', () => {
+  const { context: c } = harness();
+  const parts = item => JSON.parse(JSON.stringify(c.menuPriceParts(item)));
+  assert.deepEqual(parts({ price_currency: '€', package_price_amount: 10, package_weight_g: 1, price_amount: 10 }),
+    { primary: '€10/g', secondary: '' });
+  assert.deepEqual(parts({ price_currency: '€', package_price_amount: 100, package_weight_g: 3.5, price_amount: 100 / 3.5 }),
+    { primary: '€100 / 3.5g', secondary: '€28.57/g' });
+  assert.deepEqual(parts({ price_currency: '£', package_price_amount: 12.5, package_weight_g: 0.9, price_amount: 12.5 / 0.9 }),
+    { primary: '£12.50 / 0.9g', secondary: '£13.89/g' });
+  assert.deepEqual(parts({ price_currency: '$', price_amount: 30, price_unit: 'g' }),
+    { primary: '$30/g', secondary: '' });
+  for (const price_amount of [null, undefined, '', ' ', 'unknown', 0, -10]) {
+    assert.deepEqual(parts({ price_amount }), { primary: 'Price unknown', secondary: '' });
+  }
+  assert.deepEqual(parts({ package_price_amount: 50, package_weight_g: 3.5, price_amount: null }),
+    { primary: '€50 / 3.5g', secondary: '' });
+});
+
+test('menu rows retain grower, flags, notes, dates and safe strain navigation', () => {
+  const { context: c } = harness();
+  const row = { strain_name: 'Long strain x Wild Cherry', strain_name_normalised: 'long strain x wild cherry',
+    base_type: 'hybrid', is_cali: 1, is_legal: 1, grower: 'Wizard Trees', notes: 'Limited <batch>',
+    price_amount: 20, package_price_amount: 70, package_weight_g: 3.5, source_menu_date: '2026-08-01' };
+  const before = JSON.stringify(row);
+  const result = c.menuListingCardHtml(row);
+  assert.match(result, /data-open-strain-detail="long strain x wild cherry"/);
+  assert.match(result, />Long strain x Wild Cherry<\/button>/);
+  assert.match(result, /Cali · Legal project · Grower: Wizard Trees/);
+  assert.match(result, /Limited &lt;batch&gt;/);
+  assert.match(result, /Source menu dated 1 Aug 2026/);
+  assert.match(result, /€70 \/ 3.5g/);
+  assert.match(result, /€20\/g/);
+  assert.equal(JSON.stringify(row), before);
+  const unsafe = c.menuListingCardHtml({ ...row, strain_name: '<script>alert(1)</script>',
+    strain_name_normalised: 'test" onclick="bad', grower: '<img src=x>', notes: '<script>bad</script>' });
+  assert.doesNotMatch(unsafe, /<script>|<img src=x>/);
+  assert.match(unsafe, /&quot; onclick=&quot;/);
+});
+
+test('an unknown menu price never receives a bargain badge', () => {
+  const { context: c, state } = harness();
+  state.strainStats = [{ key: 'test', name: 'Test', offerings: [{ price_amount: 20, price_unit: 'g' }] }];
+  const result = c.menuListingCardHtml({ strain_name: 'Test', strain_name_normalised: 'test', price_amount: null });
+  assert.match(result, /Price unknown/);
+  assert.doesNotMatch(result, /below average|above average|Around average/);
+  assert.match(result, /Menu date unknown/);
+});
+
+test('compact headers keep statistics available on demand and existing menu actions', () => {
+  const { context: c, state } = harness();
+  const row = { shopId: '105', shopName: 'Dampkring', shopKey: 'cs-dampkring', city: 'Amsterdam', shopUrl: 'https://example.com/menu' };
+  state.shopById.set('105', { shop_id: 105, city: 'Amsterdam' });
+  const result = c.shopMenuHeaderHtml(row, [{ price_amount: 16, source_menu_date: '2026-08-01' }], { detail: true });
+  assert.match(result, /<h2 class="shop-menu-name">Dampkring<\/h2>/);
+  assert.match(result, /Amsterdam · 1 menu item/);
+  assert.match(result, /<details class="shop-menu-overview">/);
+  assert.doesNotMatch(result, /<details[^>]*\bopen\b/);
+  assert.match(result, /<summary>Menu details/);
+  assert.match(result, /Average price/);
+  assert.match(result, /Source menu/);
+  assert.match(result, /data-toggle-map-shop="105"/);
+  assert.match(result, /aria-pressed="false"/);
+  const map = result.match(/<a href="([^"]+)">View on map/)[1].replaceAll('&amp;', '&');
+  assert.equal(new URL(map, 'https://budfinder.org').searchParams.get('shops'), '105');
+  assert.doesNotMatch(result, /full current menu snapshot|PRICED LISTINGS/);
+});
+
+test('category links target unique headings in both menu views without dropping any pack options', () => {
+  const { context: c } = harness();
+  const item = (name, category, weight = 1) => ({ strain_name: name, base_type: category,
+    price_amount: 10, package_price_amount: 10 * weight, package_weight_g: weight });
+  const groups = new Map([
+    ['hybrid', [item('One', 'hybrid'), item('One', 'hybrid', 3.5)]],
+    ['sativa', [item('Two', 'sativa')]],
+    ['indica', [item('Three', 'indica')]],
+  ]);
+  const detail = c.shopMenuSectionsHtml(groups, 'detail-menu-105', { detail: true });
+  const browser = c.shopMenuSectionsHtml(groups, 'browser-menu-105');
+  assert.ok(detail.indexOf('>Sativa<span>') < detail.indexOf('>Indica<span>'));
+  assert.ok(detail.indexOf('>Indica<span>') < detail.indexOf('>Hybrid<span>'));
+  for (const markup of [detail, browser]) {
+    assert.equal((markup.match(/class="menu-listing-card menu-row"/g) || []).length, 4);
+    for (const [, target] of markup.matchAll(/href="#([^"]+)"/g)) {
+      assert.ok(markup.includes(`id="${target}" tabindex="-1"`));
+    }
+  }
+  const allIds = [...(detail + browser).matchAll(/\bid="([^"]+)"/g)].map(([, id]) => id);
+  assert.equal(new Set(allIds).size, allIds.length);
+});
+
+test('dates appear once only when every menu item has the same known date label', () => {
+  const { context: c } = harness();
+  const dated = { strain_name: 'One', price_amount: 10, source_menu_date: '2026-08-01' };
+  const same = [{ ...dated }, { ...dated, strain_name: 'Two' }];
+  assert.ok(c.commonMenuDateItem(same));
+  assert.equal(c.commonMenuDateItem([{ ...dated }, { ...dated, source_menu_date: '2026-08-02' }]), null);
+  assert.equal(c.commonMenuDateItem([{ ...dated }, { strain_name: 'Unknown date' }]), null);
+  assert.equal(c.commonMenuDateItem([{ strain_name: 'Unknown date' }]), null);
+  assert.equal(c.commonMenuDateItem([]), null);
+  const groups = new Map([['sativa', same]]);
+  const grouped = c.shopMenuSectionsHtml(groups, 'known-date', { sharedDateItem: c.commonMenuDateItem(same) });
+  assert.doesNotMatch(grouped, /Source menu dated/);
+  const header = c.shopMenuHeaderHtml({ shopId: '1', shopName: 'Test' }, same);
+  assert.match(header, /Source menu dated 1 Aug 2026/);
+  const mixed = c.shopMenuSectionsHtml(groups, 'mixed-dates');
+  assert.equal((mixed.match(/Source menu dated 1 Aug 2026/g) || []).length, 2);
 });

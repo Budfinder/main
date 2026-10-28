@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="styles/budfinder-home-base.css?v=20260905-refine1" />
   <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260905-review1" />
   <link rel="stylesheet" href="styles/budfinder-home-search.css?v=20260905-refine1" />
-  <link id="budfinder-home-tlc" rel="stylesheet" href="styles/budfinder-home-layout.css?v=20260905-refine1" />
+  <link id="budfinder-home-tlc" rel="stylesheet" href="styles/budfinder-home-layout.css?v=20261028-home1" />
 </head>
 <body>
   <a class="skip-link" href="#home-search-input">Skip to search</a>
@@ -66,14 +66,14 @@
         <span class="kicker" id="home-personal-greeting">Dutch coffeeshop guide</span>
       </div>
       <div class="hero-copy">
-        <h1 id="home-title">Find the right coffeeshop in minutes.</h1>
-        <p class="lead">Search a strain, grower, coffeeshop, town or neighbourhood. Compare listed prices, see locations and check when menus were observed.</p>
+        <h1 id="home-title">Find your next coffeeshop.</h1>
+        <p class="lead">Find strains, compare listed prices and explore coffeeshops across the Netherlands.</p>
 
         <form id="home-search-form" class="home-search hero-search" action="map.html" aria-label="Search Budfinder">
           <label class="search-input-label" for="home-search-input">Strain, grower, coffeeshop, town or area</label>
           <div class="search-row">
-            <input id="home-search-input" name="search" type="search" role="combobox" placeholder="Amnesia Haze, Karma, De Wedren, Nijmegen…" autocomplete="off" enterkeyhint="search" aria-autocomplete="list" aria-controls="home-search-results" aria-expanded="false" aria-haspopup="listbox" />
-            <button class="primary-btn" id="home-search-submit" type="submit">Explore matching shops</button>
+            <input id="home-search-input" name="search" type="search" role="combobox" placeholder="Amnesia Haze, Karma, Amsterdam…" autocomplete="off" enterkeyhint="search" aria-autocomplete="list" aria-controls="home-search-results" aria-expanded="false" aria-haspopup="listbox" />
+            <button class="primary-btn" id="home-search-submit" type="submit">Search</button>
           </div>
           <div id="home-search-results" class="home-search-results" role="listbox" aria-label="Search suggestions" hidden></div>
           <p id="home-search-status" class="home-search-status" role="status" aria-live="polite"></p>
@@ -81,6 +81,7 @@
 
         <div class="intent-actions" aria-label="Quick links">
           <a class="intent-action" href="map.html?source=home&amp;intent=nearby">Near me</a>
+          <a class="intent-action" href="database.html?browser=shops">Browse menus</a>
           <a class="intent-action" href="database.html">Find a strain</a>
           <a class="intent-action" href="map.html?source=home&amp;intent=itinerary">Plan a route</a>
         </div>
@@ -105,12 +106,13 @@
 
     <section class="updates-panel" aria-labelledby="updates-title">
       <div class="updates-head">
-        <div><span class="eyebrow">From Budfinder</span><h2 id="updates-title">Updates &amp; things worth knowing</h2></div>
-        <p>New map areas, settings, project notes, and useful things I’ve found along the way.</p>
+        <div><span class="eyebrow">From Budfinder</span><h2 id="updates-title">Latest updates</h2></div>
+        <p>News, new places and improvements to Budfinder.</p>
       </div>
-      <div id="home-updates" class="updates-grid" aria-live="polite">
+      <div id="home-updates" class="updates-grid" role="region" aria-labelledby="updates-title" aria-live="polite">
         <p class="updates-empty">Loading the latest updates…</p>
       </div>
+      <p id="home-updates-help" class="updates-scroll-hint" hidden></p>
     </section>
 
     <section class="insights-panel market-snapshot" aria-labelledby="market-snapshot-title">
@@ -119,7 +121,7 @@
           <span class="eyebrow">About the menu data</span>
           <h2 id="market-snapshot-title">Coverage, prices and menu dates</h2>
         </div>
-        <p>Database refreshed <strong id="snapshot-date">Loading…</strong>. This is when these database figures were prepared. Individual menu observation dates may be older or unknown, and availability can change.</p>
+        <p>Database refreshed <strong id="snapshot-date">Loading…</strong>. Menu dates vary; check each menu before travelling.</p>
       </div>
       <div id="amsterdam-insights" class="insights-grid market-signal-grid" aria-live="polite">
         <article class="insight-panel coverage-panel">
@@ -128,8 +130,11 @@
             <span><strong id="catalog-shop-count">Loading…</strong><small id="catalog-shop-label">mapped Amsterdam shops</small></span>
             <span><strong id="catalog-listing-count">Loading…</strong><small>Amsterdam menu listings</small></span>
           </div>
-          <p id="coverage-definition">Mapped shops are marked open in our Amsterdam catalogue. A menu listing is one strain-and-price entry retained in the latest database.</p>
-          <p id="coverage-filter-note" class="coverage-filter-note">Loading menu coverage…</p>
+          <details class="coverage-details">
+            <summary>How these figures work</summary>
+            <p id="coverage-definition">Mapped shops are marked open in our Amsterdam catalogue. A menu listing is one strain-and-price entry retained in the latest database.</p>
+            <p id="coverage-filter-note" class="coverage-filter-note">Loading menu coverage…</p>
+          </details>
         </article>
         <a class="insight-panel market-signal-card" href="database.html">
           <span>Nationwide average strain price</span>
@@ -191,6 +196,6 @@
   <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
   <script src="scripts/budfinder-page-settings.js?v=20260905-refine1"></script>
   <script src="scripts/budfinder-search.js?v=20260830-search2"></script>
-  <script src="scripts/budfinder-home.js?v=20260905-refine1"></script>
+  <script src="scripts/budfinder-home.js?v=20261028-home1"></script>
 </body>
 </html>

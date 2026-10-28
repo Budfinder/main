@@ -1,0 +1,51 @@
+Budfinder data QA
+=================
+shops.json: 444 (manifest 444)
+shop_lookup.json: 444
+strains.json: 1,869 (manifest 1869)
+active_offerings.json: 5,622 (manifest 5622)
+menu_entries.json: 5,632 (manifest 5632)
+strain_index.json: 1,869 (manifest 1869)
+search_index.json: 7
+home_summary.json: 10
+updates.json: 3
+
+Location CSVs
+-------------
+coffeeshops.csv: 323 shops across 15 registered towns and cities
+Alkmaar.csv: 6 rows, 1 local map places
+amsterdamLoc.csv: 360 rows, 197 local map places
+amsterdamLoc2.csv: 159 rows, 159 local map places
+Arnhem.csv: 7 rows, 0 local map places
+Breda.csv: 8 rows, 0 local map places
+Delft.csv: 6 rows, 1 local map places
+denHaag.csv: 31 rows, 1 local map places
+Eindhoven.csv: 5 rows, 0 local map places
+Gronigen.csv: 9 rows, 0 local map places
+Haarlem.csv: 18 rows, 1 local map places
+Leeuwarden.csv: 9 rows, 0 local map places
+Maastricht.csv: 16 rows, 1 local map places
+Nijmegen.csv: 11 rows, 0 local map places
+Rotterdam.csv: 20 rows, 1 local map places
+Tilburg.csv: 10 rows, 0 local map places
+utrechtLoc.csv: 22 rows, 11 local map places
+
+Menu source-date coverage
+-------------------------
+Source/observed dates only; bulk menu checks, last-seen and export updates do not reset menu age.
+Age is measured by UTC calendar day; source age does not guarantee current stock.
+0–14 days: 290 of 5,622 listings (5.2%)
+15–60 days: 1,020 of 5,622 listings (18.1%)
+Over 60 days: 2,476 of 5,622 listings (44.0%)
+Unknown date: 1,836 of 5,622 listings (32.7%)
+Shops with active listings: 270; newest usable source date per shop: 11 within 14 days, 38 15–60 days, 111 over 60 days, 110 unknown.
+Bulk timestamps only: 1,836 listings (included in unknown, not fresh).
+Usable date fields: menu_changed_at_utc (3,786)
+Newest active offering source date: 2026-10-18 (8 day(s) ago)
+
+Warnings
+--------
+- 3,496 of 5,622 active listings (62.2%) have source dates older than 14 days; 2,476 are over 60 days old
+- 1,836 of 5,622 active listings (32.7%) have unknown source age; bulk refresh dates are not menu verification
+
+No blocking data issues found.

@@ -18,9 +18,11 @@ class Element {
     this.hidden = false;
     this.textContent = 'Loading…';
     this.dataset = {};
+    this.style = {};
     this.attributes = new Map();
     this.listeners = new Map();
     this.options = [];
+    this.cards = [];
     this._html = '';
   }
 
@@ -48,6 +50,11 @@ class Element {
 
   set innerHTML(html) {
     this._html = html;
+    this.cards = [...html.matchAll(/<article class="update-card">/g)].map((_, index) => {
+      const card = new Element();
+      card.getBoundingClientRect = () => this.cardRects?.[index] || { top: index * 212, bottom: index * 212 + 200 };
+      return card;
+    });
     this.options = [...html.matchAll(/<button\b([^>]*)>/g)].map(match => {
       const attributes = [...match[1].matchAll(/([\w-]+)="([^"]*)"/g)];
       const option = new Element();
@@ -62,6 +69,7 @@ class Element {
 
   get innerHTML() { return this._html; }
   querySelectorAll(selector) {
+    if (selector === '.update-card') return this.cards;
     assert.equal(selector, '[data-search-result-index]');
     return this.options;
   }
@@ -136,11 +144,13 @@ function harness(options = {}) {
         { name: 'Amnesia Haze', shop_count: 5 }
       ]
     },
-    'database/updates.json': []
+    'database/updates.json': options.updates || []
   };
+  const windowEvents = new Element('window');
   const window = {
     location: { href: 'https://budfinder.org/index.html' },
-    addEventListener() {},
+    addEventListener: windowEvents.addEventListener.bind(windowEvents),
+    dispatch: windowEvents.dispatch.bind(windowEvents),
     setTimeout: timers.setTimeout,
     clearTimeout: timers.clearTimeout
   };
@@ -155,10 +165,18 @@ function harness(options = {}) {
     assert.ok(Object.hasOwn(data, url), `Unexpected data request: ${url}`);
     return Promise.resolve({ ok: true, json: async () => data[url] });
   };
-  const context = vm.createContext({ window, document, fetch, URL, AbortController, console });
+  get('home-updates').cardRects = options.cardRects;
+  get('home-updates-help').hidden = true;
+  const observers = [];
+  class ResizeObserver {
+    constructor(callback) { this.callback = callback; this.elements = []; observers.push(this); }
+    observe(element) { this.elements.push(element); }
+    disconnect() { this.elements = []; }
+  }
+  const context = vm.createContext({ window, document, fetch, URL, AbortController, ResizeObserver, console });
   vm.runInContext(searchSource, context, { filename: 'budfinder-search.js' });
   vm.runInContext(homeSource, context, { filename: 'budfinder-home.js' });
-  return { get, window, timers, requests };
+  return { get, window, timers, requests, observers };
 }
 
 const settle = () => new Promise(resolve => setImmediate(resolve));
@@ -277,4 +295,63 @@ test('a stalled request is aborted and the dashboard settles instead of loading 
   assert.equal(app.get('amsterdam-insights').dataset.ready, 'true');
   assert.equal(app.get('home-average-price').textContent, 'Unavailable');
   assert.equal(app.timers.pending, 0);
+});
+
+const updates = count => Array.from({ length: count }, (_, index) => ({
+  title: `Update ${index + 1}`, body: `Full text for update ${index + 1}`,
+  category: 'News', published_at_utc: '2026-10-28T12:00:00Z'
+}));
+
+test('all published updates remain available while the viewport fits the first three at each layout', async () => {
+  const app = harness({ updates: updates(8), cardRects: [
+    { top: 100, bottom: 300 }, { top: 100, bottom: 320 }, { top: 100, bottom: 310 }
+  ] });
+  await settle();
+  const panel = app.get('home-updates');
+  assert.equal(panel.cards.length, 8, 'Older updates must not be capped at six');
+  assert.match(panel.innerHTML, /Full text for update 8/);
+  assert.equal(panel.style.maxHeight, '224px', 'Desktop viewport fits the tallest of three cards in a row');
+  assert.equal(panel.getAttribute('tabindex'), '0', 'The scroll panel is keyboard reachable');
+  assert.equal(panel.getAttribute('aria-describedby'), 'home-updates-help');
+  assert.match(app.get('home-updates-help').textContent, /Latest 3 of 8/);
+  assert.equal(app.get('home-updates-help').hidden, false);
+
+  panel.cardRects = [{ top: 100, bottom: 250 }, { top: 262, bottom: 450 }, { top: 462, bottom: 650 }];
+  app.window.dispatch('resize');
+  assert.equal(panel.style.maxHeight, '554px', 'Phone viewport fits three complete stacked cards');
+  assert.equal(app.observers[0].elements.length, 3);
+  panel.cardRects = [{ top: -200, bottom: -50 }, { top: -38, bottom: 150 }, { top: 162, bottom: 390 }];
+  app.observers[0].callback();
+  assert.equal(panel.style.maxHeight, '594px', 'Content growth is handled even while the panel is scrolled');
+});
+
+test('short or empty update feeds do not create an unnecessary keyboard stop or scroll hint', async () => {
+  for (const count of [0, 1, 3]) {
+    const app = harness({ updates: updates(count) });
+    await settle();
+    const panel = app.get('home-updates');
+    assert.equal(panel.cards.length, count);
+    assert.equal(panel.dataset.scrollable, 'false');
+    assert.equal(panel.style.maxHeight, '');
+    assert.equal(panel.getAttribute('tabindex'), null);
+    assert.equal(panel.getAttribute('aria-describedby'), null);
+    assert.equal(app.get('home-updates-help').hidden, true);
+    if (!count) assert.match(panel.innerHTML, /No published updates yet/);
+  }
+});
+
+test('update text stays escaped and only web links are offered', async () => {
+  const app = harness({ updates: [
+    { title: '<script>bad</script>', body: 'First line\nSecond <line>', link_url: 'javascript:alert(1)' },
+    { title: 'Unsafe data', link_url: 'data:text/html,bad' },
+    { title: 'Menu', link_url: 'database.html?browser=shops', link_label: 'Browse <menus>' },
+    { title: 'External', link_url: 'https://example.com/news', link_label: 'Read more' }
+  ] });
+  await settle();
+  const html = app.get('home-updates').innerHTML;
+  assert.doesNotMatch(html, /<script>|javascript:|data:text/);
+  assert.match(html, /&lt;script&gt;bad&lt;\/script&gt;/);
+  assert.match(html, /First line\nSecond &lt;line&gt;/);
+  assert.match(html, /href="database.html\?browser=shops">Browse &lt;menus&gt;/);
+  assert.match(html, /href="https:\/\/example.com\/news" target="_blank" rel="noopener noreferrer"/);
 });

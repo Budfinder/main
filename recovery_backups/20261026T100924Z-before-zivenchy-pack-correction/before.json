@@ -1,0 +1,41 @@
+{
+  "menu_entry": {
+    "id": 13348,
+    "shop_id": 161,
+    "strain_id": 5070,
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "is_legal": 0,
+    "grower": "Maison O Cacapo",
+    "price_currency": "€",
+    "price_amount": 100.0,
+    "price_unit": "g",
+    "package_price_amount": 100.0,
+    "package_weight_g": 1.0,
+    "notes": "",
+    "created_at": "2026-10-26T08:05:59.527897+00:00"
+  },
+  "offering": {
+    "id": 23579,
+    "shop_id": 161,
+    "strain_id": 5070,
+    "base_type": "hybrid",
+    "is_cali": 1,
+    "is_legal": 0,
+    "grower": "Maison O Cacapo",
+    "price_currency": "€",
+    "price_amount": 100.0,
+    "price_unit": "g",
+    "package_price_amount": 100.0,
+    "package_weight_g": 1.0,
+    "notes": "",
+    "status": "active",
+    "discontinued_reason": "",
+    "discontinued_since_utc": "",
+    "discontinued_until_utc": "",
+    "last_seen_at_utc": "2026-10-26T08:11:46.024355+00:00",
+    "manual_status_lock": 0,
+    "created_at": "2026-10-26T08:11:46.024355+00:00",
+    "updated_at": "2026-10-26T08:11:46.024355+00:00"
+  }
+}

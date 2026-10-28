@@ -23,6 +23,8 @@ Then open `http://localhost:8000/index.html`.
 - Page styles live in `styles/budfinder-home-{base,search,layout}.css`,
   `styles/budfinder-map-{base,layout,refinements}.css`, and
   `styles/budfinder-database.css` plus `styles/budfinder-database-refinements.css`.
+  `styles/budfinder-menu.css` supplies the compact shop menus after those explorer
+  styles. It is shared by the shop detail page and the Shop Menu Browser.
   `styles/budfinder-polish.css` supplies shared improvements. Keep stylesheet and
   script order in each HTML page when editing or publishing these assets.
 - `coffeeshop_menu_app.py` maintains the SQLite/menu-entry workflow and exports the static JSON snapshot.
@@ -83,6 +85,36 @@ homepage. Menu entries can keep more than one pack size for the same shop and st
 enter the pack price and weight for each option. Use **Legal project** for products that
 are part of the regulated project so the map and database can label and filter them.
 
+## Faster menu entry
+
+Both **Add entry** and **Edit entry** have searchable strain and grower dropdowns.
+Strain matches put exact names first, then prefixes and partial words, with common
+strains ahead of less-used variants. For example, type `am haze` to find Amnesia
+Haze. Press **Down** to highlight the first match, then **Up/Down** to move through
+the list and **Return** to select and move to price. Return also accepts the first
+match directly. Use **Escape** to keep a new name exactly as typed.
+**Tab** also keeps the typed name. Selecting
+or typing a grower ticks **Cali**; untick it when the origin is different.
+
+On Add entry, **Keep settings for the next entry** remembers grower, Cali/legal
+flags, currency and pack size for the current shop and menu image in that browser
+tab. Names, prices and notes start blank. **Keep type for this section** also keeps
+the chosen sativa/indica/hybrid/hash category; otherwise known strains suggest
+their existing category. **New section** resets those shared settings without
+discarding a name or price already being entered. Editing opens with the entry's
+saved values rather than these add-entry defaults.
+
+Changing an entry's strain name affects only that shop and pack option. The old
+option becomes discontinued at that shop, and other shops and historical records
+keep their original strain identity. If the destination option already exists,
+the save is rejected with both entries preserved. Database-wide typo corrections
+and merges belong to the separate **Consolidate strains** tool.
+
+Use the **1g / 3.5g / 5g** buttons for common pack sizes, or type another weight.
+**⌘/Ctrl+Enter** saves through the normal form validation. Entry helpers live in
+`static/strain-picker.js` and `static/entry-helpers.js`; include these files when
+updating the local admin app. Menu completion and replacement rules are unchanged.
+
 ## BUD//WATCH workflow
 
 The admin homepage can build the watch data package from the canonical Budfinder
@@ -119,6 +151,9 @@ finishes with the existing static data QA. It returns a failing exit code for a
 failed check; freshness warnings remain informational. It does not install tools,
 fetch remote assets, modify data, or deploy files.
 
+Admin-entry fixtures also run when Flask is installed in the selected Python
+environment; they use temporary databases and are skipped when Flask is absent.
+
 To run the homepage checks separately:
 
 ```sh
@@ -127,6 +162,14 @@ node --test tests/home-regressions.cjs
 
 They exercise the shipped homepage and search scripts, including price formatting,
 keyboard suggestions, fast edits, failed requests, and loading timeouts.
+The database fixtures also check compact menu prices, pack options, category
+navigation, safe rendering and shared versus mixed menu dates. Shop menus retain
+all entries and metadata; Menu details exposes the full statistics on demand.
+The homepage updates panel fits three complete posts at desktop and phone widths,
+with all older published posts available by scrolling inside the panel. Its height
+adapts to wrapping and content changes; the scrollable region supports keyboard
+navigation and describes how to reach older posts. Homepage fixtures cover long
+and short feeds, resizing, escaped update text and optional web links.
 `tests/test_data_quality.py` covers mostly stale data, undated menus, bulk refreshes,
 source-date precedence, and UTC age boundaries using isolated fixtures. For UI
 changes, also preview the homepage, map, and explorer at desktop and mobile widths;

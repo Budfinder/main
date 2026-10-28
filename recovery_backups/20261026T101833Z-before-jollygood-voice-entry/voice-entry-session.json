@@ -1,0 +1,1332 @@
+{
+  "shop": {
+    "id": 199,
+    "name": "Jollygood",
+    "city": "Amsterdam",
+    "status": "new",
+    "menu_id": 199,
+    "sha256": "a675c513246c723a6198e1fa97e18a83142fc671b0c19f5f6ceea022b9ba4ed5",
+    "fetched_at_utc": "2026-10-18T10:51:39.312902+00:00"
+  },
+  "starting_entries": [
+    {
+      "id": 11246,
+      "shop_id": 199,
+      "strain_id": 147,
+      "base_type": "sativa",
+      "is_cali": 0,
+      "is_legal": 0,
+      "grower": "",
+      "price_currency": "€",
+      "price_amount": 10.0,
+      "price_unit": "g",
+      "package_price_amount": 10.0,
+      "package_weight_g": 1.0,
+      "notes": "",
+      "created_at": "2026-10-26T09:38:19.007926+00:00",
+      "strain_name": "Super SIlver Haze"
+    },
+    {
+      "id": 13440,
+      "shop_id": 199,
+      "strain_id": 209,
+      "base_type": "hybrid",
+      "is_cali": 0,
+      "is_legal": 0,
+      "grower": "",
+      "price_currency": "€",
+      "price_amount": 10.0,
+      "price_unit": "g",
+      "package_price_amount": 10.0,
+      "package_weight_g": 1.0,
+      "notes": "",
+      "created_at": "2026-10-26T09:38:28.045637+00:00",
+      "strain_name": "Lemon Cherry Gelato"
+    },
+    {
+      "id": 13441,
+      "shop_id": 199,
+      "strain_id": 1131,
+      "base_type": "hybrid",
+      "is_cali": 0,
+      "is_legal": 0,
+      "grower": "",
+      "price_currency": "€",
+      "price_amount": 10.0,
+      "price_unit": "g",
+      "package_price_amount": 10.0,
+      "package_weight_g": 1.0,
+      "notes": "",
+      "created_at": "2026-10-26T09:38:33.366693+00:00",
+      "strain_name": "Blue Nerds"
+    },
+    {
+      "id": 13442,
+      "shop_id": 199,
+      "strain_id": 590,
+      "base_type": "indica",
+      "is_cali": 0,
+      "is_legal": 0,
+      "grower": "",
+      "price_currency": "€",
+      "price_amount": 10.0,
+      "price_unit": "g",
+      "package_price_amount": 10.0,
+      "package_weight_g": 1.0,
+      "notes": "",
+      "created_at": "2026-10-26T09:38:39.858045+00:00",
+      "strain_name": "Mochi"
+    }
+  ],
+  "backup": "/Users/matt/Documents/GitHub/main/recovery_backups/20261026T101833Z-before-jollygood-voice-entry",
+  "started_at_utc": "2026-10-26T10:18:33.414460+00:00",
+  "scope": "complete_menu",
+  "defaults": {
+    "price_currency": "€",
+    "package_weight_g": 1,
+    "is_cali": true,
+    "is_legal": false,
+    "grower": ""
+  },
+  "pending_batch": [],
+  "saved_batches": [
+    {
+      "saved_at_utc": "2026-10-26T10:22:40.311767+00:00",
+      "entries": [
+        {
+          "spoken_name": "Super Silver Haze",
+          "strain_name": "Super Silver Haze",
+          "package_price_amount": 10,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "sativa",
+          "suggested_base_type": "sativa"
+        },
+        {
+          "spoken_name": "Lemon Cherry Gelato",
+          "strain_name": "Lemon Cherry Gelato",
+          "package_price_amount": 10,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "spoken_name": "Blue Nerds",
+          "strain_name": "Blue Nerds",
+          "package_price_amount": 10,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "spoken_name": "Mochi",
+          "strain_name": "Mochi",
+          "package_price_amount": 10,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "indica",
+          "suggested_base_type": "indica"
+        },
+        {
+          "spoken_name": "Versace",
+          "strain_name": "Versace",
+          "package_price_amount": 10,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "spoken_name": "Headbanger OG",
+          "strain_name": "Headbanger OG",
+          "package_price_amount": 12,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "indica",
+          "suggested_base_type": "indica"
+        },
+        {
+          "spoken_name": "Animal Tsunami",
+          "strain_name": "Animal Tsunami",
+          "package_price_amount": 15,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "spoken_name": "Lemon Up",
+          "strain_name": "Lemon Up",
+          "package_price_amount": 15,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "sativa",
+          "suggested_base_type": "sativa"
+        },
+        {
+          "spoken_name": "Skittles",
+          "strain_name": "Zkittlez",
+          "package_price_amount": 15,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "indica",
+          "suggested_base_type": "indica",
+          "name_evidence": "Printed ZKITTLEZ on the saved Dutch menu; existing strain 1730."
+        }
+      ],
+      "saved_entry_ids": [
+        13443,
+        13444,
+        13445,
+        13446,
+        13447,
+        13448,
+        13449,
+        13450,
+        13451
+      ]
+    },
+    {
+      "section": "British",
+      "saved_at_utc": "2026-10-26T10:28:43.256837+00:00",
+      "entries": [
+        {
+          "section": "British",
+          "spoken_name": "Zootopia",
+          "strain_name": "Zutopia",
+          "package_price_amount": 50,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "base_type": "hybrid",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "British",
+          "spoken_name": "American Pie",
+          "strain_name": "American Pie",
+          "package_price_amount": 16,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "base_type": "hybrid",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "suggested_base_type": null
+        },
+        {
+          "section": "British",
+          "spoken_name": "Delish",
+          "strain_name": "D Lish",
+          "package_price_amount": 50,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "base_type": "hybrid",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "British",
+          "spoken_name": "Earth OG",
+          "strain_name": "Earth OG",
+          "package_price_amount": 50,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "base_type": "hybrid",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "suggested_base_type": null
+        },
+        {
+          "section": "British",
+          "spoken_name": "Lotus",
+          "strain_name": "Lotus",
+          "package_price_amount": 50,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "base_type": "hybrid",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "suggested_base_type": null
+        },
+        {
+          "section": "British",
+          "spoken_name": "Red Hots",
+          "strain_name": "Redhotz",
+          "package_price_amount": 50,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "base_type": "hybrid",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "suggested_base_type": null
+        },
+        {
+          "section": "British",
+          "spoken_name": "Zangria",
+          "strain_name": "Zangria",
+          "package_price_amount": 50,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "base_type": "indica",
+          "is_cali": false,
+          "is_legal": false,
+          "grower": "",
+          "suggested_base_type": "indica"
+        }
+      ],
+      "saved_entry_ids": [
+        13452,
+        13453,
+        13454,
+        13455,
+        13456,
+        13457,
+        13458
+      ]
+    },
+    {
+      "section": "Cali first four",
+      "saved_at_utc": "2026-10-26T10:36:59.060574+00:00",
+      "entries": [
+        {
+          "section": "Cali",
+          "spoken_name": "Cap Junky x Banana OG",
+          "strain_name": "Cap Junky x Banana OG",
+          "package_price_amount": 15,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "High Octane OG x Animal Mints",
+          "strain_name": "High Octane OG x Animal Mints",
+          "package_price_amount": 15,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Lemon Z",
+          "strain_name": "Lemon Z",
+          "package_price_amount": 15,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Sherb BX x Zkittlez x Wild Cherry",
+          "strain_name": "Sherb BX x Zkittlez x Wild Cherry",
+          "package_price_amount": 15,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid"
+        }
+      ],
+      "saved_entry_ids": [
+        13459,
+        13460,
+        13461,
+        13462
+      ]
+    },
+    {
+      "section": "Cali remaining, cheaper duplicate choices applied",
+      "saved_at_utc": "2026-10-26T10:46:16.941946+00:00",
+      "entries": [
+        {
+          "section": "Cali",
+          "spoken_name": "Blueberry Hooper Pie",
+          "strain_name": "Blueberry Haupia Pie",
+          "source_spelling_suggestion": "Blueberry Haupia Pie",
+          "package_price_amount": 50,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Cherry Hooper Pie",
+          "strain_name": "Cherry Haupia Pie",
+          "source_spelling_suggestion": "Cherry Haupia Pie",
+          "package_price_amount": 50,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Lemon Fiend",
+          "strain_name": "Lemonfeen",
+          "source_spelling_suggestion": "Lemonfeen",
+          "package_price_amount": 20,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "sativa",
+          "suggested_base_type": "sativa"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Medic",
+          "strain_name": "Medic",
+          "source_spelling_suggestion": "Medic",
+          "package_price_amount": 20,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Purple Dino",
+          "strain_name": "Purple Dino",
+          "source_spelling_suggestion": "Purple Dino",
+          "package_price_amount": 20,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Smooth Operator",
+          "strain_name": "Smooth Operator",
+          "source_spelling_suggestion": "Smooth Operator",
+          "package_price_amount": 20,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Sugar Shack",
+          "strain_name": "Sugar Shack",
+          "source_spelling_suggestion": "Sugar Shack",
+          "package_price_amount": 20,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Zatti",
+          "strain_name": "Zatti",
+          "source_spelling_suggestion": "Zatti",
+          "package_price_amount": 20,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Z Amnesia",
+          "strain_name": "Z Amnesia",
+          "source_spelling_suggestion": "Z Amnesia",
+          "package_price_amount": 20,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Blue Hawaiian",
+          "strain_name": "Blue Hawaiian",
+          "source_spelling_suggestion": "Blue Hawaiian",
+          "package_price_amount": 21,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "ZHIFU",
+          "strain_name": "ZHIFU",
+          "source_spelling_suggestion": "ZHIFU",
+          "package_price_amount": 21,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Mega Z Blue",
+          "strain_name": "Mega Z Blue",
+          "source_spelling_suggestion": "Mega Z Blue",
+          "package_price_amount": 21,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Hyper Z",
+          "strain_name": "Hyper Z",
+          "source_spelling_suggestion": "Hyper Z",
+          "package_price_amount": 21,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Snazzy",
+          "strain_name": "Snazzy",
+          "source_spelling_suggestion": "Snazzy",
+          "package_price_amount": 24,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Mellow Gello",
+          "strain_name": "Mellow Gello",
+          "source_spelling_suggestion": "Mellow Gello",
+          "package_price_amount": 24,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Bluegie",
+          "strain_name": "Bluzhie",
+          "source_spelling_suggestion": "Bluzhie",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Bushido",
+          "strain_name": "Bushido",
+          "source_spelling_suggestion": "Bushido",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Crown Melon Z",
+          "strain_name": "Crown Melonz",
+          "source_spelling_suggestion": "Crown Melonz",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Z Cream Pie",
+          "strain_name": "Z Cream Pie",
+          "source_spelling_suggestion": "Z Cream Pie",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Yamazaki",
+          "strain_name": "Yamazaki",
+          "source_spelling_suggestion": "Yamazaki",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Zenshi",
+          "strain_name": "Zenshi",
+          "source_spelling_suggestion": "Zenshi",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Z Z Zushimi",
+          "strain_name": "Zhi Zhi Zushimi",
+          "source_spelling_suggestion": "Zhi Zhi Zushimi",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Izumi",
+          "strain_name": "Izumi",
+          "source_spelling_suggestion": "Izumi",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Passion Fruit Z",
+          "strain_name": "Passion Fruit Z",
+          "source_spelling_suggestion": "Passion Fruit Z",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Watermelon Z",
+          "strain_name": "Watermelon Z",
+          "source_spelling_suggestion": "Watermelon Z",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Atomic Apples",
+          "strain_name": "Atomic Apples",
+          "source_spelling_suggestion": "Atomic Apples",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "BK Satellite",
+          "strain_name": "BK Satellite",
+          "source_spelling_suggestion": "BK Satellite",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Brainwash",
+          "strain_name": "Brain Wash",
+          "source_spelling_suggestion": "Brain Wash",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Gemini",
+          "strain_name": "Gemini",
+          "source_spelling_suggestion": "Gemini",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Permanent Shade",
+          "strain_name": "Permanent Shade",
+          "source_spelling_suggestion": "Permanent Shade",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Skittles",
+          "strain_name": "Zkittlez",
+          "source_spelling_suggestion": "Zkittlez",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "indica",
+          "suggested_base_type": "indica"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Zone Biscotti",
+          "strain_name": "Blowin Biscotti",
+          "source_spelling_suggestion": "Blowin Biscotti",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid",
+          "name_resolution": "User corrected the name to Blowin Biscotti."
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Gushers",
+          "strain_name": "Gushers",
+          "source_spelling_suggestion": "Gushers",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Nightshade",
+          "strain_name": "Nightshade",
+          "source_spelling_suggestion": "Nightshade",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "indica",
+          "suggested_base_type": "indica"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Antidote",
+          "strain_name": "Antidote",
+          "source_spelling_suggestion": "Antidote",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Flashbang",
+          "strain_name": "Flash Bang",
+          "source_spelling_suggestion": "Flash Bang",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "M8",
+          "strain_name": "M8",
+          "source_spelling_suggestion": "M8",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Tidebanger",
+          "strain_name": "Tidebanger",
+          "source_spelling_suggestion": "Tidebanger",
+          "package_price_amount": 100,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Black Squid",
+          "strain_name": "Black Squid",
+          "source_spelling_suggestion": "Black Squid",
+          "package_price_amount": 120,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Fishbone",
+          "strain_name": "Fish Bone",
+          "source_spelling_suggestion": "Fish Bone",
+          "package_price_amount": 120,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Glove",
+          "strain_name": "Glove",
+          "source_spelling_suggestion": "Glove",
+          "package_price_amount": 120,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Loudmouth",
+          "strain_name": "Loud Mouth",
+          "source_spelling_suggestion": "Loud Mouth",
+          "package_price_amount": 120,
+          "package_weight_g": 3.5,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": "hybrid",
+          "suggested_base_type": "hybrid"
+        }
+      ],
+      "saved_entry_ids": [
+        13463,
+        13464,
+        13465,
+        13466,
+        13467,
+        13468,
+        13469,
+        13470,
+        13471,
+        13472,
+        13473,
+        13474,
+        13475,
+        13476,
+        13477,
+        13478,
+        13479,
+        13480,
+        13481,
+        13482,
+        13483,
+        13484,
+        13485,
+        13486,
+        13487,
+        13488,
+        13489,
+        13490,
+        13491,
+        13492,
+        13493,
+        13494,
+        13495,
+        13496,
+        13497,
+        13498,
+        13499,
+        13500,
+        13501,
+        13502,
+        13503,
+        13504
+      ],
+      "omitted_duplicate_entries": [
+        {
+          "section": "Cali",
+          "spoken_name": "Lemon Up",
+          "strain_name": "Lemon Up",
+          "source_spelling_suggestion": "Lemon Up",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": null,
+          "suggested_base_type": "sativa"
+        },
+        {
+          "section": "Cali",
+          "spoken_name": "Skittles",
+          "strain_name": "Zkittlez",
+          "source_spelling_suggestion": "Zkittlez",
+          "package_price_amount": 30,
+          "package_weight_g": 1,
+          "price_currency": "€",
+          "is_cali": true,
+          "is_legal": false,
+          "grower": "",
+          "base_type": null,
+          "suggested_base_type": "indica"
+        }
+      ]
+    }
+  ],
+  "menu_finished": true,
+  "start_from_scratch": true,
+  "reset_at_utc": "2026-10-26T10:19:38.564971+00:00",
+  "reset_summary": {
+    "before": 4,
+    "after": 0,
+    "removed": 4
+  },
+  "pending_batch_confirmed": false,
+  "pending_batch_captured_at_utc": "2026-10-26T10:36:58.898072+00:00",
+  "transcription_corrections": [
+    {
+      "strain": "Headbanger OG",
+      "discarded_price": 10,
+      "corrected_price": 12
+    }
+  ],
+  "dictionary_candidates": [
+    {
+      "spoken": "Super Silver Haze",
+      "id": 147,
+      "name_display": "Super SIlver Haze",
+      "name_normalised": "super silver haze",
+      "existing_type": "sativa"
+    },
+    {
+      "spoken": "Lemon Cherry Gelato",
+      "id": 209,
+      "name_display": "Lemon Cherry Gelato",
+      "name_normalised": "lemon cherry gelato",
+      "existing_type": "hybrid"
+    },
+    {
+      "spoken": "Blue Nerds",
+      "id": 1131,
+      "name_display": "Blue Nerds",
+      "name_normalised": "blue nerds",
+      "existing_type": "hybrid"
+    },
+    {
+      "spoken": "Mochi",
+      "id": 590,
+      "name_display": "Mochi",
+      "name_normalised": "mochi",
+      "existing_type": "indica"
+    },
+    {
+      "spoken": "Versace",
+      "id": 1127,
+      "name_display": "Versace",
+      "name_normalised": "versace",
+      "existing_type": "hybrid"
+    },
+    {
+      "spoken": "Headbanger OG",
+      "id": 531,
+      "name_display": "Headbanger OG",
+      "name_normalised": "headbanger og",
+      "existing_type": "indica"
+    },
+    {
+      "spoken": "Animal Tsunami",
+      "id": 6967,
+      "name_display": "Animal Tsunami",
+      "name_normalised": "animal tsunami",
+      "existing_type": "hybrid"
+    },
+    {
+      "spoken": "Lemon Up",
+      "id": 4677,
+      "name_display": "Lemon Up",
+      "name_normalised": "lemon up",
+      "existing_type": "sativa"
+    },
+    {
+      "spoken": "Skittles",
+      "id": 11169,
+      "name_display": "Zkittles",
+      "name_normalised": "zkittles",
+      "existing_type": "hybrid"
+    },
+    {
+      "spoken": "Skittles",
+      "id": 1730,
+      "name_display": "Zkittlez",
+      "name_normalised": "zkittlez",
+      "existing_type": "indica"
+    }
+  ],
+  "questions_pending": [],
+  "saved_menu_observations": {
+    "dutch_section_names": [
+      "SUPER SILVER HAZE",
+      "LCG",
+      "BLUE NERDZ",
+      "MOCHI",
+      "VERZACE",
+      "HEADBANGER OG",
+      "ANIMAL TSUNAMI",
+      "LEMON UP",
+      "ZKITTLEZ"
+    ],
+    "mochi_possible_price": 8,
+    "mochi_price_resolution": "User explicitly confirmed €10/g; overrides the saved image."
+  },
+  "confirmation": {
+    "confirmed_at_utc": "2026-10-26T10:28:43.114579+00:00",
+    "new_categories": "hybrid",
+    "existing_categories": "retained"
+  },
+  "dictionary_candidates_current_batch": [
+    {
+      "spoken_name": "Zootopia",
+      "price": 50,
+      "weight_g": 3.5,
+      "candidates": [
+        {
+          "id": 46,
+          "name_display": "Zutopia",
+          "name_normalised": "zutopia",
+          "existing_type": "hybrid",
+          "jollygood_history": [
+            {
+              "base_type": "hybrid",
+              "grower": "",
+              "is_cali": 0,
+              "package_weight_g": 1.0,
+              "price_amount": 18.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "spoken_name": "American Pie",
+      "price": 16,
+      "weight_g": 1,
+      "candidates": []
+    },
+    {
+      "spoken_name": "Delish",
+      "price": 50,
+      "weight_g": 3.5,
+      "candidates": [
+        {
+          "id": 206,
+          "name_display": "D Lish",
+          "name_normalised": "d lish",
+          "existing_type": "hybrid",
+          "jollygood_history": []
+        }
+      ]
+    },
+    {
+      "spoken_name": "Earth OG",
+      "price": 50,
+      "weight_g": 3.5,
+      "candidates": []
+    },
+    {
+      "spoken_name": "Lotus",
+      "price": 50,
+      "weight_g": 3.5,
+      "candidates": []
+    },
+    {
+      "spoken_name": "Red Hots",
+      "price": 50,
+      "weight_g": 3.5,
+      "candidates": []
+    },
+    {
+      "spoken_name": "Zangria",
+      "price": 50,
+      "weight_g": 3.5,
+      "candidates": [
+        {
+          "id": 803,
+          "name_display": "Zangria",
+          "name_normalised": "zangria",
+          "existing_type": "indica",
+          "jollygood_history": []
+        }
+      ]
+    }
+  ],
+  "cross_separator": " x ",
+  "explicitly_confirmed_cali_first_four": [
+    {
+      "strain_name": "Cap Junky x Banana OG",
+      "package_price_amount": 15,
+      "package_weight_g": 1,
+      "is_cali": true
+    },
+    {
+      "strain_name": "High Octane OG x Animal Mints",
+      "package_price_amount": 15,
+      "package_weight_g": 1,
+      "is_cali": true
+    },
+    {
+      "strain_name": "Lemon Z",
+      "package_price_amount": 15,
+      "package_weight_g": 1,
+      "is_cali": true
+    },
+    {
+      "strain_name": "Sherb BX x Zkittlez x Wild Cherry",
+      "package_price_amount": 15,
+      "package_weight_g": 1,
+      "is_cali": true
+    }
+  ],
+  "collisions_pending": [],
+  "spelling_checks_pending": [],
+  "name_corrections": [
+    {
+      "recorded_at_utc": "2026-10-26T10:41:49.500717+00:00",
+      "biscotti": "Blowin Biscotti",
+      "zkittlez_spelling": "Z K I T T L E Z",
+      "cross_separator": "lowercase x"
+    }
+  ],
+  "duplicate_resolution": {
+    "confirmed_at_utc": "2026-10-26T10:46:16.664170+00:00",
+    "rule": "Keep cheaper option for duplicate strain name and pack size.",
+    "retained": [
+      "Lemon Up: Dutch €15/1g",
+      "Zkittlez: Dutch €15/1g"
+    ],
+    "omitted": [
+      {
+        "section": "Cali",
+        "spoken_name": "Lemon Up",
+        "strain_name": "Lemon Up",
+        "source_spelling_suggestion": "Lemon Up",
+        "package_price_amount": 30,
+        "package_weight_g": 1,
+        "price_currency": "€",
+        "is_cali": true,
+        "is_legal": false,
+        "grower": "",
+        "base_type": null,
+        "suggested_base_type": "sativa"
+      },
+      {
+        "section": "Cali",
+        "spoken_name": "Skittles",
+        "strain_name": "Zkittlez",
+        "source_spelling_suggestion": "Zkittlez",
+        "package_price_amount": 30,
+        "package_weight_g": 1,
+        "price_currency": "€",
+        "is_cali": true,
+        "is_legal": false,
+        "grower": "",
+        "base_type": null,
+        "suggested_base_type": "indica"
+      }
+    ],
+    "retained_other_pack": "Zkittlez Cali €100/3.5g"
+  },
+  "finished_at_utc": "2026-10-26T10:48:47.233782+00:00",
+  "finish_summary": {
+    "entries": 62,
+    "active_offerings": 62,
+    "old_active_offerings_discontinued": 0
+  },
+  "exports_refreshed": true,
+  "exported_at_utc": "2026-10-26T10:49:11.212074+00:00",
+  "validation": {
+    "database_integrity": "ok",
+    "foreign_keys": "ok",
+    "shop_active_rows": 62,
+    "shop_export_rows": 62,
+    "data_qa_passed": true,
+    "menu_status": "processed"
+  }
+}

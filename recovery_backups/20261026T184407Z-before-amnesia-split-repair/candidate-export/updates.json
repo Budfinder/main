@@ -1,0 +1,29 @@
+[
+  {
+    "id": 3,
+    "title": "Version 1.28",
+    "body": "Quite a meaningful update. I've simplified the backend which should improve the search-ability.",
+    "category": "News",
+    "link_url": "",
+    "link_label": "",
+    "published_at_utc": "2026-08-29T14:38:16.925000+00:00"
+  },
+  {
+    "id": 2,
+    "title": "Arnhem, Delft, Eindhoven, and Nijmegen!",
+    "body": "New locations added and tested!",
+    "category": "News",
+    "link_url": "",
+    "link_label": "",
+    "published_at_utc": "2026-08-29T14:36:28.092658+00:00"
+  },
+  {
+    "id": 1,
+    "title": "Leeuwarden and Breda",
+    "body": "Just done adding Leeuwarden and Breda. Moving straight to another 4 places.",
+    "category": "New area",
+    "link_url": "",
+    "link_label": "",
+    "published_at_utc": "2026-08-28T10:58:55.555435+00:00"
+  }
+]

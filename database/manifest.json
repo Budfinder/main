@@ -1,18 +1,18 @@
 {
-  "exported_at_utc": "2026-09-06T16:23:26.596121+00:00",
+  "exported_at_utc": "2026-10-28T13:12:12.235780+00:00",
   "counts": {
     "shops": 444,
-    "strains": 2004,
-    "active_offerings": 6282,
-    "menu_entries": 6295,
-    "strain_index": 2004,
-    "site_updates": 3,
+    "strains": 2030,
+    "active_offerings": 6526,
+    "menu_entries": 6536,
+    "strain_index": 2030,
+    "site_updates": 5,
     "search_shops": 306,
-    "search_strains": 2004,
-    "search_growers": 18,
+    "search_strains": 2030,
+    "search_growers": 19,
     "search_cities": 15,
-    "home_active_shops": 296,
-    "home_active_listings": 6239
+    "home_active_shops": 301,
+    "home_active_listings": 6491
   },
   "files": [
     "shops.json",

@@ -18,14 +18,9 @@ This app then lets you:
 - Edit / delete current menu entries
 - Browse the current database via a read-only browser page
 
-IMPORTANT BEHAVIOUR (fix for “can't rename incorrect strain”)
--------------------------------------------------------------
-When you edit the strain name for an entry, this app now performs a *true rename* of the
-existing `strains` record (or a merge into an existing strain), rather than creating a
-new strain and leaving the old incorrect one behind.
-
-That means: if you correct “Tropicana Chery” → “Tropicana Cherry”, the incorrect strain
-disappears everywhere once merged/renamed.
+Entry names are local to the shop being edited. Changing a name selects or creates
+the matching strain without renaming shared records. The separate consolidation
+tool is the explicit workflow for database-wide typo corrections and merges.
 
 - Finish a menu to reconcile the long-term `shop_offerings` catalogue
   (set active, auto-discontinue missing, and mark menu processed)
@@ -49,11 +44,11 @@ Notes
 -----
 - Price comparisons use a normalized per-gram value, while the original pack price
   and pack weight are also stored for jar-only listings.
-- This file is intentionally self-contained: HTML templates are embedded.
+- HTML templates are embedded; entry-screen helpers live in static/.
 
 Version
 -------
-v5-full-ui-edit-by-id+true-rename-or-merge-strains
+v6-shop-local-entry-edits
 """
 
 from __future__ import annotations
@@ -2172,10 +2167,8 @@ def resolve_grower(grower_choice: str, grower_custom: str) -> str:
 def upsert_strain(conn: sqlite3.Connection, name: str) -> int:
     """Insert a strain if missing; return strain_id.
 
-    NOTE:
-    This is used when adding new menu entries.
-    For correcting mistakes while editing, we now prefer a true rename/merge,
-    implemented in `rename_or_merge_strain_id(...)`.
+    Used for adding menu entries. Editing resolves a strain without changing an
+    existing shared name; explicit global corrections use `rename_or_merge_strain_id`.
     """
     norm, disp = normalise_strain_name(name)
     if not norm:
@@ -2534,6 +2527,62 @@ def preferred_base_type_for_strain_id(conn: sqlite3.Connection, strain_id: int) 
     return str(row["base_type"] or "") if row else ""
 
 
+def strain_suggestion_items(conn: sqlite3.Connection, query: str, limit: int = 12) -> List[Dict[str, Any]]:
+    """Rank dictionary matches without changing any strain or menu records."""
+    def words(value: str) -> List[str]:
+        return re.findall(r"[^\W_]+", value.casefold())
+
+    query = (query or '').strip()
+    if len(query) > 160:
+        return []
+    tokens = words(query)
+    if query and not tokens:
+        return []
+    phrase = " ".join(tokens)
+    compact = "".join(tokens)
+    candidates = conn.execute(
+        """
+        SELECT st.id, st.name_display, COALESCE(used.shop_count, 0) AS shop_count
+        FROM strains st
+        LEFT JOIN (
+            SELECT strain_id, COUNT(*) AS shop_count
+            FROM (
+                SELECT strain_id, shop_id FROM shop_offerings WHERE status = 'active'
+                UNION
+                SELECT strain_id, shop_id FROM menu_entries
+            ) appearances
+            GROUP BY strain_id
+        ) used ON used.strain_id = st.id;
+        """
+    ).fetchall()
+    ranked = []
+    for row in candidates:
+        name_tokens = words(row['name_display'])
+        name = " ".join(name_tokens)
+        name_compact = "".join(name_tokens)
+        if not tokens:
+            match = 0
+        elif phrase == name or compact == name_compact:
+            match = 0
+        elif name.startswith(phrase) or name_compact.startswith(compact):
+            match = 1
+        elif all(any(word.startswith(token) for word in name_tokens) for token in tokens):
+            match = 2
+        elif phrase in name:
+            match = 3
+        elif all(token in name for token in tokens):
+            match = 4
+        else:
+            continue
+        score = (match, -int(row['shop_count']), len(name_tokens), len(name), name)
+        ranked.append((score, row))
+    ranked.sort(key=lambda item: item[0])
+    return [
+        {'name_display': row['name_display'], 'base_type': preferred_base_type_for_strain_id(conn, int(row['id']))}
+        for _score, row in ranked[:max(1, min(limit, 30))]
+    ]
+
+
 def consolidate_base_type_for_strain(
     conn: sqlite3.Connection,
     strain_id: int,
@@ -2691,167 +2740,105 @@ def update_menu_entry_by_id(
     package_weight_custom: str,
     notes: str,
 ) -> Tuple[bool, str]:
-    """Update an existing current-menu entry by menu_entries.id.
-
-    KEY FIX:
-    - If the user edits the strain name, we now RENAME or MERGE the *existing* strain,
-      rather than creating a new strain_id and leaving the wrong one behind.
-    """
+    """Edit one shop's entry atomically, without renaming shared strain records."""
     base_type = (base_type or "").strip().lower()
     if base_type not in VALID_BASE_TYPES:
         return False, f"Base type must be one of: {', '.join(VALID_BASE_TYPES)}"
-
     price_currency = (price_currency or DEFAULT_CURRENCY).strip()
     if price_currency not in SUPPORTED_CURRENCIES:
         return False, f"Currency must be one of: {', '.join(SUPPORTED_CURRENCIES)}"
-
     try:
         package_price_amount = parse_positive_decimal(package_price_amount_text, "Price amount")
         package_weight_g = resolve_package_weight(package_weight_choice, package_weight_custom)
         price_amount = normalised_price_per_gram(package_price_amount, package_weight_g)
-    except ValueError as e:
-        return False, str(e)
-    grower = resolve_grower(grower_choice, grower_custom)
-
-    # Ensure entry exists and belongs to this shop
-    existing = conn.execute(
-        """
-        SELECT me.id, me.shop_id, me.strain_id,
-               st.name_normalised AS strain_norm,
-               st.name_display AS strain_display
-        FROM menu_entries me
-        JOIN strains st ON st.id = me.strain_id
-        WHERE me.id = ? AND me.shop_id = ?;
-        """,
-        (entry_id, shop_id),
-    ).fetchone()
-    if not existing:
-        return False, "Entry not found."
-
-    current_strain_id = int(existing["strain_id"])
-    current_norm = str(existing["strain_norm"])
-
-    # Decide if the strain name is changing (based on normalised form)
-    new_norm, _new_disp = normalise_strain_name(new_strain_name)
+    except ValueError as exc:
+        return False, str(exc)
+    new_norm, new_disp = normalise_strain_name(new_strain_name)
     if not new_norm:
         return False, "Strain name cannot be blank."
-
-    # If normalised differs, do a rename/merge of the *existing* strain_id
-    resulting_strain_id = current_strain_id
-    rename_msg = ""
-    if new_norm != current_norm:
-        ok, resulting_strain_id, rename_msg = rename_or_merge_strain_id(
-            conn, current_strain_id=current_strain_id, new_name=new_strain_name
-        )
-        if not ok:
-            return False, rename_msg
-    else:
-        # Same normalised name: still allow updating display string (fix casing)
-        ok, resulting_strain_id, rename_msg = rename_or_merge_strain_id(
-            conn, current_strain_id=current_strain_id, new_name=new_strain_name
-        )
-        if not ok:
-            return False, rename_msg
-
+    grower = resolve_grower(grower_choice, grower_custom)
     now = utc_now_iso()
-    is_cali_int = 1 if bool(is_cali) else 0
+    is_cali_int = 1 if is_cali else 0
+    is_legal_int = 1 if is_legal else 0
 
-    # If the rename resulted in a different strain_id (merge), we might have collided
-    # with an existing entry for this shop. Resolve: keep the target one, delete this one.
-    if resulting_strain_id != current_strain_id:
-        clash = conn.execute(
-            """
-            SELECT id FROM menu_entries
-            WHERE shop_id = ? AND strain_id = ? AND id != ?
-              AND package_weight_g = ? AND is_legal = ?;
-            """,
-            (shop_id, resulting_strain_id, entry_id, package_weight_g, 1 if bool(is_legal) else 0),
-        ).fetchone()
-        if clash:
-            # Delete this entry, because the shop already has the merged strain entry.
-            conn.execute("DELETE FROM menu_entries WHERE id = ? AND shop_id = ?;", (entry_id, shop_id))
-            conn.commit()
-            return True, f"{rename_msg}. Note: merged with existing shop entry; duplicate removed."
+    try:
+        with conn:
+            conn.execute("BEGIN IMMEDIATE;")
+            existing = conn.execute(
+                "SELECT * FROM menu_entries WHERE id = ? AND shop_id = ?;",
+                (entry_id, shop_id),
+            ).fetchone()
+            if not existing:
+                return False, "Entry not found."
 
-    # Update the menu entry row values (strain_id may have changed if merged)
-    conn.execute(
-        """
-        UPDATE menu_entries
-        SET strain_id = ?,
-            base_type = ?,
-            is_cali = ?,
-            is_legal = ?,
-            grower = ?,
-            price_currency = ?,
-            price_amount = ?,
-            price_unit = ?,
-            package_price_amount = ?,
-            package_weight_g = ?,
-            notes = ?,
-            created_at = ?
-        WHERE id = ? AND shop_id = ?;
-        """,
-        (
-            resulting_strain_id,
-            base_type,
-            is_cali_int,
-            1 if bool(is_legal) else 0,
-            grower,
-            price_currency,
-            price_amount,
-            DEFAULT_UNIT,
-            package_price_amount,
-            package_weight_g,
-            (notes or "").strip(),
-            now,
-            entry_id,
-            shop_id,
-        ),
-    )
+            # Resolve the desired identity without modifying an existing dictionary name.
+            # Global corrections belong exclusively to the explicit consolidation tool.
+            target = conn.execute(
+                "SELECT id, name_display FROM strains WHERE name_normalised = ?;", (new_norm,)
+            ).fetchone()
+            if not target:
+                conn.execute(
+                    "INSERT INTO strains(name_normalised, name_display, created_at) VALUES(?, ?, ?);",
+                    (new_norm, new_disp, now),
+                )
+                target = conn.execute(
+                    "SELECT id, name_display FROM strains WHERE name_normalised = ?;", (new_norm,)
+                ).fetchone()
+            resulting_strain_id = int(target["id"])
+            clash = conn.execute(
+                """SELECT id FROM menu_entries
+                   WHERE shop_id = ? AND strain_id = ? AND package_weight_g = ?
+                     AND is_legal = ? AND id != ?;""",
+                (shop_id, resulting_strain_id, package_weight_g, is_legal_int, entry_id),
+            ).fetchone()
+            if clash:
+                raise ValueError(
+                    f"This shop already has {target['name_display']} at {package_weight_g:g}g"
+                    f"{' in the legal project' if is_legal else ''}. Edit that entry instead; both entries are unchanged."
+                )
 
-    # Sync catalogue so changes are visible immediately.
-    sync_offering_from_menu_entry(
-        conn,
-        shop_id=shop_id,
-        strain_id=resulting_strain_id,
-        base_type=base_type,
-        is_cali=bool(is_cali_int),
-        is_legal=bool(is_legal),
-        grower=grower,
-        price_currency=price_currency,
-        price_amount=price_amount,
-        package_price_amount=package_price_amount,
-        package_weight_g=package_weight_g,
-        notes=(notes or "").strip(),
-    )
+            old_key = (int(existing["strain_id"]), float(existing["package_weight_g"]), int(existing["is_legal"] or 0))
+            new_key = (resulting_strain_id, package_weight_g, is_legal_int)
+            conn.execute(
+                """UPDATE menu_entries SET strain_id = ?, base_type = ?, is_cali = ?, is_legal = ?,
+                       grower = ?, price_currency = ?, price_amount = ?, price_unit = ?,
+                       package_price_amount = ?, package_weight_g = ?, notes = ?, created_at = ?
+                   WHERE id = ? AND shop_id = ?;""",
+                (resulting_strain_id, base_type, is_cali_int, is_legal_int, grower, price_currency,
+                 price_amount, DEFAULT_UNIT, package_price_amount, package_weight_g,
+                 (notes or "").strip(), now, entry_id, shop_id),
+            )
+            if old_key != new_key:
+                # Retire only the replaced option at this shop; other shops, packs and
+                # historical observations keep their original identity and values.
+                conn.execute(
+                    """UPDATE shop_offerings SET status = 'discontinued',
+                           discontinued_reason = 'corrected menu entry', discontinued_since_utc = ?,
+                           discontinued_until_utc = '', updated_at = ?
+                       WHERE shop_id = ? AND strain_id = ? AND package_weight_g = ?
+                         AND is_legal = ? AND status = 'active'
+                         AND NOT EXISTS (
+                             SELECT 1 FROM menu_entries me WHERE me.shop_id = shop_offerings.shop_id
+                               AND me.strain_id = shop_offerings.strain_id
+                               AND me.package_weight_g = shop_offerings.package_weight_g
+                               AND me.is_legal = shop_offerings.is_legal
+                         );""",
+                    (now, now, shop_id, *old_key),
+                )
+            sync_offering_from_menu_entry(
+                conn, shop_id=shop_id, strain_id=resulting_strain_id, base_type=base_type,
+                is_cali=bool(is_cali_int), is_legal=bool(is_legal_int), grower=grower,
+                price_currency=price_currency, price_amount=price_amount,
+                package_price_amount=package_price_amount, package_weight_g=package_weight_g,
+                notes=(notes or "").strip(),
+            )
+    except (sqlite3.Error, ValueError) as exc:
+        return False, f"Save failed: {exc}"
 
-    conn.commit()
-
-    # Read back saved state
-    saved = conn.execute(
-        """
-        SELECT me.id AS entry_id,
-               st.name_display AS strain_name,
-               me.base_type, me.is_cali, me.is_legal,
-               me.grower,
-               me.price_currency, me.price_amount, me.price_unit,
-               me.package_price_amount, me.package_weight_g,
-               me.notes
-        FROM menu_entries me
-        JOIN strains st ON st.id = me.strain_id
-        WHERE me.id = ? AND me.shop_id = ?;
-        """,
-        (entry_id, shop_id),
-    ).fetchone()
-
-    if not saved:
-        return False, "Save failed: could not re-load saved entry."
-
-    prefix = (rename_msg + ". ") if rename_msg else ""
     return True, (
-        f"{prefix}Updated. Now: {saved['strain_name']} · {saved['base_type']}"
-        f"{' (cali)' if int(saved['is_cali']) else ''}, "
-        f"{saved['price_currency']}{float(saved['price_amount']):.2f}/{saved['price_unit']}"
+        f"Updated this shop's entry: {target['name_display']} · {base_type}"
+        f"{' (cali)' if is_cali_int else ''}, "
+        f"{price_currency}{package_price_amount:.2f}/{package_weight_g:g}g"
     )
 
 
@@ -3476,6 +3463,49 @@ button.danger { border-color: rgba(252,129,129,.45); color: var(--bad); }
   width: 100%;
 }
 
+.strainPicker { position: relative; }
+.strainSuggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 5px);
+  z-index: 30;
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #111a29;
+  box-shadow: 0 14px 35px rgba(0,0,0,.45);
+}
+.strainSuggestions[hidden] { display: none; }
+.strainSuggestion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+}
+.strainSuggestion:hover {
+  background: rgba(79,209,197,.17);
+}
+.strainSuggestion[aria-selected=true] {
+  background: rgba(79,209,197,.28);
+  box-shadow: inset 3px 0 0 var(--accent);
+  color: #fff;
+}
+.strainSuggestionType { color: var(--muted); font-size: 12px; flex-shrink: 0; }
+.strainPickerHelp { margin-top: 6px; }
+.entryWeights { margin-top: 7px; gap: 6px; }
+.entryWeights button { padding: 5px 10px; font-size: 12px; }
+.entryWeights button[aria-pressed=true] { border-color: var(--accent); background: rgba(79,209,197,.14); }
+.entryDefaults { margin-top: 12px; padding: 10px; border: 1px solid var(--border); border-radius: 10px; }
+
 .entryPriceGrid {
   display: grid;
   grid-template-columns: 68px minmax(0, 1fr) minmax(100px, .8fr);
@@ -3839,15 +3869,24 @@ PAGE_TMPL = """
             <form id="entryForm" method="post" action="{{ url_for('add_entry', shop_id=shop_id) }}">
               <div class="strainNameField">
                 <label for="strain_name">Strain name</label>
-                <input id="strain_name" name="strain_name" list="strain_suggestions" autocomplete="off"
+                <div class="strainPicker">
+                <input id="strain_name" name="strain_name" autocomplete="off"
+                       role="combobox" aria-autocomplete="list" aria-expanded="false"
+                       aria-controls="strain_suggestions" aria-describedby="strain_picker_help"
                        autocapitalize="none" autocorrect="off" spellcheck="false"
-                       placeholder="e.g. Gelato, Amnesia Haze, AK47" required>
-                <datalist id="strain_suggestions"></datalist>
+                       placeholder="Start typing, e.g. am haze" required>
+                <div id="strain_suggestions" class="strainSuggestions" role="listbox" aria-label="Matching strains" hidden></div>
+                </div>
+                <div id="strain_picker_help" class="small strainPickerHelp">↓ enters the list · ↑↓ choose · Return selects and moves to price · Esc keeps your typed name</div>
+                <div id="strain_picker_status" class="small" role="status" aria-live="polite"></div>
                 <div id="type_autofill_hint" class="small" style="margin-top:6px;"></div>
               </div>
 
               <div style="margin-top:12px;">
-                <label>Type</label>
+                <div class="btnrow" style="justify-content:space-between;">
+                  <label>Type</label>
+                  <label class="radioOption"><input type="checkbox" id="keep_entry_type"><span>Keep type for this section</span></label>
+                </div>
                 <div class="radioGroup">
                   <label class="radioOption"><input type="radio" name="base_type" value="sativa" required><span>Sativa</span></label>
                   <label class="radioOption"><input type="radio" name="base_type" value="indica" required><span>Indica</span></label>
@@ -3872,26 +3911,38 @@ PAGE_TMPL = """
                   <input class="weightField" id="package_weight_choice" name="package_weight_choice"
                          inputmode="decimal" value="1g" aria-label="weight in grams" required>
                 </div>
+                <div class="btnrow entryWeights" aria-label="Quick pack sizes">
+                  <button type="button" data-entry-weight="1" aria-pressed="true">1g</button>
+                  <button type="button" data-entry-weight="3.5" aria-pressed="false">3.5g</button>
+                  <button type="button" data-entry-weight="5" aria-pressed="false">5g</button>
+                </div>
                 <div id="normalised_price_hint" class="small" style="margin-top:6px;">Price per gram.</div>
               </div>
 
               <div class="entryGrowerRow">
-                <label for="grower_choice">Grower <span class="small">(optional)</span></label>
-                <div style="display:grid; grid-template-columns: 1fr; gap:8px;">
-                  <select id="grower_choice" name="grower_choice">
-                    <option value="">Unspecified</option>
-                    {% for grower in known_growers %}
-                      <option value="{{ grower }}">{{ grower }}</option>
-                    {% endfor %}
-                    <option value="custom">Other grower...</option>
-                  </select>
-                  <input id="grower_custom" name="grower_custom" placeholder="Grower name" style="display:none;">
+                <label for="grower_custom">Grower <span class="small">(optional)</span></label>
+                <input type="hidden" name="grower_choice" value="custom">
+                <div class="strainPicker">
+                  <input id="grower_custom" name="grower_custom" placeholder="Find a grower or type a new name"
+                         autocomplete="off" autocorrect="off" spellcheck="false" role="combobox"
+                         aria-autocomplete="list" aria-expanded="false" aria-controls="grower_suggestions">
+                  <div id="grower_suggestions" class="strainSuggestions" role="listbox" aria-label="Matching growers" hidden></div>
                 </div>
+                <div id="grower_picker_status" class="small" role="status" aria-live="polite"></div>
+                <div id="grower_cali_hint" class="small" aria-live="polite">Choosing a grower selects Cali; you can untick it.</div>
               </div>
 
               <div style="margin-top:12px;">
                 <label for="notes">Notes <span class="small">(optional)</span></label>
                 <input id="notes" name="notes" placeholder="e.g. top shelf, citrus, 25%">
+              </div>
+
+              <div class="entryDefaults">
+                <div class="btnrow" style="justify-content:space-between;">
+                  <label class="radioOption"><input type="checkbox" id="remember_entry_settings" checked><span>Keep settings for the next entry</span></label>
+                  <button type="button" class="ghost" id="new_entry_section">New section</button>
+                </div>
+                <div id="entry_defaults_hint" class="small" style="margin-top:5px;"></div>
               </div>
 
               <label class="radioOption" style="margin-top:10px;">
@@ -3902,7 +3953,7 @@ PAGE_TMPL = """
               <div class="btnrow" style="margin-top:10px;">
                 <button class="primary" type="submit">Save entry</button>
                 <button class="ghost" type="button" onclick="clearForm();">Clear</button>
-                <span class="small">After saving, the strain field is ready for the next row.</span>
+                <span class="small">⌘/Ctrl+Enter saves. Names and prices start blank for the next row.</span>
               </div>
             </form>
           </div>
@@ -4021,6 +4072,8 @@ PAGE_TMPL = """
     </div>
   </div>
 
+<script src="{{ url_for('static', filename='strain-picker.js') }}?v=20261026-2"></script>
+<script src="{{ url_for('static', filename='entry-helpers.js') }}?v=20261026"></script>
 <script>
   function navTo(url) { window.location.href = url; }
 
@@ -4182,7 +4235,6 @@ PAGE_TMPL = """
     if (!f) return;
     f.reset();
     showTypeHint('');
-    syncCustomFieldVisibility();
     updateNormalisedPriceHint();
     const s = document.getElementById('strain_name');
     if (s) s.focus();
@@ -4307,8 +4359,6 @@ PAGE_TMPL = """
   const strain = document.getElementById('strain_name');
   const priceAmount = document.getElementById('package_price_amount');
   const packageWeightChoice = document.getElementById('package_weight_choice');
-  const growerChoice = document.getElementById('grower_choice');
-  const growerCustom = document.getElementById('grower_custom');
   const normalisedPriceHint = document.getElementById('normalised_price_hint');
   const typeHint = document.getElementById('type_autofill_hint');
   if (strain) strain.focus();
@@ -4318,12 +4368,6 @@ PAGE_TMPL = """
     const raw = packageWeightChoice.value;
     const parsed = Number(String(raw || '').trim().replace(/g\\s*$/i, '').replace(',', '.'));
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-  }
-
-  function syncCustomFieldVisibility() {
-    if (growerCustom && growerChoice) {
-      growerCustom.style.display = growerChoice.value === 'custom' ? '' : 'none';
-    }
   }
 
   function updateNormalisedPriceHint() {
@@ -4337,14 +4381,10 @@ PAGE_TMPL = """
     normalisedPriceHint.textContent = `Comparisons use ${packPrice.toFixed(2)} / ${weight}g = ${(packPrice / weight).toFixed(2)} per g.`;
   }
 
-  [priceAmount, packageWeightChoice].filter(Boolean).forEach((el) => {
+  [priceAmount].filter(Boolean).forEach((el) => {
     el.addEventListener('input', updateNormalisedPriceHint);
     el.addEventListener('change', updateNormalisedPriceHint);
   });
-  [growerChoice].filter(Boolean).forEach((el) => {
-    el.addEventListener('change', syncCustomFieldVisibility);
-  });
-  syncCustomFieldVisibility();
   updateNormalisedPriceHint();
 
   function setBaseType(val) {
@@ -4397,25 +4437,16 @@ PAGE_TMPL = """
     }
   });
 
-  let debounceTimer = null;
-  if (strain) {
-    strain.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(async () => {
-        const q = strain.value || '';
-        const res = await fetch(`/api/strain_suggest?q=${encodeURIComponent(q)}`);
-        const data = await res.json();
-        const dl = document.getElementById('strain_suggestions');
-        if (!dl) return;
-        dl.innerHTML = '';
-        const items = Array.isArray(data.items) ? data.items : [];
-        items.forEach((item) => {
-          const opt = document.createElement('option');
-          opt.value = item.name_display || '';
-          dl.appendChild(opt);
-        });
-        applySuggestedType(q, items);
-      }, 120);
+  if (strain && window.BudfinderEntryHelpers) {
+    window.BudfinderEntryHelpers.attach({
+      form: document.getElementById('entryForm'),
+      shopId: {{ current_shop_id|tojson }},
+      menuRevision: {{ menu_revision|tojson }},
+      growers: {{ known_growers|tojson }},
+      endpoint: {{ url_for('api_strain_suggest')|tojson }},
+      onSuggestedType: item => applySuggestedType(item.name_display, [item]),
+      onNameInput: () => showTypeHint(''),
+      onPriceChange: updateNormalisedPriceHint,
     });
   }
 </script>
@@ -4461,16 +4492,21 @@ EDIT_TMPL = """
       <div class="cardHeader">
         <div>
           <div style="font-weight:800;">Edit current menu entry</div>
-          <div class="small">Edits save by entry_id (menu_entries.id) · renames merge globally</div>
+          <div class="small">Changes apply only to this shop and pack option. Other shops keep their strain names.</div>
         </div>
       </div>
 
       <div class="cardBody">
-        <form method="post" action="{{ url_for('edit_entry_post', shop_id=shop_id, entry_id=entry['entry_id']) }}">
-          <div>
+        <form id="entryEditForm" method="post" action="{{ url_for('edit_entry_post', shop_id=shop_id, entry_id=entry['entry_id']) }}">
+          <div class="strainNameField">
             <label for="strain_name">Strain name</label>
-            <input id="strain_name" name="strain_name" value="{{ entry['strain_name'] }}" required
-       autocapitalize="none" autocorrect="off" spellcheck="false">
+            <div class="strainPicker">
+              <input id="strain_name" name="strain_name" value="{{ entry['strain_name'] }}" required autocomplete="off"
+                     role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="strain_suggestions"
+                     autocapitalize="none" autocorrect="off" spellcheck="false">
+              <div id="strain_suggestions" class="strainSuggestions" role="listbox" aria-label="Matching strains" hidden></div>
+            </div>
+            <div id="strain_picker_status" class="small" role="status" aria-live="polite"></div>
           </div>
 
           <div class="grid2" style="margin-top:10px;">
@@ -4492,19 +4528,16 @@ EDIT_TMPL = """
             </div>
 
             <div>
-              <label for="grower_choice">Grower</label>
-              <div style="display:grid; grid-template-columns: 1fr; gap:10px;">
-                <select id="grower_choice" name="grower_choice">
-                  <option value="" {% if not entry['grower'] %}selected{% endif %}>Unspecified</option>
-                  {% for grower in known_growers %}
-                    <option value="{{ grower }}" {% if entry['grower'] == grower %}selected{% endif %}>{{ grower }}</option>
-                  {% endfor %}
-                  <option value="custom" {% if entry['grower'] and entry['grower'] not in known_growers %}selected{% endif %}>Other grower...</option>
-                </select>
-                <input id="grower_custom" name="grower_custom" placeholder="Grower name"
-                       value="{% if entry['grower'] and entry['grower'] not in known_growers %}{{ entry['grower'] }}{% endif %}"
-                       style="{% if not entry['grower'] or entry['grower'] in known_growers %}display:none;{% endif %}">
+              <label for="grower_custom">Grower</label>
+              <input type="hidden" name="grower_choice" value="custom">
+              <div class="strainPicker">
+                <input id="grower_custom" name="grower_custom" placeholder="Find a grower or type a new name"
+                       value="{{ entry['grower'] }}" autocomplete="off" role="combobox"
+                       aria-autocomplete="list" aria-expanded="false" aria-controls="grower_suggestions">
+                <div id="grower_suggestions" class="strainSuggestions" role="listbox" aria-label="Matching growers" hidden></div>
               </div>
+              <div id="grower_picker_status" class="small" role="status" aria-live="polite"></div>
+              <div id="grower_cali_hint" class="small" aria-live="polite">Choosing a grower selects Cali; you can untick it.</div>
             </div>
           </div>
 
@@ -4525,6 +4558,11 @@ EDIT_TMPL = """
               <label for="package_weight_choice">Weight in grams</label>
               <input class="weightField" id="package_weight_choice" name="package_weight_choice"
                      inputmode="decimal" value="{{ entry['package_weight_g'] }}g" required>
+              <div class="btnrow entryWeights" aria-label="Quick pack sizes">
+                <button type="button" data-entry-weight="1" aria-pressed="false">1g</button>
+                <button type="button" data-entry-weight="3.5" aria-pressed="false">3.5g</button>
+                <button type="button" data-entry-weight="5" aria-pressed="false">5g</button>
+              </div>
             </div>
           </div>
           <div id="normalised_price_hint" class="small" style="margin-top:6px;">Comparisons use the equivalent price per gram.</div>
@@ -4536,6 +4574,7 @@ EDIT_TMPL = """
 
           <div class="btnrow" style="margin-top:10px;">
             <button class="primary" type="submit">Save changes</button>
+            <span class="small">⌘/Ctrl+Enter saves.</span>
             <a class="pill" href="{{ url_for('shop_view', shop_id=shop_id) }}">Cancel</a>
           </div>
         </form>
@@ -4548,23 +4587,17 @@ EDIT_TMPL = """
       </div>
     </div>
   </div>
+  <script src="{{ url_for('static', filename='strain-picker.js') }}?v=20261026-2"></script>
+  <script src="{{ url_for('static', filename='entry-helpers.js') }}?v=20261026"></script>
   <script>
     const packagePriceAmount = document.getElementById('package_price_amount');
     const packageWeightChoice = document.getElementById('package_weight_choice');
-    const growerChoice = document.getElementById('grower_choice');
-    const growerCustom = document.getElementById('grower_custom');
     const normalisedPriceHint = document.getElementById('normalised_price_hint');
 
     function selectedPackageWeight() {
       const raw = packageWeightChoice ? packageWeightChoice.value : '1';
       const parsed = Number(String(raw || '').trim().replace(/g\\s*$/i, '').replace(',', '.'));
       return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-    }
-
-    function syncCustomFieldVisibility() {
-      if (growerCustom && growerChoice) {
-        growerCustom.style.display = growerChoice.value === 'custom' ? '' : 'none';
-      }
     }
 
     function updateNormalisedPriceHint() {
@@ -4578,15 +4611,17 @@ EDIT_TMPL = """
       normalisedPriceHint.textContent = `Comparisons use ${packPrice.toFixed(2)} / ${weight}g = ${(packPrice / weight).toFixed(2)} per g.`;
     }
 
-    [packagePriceAmount, packageWeightChoice].filter(Boolean).forEach((el) => {
+    [packagePriceAmount].filter(Boolean).forEach((el) => {
       el.addEventListener('input', updateNormalisedPriceHint);
       el.addEventListener('change', updateNormalisedPriceHint);
     });
-    [growerChoice].filter(Boolean).forEach((el) => {
-      el.addEventListener('change', syncCustomFieldVisibility);
-    });
-    syncCustomFieldVisibility();
     updateNormalisedPriceHint();
+    window.BudfinderEntryHelpers.attach({
+      form: document.getElementById('entryEditForm'), editing: true,
+      shopId: {{ shop_id|tojson }}, growers: {{ known_growers|tojson }},
+      endpoint: {{ url_for('api_strain_suggest')|tojson }},
+      onPriceChange: updateNormalisedPriceHint,
+    });
   </script>
 </body>
 </html>
@@ -6266,7 +6301,7 @@ def create_app(
         row = c.execute(
             """
             SELECT s.id AS shop_id, s.name, s.city,
-                   m.local_path, m.image_url, m.status
+                   m.local_path, m.image_url, m.status, m.sha256
             FROM shops s
             JOIN menus m ON m.shop_id = s.id
             WHERE s.id = ?;
@@ -6359,6 +6394,7 @@ def create_app(
             "menu_images": menu_images,
             "menu_image_count": len(menu_images),
             "menu_status": row["status"],
+            "menu_revision": row['sha256'] or '',
             "menu_entries": menu_entries,
             "offerings": offerings,
             "menu_entry_count": menu_entry_count,
@@ -8359,35 +8395,10 @@ def create_app(
         """Autocomplete suggestions for strain names."""
         q = (request.args.get("q", "") or "").strip()
         c = conn()
-        if q:
-            like = q + "%"
-            rows = c.execute(
-                """
-                SELECT id, name_display
-                FROM strains
-                WHERE name_display LIKE ?
-                ORDER BY name_display
-                LIMIT 30;
-                """,
-                (like,),
-            ).fetchall()
-        else:
-            rows = c.execute(
-                """
-                SELECT id, name_display
-                FROM strains
-                ORDER BY id DESC
-                LIMIT 30;
-                """
-            ).fetchall()
-        items = [
-            {
-                "name_display": r["name_display"],
-                "base_type": preferred_base_type_for_strain_id(c, int(r["id"])),
-            }
-            for r in rows
-        ]
-        c.close()
+        try:
+            items = strain_suggestion_items(c, q)
+        finally:
+            c.close()
         return jsonify(
             {
                 "suggestions": [item["name_display"] for item in items],
