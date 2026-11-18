@@ -13,7 +13,7 @@ const code = source.slice(start,end);
 function harness({failMenus=false}={}) {
   const memory=new Map();
   const localStorage={getItem:key=>memory.has(key)?memory.get(key):null,setItem:(key,value)=>memory.set(key,value)};
-  const ids=['skunk-nearby-button','skunk-nearby-dialog','skunk-nearby-close','skunk-nearby-status','skunk-nearby-results','skunk-nearby-origin','skunk-nearby-edit','skunk-nearby-centre','skunk-nearby-location','skunk-nearby-recent','skunk-nearby-radius','settings-matt-defaults','settings-matt-defaults-status'];
+  const ids=['skunk-nearby-button','skunk-nearby-dialog','skunk-nearby-close','skunk-nearby-status','skunk-nearby-results','skunk-nearby-origin','skunk-nearby-edit','skunk-nearby-centre','skunk-nearby-location','skunk-nearby-recent','skunk-nearby-radius','settings-site-defaults','settings-site-defaults-status'];
   const els=Object.fromEntries(ids.map(id=>[id,{id,hidden:false,open:false,innerHTML:'',textContent:'',listeners:{},dataset:{},attrs:{},
     addEventListener(type,fn){this.listeners[type]=fn;},setAttribute(k,v){this.attrs[k]=v;},focus(){},
     showModal(){this.open=true;},close(){this.open=false;this.listeners.close?.();},querySelectorAll(){return this.routeButtons||[];}}]));
@@ -59,11 +59,11 @@ test('empty results at the largest radius offer a different starting point',asyn
   assert.doesNotMatch(h.els['skunk-nearby-results'].innerHTML,/expand-radius/);
 });
 
-test('map setting saves Matt’s defaults on the device',()=>{
+test('map setting saves site defaults on the device',()=>{
   const h=harness();
-  h.els['settings-matt-defaults'].listeners.change({target:{checked:false}});
-  assert.equal(api.readMattDefaults(h.localStorage),false);
-  assert.match(h.els['settings-matt-defaults-status'].textContent,/Saved on this device/);
+  h.els['settings-site-defaults'].listeners.change({target:{checked:false}});
+  assert.equal(api.readSiteDefaults(h.localStorage),false);
+  assert.match(h.els['settings-site-defaults-status'].textContent,/Saved on this device/);
 });
 
 test('map button appears with a profile and location is requested only after choosing it',async()=>{

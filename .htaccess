@@ -7,6 +7,9 @@
   RewriteCond %{HTTP_HOST} ^www\.budfinder\.org$ [NC]
   RewriteRule ^ https://budfinder.org%{REQUEST_URI} [R=301,L,NE]
 
+  # Never publish local review packages or historical working backups.
+  RewriteRule ^(?:tmp|recovery_backups|tests|menus_downloaded|generated_images)(?:/|$) - [R=404,L,NC]
+
   # Retire standalone guides, directories and old maps even if a copy remains on hosting.
   RewriteRule ^(?:guides|cities|shops)(?:/|$) - [G,NC]
   RewriteRule ^(?:about|locate[2-7]?)\.html(?:/|$) - [G,NC]

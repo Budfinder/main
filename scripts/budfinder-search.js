@@ -51,7 +51,7 @@
     return memoise(simplifyCache, raw, text);
   }
 
-  function editDistance(left, right, maxDistance = Infinity) {
+  function editDistance(left, right, maxDistance = Infinity, allowTransposition = false) {
     const a = String(left || '');
     const b = String(right || '');
     if (a === b) return 0;
@@ -60,16 +60,21 @@
     if (Math.abs(a.length - b.length) > maxDistance) return maxDistance + 1;
 
     let previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+    let beforePrevious;
     for (let row = 1; row <= a.length; row += 1) {
       const current = [row];
       let rowMinimum = row;
       for (let column = 1; column <= b.length; column += 1) {
         const substitution = previous[column - 1] + (a[row - 1] === b[column - 1] ? 0 : 1);
-        const value = Math.min(previous[column] + 1, current[column - 1] + 1, substitution);
+        let value = Math.min(previous[column] + 1, current[column - 1] + 1, substitution);
+        if (allowTransposition && row > 1 && column > 1 && a[row - 1] === b[column - 2] && a[row - 2] === b[column - 1]) {
+          value = Math.min(value, beforePrevious[column - 2] + 1);
+        }
         current[column] = value;
         rowMinimum = Math.min(rowMinimum, value);
       }
       if (rowMinimum > maxDistance) return maxDistance + 1;
+      beforePrevious = previous;
       previous = current;
     }
     return previous[b.length];
@@ -171,7 +176,34 @@
       .slice(0, limit);
   }
 
-  const api = Object.freeze({ normalise, simplify, tokens, editDistance, score, matches, rank, entities, suggest });
+  // Offer a unique nearby spelling as a choice, without changing search matching.
+  function typoCorrection(query, names) {
+    const words = tokens(query);
+    if (!words.length || !words.some(word => word.length >= 4) || words.length > 6) return '';
+    const seen = new Set();
+    let bestName = '';
+    let bestDistance = Math.min(words.length, 2) + 1;
+    for (const name of names) {
+      const candidate = tokens(name);
+      if (candidate.length !== words.length) continue;
+      const key = candidate.join(' ');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const distances = words.map((word, index) => editDistance(word, candidate[index], 1, true));
+      if (distances.some((distance, index) => distance > (words[index].length >= 4 ? 1 : 0))) continue;
+      const total = distances.reduce((sum, distance) => sum + distance, 0);
+      if (total === 0) return '';
+      if (total < bestDistance) {
+        bestName = name;
+        bestDistance = total;
+      } else if (total === bestDistance) {
+        bestName = '';
+      }
+    }
+    return bestName;
+  }
+
+  const api = Object.freeze({ normalise, simplify, tokens, editDistance, score, matches, rank, entities, suggest, typoCorrection });
   window.BudfinderSearch = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();

@@ -8,14 +8,14 @@ function storage(entries = {}) {
   return {getItem:key=>data.has(key)?data.get(key):null,setItem:(key,value)=>data.set(key,value),removeItem:key=>data.delete(key),data};
 }
 
-test('Matt’s published visits and ratings can be switched off and back on locally', () => {
+test('Budfinder’s published visits and ratings can be switched off and back on locally', () => {
   const saved = storage();
-  assert.equal(skunk.readMattDefaults(saved), true);
-  skunk.writeMattDefaults(saved, false);
-  assert.equal(skunk.readMattDefaults(saved), false);
-  skunk.writeMattDefaults(saved, true);
-  assert.equal(skunk.readMattDefaults(saved), true);
-  assert.equal(skunk.readMattDefaults({getItem() { throw Error('blocked'); }}), true);
+  assert.equal(skunk.readSiteDefaults(saved), true);
+  skunk.writeSiteDefaults(saved, false);
+  assert.equal(skunk.readSiteDefaults(saved), false);
+  skunk.writeSiteDefaults(saved, true);
+  assert.equal(skunk.readSiteDefaults(saved), true);
+  assert.equal(skunk.readSiteDefaults({getItem() { throw Error('blocked'); }}), true);
 });
 
 test('existing map favourites and old strain keys populate Skunkworks without losing names', () => {
@@ -151,4 +151,14 @@ test('deal threshold, sample size and date preference rank transparent leads', (
   assert.equal(recent.deals[4].freshnessRank, 3, 'Future dates are unknown');
   const noDatePreference = skunk.nearby({ ...base, profile: { preferRecent: false } });
   assert.equal(noDatePreference.deals[1].name, 'Old large sample', 'A larger comparison ranks above a small sample when recency is off');
+});
+
+// Existing device choices migrate to the anonymous key without being reset.
+test('older site-rating preferences migrate without losing the choice', () => {
+  const saved = storage();
+  const legacy = ['budfinder_show_', 'ma', 'tt', '_visits_ratings'].join('');
+  saved.setItem(legacy, 'false');
+  assert.equal(skunk.readSiteDefaults(saved), false);
+  assert.equal(saved.getItem(skunk.SITE_DEFAULTS_KEY), 'false');
+  assert.equal(saved.getItem(legacy), null);
 });

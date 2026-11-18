@@ -21,7 +21,7 @@
       : '<li>No saved strains yet.</li>';
   }
   function shopPreference(shop, preferences) { return preferences[api.locationKey(shop)] || {}; }
-  function isVisited(shop, pref) { return typeof pref.visited === 'boolean' ? pref.visited : api.readMattDefaults(localStorage) && String(shop.visited || '').trim().toLowerCase() === 'y'; }
+  function isVisited(shop, pref) { return typeof pref.visited === 'boolean' ? pref.visited : api.readSiteDefaults(localStorage) && String(shop.visited || '').trim().toLowerCase() === 'y'; }
   function renderShopRow(shop, preferences) {
     const pref = shopPreference(shop, preferences);
     const visited = isVisited(shop, pref);
@@ -44,7 +44,7 @@
     byId('skunk-radius').value = String(profile.radiusKm);
     byId('skunk-unvisited').checked = profile.showUnvisited;
     byId('skunk-recent').checked = profile.preferRecent;
-    byId('skunk-matt-defaults').checked = api.readMattDefaults(localStorage);
+    byId('skunk-site-defaults').checked = api.readSiteDefaults(localStorage);
     document.querySelectorAll('input[name="type"]').forEach(input => { input.checked = profile.types.includes(input.value); });
   }
   byId('skunk-strain-form').addEventListener('submit', event => {
@@ -113,7 +113,7 @@
         showUnvisited: byId('skunk-unvisited').checked,
         preferRecent: byId('skunk-recent').checked
       });
-      api.writeMattDefaults(localStorage, byId('skunk-matt-defaults').checked);
+      api.writeSiteDefaults(localStorage, byId('skunk-site-defaults').checked);
       renderShops();
       announce('Preferences saved. Open the map and choose “What’s around?”');
     });
@@ -122,7 +122,7 @@
     if (api.STRAIN_KEYS.includes(event.key)) renderStrains();
     if (api.LOCATION_KEYS.includes(event.key)) renderShops();
     if (event.key === api.PROFILE_KEY) renderProfile();
-    if (event.key === api.MATT_DEFAULTS_KEY) { renderProfile(); renderShops(); }
+    if (event.key === api.SITE_DEFAULTS_KEY) { renderProfile(); renderShops(); }
   });
   // Storage events do not fire in the tab which cleared its own settings.
   window.addEventListener('budfinder:saved-data-cleared', () => {

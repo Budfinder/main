@@ -36,6 +36,7 @@
     let mobileShopState = null; // Live popup DOM is temporarily hosted by the mobile dialog.
     let mobileSearchUnoccludedHeight = 0; // Remember the phone viewport before its keyboard opens.
     let mobileSearchViewportWidth = 0; // Reset the keyboard baseline after an orientation change.
+    let mobileSearchMenuOffset = null; // Menu position relative to the visible screen before typing.
 
     function currentMapSearchCity(useViewport = true) {
       if (sharedMenuFilters.city) return sharedMenuFilters.city;
@@ -111,7 +112,8 @@
       if (status) status.textContent = summary;
       if (showMatches) showMatches.hidden = !(acrossCities ? info.total : info.local);
       if (button) {
-        button.hidden = Boolean(sharedMenuFilters.city) || !info.city || (!mapSearchViewAllCities && !info.elsewhere);
+        button.hidden = !info.city || Boolean(sharedMenuFilters.city && count > 0) ||
+          (!mapSearchViewAllCities && !info.elsewhere && count > 0);
         button.textContent = mapSearchViewAllCities ? `Back to ${info.city}` : 'Show all cities';
       }
       const scope = document.getElementById('map-scope-summary');
@@ -122,6 +124,12 @@
     }
 
     function toggleMapSearchArea() {
+      if (sharedMenuFilters.city) {
+        mapSearchViewCity = sharedMenuFilters.city;
+        mapSearchViewAllCities = true;
+        setSharedMenuFilters({ ...sharedMenuFilters, city: '' });
+        return;
+      }
       if (!mapSearchViewCity || !hasMapSearchQuery()) return;
       rememberMapFilterState();
       mapSearchViewAllCities = !mapSearchViewAllCities;
@@ -356,7 +364,7 @@
     let dbByUniqueName = new Map(); // "name" -> shop_id when unique
     let dbShopMetaById = new Map(); // shop_id -> { name, city, shop_url }
     let dbUnavailableShopIds = new Set(); // shop ids hidden from current browsing
-    let explorerFocusShopIds = null; // Set<string> | null, from Price & Menus handoff
+    let explorerFocusShopIds = null; // Set<string> | null, from Menus & prices handoff
     let explorerFocusStrainName = '';
     let explorerFocusStrainShopIds = null; // Set<string> | null, all shops carrying handoff strain
 
@@ -1217,6 +1225,14 @@
 
     function collapseMapSearchResults({ focus = false } = {}) {
       if (!isCompactMobileLayout() || document.getElementById('route-tools-dropdown')?.open) return;
+      if (hasMapSearchQuery()) {
+        const info = mapSearchAreaInfo();
+        if (!(localMapSearchCity() ? info.local : info.total)) {
+          setControlsVisible(true, { collapsed: false });
+          if (focus) focusMapPanelTarget(document.getElementById('map-search-recovery-status'));
+          return;
+        }
+      }
       setControlsVisible(true, { collapsed: true });
       if (focus) focusMapPanelTarget(document.getElementById('controls-header-toggle'));
     }
@@ -1292,7 +1308,7 @@
       btn.hidden = !canExpand;
       if (canExpand) {
         btn.textContent = `Show all ${explorerFocusStrainShopIds.size} shops`;
-        btn.title = `Show every coffeeshop carrying ${explorerFocusStrainName}`;
+        btn.title = `Show every coffeeshop listing ${explorerFocusStrainName}`;
       } else {
         btn.removeAttribute('title');
       }
@@ -1321,7 +1337,7 @@
         url.searchParams.delete('all_shops');
         window.history.replaceState({}, document.title, url.href);
       }
-      setRouteStatus(`Showing all shops carrying ${explorerFocusStrainName}.`, 'ok');
+      setRouteStatus(`Showing all shops listing ${explorerFocusStrainName}.`, 'ok');
       updateDestinationDropdown();
       updateDistanceInfo();
       updateMarkers();
@@ -1483,10 +1499,10 @@
 
       locations.forEach((loc, index) => {
         const pref = readLocationPreference(loc);
-        const includeMatt = window.BudfinderSkunkworks?.readMattDefaults(localStorage) !== false;
+        const includeSiteRatings = window.BudfinderSkunkworks?.readSiteDefaults(localStorage) !== false;
         // Retain the catalogue values so turning the option back on restores them.
-        loc.visited = pref && typeof pref.visited === 'boolean' ? pref.visited : Boolean(includeMatt && loc.mattVisited);
-        loc.rating = pref && Number.isFinite(pref.rating) ? Math.max(0, Math.min(5, Math.round(pref.rating))) : (includeMatt ? loc.mattRating || 0 : 0);
+        loc.visited = pref && typeof pref.visited === 'boolean' ? pref.visited : Boolean(includeSiteRatings && loc.siteVisited);
+        loc.rating = pref && Number.isFinite(pref.rating) ? Math.max(0, Math.min(5, Math.round(pref.rating))) : (includeSiteRatings ? loc.siteRating || 0 : 0);
         if (!pref) return;
 
         if (pref.favorite) {
@@ -1709,8 +1725,8 @@
       }
       if (distanceUnitSelect) distanceUnitSelect.value = personalisation.distanceUnit;
       if (reduceMotionInput) reduceMotionInput.checked = personalisation.reduceMotion;
-      const mattDefaultsInput = document.getElementById('settings-matt-defaults');
-      if (mattDefaultsInput) mattDefaultsInput.checked = window.BudfinderSkunkworks?.readMattDefaults(localStorage) !== false;
+      const siteDefaultsInput = document.getElementById('settings-site-defaults');
+      if (siteDefaultsInput) siteDefaultsInput.checked = window.BudfinderSkunkworks?.readSiteDefaults(localStorage) !== false;
       document.querySelectorAll('[data-budfinder-vibe-selector], #accent-select').forEach(select => {
         if (select && select.value !== personalisation.accent) select.value = personalisation.accent;
       });
@@ -1843,6 +1859,11 @@
         mobileSearchUnoccludedHeight - height > Math.max(100, mobileSearchUnoccludedHeight * 0.15);
       const active = normalScale && keyboardVisible && isCompactMobileLayout() && controlsVisible && !controlsCollapsed &&
         focused && !document.getElementById('route-tools-dropdown')?.open;
+      // Lift the existing menu a little so suggestions remain reachable above
+      // the phone keyboard without sending the sheet to the top of the map.
+      const menuOffset = mobileSearchMenuOffset == null ? Math.max(8, height - 180) : mobileSearchMenuOffset;
+      const menuTop = top + Math.max(8, Math.min(menuOffset - 100, Math.max(8, height - 220)));
+      root.style.setProperty('--app-search-menu-top', `${Math.floor(menuTop)}px`);
       root.style.setProperty('--app-search-visible-height', `${Math.max(0, Math.floor(height))}px`);
       root.style.setProperty('--app-search-visible-top', `${Math.floor(top)}px`);
       document.body.classList.toggle('mobile-map-search-active', active);
@@ -3012,7 +3033,7 @@
               `<span class="stash-bag-city">${escapeHtml(market.bestCityCopy || (isCurrent ? 'Current map match' : 'Saved strain'))}</span>` +
               `<span class="stash-bag-meta">${escapeHtml(metaBits.join(' · '))}</span>` +
               `<span class="stash-bag-price">${escapeHtml(lowestText)}</span>` +
-              `<span class="stash-bag-footer">Tap to show the shops carrying this strain</span>` +
+              `<span class="stash-bag-footer">Tap to show the shops listing this strain</span>` +
             `</button>` +
           `</article>`
         );
@@ -4794,12 +4815,36 @@
       if (hasItemFilters) rows = sharedFilteredOfferingRows(rows);
       const byId = new Map();
       const byNameCity = new Map();
+      const pricesById = new Map();
+      const pricesByNameCity = new Map();
+      const addPriceSource = (prices, key, row) => {
+        if (!strainFilterText || isLeftOutOfComparisons(row) || !getOfferingPriceEntry(row)) return;
+        if (!prices.has(key)) prices.set(key, { labels: new Set(), dates: new Set(), newest: new Map() });
+        const group = prices.get(key);
+        group.labels.add(formatOfferingPriceLabel(row));
+        group.dates.add(formatDisplayDate(getDisplayOfferingUpdatedAt(row)));
+        pushPopupMenuUpdated(group.newest, key, row);
+      };
       rows.forEach(row => {
-        if (row.shop_id != null) pushPopupMenuUpdated(byId, String(row.shop_id), row);
+        if (row.shop_id != null) {
+          pushPopupMenuUpdated(byId, String(row.shop_id), row);
+          addPriceSource(pricesById, String(row.shop_id), row);
+        }
         const key = normaliseNameCityKey(row.shop_name, row.shop_city);
-        if (key !== '|') pushPopupMenuUpdated(byNameCity, key, row);
+        if (key !== '|') {
+          pushPopupMenuUpdated(byNameCity, key, row);
+          addPriceSource(pricesByNameCity, key, row);
+        }
       });
-      return { byId, byNameCity };
+      return { byId, byNameCity, pricesById, pricesByNameCity };
+    }
+
+    function mapPriceEvidenceLabel(info, mixedDates) {
+      if (mixedDates) return 'Prices from multiple menu records';
+      const label = formatPopupMenuDateInfo(info);
+      return label.startsWith('Menu dated ')
+        ? `Listed on the ${label.slice('Menu dated '.length)} menu`
+        : label;
     }
 
     function getShopSourceMeta(loc) {
@@ -4812,25 +4857,25 @@
       return meta && meta.image_url ? meta.image_url : '';
     }
 
-    /* Keep the open place panel in step with device preferences and Matt's data. */
+    /* Keep the open place panel in step with device preferences and site ratings. */
     function syncPopupPersonalState(index) {
       const loc = locations[index];
       const card = document.getElementById(popupCardId(index));
       if (!loc || !card) return;
       const visit = card.querySelector('.visited-checkbox');
       const rating = card.querySelector('.rating-stars');
-      const matt = card.querySelector('.popup-matt-review');
+      const siteReview = card.querySelector('.popup-site-review');
       if (visit) visit.checked = Boolean(loc.visited);
       if (rating) {
         rating.setAttribute('data-rating', String(loc.rating || 0));
         rating.setAttribute('aria-label', `Rating: ${loc.rating || 0} out of 5. Select to change.`);
         rating.textContent = renderStars(loc.rating || 0);
       }
-      if (matt) {
-        const show = window.BudfinderSkunkworks?.readMattDefaults(localStorage) !== false;
-        const details = [loc.mattVisited ? 'Visited by Matt' : '', loc.mattRating ? `Matt’s rating: ${loc.mattRating}/5` : ''].filter(Boolean);
-        matt.hidden = !show || !details.length;
-        matt.textContent = details.join(' · ');
+      if (siteReview) {
+        const show = window.BudfinderSkunkworks?.readSiteDefaults(localStorage) !== false;
+        const details = [loc.siteVisited ? 'Visited by Budfinder' : '', loc.siteRating ? `Budfinder rating: ${loc.siteRating}/5` : ''].filter(Boolean);
+        siteReview.hidden = !show || !details.length;
+        siteReview.textContent = details.join(' · ');
       }
     }
 
@@ -5028,7 +5073,7 @@
 
       liveContainer.style.display = 'block';
       const updatedLabel = getPopupMenuDateLabel(loc);
-      const countText = `${strains.length} strain${strains.length === 1 ? '' : 's'} available${updatedLabel ? ` · ${updatedLabel}` : ''}`;
+      const countText = `${strains.length} strain${strains.length === 1 ? '' : 's'} listed${updatedLabel ? ` · ${updatedLabel}` : ''}`;
       const menuValueSummary = getLocationMenuValueSummary(loc, strains);
       setPopupCardValueTone(index, menuValueSummary);
       const menuValueSummaryHtml = menuValueSummary && menuValueSummary.label
@@ -5089,7 +5134,7 @@
                 `${metaHtml}` +
               `</summary>` +
               `<span class="popup-strain-actions">` +
-                `<button type="button" class="popup-strain-show-shops" data-popup-strain-show-shops="${escapeHtmlAttr(n)}" aria-label="Show all shops carrying ${escapeHtmlAttr(n)}">` +
+                `<button type="button" class="popup-strain-show-shops" data-popup-strain-show-shops="${escapeHtmlAttr(n)}" aria-label="Show all shops listing ${escapeHtmlAttr(n)}">` +
                   `<span class="popup-strain-action-icon" aria-hidden="true">` +
                     `<svg viewBox="0 0 24 24"><path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z"></path><circle cx="12" cy="10" r="2.2"></circle></svg>` +
                   `</span>` +
@@ -5819,7 +5864,7 @@
 
           globalSearchAppliedStrainKey = normaliseText(match);
           acceptedResolvedQueryKey = normaliseText(match);
-          // A strain filters the existing map; it must not switch city or zoom.
+          // A submitted strain search frames matches in the current city without discarding other cities.
           locationSearchText = '';
           if (searchInput) searchInput.value = match;
           syncMapSearchUrl(match);
@@ -5827,6 +5872,7 @@
           if (!applied || !isCurrentRequest()) return;
           updateDestinationDropdown();
           updateMarkers();
+          if (pendingInitialSearchPresentation) fitMapToVisibleMarkers({ searchResults: true });
           pendingInitialSearchPresentation = false;
         } catch (_err) {
           // Keep plain shop/city search if strain data is not available.
@@ -6135,7 +6181,7 @@
       setRouteStatus(
         isNarrowedExplorerFocus
           ? `Focused on the cheapest visible ${explorerFocusStrainName} shop. Use "Show all shops" to widen the map.`
-          : `Showing shops carrying ${explorerFocusStrainName}.`,
+          : `Showing shops listing ${explorerFocusStrainName}.`,
         'ok'
       );
       syncExplorerFocusControls();
@@ -6287,7 +6333,7 @@
           : `Dutch coffeeshop guide · Viewing ${locationLabel}`;
       }
       if (landingTitle) {
-        landingTitle.textContent = 'Find coffeeshops across the Netherlands carrying the strains you actually want.';
+        landingTitle.textContent = 'Compare coffeeshops across the Netherlands with menu listings for the strains you want.';
       }
       if (journeyContent) {
         journeyContent.setAttribute('aria-label', isNationwideView ? 'Netherlands route planner' : `${locationLabel} map view and route planner`);
@@ -6847,8 +6893,8 @@
           }
         }
         // Keep the published values separate from this device's overrides.
-        obj.mattVisited = obj.visited;
-        obj.mattRating = obj.rating;
+        obj.siteVisited = obj.visited;
+        obj.siteRating = obj.rating;
 
         // Parse other boolean Y/N fields as category flags.
         Object.entries(r).forEach(([k, v]) => {
@@ -7374,7 +7420,7 @@
             `<div id="${popupCardId(i)}" class="${popupCardClass}">` +
             `<strong class="popup-shop-title">${escapeHtml(loc.name)}</strong><br>` +
             logoHtml +
-            `<p class="popup-matt-review" hidden></p>` +
+            `<p class="popup-site-review" hidden></p>` +
             areaControlsHtml +
             (journeyControlsHtml ? `<div class="popup-place-route-actions">${journeyControlsHtml}</div>` : '') +
             `<div class="popup-place-links">${websiteLinkHtml}${streetViewLinkHtml}</div>` +
@@ -7817,7 +7863,7 @@
 
     function focusInitialMapViewport() {
       if (!map || !markers.length) return;
-      if (initialViewportRestored) {
+      if (initialViewportRestored && !hasExplorerFocus()) {
         initialCameraSettled = true;
         waitForInitialMapTiles();
         return;
@@ -7834,6 +7880,7 @@
         (locationSearchText || '').trim() ||
         (strainFilterText || '').trim() ||
         (explorerFocusStrainName || '').trim() ||
+        hasExplorerFocus() ||
         offeringAttributeFilterKind
       );
       if (hasActiveSearchResults) {
@@ -8284,6 +8331,8 @@
 
     function updatePositionFromGeolocation(position, options = {}) {
       if (!position || !position.coords) return null;
+      const nearbyFallback = document.getElementById('nearby-fallback');
+      if (nearbyFallback) nearbyFallback.hidden = true;
       const nextPosition = [position.coords.latitude, position.coords.longitude];
       const previousPosition = lastPosition;
       const movedDistance = previousPosition ? haversineDistance(previousPosition, nextPosition) : Infinity;
@@ -8467,7 +8516,7 @@
       const labels = {
         all: 'All',
         favourites: 'Saved',
-        mattVisited: 'Visited'
+        siteVisited: 'Visited'
       };
       if (labels[cat]) return labels[cat];
       return (cat || '')
@@ -9173,6 +9222,29 @@
       const visibleCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
       const hasSearch = !!(locationSearchText || '').trim();
       statusEl.classList.toggle('is-empty', visibleCount === 0);
+      const recovery = document.getElementById('map-search-recovery');
+      if (recovery) {
+        const city = sharedMenuFilters.city || localMapSearchCity();
+        const info = mapSearchAreaInfo();
+        const query = (document.getElementById('destination-search')?.value || locationSearchText || strainFilterText || '').trim();
+        const age = sharedMenuFilters.age;
+        recovery.hidden = !(query || age) || Boolean(city ? info.local : info.total);
+        if (!recovery.hidden) {
+          const correction = window.BudfinderSearch?.typoCorrection?.(query, [
+            ...activeStrainNames, ...mapSearchCandidates.map(item => item.name), ...locations.map(loc => loc.name)
+          ]);
+          const ageLimit = { fresh: 'within 14 days', ageing: '15–60 days ago', stale: 'over 60 days ago', unknown: 'with an unknown date' }[age];
+          document.getElementById('map-search-recovery-status').textContent =
+            `No matches in the menus we’ve seen${city ? ` in ${city}` : ''}.${ageLimit ? ` Showing only menus ${ageLimit}.` : ''} Shops may have unlisted items.`;
+          const correct = document.getElementById('map-correct-search');
+          correct.hidden = !correction;
+          correct.dataset.correction = correction || '';
+          correct.textContent = correction ? `Search for ${correction}` : '';
+          const include = document.getElementById('map-include-menu-dates');
+          include.hidden = !age;
+          include.textContent = age === 'fresh' || age === 'ageing' ? 'Include older menus' : 'Include all menu dates';
+        }
+      }
 
       if (!hasSearch) {
         if (!baseVisibleCount) {
@@ -9192,7 +9264,7 @@
 
       statusEl.textContent = visibleCount
         ? `${visibleCount} Destination${visibleCount === 1 ? '' : 's'} match "${locationSearchText}".`
-        : `No visible places match "${locationSearchText}". Try a broader shop, area, or strain name.`;
+        : '';
     }
 
     function getLocationSourceLabel(loc) {
@@ -9423,7 +9495,7 @@
       if (!activeName) {
       mediaEl.innerHTML = '<div class="strain-spotlight-fallback">Pick a strain to open its profile.</div>';
       nameEl.textContent = 'No strain selected';
-      summaryEl.textContent = 'Choose a strain to see map matches. For average prices and full listings, open Price & Menus.';
+      summaryEl.textContent = 'Choose a strain to see map matches. For average prices and full listings, open Menus & prices.';
         typeEl.textContent = 'Type loads after search';
         priceEl.textContent = 'Price signal pending';
         countEl.textContent = 'Matches load after search';
@@ -9690,17 +9762,24 @@
           mapSearchViewAllCities = false;
         }
         pendingInitialSearchPresentation = true;
-        collapseMapSearchResults({ focus: true });
         syncMapSearchUrl(rawQuery);
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
+        collapseMapSearchResults({ focus: true });
         const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
         scheduleGlobalSearchStrainResolve(rawQuery, visibleLocationCount, {
           immediate: true, allowTownSwitch: true, entityKind: mapSearchEntityKind
         });
       };
       document.getElementById('map-search-submit')?.addEventListener('click', () => submitMapSearch());
+      document.getElementById('map-correct-search')?.addEventListener('click', event => {
+        submitMapSearch({ name: event.currentTarget.dataset.correction });
+      });
+      document.getElementById('map-include-menu-dates')?.addEventListener('click', () => {
+        setSharedMenuFilters({ ...sharedMenuFilters, age: '' });
+        document.getElementById('destination-search').focus({ preventScroll: true });
+      });
       const suggestionList = document.getElementById('global-search-suggestions');
       suggestionList?.addEventListener('mousedown', event => event.preventDefault());
       suggestionList?.addEventListener('click', event => {
@@ -9709,6 +9788,15 @@
         if (candidate) submitMapSearch(candidate);
       });
       destinationSearchInput.addEventListener('focus', () => {
+        // Read the existing menu position before the software keyboard resizes
+        // or pans the viewport, so search remains attached to the same menu.
+        const searchMenu = document.querySelector('.controls');
+        const menuRect = searchMenu?.getBoundingClientRect();
+        const viewportTop = window.visualViewport?.offsetTop || 0;
+        mobileSearchMenuOffset = isCompactMobileLayout() && menuRect ? Math.max(0, menuRect.top - viewportTop) : null;
+        if (isCompactMobileLayout() && menuRect?.height) {
+          document.documentElement.style.setProperty('--app-search-menu-height', `${Math.round(menuRect.height)}px`);
+        }
         mapSuggestionsDismissedQuery = '';
         updateGlobalSearchSuggestions(destinationSearchInput.value);
         syncMobileSearchViewport();
@@ -9718,6 +9806,7 @@
         }
       });
       destinationSearchInput.addEventListener('blur', () => {
+        mobileSearchMenuOffset = null;
         hideMapSearchSuggestions();
         syncMobileSearchViewport();
       });
@@ -11013,8 +11102,14 @@
           const etaLabel = formatCompactDuration(estimateTravelSecondsForMode(distanceMeters, mode));
           const priceLabel = getMarkerPriceLabel(loc);
           const rating = Number.isFinite(loc.rating) ? Math.max(0, Math.min(5, Math.round(loc.rating))) : 0;
-          const dateInfo = resultMenuDates
-            ? (loc.db_shop_id ? resultMenuDates.byId.get(String(loc.db_shop_id)) : resultMenuDates.byNameCity.get(normaliseNameCityKey(loc.name, loc.city || '')))
+          const shopId = String(loc.db_shop_id || '');
+          const nameCity = normaliseNameCityKey(loc.name, loc.city || '');
+          const priceSource = priceLabel && resultMenuDates &&
+            (resultMenuDates.pricesById.get(shopId) || resultMenuDates.pricesByNameCity.get(nameCity));
+          const dateInfo = priceSource
+            ? priceSource.newest.get(shopId) || priceSource.newest.get(nameCity)
+            : resultMenuDates
+            ? resultMenuDates.byId.get(shopId) || resultMenuDates.byNameCity.get(nameCity)
             : getPopupMenuDateInfo(loc);
           const updatedAt = dateInfo?.value || '';
           const savedMatches = getSavedStrainMatchesForLocation(loc);
@@ -11037,7 +11132,9 @@
             priceAmount: parsePriceAmountFromLabel(priceLabel),
             priceInsight,
             updatedAt,
-            freshnessLabel: formatPopupMenuDateInfo(dateInfo),
+            freshnessLabel: priceLabel
+              ? mapPriceEvidenceLabel(priceSource ? dateInfo : null, priceSource?.labels.size > 1 && priceSource.dates.size > 1)
+              : formatPopupMenuDateInfo(dateInfo),
             freshnessTone: freshnessTone(updatedAt),
             confidence,
             savedMatches,
@@ -11127,7 +11224,7 @@
 
       if (!displayItems.length) {
         statusEl.textContent = activeName
-          ? `No visible shops are carrying ${activeName} under the current filters.`
+          ? `No known menu listings for ${activeName} match the current filters.`
           : 'No nearby places match the current filters yet.';
         listEl.innerHTML = '<p class="destination-card-empty">Try clearing a filter, searching a different strain, or setting a different Starting point.</p>';
         return;
@@ -11268,9 +11365,7 @@
         return 'Lists a Legal-project product; check the current menu before travelling.';
       }
       if (activeName) {
-        if (item.isCheapest && item.priceLabel) return `Good price signal for ${activeName}: ${item.priceLabel}.`;
-        if (item.priceLabel) return `Matches ${activeName}; last seen at ${item.priceLabel}.`;
-        return `Matches ${activeName}; check before travelling.`;
+        return `Menu listings for ${activeName}.`;
       }
       if ((locationSearchText || '').trim()) {
         return `Matches your search for "${locationSearchText}".`;
@@ -11314,6 +11409,9 @@
           return time(b) - time(a) || 0;
         });
       }
+      if (order && order.value === 'cheapest') {
+        relevantItems.sort((a, b) => (a.priceAmount ?? Infinity) - (b.priceAmount ?? Infinity) || 0);
+      }
       const pageSize = bestMatchPageSize();
       const resultKey = [order ? order.value : '', city || '',
         relevantItems.map(item => item.index).sort((a, b) => a - b).join(',')].join('|');
@@ -11331,7 +11429,7 @@
       }
 
       if (!displayItems.length) {
-        listEl.innerHTML = '<p class="best-match-empty">Try a broader search or clear one filter to widen the map.</p>';
+        listEl.innerHTML = '';
         return;
       }
 
@@ -11349,8 +11447,8 @@
         const badges = [
           locationLabel ? `<span class="best-match-badge">${escapeHtml(locationLabel)}</span>` : '',
           priceLabel ? `<span class="best-match-badge${item.priceInsight && item.priceInsight.tone === 'deal' ? ' is-deal' : ''}">${escapeHtml(priceLabel)}</span>` : '',
-          distanceLabel ? `<span class="best-match-badge">${escapeHtml(distanceLabel)}</span>` : '',
-          freshnessLabel ? `<span class="best-match-badge is-age-${escapeHtmlAttr(item.freshnessTone || 'unknown')}">${escapeHtml(freshnessLabel)}</span>` : ''
+          freshnessLabel ? `<span class="best-match-badge is-age-${escapeHtmlAttr(item.freshnessTone || 'unknown')}">${escapeHtml(freshnessLabel)}</span>` : '',
+          distanceLabel ? `<span class="best-match-badge">${escapeHtml(distanceLabel)}</span>` : ''
         ].filter(Boolean).join('');
         const inItinerary = !!item.inItinerary;
         const researchUrl = loc.db_shop_id != null && Number.isFinite(Number(loc.db_shop_id))
@@ -11543,8 +11641,7 @@
       if (searchScope) searchScope.textContent = `${sharedMenuFilters.city || 'Across the Netherlands'}`;
       const filterSummary = document.getElementById('map-filter-summary');
       if (filterSummary) filterSummary.textContent = (selectedCategories || []).map(getCategoryFilterLabel).join(', ') || 'All places';
-      const markerPriceLimit = isCompactMobileLayout() ? 12 : 36;
-      const showMarkerPriceLabels = visibleMarkerCount > 0 && visibleMarkerCount <= markerPriceLimit;
+      const showMarkerPriceLabels = Boolean(strainFilterText);
       const priceContextKey = [
         JSON.stringify(sharedMenuFilters),
         strainFilterText || '',
@@ -11948,9 +12045,9 @@
     let skunkCurrentOrigin = null;
 
     // Reapply published defaults without discarding the visitor's own choices.
-    function refreshMattDefaults() {
-      const input = document.getElementById('settings-matt-defaults');
-      if (input) input.checked = skunkApi.readMattDefaults(localStorage);
+    function refreshSiteDefaults() {
+      const input = document.getElementById('settings-site-defaults');
+      if (input) input.checked = skunkApi.readSiteDefaults(localStorage);
       if (!locations.length) return;
       hydrateLocationPreferences();
       if (mobileShopState) syncPopupPersonalState(mobileShopState.index);
@@ -11961,14 +12058,14 @@
       if (skunkDialog.open && skunkCurrentOrigin) showSkunkNearby(skunkCurrentOrigin.origin, skunkCurrentOrigin.originLabel);
     }
 
-    document.getElementById('settings-matt-defaults').addEventListener('change', event => {
-      const status = document.getElementById('settings-matt-defaults-status');
+    document.getElementById('settings-site-defaults').addEventListener('change', event => {
+      const status = document.getElementById('settings-site-defaults-status');
       try {
-        skunkApi.writeMattDefaults(localStorage, event.target.checked);
-        refreshMattDefaults();
+        skunkApi.writeSiteDefaults(localStorage, event.target.checked);
+        refreshSiteDefaults();
         status.textContent = 'Saved on this device.';
       } catch (_err) {
-        event.target.checked = skunkApi.readMattDefaults(localStorage);
+        event.target.checked = skunkApi.readSiteDefaults(localStorage);
         status.textContent = 'Could not save this preference on this device.';
       }
     });
@@ -12149,7 +12246,7 @@
 
     window.addEventListener('storage', event => {
       if (!skunkApi || !event.key) return;
-      if (event.key === skunkApi.MATT_DEFAULTS_KEY) { refreshMattDefaults(); return; }
+      if (event.key === skunkApi.SITE_DEFAULTS_KEY) { refreshSiteDefaults(); return; }
       if (skunkApi.STRAIN_KEYS.includes(event.key)) shelfStrainNames = normaliseShelfStrainNames(loadStoredArray(STRAIN_SHELF_STORAGE_KEYS, []));
       if (skunkApi.LOCATION_KEYS.includes(event.key)) {
         locationPreferences = loadStoredObject(LOCATION_PREFERENCES_STORAGE_KEYS, {});
@@ -12220,25 +12317,40 @@
       openSettingsPanel();
     }
 
-    function applyInitialWorkflowIntent() {
+    async function showNearbyResults() {
+      const fallback = document.getElementById('nearby-fallback');
+      if (fallback) fallback.hidden = true;
+      setControlsVisible(true, { collapsed: isCompactMobileLayout() });
+      try {
+        await requestUserLocation({
+          label: 'Getting your location for nearby results...',
+          centerMap: true
+        });
+        nearbyExploreActive = true;
+        updateDestinationDropdown();
+        updateMarkers();
+      } catch (_) {
+        focusInitialMapViewport();
+        const city = currentMapSearchCity() || getActiveLocationLabel();
+        if (fallback) {
+          fallback.hidden = false;
+          document.getElementById('nearby-fallback-status').textContent = `Location unavailable · showing ${city}`;
+        }
+        setControlsVisible(true, { collapsed: false });
+      }
+    }
+
+    document.getElementById('nearby-retry')?.addEventListener('click', showNearbyResults);
+
+    function applyInitialWorkflowIntent(initialIntent = '') {
       let intent = '';
       try {
-        intent = (new URLSearchParams(window.location.search || '').get('intent') || '').toLowerCase();
+        intent = (initialIntent || new URLSearchParams(window.location.search || '').get('intent') || '').toLowerCase();
       } catch (_err) {
         intent = '';
       }
       if (intent === 'nearby') {
-        setControlsVisible(true, { collapsed: isCompactMobileLayout() });
-        requestUserLocation({
-          label: 'Getting your location for nearby results...',
-          centerMap: true
-        }).then(() => {
-          nearbyExploreActive = true;
-          updateDestinationDropdown();
-          updateMarkers();
-        }).catch(() => {
-          focusInitialMapViewport();
-        });
+        showNearbyResults();
         return;
       }
       if (intent !== 'itinerary') return;
@@ -12277,18 +12389,7 @@
           return;
         }
         if (intent === 'nearby') {
-          try {
-            await requestUserLocation({
-              label: 'Getting your location for nearby results...',
-              centerMap: true
-            });
-            nearbyExploreActive = true;
-            updateDestinationDropdown();
-            updateMarkers();
-            setRouteStatus('Showing useful stops around your location.', 'good');
-          } catch (_err) {
-            focusInitialMapViewport();
-          }
+          await showNearbyResults();
           return;
         }
         if (intent === 'value') {
@@ -12571,9 +12672,11 @@
     syncCompactLayoutState();
     syncControlsChrome();
     scheduleViewportResync([160, 420]);
-    applyInitialWorkflowIntent();
+    const initialWorkflowIntent = new URLSearchParams(window.location.search || '').get('intent') || '';
     openSettingsFromHash();
-    bootstrapInitialCsvLoad();
+    bootstrapInitialCsvLoad().then(() => {
+      if (locations.length) applyInitialWorkflowIntent(initialWorkflowIntent);
+    });
 
     // Optional: probe DB routes early so status is visible before CSV upload.
     ensureDbIntegration();

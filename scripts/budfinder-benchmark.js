@@ -6,20 +6,19 @@
 })(typeof window === 'undefined' ? globalThis : window, function () {
   'use strict';
   const STORAGE_KEY = 'budfinder_custom_price_benchmark_v1';
-  const SHOP_LIMIT = 20;
 
   // Invalid or unavailable settings fall back to the published benchmark.
   function cleanIds(value) {
     if (!Array.isArray(value)) return null;
     const ids = value.map(Number);
-    return ids.length === SHOP_LIMIT && ids.every(id => Number.isSafeInteger(id) && id > 0) && new Set(ids).size === SHOP_LIMIT ? ids : null;
+    return ids.length > 0 && ids.every(id => Number.isSafeInteger(id) && id > 0) && new Set(ids).size === ids.length ? ids : null;
   }
   function read(storage) {
     try { return cleanIds(JSON.parse(storage.getItem(STORAGE_KEY) || 'null')); } catch (_) { return null; }
   }
   function write(storage, ids) {
     const clean = cleanIds(ids);
-    if (!clean) throw new Error('Select exactly 20 different shops.');
+    if (!clean) throw new Error('Select at least one shop, without duplicates.');
     storage.setItem(STORAGE_KEY, JSON.stringify(clean));
   }
   function reset(storage) { storage.removeItem(STORAGE_KEY); }
@@ -65,7 +64,7 @@
   // forward. A missing or removed menu invalidates the point until it returns.
   function build(shops, ids, latest) {
     const selectedIds = cleanIds(ids);
-    if (!selectedIds) throw new Error('Select exactly 20 different shops.');
+    if (!selectedIds) throw new Error('Select at least one shop, without duplicates.');
     const byId = new Map(shops.map(shop => [shop.shopId, shop]));
     const chosen = selectedIds.map(id => byId.get(id));
     if (chosen.some(shop => !shop)) throw new Error('One or more selected shops are missing from this export.');
@@ -90,8 +89,8 @@
         shop_count: available.length, strain_count: available.reduce((sum, point) => sum + point.strain_count, 0),
         listing_count: available.reduce((sum, point) => sum + point.listing_count, 0), kind: date === latest ? 'current' : 'recorded'};
     });
-    return {id:'custom-benchmark', name:'Your 20-shop benchmark', kind:'benchmark', points, shops:chosen, missingLatest};
+    return {id:'custom-benchmark', name:`Your ${chosen.length}-shop benchmark`, kind:'benchmark', points, shops:chosen, missingLatest};
   }
 
-  return { STORAGE_KEY, SHOP_LIMIT, cleanIds, read, write, reset, normaliseHistory, build };
+  return { STORAGE_KEY, cleanIds, read, write, reset, normaliseHistory, build };
 });

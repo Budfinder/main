@@ -28,10 +28,12 @@ import argparse
 import csv
 import html
 import json
+import hashlib
 import os
 import re
 import statistics
 import sys
+import tempfile
 import unicodedata
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -414,6 +416,7 @@ def page(*, path: str, title: str, description: str, crumbs: List[Tuple[str, str
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{esc(title)}</title>
   <meta name="description" content="{esc(description)}" />
+  <meta name="budfinder-snapshot" content="{esc(dataset.summary.get('exported_at_utc', ''))}" />
   <link rel="canonical" href="{SITE}{path}" />
   <meta property="og:title" content="{esc(title)}" />
   <meta property="og:description" content="{esc(description)}" />
@@ -439,7 +442,7 @@ def page(*, path: str, title: str, description: str, crumbs: List[Tuple[str, str
 {body}
   </main>
   <footer class="site-footer">
-    <p>Prices come from published coffeeshop menus (snapshot {esc(snapshot)}) and can change. Check with the shop before you travel.</p>
+    <p>Prices come from published coffeeshop menus (snapshot {esc(snapshot)}) and can change. Stock changes and shops may have unlisted items.</p>
     <p>For adults 18+. Follow local laws and coffeeshop rules. <a href="/coffeeshops/">All cities</a> · <a href="/strains/">All strains</a></p>
   </footer>
 </body>
@@ -514,8 +517,8 @@ def strain_page(ds: Dataset, strain: Dict[str, Any]) -> str:
       </table></div>
     </section>
     <section>
-      <h2>Where to buy {esc(strain["name"])}</h2>
-      <p class="muted">Cheapest first. Menu date is when Budfinder last recorded a change to that menu.</p>
+      <h2>Listed prices and shops</h2>
+      <p class="muted">Lowest listed price first. Dates describe source menus or observations. Check with the shop before travelling for a specific item.</p>
       <div class="table-wrap"><table>
         <thead><tr><th scope="col">Coffeeshop</th><th scope="col">City</th><th scope="col" class="num">Price</th><th scope="col" class="num">Menu date</th></tr></thead>
         <tbody>{"".join(listing_rows)}</tbody>
@@ -570,7 +573,7 @@ def shop_page(ds: Dataset, shop: Dict[str, Any]) -> str:
         <tbody>{"".join(trs)}</tbody>
       </table></div>
     </section>""")
-    source = (f'<a class="button" href="{esc(shop["source_url"])}" rel="nofollow noopener" target="_blank">Menu source</a>'
+    source = (f'<a class="button" href="{esc(shop["source_url"])}" rel="nofollow noopener" target="_blank">View source menu</a>'
               if shop["source_url"] else "")
     address = f'<p class="muted">{esc(shop["address"])}</p>' if shop["address"] else ""
     date_words = "Menu dated" if shop["dated"] else "Menu last changed"
@@ -585,6 +588,7 @@ def shop_page(ds: Dataset, shop: Dict[str, Any]) -> str:
       </div></div>
       {address}
       <p class="lead">{plural(shop["strain_count"], "strain")} on the menu, from {per_gram(shop["own_low"])}. {date_words} {esc(fmt_long_date(shop["latest"]))}.</p>
+      <div class="actions">{source}</div>
       {old_notice}
       <div class="stats">
         {stat("Typical price", per_gram(shop["own_median"]), "Median listing")}
@@ -595,8 +599,8 @@ def shop_page(ds: Dataset, shop: Dict[str, Any]) -> str:
       <div class="actions">
         <a class="button primary" href="{esc(live_url("map.html", shops=shop["id"], city=shop["city"], source="static"))}">Open on map</a>
         <a class="button" href="{esc(live_url("database.html", explore="1", detail="shop", shop_id=shop["id"]))}">Full menu tools</a>
-        {source}
       </div>
+      <p class="muted">Travelling for a specific item? Check with the shop first.</p>
     </header>{hours_section(ds, shop)}{"".join(sections)}"""
     extra = None
     if shop.get("lat") and shop.get("lng"):
@@ -651,7 +655,10 @@ def city_page(ds: Dataset, city: Dict[str, Any]) -> str:
     for key, shop_ids in city["top_strains"]:
         prices = [r["_cmp"] for r in ds.strains[key]["rows"]
                   if r["_cmp"] is not None and ds.shops[str(r["shop_id"])]["city_slug"] == city["slug"]]
-        top.append(f'<li>{ds.strain_link(key)} <span>{plural(len(shop_ids), "shop")} · typical {per_gram(median(prices))}</span></li>')
+        strain = ds.strains[key]
+        compare_url = live_url("database.html", explore="1", detail="strain", strain=strain["name"], filter_city=city["name"])
+        top.append(f'<li><a href="{esc(compare_url)}">{esc(strain["name"])}</a> '
+                   f'<span>{plural(len(shop_ids), "shop")} · typical {per_gram(median(prices))} · Compare in {esc(city["name"])}</span></li>')
     body = f"""
     <header class="hero">
       <p class="eyebrow">Coffeeshop menus</p>
@@ -664,7 +671,7 @@ def city_page(ds: Dataset, city: Dict[str, Any]) -> str:
         {stat("Strains", f"{city['strain_count']:,}")}
       </div>
       <div class="actions">
-        <a class="button primary" href="{esc(live_url("map.html", city=city["name"], source="static"))}">Open the {esc(city["name"])} map</a>
+        <a class="button primary" href="{esc(live_url("map.html", city=city["name"], filter_city=city["name"], source="static"))}">Open the {esc(city["name"])} map</a>
         <a class="button" href="{esc(live_url("database.html", explore="1", filter_city=city["name"], browser="shops"))}">Browse menus</a>
       </div>
     </header>
@@ -817,6 +824,44 @@ def sitemap(ds: Dataset, out: Output) -> int:
     return len(urls)
 
 
+def write_release(root: Path, generated: set, dataset: Dataset) -> None:
+    """Describe the exact public snapshot so partial uploads can be detected."""
+    paths = set(generated)
+    for name in ("index.html", "map.html", "database.html", "404.html", "robots.txt", ".htaccess", "sw.js"):
+        if (root / name).is_file():
+            paths.add(root / name)
+    for folder, patterns in (("scripts", ("*.js",)), ("styles", ("*.css",)),
+                             ("database", ("*.json", "*.csv"))):
+        for pattern in patterns:
+            paths.update((root / folder).glob(pattern))
+    paths.update((root / "database" / "locations").glob("*.csv"))
+    paths.update((root / "database" / "locations").glob("*.json"))
+    target = root / "database" / "release.json"
+    files = {}
+    for path in sorted(paths):
+        if path.name == MARKER_FILE or path == target or path.name == "csd.csv":
+            continue
+        files[path.relative_to(root).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+    snapshot = dataset.summary.get("exported_at_utc", "")
+    fingerprint = hashlib.sha256(json.dumps(files, sort_keys=True).encode("utf-8")).hexdigest()[:12]
+    release = {
+        "release_id": f"{snapshot}-{fingerprint}",
+        "exported_at_utc": snapshot,
+        "counts": {"shops": len(dataset.shops), "listings": len(dataset.rows),
+                   "strains": len(dataset.strains), "cities": len(dataset.cities)},
+        "files": files,
+    }
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=target.parent,
+                                     prefix=".release-", suffix=".tmp", delete=False) as handle:
+        handle.write(json.dumps(release, indent=2) + "\n")
+        temporary = Path(handle.name)
+    try:
+        temporary.replace(target)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def build(root: Path) -> Dict[str, int]:
     ds = Dataset(root)
     out = Output(root)
@@ -831,6 +876,7 @@ def build(root: Path) -> Dict[str, int]:
         out.write(root / strain["path"].strip("/") / "index.html", strain_page(ds, strain))
     urls = sitemap(ds, out)
     removed = out.remove_stale()
+    write_release(root, out.expected, ds)
     return {"cities": len(ds.cities), "shops": len(ds.shops), "strains": len(published), "sitemap_urls": urls,
             "files_written": out.written, "files_unchanged": out.unchanged, "files_removed": removed}
 

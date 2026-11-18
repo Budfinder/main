@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const source = fs.readFileSync(require.resolve('../scripts/budfinder-map.js'), 'utf8');
 const shipped = name => {
-  const match=source.match(new RegExp(`^    function ${name}\\([^]*?^    }`, 'm'));
+  const match=source.match(new RegExp(`^    (?:async )?function ${name}\\([^]*?^    }`, 'm'));
   assert.ok(match, name);return match[0];
 };
 
@@ -36,7 +36,8 @@ function harness() {
     controlsVisible:false,controlsCollapsed:false,directionsVisible:false,shelfVisible:false,
     journeyPlanner:{start:{ref:'shop-a'},stops:[{ref:'shop-b'},{ref:'shop-c'}]},selectedCategories:['Coffeeshop'],
     getDefaultLocationCategories:()=>['Coffeeshop'],getSelectedDestinationIndex:()=>null,
-    strainFilterText:'',hasExplorerFocus:()=>false,hasLocationSearchFilter:()=>false,hasMissionFilter:()=>false,
+    strainFilterText:'',mapSearchAreaInfo:()=>({local:1,total:1}),localMapSearchCity:()=> 'Amsterdam',
+    hasExplorerFocus:()=>false,hasLocationSearchFilter:()=>false,hasMissionFilter:()=>false,
     hasCategoryFilter:()=>true,menuExplore:{active:()=>[]},sharedMenuFilters:{},syncExplorerFocusControls(){},
     openRouteTools(){elements.get('route-tools-dropdown').open=true;return {querySelector:()=>plannerSummary};},
     setDirectionsVisible(value){context.directionsVisible=value;},
@@ -134,6 +135,38 @@ test('Show results opens on the list, or on its search area when the list is emp
     assert.equal(h.focused(), target);
     assert.equal(h.elements.get('map-tools-content').scrollTop, 368);
   }
+});
+
+test('a search with zero local matches keeps the phone search panel open', () => {
+  const h = harness();
+  h.context.mapSearchAreaInfo = () => ({ local: 0, total: 3 });
+  h.elements.set('map-search-recovery-status', { id: 'map-search-recovery-status', focus() {} });
+  h.context.collapseMapSearchResults();
+  assert.equal(h.context.controlsVisible, true);
+  assert.equal(h.context.controlsCollapsed, false);
+});
+
+test('Nearby exposes the selected city after a failed location lookup and can retry', async () => {
+  const h = harness();
+  const fallback = { hidden: true };
+  const status = { textContent: '' };
+  h.elements.set('nearby-fallback', fallback);
+  h.elements.set('nearby-fallback-status', status);
+  h.context.currentMapSearchCity = () => 'Amsterdam';
+  h.context.focusInitialMapViewport = () => {};
+  h.context.requestUserLocation = async () => { throw new Error('Location unavailable'); };
+  h.context.updateDestinationDropdown = () => {};
+  h.context.updateMarkers = () => {};
+  vm.runInContext(shipped('showNearbyResults'), h.context);
+  await h.context.showNearbyResults();
+  assert.equal(fallback.hidden, false);
+  assert.equal(status.textContent, 'Location unavailable · showing Amsterdam');
+  assert.equal(h.context.controlsCollapsed, false);
+  h.context.requestUserLocation = async () => ({ coords: {} });
+  await h.context.showNearbyResults();
+  assert.equal(fallback.hidden, true);
+  assert.equal(h.context.nearbyExploreActive, true);
+  assert.match(source, /bootstrapInitialCsvLoad\(\)\.then\(\(\) => \{\s*if \(locations.length\) applyInitialWorkflowIntent\(initialWorkflowIntent\)/);
 });
 
 test('map Settings dismisses to its trigger and drops the hash on dismissal or switching to Search', () => {

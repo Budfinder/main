@@ -7,8 +7,9 @@ const html = fs.readFileSync(require.resolve('../map.html'), 'utf8');
 const source = fs.readFileSync(require.resolve('../scripts/budfinder-map.js'), 'utf8');
 const css = fs.readFileSync(require.resolve('../styles/budfinder-map-controls.css'), 'utf8');
 
-test('places stays above search and the search and price explanations share one control', () => {
-  assert.ok(html.indexOf('class="panel-section map-category-shortcuts') < html.indexOf('class="panel-section search-wanted-panel'));
+test('places follows the search input and the search and price explanations share one control', () => {
+  assert.ok(html.indexOf('id="destination-search"') < html.indexOf('class="panel-section map-category-shortcuts'));
+  assert.ok(html.indexOf('class="panel-section map-category-shortcuts') < html.indexOf('id="map-strain-result"'));
   const help = html.match(/<details class="map-matching-help">([^]*?)<\/details>/)[1];
   assert.match(help, /How search and prices work/);
   assert.match(help, /Search matches/);

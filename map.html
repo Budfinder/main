@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="styles/budfinder-map-layout.css?v=20260905-clarity1" />
   <link rel="stylesheet" href="styles/budfinder-map-refinements.css?v=20261118-logos2" />
   <link rel="stylesheet" href="styles/budfinder-explore.css?v=20261028-explore1" />
-  <link rel="stylesheet" href="styles/budfinder-map-controls.css?v=20261118-more1" />
+  <link rel="stylesheet" href="styles/budfinder-map-controls.css?v=20261118-menu-scroll2" />
   <link rel="stylesheet" href="styles/budfinder-skunkworks.css?v=20261115-tidy1" />
 </head>
 
@@ -65,11 +65,11 @@
           <span id="landing-location-kicker">Coffeeshop intelligence across the Netherlands</span>
         </div>
         <div class="landing-copy">
-          <h1 id="landing-title">Find coffeeshops carrying the strains you actually want.</h1>
+          <h1 id="landing-title">Find coffeeshops listing the strains you actually want.</h1>
           <p>Search strains, growers, coffeeshops, towns, or areas, compare nearby matches, spot useful price signals, and plan the next Destination from your Starting point.</p>
           <div class="landing-actions">
             <button id="open-budfinder-btn" class="landing-primary" type="button">Start planning</button>
-            <a class="landing-secondary" href="database.html">Open Price &amp; Menus</a>
+            <a class="landing-secondary" href="database.html">Open Menus &amp; prices</a>
             <button id="landing-guide-btn" class="landing-secondary" type="button">How it works</button>
           </div>
         </div>
@@ -185,6 +185,29 @@
       </div>
     </div>
     <div class="controls-content" id="map-tools-content">
+      <section class="panel-section search-wanted-panel control-group" aria-labelledby="map-intent-title">
+        <div class="intent-head">
+          <strong id="map-intent-title">Search the map</strong>
+        </div>
+        <label class="map-search-label" for="destination-search">Search strains, growers, coffeeshops, towns, and areas</label>
+        <div class="map-search-anchor">
+        <div class="map-search-row">
+          <input id="destination-search" type="search" aria-label="Search strains, growers, coffeeshops, towns, and areas" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="global-search-suggestions" aria-expanded="false" placeholder="Strain, shop, grower or place…" autocomplete="off" enterkeyhint="search" />
+          <button id="map-search-submit" type="button" aria-label="Search the map"><span class="map-search-submit-label">Search</span><svg class="map-search-submit-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button>
+        </div>
+        <div id="global-search-suggestions" class="map-search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
+        </div>
+        <p id="map-suggestion-status" class="map-suggestion-status" role="status" aria-live="polite"></p>
+        <div id="nearby-fallback" class="map-search-recovery" hidden>
+          <p id="nearby-fallback-status" role="status"></p>
+          <button id="nearby-retry" class="secondary-btn" type="button">Try location again</button>
+          <a class="secondary-btn" href="/coffeeshops/">Choose a city</a>
+        </div>
+        <div id="map-search-recovery" class="map-search-recovery" hidden>
+          <p id="map-search-recovery-status" role="status"></p>
+          <button id="map-correct-search" class="secondary-btn" type="button" hidden></button>
+          <button id="map-include-menu-dates" class="secondary-btn" type="button" hidden>Include older menus</button>
+        </div>
       <details class="panel-section map-category-shortcuts control-group">
         <summary class="sidebar-drawer-summary">
           <span><strong id="map-category-title">Places on the map</strong><small id="map-filter-summary">Coffeeshops</small></span>
@@ -198,17 +221,6 @@
         </div>
         </div>
       </details>
-      <section class="panel-section search-wanted-panel control-group" aria-labelledby="map-intent-title">
-        <div class="intent-head">
-          <strong id="map-intent-title">Search the map</strong>
-        </div>
-        <label class="map-search-label" for="destination-search">Search strains, growers, coffeeshops, towns, and areas</label>
-        <div class="map-search-row">
-          <input id="destination-search" type="search" aria-label="Search strains, growers, coffeeshops, towns, and areas" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="global-search-suggestions" aria-expanded="false" placeholder="Strain, shop, grower or place…" autocomplete="off" enterkeyhint="search" />
-          <button id="map-search-submit" type="button">Search</button>
-        </div>
-        <div id="global-search-suggestions" class="map-search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
-        <p id="map-suggestion-status" class="map-suggestion-status" role="status" aria-live="polite"></p>
         <article id="map-strain-result" class="map-strain-result" aria-labelledby="map-strain-result-name" aria-live="polite" hidden>
           <span>Selected strain · Exact name</span>
           <h3 id="map-strain-result-name"></h3>
@@ -240,7 +252,8 @@
             <label for="best-match-order">Sort results</label>
             <select id="best-match-order">
               <option value="recommended">Recommended</option>
-              <option value="freshest">Most recent menu information</option>
+              <option value="freshest">Newest menu</option>
+              <option value="cheapest">Lowest listed price</option>
             </select>
             <button id="best-match-compact" type="button" aria-pressed="false" aria-controls="best-match-list">Detailed view</button>
           </div>
@@ -499,7 +512,7 @@
               <div class="strain-spotlight-copy">
                 <span class="selection-eyebrow">Map matching strain</span>
                 <h3 id="strain-spotlight-name">No strain selected</h3>
-                <p id="strain-spotlight-summary" class="strain-spotlight-summary">Choose a strain to see map matches. For average prices and full listings, open Price &amp; Menus.</p>
+                <p id="strain-spotlight-summary" class="strain-spotlight-summary">Choose a strain to see map matches. For average prices and full listings, open Menus &amp; prices.</p>
                 <div class="strain-spotlight-chip-row">
                   <span id="strain-spotlight-type" class="strain-spotlight-chip">Type loads after search</span>
                   <span id="strain-spotlight-price" class="strain-spotlight-chip">Price signal pending</span>
@@ -551,14 +564,14 @@
               <input id="display-name-input" type="text" maxlength="24" placeholder="Explorer" />
             </label>
           </div>
-          <label class="field-label settings-matt-toggle" for="settings-matt-defaults"><input id="settings-matt-defaults" type="checkbox" /> Include Matt’s visits and ratings</label>
+          <label class="field-label settings-site-toggle" for="settings-site-defaults"><input id="settings-site-defaults" type="checkbox" /> Include Budfinder visits and ratings</label>
           <p class="field-note">Your own visit marks and ratings are saved on this device and take precedence.</p>
-          <p id="settings-matt-defaults-status" role="status" class="field-note"></p>
+          <p id="settings-site-defaults-status" role="status" class="field-note"></p>
         </section>
 
         <section class="settings-section" aria-labelledby="settings-data-title">
           <h4 id="settings-data-title">Data</h4>
-          <p class="panel-copy">Manage saved places and open Price &amp; Menus.</p>
+          <p class="panel-copy">Manage saved places and open Menus &amp; prices.</p>
           <a class="panel-link-button" href="database.html">View menu</a>
           <div class="button-row">
             <button id="clear-saved-data-btn" type="button" class="secondary-btn">Clear saved data</button>
@@ -628,11 +641,11 @@
   <script src="scripts/budfinder-logos.js?v=20261118-thumbs1"></script>
   <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
   <script src="scripts/budfinder-data.js?v=20261031-usability1"></script>
-  <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
+  <script src="scripts/budfinder-search.js?v=20261118-menu-evidence1"></script>
 
   <script src="scripts/budfinder-marker-layout.js?v=20261118-logos1"></script>
   <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
-  <script src="scripts/budfinder-skunkworks.js?v=20261115-personal2"></script>
-  <script src="scripts/budfinder-map.js?v=20261118-more1"></script>
+  <script src="scripts/budfinder-skunkworks.js?v=20261118-anon3"></script>
+  <script src="scripts/budfinder-map.js?v=20261118-names1"></script>
 </body>
 </html>

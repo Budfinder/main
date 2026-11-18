@@ -71,7 +71,7 @@ function harness({ data = payload(), fail = false, mismatch = false, hang = fals
     'price-history-date', 'price-history-coverage', 'price-history-status', 'price-history-rows', 'price-history-live',
     'price-history-controls', 'price-history-details', 'price-history-stamp', 'price-history-note',
     'price-history-benchmark', 'price-history-shops', 'price-history-benchmark-description',
-    'price-history-trace-control', 'price-history-trace-toggle'];
+    'price-history-trace-control', 'price-history-trace-toggle', 'price-history-partial', 'price-history-partial-toggle', 'price-history-partial-result'];
   const elements = new Map(ids.map(id => [id, new Element()]));
   const get = id => elements.get(id);
   const buttons = ['30', '90', 'all'].map(value => { const button = new Element(); button.dataset.priceRange = value; button.closest = () => button; return button; });
@@ -181,4 +181,70 @@ test('shop traces share an honest price scale while the benchmark remains the pr
   assert.match(svg, /High &lt;shop&gt;/);
   assert.equal((svg.match(/class="price-history-line"/g) || []).length, 1);
   assert.equal(buildGeometry(main, 400, 260).traces.length, 0);
+});
+
+// A partial benchmark is offered separately and never changes the full chart.
+test('incomplete latest benchmark is separately labelled and uses only reporting shops', async () => {
+  const data = payload();
+  data.benchmark = { shops: [{shop_id: 1, name: 'One'}, {shop_id: 2, name: 'Two'}] };
+  data.series = [
+    {id: 'benchmark', name: 'Benchmark', kind: 'benchmark', points: [point('2026-10-10', 12), point('2026-10-28', null, {shop_count: 1})]},
+    {id: 'shop-1', name: 'One', kind: 'shop', points: [point('2026-10-28', 18, {shop_count: 1})]},
+    {id: 'shop-2', name: 'Two', kind: 'shop', points: [point('2026-10-28', null, {shop_count: 0})]}
+  ];
+  const app = harness({data});
+  await app.ready;
+  assert.equal(app.get('price-history-value').textContent, '€18.00/g');
+  assert.match(app.get('price-history-date').textContent, /Incomplete latest snapshot/);
+  assert.match(app.get('price-history-coverage').textContent, /1 of 2 shops/);
+  assert.match(app.get('price-history-status').textContent, /Latest complete benchmark: 10 October 2026/);
+  assert.equal(app.get('price-history-partial').hidden, false);
+  app.get('price-history-partial-toggle').dispatch('click');
+  assert.equal(app.get('price-history-partial-result').hidden, false);
+  assert.match(app.get('price-history-partial-result').textContent, /€18.00\/g across 1 of 2 shops/);
+  assert.match(app.get('price-history-partial-result').textContent, /not directly comparable/);
+  assert.equal(app.get('price-history-value').textContent, '€18.00/g');
+  assert.match(app.get('price-history-plot').innerHTML, /price-history-line/);
+  assert.doesNotMatch(app.get('price-history-plot').innerHTML, /price-history-extension/);
+});
+
+// August is the first date displayed, not a fabricated data point.
+test('the August cutoff excludes older records and the axis starts on 1 August', () => {
+  const scope={points:[point('2026-07-31',8),point('2026-08-03',10),point('2026-10-28',16)]};
+  const selected=selectPoints(scope,'all','2026-10-28');
+  assert.deepEqual(selected.map(row=>row.date),['2026-08-03','2026-10-28']);
+  const geometry=buildGeometry(selected,400,270,[],Date.parse('2026-08-01T00:00:00Z'));
+  assert.equal(geometry.xTicks[0].label,'1 Aug');
+  assert.equal(geometry.points.length,2);
+  assert.equal(geometry.points[0].date,'2026-08-03');
+  assert.ok(geometry.points[0].x > geometry.box.left);
+});
+
+// Date boundaries do not add projected lines or observations.
+test('graph keeps its date boundaries without projecting values', () => {
+  const points=[point('2026-08-03',10),point('2026-10-10',16)];
+  const geometry=buildGeometry(points,400,270,[],Date.parse('2026-08-01T00:00:00Z'),Date.parse('2026-10-28T00:00:00Z'));
+  const svg=chartSvg(geometry,1,'Benchmark');
+  assert.equal(geometry.xTicks[0].label,'1 Aug');
+  assert.equal(geometry.xTicks.at(-1).label,'28 Oct');
+  assert.doesNotMatch(svg, /price-history-extension/);
+  assert.equal(geometry.points.length,2);
+  assert.match(svg,/connects recorded observations/);
+});
+
+// Real benchmark data should start at the first visible price, not the range cutoff.
+test('one- and three-month ranges start with their first recorded benchmark point at the left edge', async () => {
+  const fs = require('node:fs');
+  const data = JSON.parse(fs.readFileSync(require.resolve('../database/price_history.json'), 'utf8'));
+  const app = harness({ data });
+  await app.ready;
+  for (const [button, expected] of [[app.buttons[1], '27 Aug'], [app.buttons[0], '26 Oct']]) {
+    app.get('price-history-ranges').dispatch('click', { target: button });
+    const svg = app.get('price-history-plot').innerHTML;
+    const first = svg.match(/class="price-history-dot" cx="([^"]+)"/);
+    assert.ok(first, `Missing data point for ${expected}`);
+    assert.equal(Number(first[1]), 45, `${expected} should start at the left edge`);
+    assert.match(svg, new RegExp(`>${expected}</text>`));
+    assert.doesNotMatch(svg, /price-history-extension/);
+  }
 });

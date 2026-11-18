@@ -136,6 +136,7 @@ def main() -> int:
     checks.extend([
         ("Python regression tests", [sys.executable, "-B", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"]),
         ("Static data QA", [sys.executable, "-B", "data_quality_report.py"]),
+        ("Release consistency", [sys.executable, "-B", "scripts/check_release.py"]),
     ])
     for label, command in checks:
         print(f"\n{label}", flush=True)

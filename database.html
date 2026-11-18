@@ -21,14 +21,14 @@
       "@type": "BreadcrumbList",
       "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://budfinder.org/"},
-        {"@type": "ListItem", "position": 2, "name": "Price & Menus", "item": "https://budfinder.org/database.html"}
+        {"@type": "ListItem", "position": 2, "name": "Menus & prices", "item": "https://budfinder.org/database.html"}
       ]
     }
   </script>
   <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
   <link rel="stylesheet" href="styles/budfinder-database.css?v=20260905-clarity1" />
   <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261118-review1" />
-  <link rel="stylesheet" href="styles/budfinder-database-refinements.css?v=20261118-dates1" />
+  <link rel="stylesheet" href="styles/budfinder-database-refinements.css?v=20261118-summary1" />
   <link rel="stylesheet" href="styles/budfinder-menu.css?v=20261118-shop5" />
   <link rel="stylesheet" href="styles/budfinder-explore.css?v=20261028-explore1" />
 
@@ -93,7 +93,7 @@
 
     <p id="status" class="status is-visible" role="status" aria-live="polite" aria-atomic="true">Loading nationwide menu data...</p>
 
-    <p id="database-data-note" class="database-data-note">Prices come from published menus and can change.</p>
+    <p id="database-data-note" class="database-data-note">Stock changes and shops may have unlisted items.</p>
 
     <section id="discovery-suggestions" class="discovery-suggestions" aria-labelledby="discovery-suggestions-title">
       <h2 id="discovery-suggestions-title" class="discovery-intro">A few useful places to begin.</h2>
@@ -191,7 +191,7 @@
           <span class="filter-label">Quick filters</span>
           <div id="browse-mode-grid" class="browse-mode-grid" role="group" aria-label="Browse mode">
             <button class="is-active" type="button" data-browse-mode="value">Best value</button>
-            <button type="button" data-browse-mode="available">Most stocked</button>
+            <button type="button" data-browse-mode="available">Most listed</button>
             <button type="button" data-browse-mode="fresh">Fresh menus</button>
             <button type="button" data-browse-mode="under10">Under €10</button>
             <button type="button" data-browse-mode="rare">2-3 shop finds</button>
@@ -339,7 +339,7 @@
           <div class="section-head">
             <div>
               <h2>Compare saved strains</h2>
-              <p id="compare-summary">Find shops carrying several saved strains at once.</p>
+              <p id="compare-summary">Find shops listing several saved strains at once.</p>
             </div>
           </div>
           <div id="common-shop-board" class="common-shop-board"></div>
@@ -426,8 +426,8 @@
   <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
   <script src="scripts/budfinder-page-settings.js?v=20261115-benchmark1"></script>
   <script src="scripts/budfinder-data.js?v=20261031-usability1"></script>
-  <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
+  <script src="scripts/budfinder-search.js?v=20261118-menu-evidence1"></script>
   <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
-  <script src="scripts/budfinder-database.js?v=20261118-labels1"></script>
+  <script src="scripts/budfinder-database.js?v=20261118-summary1"></script>
 </body>
 </html>

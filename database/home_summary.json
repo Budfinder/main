@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at_utc": "2026-11-18T12:37:11.432348+00:00",
+  "exported_at_utc": "2026-11-18T16:54:13.401899+00:00",
   "latest_menu_signal_utc": "2026-11-18T08:55:42.115967+00:00",
   "definitions": {
     "median_listing_price": "The middle per-gram price across the compared listings in that scope (likely typos and menus over a year old are left out).",
@@ -11,29 +11,29 @@
   },
   "amsterdam": {
     "source_shop_records": 179,
-    "active_shops": 150,
-    "active_listings": 2549,
-    "active_strains": 1133,
-    "average_strain_price": 16.32,
+    "active_shops": 151,
+    "active_listings": 2563,
+    "active_strains": 1137,
+    "average_strain_price": 16.31,
     "median_listing_price": 13.5,
-    "median_listing_count": 1907,
+    "median_listing_count": 1921,
     "mapped_shops": 163,
     "excluded_listings": 35
   },
   "network": {
     "source_shop_records": 444,
-    "active_shops": 301,
-    "active_listings": 6507,
-    "active_strains": 2037,
+    "active_shops": 302,
+    "active_listings": 6521,
+    "active_strains": 2040,
     "average_strain_price": 14.28,
     "median_listing_price": 11.0,
-    "median_listing_count": 5169,
+    "median_listing_count": 5183,
     "excluded_listings": 35
   },
   "top_strains": [
     {
       "name": "amnesia haze",
-      "shop_count": 243,
+      "shop_count": 244,
       "average_price": 9.76
     },
     {
@@ -57,7 +57,7 @@
       "average_price": 13.29
     }
   ],
-  "rare_strain_count": 376,
+  "rare_strain_count": 377,
   "rare_strains": [
     {
       "name": "3CHEMS",
@@ -214,10 +214,10 @@
     {
       "name": "Amsterdam",
       "map_location": "amsterdamLoc.csv",
-      "active_shops": 150,
-      "active_listings": 2549,
-      "active_strains": 1133,
-      "average_strain_price": 16.32,
+      "active_shops": 151,
+      "active_listings": 2563,
+      "active_strains": 1137,
+      "average_strain_price": 16.31,
       "median_listing_price": 13.5
     },
     {

@@ -81,7 +81,7 @@ for (const query of ['g13', 'G-13', 'g 13']) {
     assert.equal(h.applied.length, 0);
     assert.equal(h.input.value, 'G-13');
     assert.deepEqual(h.urls, ['G-13']);
-    assert.equal(h.fits.length, 0, 'A strain search does not reframe the map');
+    assert.equal(h.fits.length, 1, 'A submitted strain search frames the matching shops');
     assert.equal(h.switches.length, 0, 'A strain search does not switch city');
   });
 }

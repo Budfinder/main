@@ -14,9 +14,10 @@ const history = () => ({version:1, exported_at_utc:stamp, currency:'€',unit:'g
   ]}))});
 const storage = () => {const memory=new Map();return {getItem:key=>memory.get(key)??null,setItem:(key,value)=>memory.set(key,value),removeItem:key=>memory.delete(key)};};
 
-test('selection is private, exactly twenty unique IDs and reversible',()=>{
+test('selection accepts any non-empty number of unique IDs and is reversible',()=>{
   const saved=storage();assert.equal(api.read(saved),null);
-  assert.throws(()=>api.write(saved,[1,2]));assert.throws(()=>api.write(saved,Array(20).fill(1)));
+  assert.throws(()=>api.write(saved,[]));assert.throws(()=>api.write(saved,[1,1]));
+  for (const selection of [[1], [1,2], [...ids, 21]]) { api.write(saved,selection); assert.deepEqual(api.read(saved),selection); }
   api.write(saved,ids);assert.deepEqual(api.read(saved),ids);
   api.reset(saved);assert.equal(api.read(saved),null);
 });
@@ -39,7 +40,9 @@ test('published shop timelines reproduce every original complete benchmark price
   const calculated=api.build(data.shops,base.benchmark.shops.map(shop=>shop.shop_id),data.latest);
   const values=new Map(calculated.points.map(point=>[point.date,point.average_price]));
   for(const point of base.series.find(row=>row.id==='benchmark').points) assert.equal(values.get(point.date),point.average_price,point.date);
-  assert.deepEqual(calculated.missingLatest,['Hashtag']);
+  const latestPoint=base.series.find(row=>row.id==='benchmark').points.find(point=>point.date===data.latest);
+  assert.equal(calculated.missingLatest.length,latestPoint?.average_price == null
+    ? base.benchmark.shops.length - Number(latestPoint?.shop_count || 0) : 0);
 });
 
 class Element {
@@ -59,9 +62,9 @@ test('Skunkworks allows one shop to be replaced and saved without touching the p
   const fetch=async path=>({ok:true,json:async()=>path.includes('shops.json')?raw:base});
   vm.runInNewContext(source,{window,document:{getElementById:id=>els[id]},localStorage:saved,fetch,Promise});
   await new Promise(resolve=>setImmediate(resolve));
-  assert.match(els['benchmark-selected-heading'].textContent,/20 of 20/);
+  assert.match(els['benchmark-selected-heading'].textContent,/Selected shops · 20/);
   els['benchmark-selected'].dispatch('click',{target:{closest:()=>({dataset:{benchmarkRemove:'20'}})}});
-  assert.equal(els['benchmark-save'].disabled,true);
+  assert.equal(els['benchmark-save'].disabled,false);
   els['benchmark-shop-search'].value='Shop 21';els['benchmark-shop-search'].dispatch('input');
   assert.match(els['benchmark-search-results'].innerHTML,/Shop 21/);
   els['benchmark-search-results'].dispatch('click',{target:{closest:()=>({dataset:{benchmarkAdd:'21'},disabled:false})}});
@@ -88,4 +91,17 @@ test('homepage loads a custom benchmark, and safely falls back if shop history i
     else assert.equal(els['price-history-strain-header'].textContent,'Shop strain entries');
     assert.deepEqual(api.read(saved),ids);
   }
+});
+
+// A larger or smaller benchmark retains equal weighting and reports its own size.
+test('custom benchmarks use the selected number of shops with equal weight', () => {
+  const data=api.normaliseHistory(history(),stamp);
+  const small=api.build(data.shops,[1,2],data.latest);
+  assert.equal(small.name,'Your 2-shop benchmark');
+  assert.equal(small.points.at(-1).average_price,10.5);
+  assert.equal(small.points.at(-1).shop_count,2);
+  const large=api.build(data.shops,[...ids,21],data.latest);
+  assert.equal(large.name,'Your 21-shop benchmark');
+  assert.equal(large.points.at(-1).average_price,20);
+  assert.equal(large.points.at(-1).shop_count,21);
 });

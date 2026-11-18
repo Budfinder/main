@@ -47,7 +47,8 @@ test('strain result dates come from matching listings at that shop', () => {
       {shop_id:1,shop_name:'Alpha',shop_city:'Amsterdam',strain_name:'Amnesia Haze',source_menu_date:'2025-06-01'},
       {shop_id:2,shop_name:'Beta',shop_city:'Amsterdam',strain_name:'Gelato',source_menu_date:'2025-02-01'}
     ],
-    isActiveOfferingRowAvailable:()=>true,
+    isActiveOfferingRowAvailable:()=>true, isLeftOutOfComparisons:()=>false,
+    getOfferingPriceEntry:()=>null,
     normaliseText:s=>String(s||'').toLowerCase().trim(),
     normaliseNameCityKey:(name,city)=>`${name}|${city}`,
     collectMatchedActiveOfferingRows:(query,rows)=>rows.filter(row=>row.strain_name.toLowerCase()===query),

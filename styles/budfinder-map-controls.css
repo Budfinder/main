@@ -207,6 +207,22 @@ body.compact-layout.mobile-controls-open #map,
 body.compact-layout.mobile-directions-open #map,
 body.compact-layout.mobile-shelf-open.shelf-open #map { bottom: calc(var(--app-mobile-nav-clearance) + var(--app-map-action-height, 50px) + 16px) !important; }
 
+/* Keep the search sheet compact and let its contents scroll independently.
+   Route planning and the on-screen keyboard retain their own layouts. */
+body.compact-layout.mobile-controls-open:not(.map-route-panel-open):not(.mobile-map-search-active) .controls:not(.is-collapsed) {
+  /* Override the inline block display only while the sheet is open. */
+  display: flex !important;
+  flex-direction: column;
+  max-height: min(38dvh, 330px, calc(var(--app-viewport-height) - var(--app-mobile-nav-clearance) - var(--app-map-action-height, 50px) - 34px)) !important;
+}
+body.compact-layout:not(.map-route-panel-open):not(.mobile-map-search-active) .controls:not(.is-collapsed) .controls-content {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+}
+body.compact-layout.mobile-controls-open .controls-header { flex-shrink: 0; }
+
 body.compact-layout .controls-header { align-items: center; padding: 12px 14px; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -231,9 +247,9 @@ body.map-route-panel-open .controls #route-tools-dropdown { margin-top: 0; borde
 .map-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .map-skip-link { position: fixed; z-index: 20000; top: 8px; left: 8px; transform: translateY(-200%); padding: 12px; border: 2px solid var(--control-text); border-radius: 8px; background: var(--control-bg-strong); color: var(--control-text); }
 .map-skip-link:focus { transform: none; outline: 3px solid var(--accent); outline-offset: 2px; }
-.settings-matt-toggle { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
-.popup-matt-review[hidden] { display: none !important; }
-.popup-matt-review { margin: 6px 0; color: var(--control-muted); font-size: 12px; }
+.settings-site-toggle { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.popup-site-review[hidden] { display: none !important; }
+.popup-site-review { margin: 6px 0; color: var(--control-muted); font-size: 12px; }
 .mobile-shop-content .rating-stars { min-height: 44px; padding: 4px 8px; border: 1px solid var(--control-border); border-radius: 8px; background: var(--control-bg-strong); color: var(--control-text); cursor: pointer; }
 .skunk-nearby-empty { padding: 8px 0; }
 .skunk-nearby-empty button { min-height: 44px; }
@@ -300,6 +316,7 @@ body.map-route-panel-open .map-price-help { display: none; }
 .map-search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
 body .controls .map-search-row input { width: 100%; min-width: 0; margin: 0; }
 body .controls #map-search-submit { min-height: 44px; margin: 0; padding: 10px 12px; border-radius: 12px; font-size: 13px; }
+.map-search-submit-icon { display: none; }
 .map-search-suggestions { max-height: 280px; overflow-y: auto; border: 1px solid var(--control-border); border-radius: 12px; background: var(--panel-strong); }
 body .controls .map-search-suggestions > button { display: grid; gap: 4px; width: 100%; min-height: 58px; margin: 0; padding: 10px 12px; border: 0; border-bottom: 1px solid var(--panel-border); border-radius: 0; background: transparent !important; text-align: left; box-shadow: none; }
 body .controls .map-search-suggestions > button:hover,
@@ -319,8 +336,8 @@ body .controls #global-search-suggestions > button:hover,
 body .controls #global-search-suggestions > button[aria-selected="true"] { background: var(--control-selected-bg) !important; }
 
 
-/* Search-category controls now lead in document, keyboard and visual order. */
-body .controls-content > .map-category-shortcuts { margin-top: 0; border-top: 0; border-bottom: 1px solid var(--panel-border); }
+/* Place category choices immediately below search in the menu. */
+body .controls .search-wanted-panel > .map-category-shortcuts { margin-top: 8px; border-top: 1px solid var(--panel-border); border-bottom: 1px solid var(--panel-border); }
 .map-matching-help { margin-top: 12px; border-top: 1px solid var(--panel-border); }
 .map-matching-help summary { min-height: 44px; padding: 12px 0; color: var(--ink); font-size: 13px; cursor: pointer; }
 .map-matching-help h3 { margin: 12px 0 6px; color: var(--ink); font-size: 13px; }
@@ -373,43 +390,44 @@ body.mobile-shop-sheet-open { overflow: hidden; }
 :root[data-map-theme-tone="dark"] .mobile-shop-content .popup-menu-value-summary.is-expensive { color: #ff9e97; }
 .mobile-shop-content .popup-strain-actions .popup-strain-show-shops { color: #082017; }
 
-/* While typing, use the complete visible phone viewport instead of the area behind the keyboard. */
-body.compact-layout.mobile-map-search-active .controls {
+/* Keep the map in the visible viewport when the phone keyboard opens.
+   The normal map layout reserves room for navigation that is hidden here. */
+body.compact-layout.mobile-map-search-active #map {
   position: fixed !important;
   top: calc(var(--app-search-visible-top, 0px) + 8px) !important;
   bottom: auto !important;
   height: max(0px, calc(var(--app-search-visible-height, 100dvh) - 16px)) !important;
-  max-height: max(0px, calc(var(--app-search-visible-height, 100dvh) - 16px)) !important;
+}
+body.compact-layout.mobile-map-search-active .controls-backdrop { display: none !important; }
+
+/* Keep the menu at its original screen position while the keyboard opens. */
+body.compact-layout.mobile-map-search-active .controls {
+  position: fixed !important;
+  top: var(--app-search-menu-top, 180px) !important;
+  bottom: auto !important;
+  height: var(--app-search-menu-height, auto) !important;
+  max-height: var(--app-search-menu-height, 330px) !important;
   display: flex !important;
   flex-direction: column;
   z-index: 1200;
 }
-body.compact-layout.mobile-map-search-active .controls-header { flex: 0 0 auto; padding: 8px 12px; }
-body.compact-layout.mobile-map-search-active .controls-title { font-size: 16px; }
 body.compact-layout.mobile-map-search-active .controls-content {
-  display: flex !important;
-  flex: 1 1 auto;
-  min-height: 0;
-  max-height: none !important;
-  overflow: hidden;
-  padding: 0 12px 12px;
-}
-body.compact-layout.mobile-map-search-active .controls-content > :not(.search-wanted-panel),
-body.compact-layout.mobile-map-search-active .search-wanted-panel > :not(.map-search-row):not(.map-search-suggestions) { display: none !important; }
-body.compact-layout.mobile-map-search-active .controls .search-wanted-panel {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  gap: 8px;
-}
-body.compact-layout.mobile-map-search-active .map-search-row { flex: 0 0 auto; }
-body.compact-layout.mobile-map-search-active .map-search-suggestions {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 0;
   max-height: none;
+  overflow-y: auto;
+}
+/* Suggestions overlay the Places control, without changing menu geometry. */
+body.compact-layout.mobile-map-search-active .map-search-anchor {
+  position: relative;
+  z-index: 2;
+}
+body.compact-layout.mobile-map-search-active .map-search-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 150px;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -510,3 +528,8 @@ html body .controls .best-match-list .best-match-more:hover,
 html body .controls .best-match-list .best-match-more:focus-visible {
   border-color: var(--accent) !important;
 }
+/* Search recovery stays beside the query on compact screens. */
+.map-search-recovery { padding: 10px 0; }
+.map-search-recovery[hidden] { display: none; }
+.map-search-recovery p { margin: 0 0 8px; }
+.map-search-recovery .secondary-btn { display: inline-flex; align-items: center; min-height: 44px; margin: 0 6px 6px 0; }

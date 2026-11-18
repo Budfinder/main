@@ -6,7 +6,9 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import build_static_pages as pages
+import check_release
 
 
 def listing(shop_id, name, price, menu_date, old=0):
@@ -32,7 +34,11 @@ class StaticPageTests(unittest.TestCase):
         offerings = [listing(1, "New Shop", 10, "2026-10-01"), listing(2, "Old Shop", 6, "2016-01-28", old=1)]
         (db / "shops.json").write_text(json.dumps(shops))
         (db / "active_offerings.json").write_text(json.dumps(offerings))
-        (db / "home_summary.json").write_text(json.dumps({"exported_at_utc": "2026-11-18T09:00:00+00:00"}))
+        snapshot = "2026-11-18T09:00:00+00:00"
+        (db / "home_summary.json").write_text(json.dumps({
+            "exported_at_utc": snapshot, "network": {"active_shops": 2, "active_listings": 2}
+        }))
+        (db / "manifest.json").write_text(json.dumps({"exported_at_utc": snapshot}))
         if hours:
             (db / "opening_hours.json").write_text(json.dumps(hours))
         pages.build(root)
@@ -46,6 +52,21 @@ class StaticPageTests(unittest.TestCase):
 
     def read(self, root, path):
         return (root / path / "index.html").read_text(encoding="utf-8")
+
+    def test_release_detects_a_partial_upload_and_rebuilds_consistently(self):
+        root = self.build()
+        self.assertEqual(check_release.verify(root), [])
+        directory = root / "coffeeshops" / "index.html"
+        directory.write_text(directory.read_text() + "stale page")
+        self.assertTrue(any("coffeeshops/index.html" in error for error in check_release.verify(root)))
+        pages.build(root)
+        self.assertEqual(check_release.verify(root), [])
+
+    def test_city_strain_links_keep_the_city_in_the_comparison(self):
+        root = self.build()
+        city = self.read(root, "coffeeshops/utrecht")
+        self.assertIn("detail=strain&amp;strain=Same+Strain&amp;filter_city=Utrecht", city)
+        self.assertIn("Compare in Utrecht", city)
 
     def test_old_menu_is_shown_with_its_date_but_not_compared(self):
         root = self.build()

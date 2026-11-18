@@ -390,6 +390,7 @@ to rebuild by hand:
 
 ```sh
 python3 build_static_pages.py
+python3 scripts/check_release.py
 ```
 
 The script updates `coffeeshops/` and `strains/` in place: unchanged pages
@@ -398,7 +399,15 @@ strains that left the menus are deleted (so delete them on the server too, or
 let your upload tool mirror deletions). It never deletes and recreates the
 folders, because that made iCloud Drive leave empty "name 2" copies behind;
 empty leftover folders inside them are removed on each run. Upload both
-folders and `sitemap.xml` after the data snapshot. `404.html` is the branded
+folders and `sitemap.xml` after the data snapshot. Include
+`database/release.json` with the generated files, then upload
+`database/manifest.json` last. The release records the snapshot timestamp,
+public counts and SHA-256 hashes of the generated pages, data and app assets.
+Rebuild after code edits so the release also describes the current scripts.
+After uploading, verify the public homepage data and sample city and strain pages with
+`python3 scripts/check_release.py --url https://budfinder.org`.
+The normal website checks also verify every recorded local release file.
+`404.html` is the branded
 not-found page used by `.htaccess`.
 
 ### Logo thumbnails

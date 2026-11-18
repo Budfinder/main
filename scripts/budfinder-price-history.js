@@ -1,6 +1,8 @@
 (() => {
   'use strict';
   const DAY = 86400000;
+  // Exclude the earlier expansion from every displayed history and comparison.
+  const HISTORY_START = '2026-08-01';
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const dateTime = value => {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value))) return NaN;
@@ -43,17 +45,18 @@
   }
 
   function selectPoints(series, period, latest) {
-    const cutoff = period === 'all' ? -Infinity : dateTime(latest) - (Number(period) - 1) * DAY;
+    const cutoff = Math.max(dateTime(HISTORY_START), period === 'all' ? -Infinity : dateTime(latest) - (Number(period) - 1) * DAY);
     return series.points.filter(point => dateTime(point.date) >= cutoff);
   }
 
-  function buildGeometry(points, width = 800, height = 270, traces = []) {
+  function buildGeometry(points, width = 800, height = 270, traces = [], axisStart = null, axisEnd = null) {
     const valid = points.filter(point => point.average_price != null);
     if (!valid.length) return null;
     width = Math.max(180, width);
     const box = { left: 45, right: width - 15, top: 18, bottom: height - 35 };
-    const times = points.map(point => dateTime(point.date));
-    const start = Math.min(...times), end = Math.max(...times);
+    // Missing-price rows are not observations and must not add empty space.
+    const times = valid.map(point => dateTime(point.date));
+    const start = Math.min(...times, ...(Number.isFinite(axisStart) ? [axisStart] : [])), end = Math.max(...times, ...(Number.isFinite(axisEnd) ? [axisEnd] : []));
     const visibleTraces = traces.map(trace => ({ ...trace, points: trace.points.filter(point => point.average_price != null && dateTime(point.date) >= start && dateTime(point.date) <= end) }));
     const values = [...valid.map(point => point.average_price), ...visibleTraces.flatMap(trace => trace.points.map(point => point.average_price))];
     const low = Math.min(...values), high = Math.max(...values);
@@ -84,7 +87,7 @@
     const path = segment => segment.map((item, index) => `${index ? 'L' : 'M'}${item.x.toFixed(2)},${item.y.toFixed(2)}`).join(' ');
     return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="price-chart-title price-chart-desc">
       <title id="price-chart-title">${escape(scope)} recorded average price per gram</title>
-      <desc id="price-chart-desc">${escape(dateLabel(points[0].date))} to ${escape(dateLabel(points.at(-1).date))}. The line joins recorded points; prices between markers are unknown. Use the table below for all values.</desc>
+      <desc id="price-chart-desc">${escape(dateLabel(points[0].date))} to ${escape(dateLabel(points.at(-1).date))}. The line connects recorded observations. An incomplete latest benchmark is identified in the chart status. Prices between markers are unknown. Use the table below for all values.</desc>
       <defs><linearGradient id="price-history-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="currentColor" stop-opacity=".17"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>
       ${ticks.map(tick => `<line class="price-history-grid" x1="${box.left}" x2="${box.right}" y1="${tick.y}" y2="${tick.y}"/><text class="price-history-axis" x="${box.left - 10}" y="${tick.y + 4}" text-anchor="end">€${Number(tick.value.toFixed(2))}</text>`).join('')}
       ${xTicks.map(tick => `<text class="price-history-axis" x="${tick.x}" y="${height - 10}" text-anchor="${tick.anchor}">${escape(tick.label)}</text>`).join('')}
@@ -106,7 +109,8 @@
       controls: byId('price-history-controls'), details: byId('price-history-details'), stamp: byId('price-history-stamp'),
       benchmark: byId('price-history-benchmark'), shops: byId('price-history-shops'),
       benchmarkDescription: byId('price-history-benchmark-description'),
-      traceControl: byId('price-history-trace-control'), traceToggle: byId('price-history-trace-toggle') };
+      traceControl: byId('price-history-trace-control'), traceToggle: byId('price-history-trace-toggle'),
+      partial: byId('price-history-partial'), partialToggle: byId('price-history-partial-toggle'), partialResult: byId('price-history-partial-result') };
     els.note = byId('price-history-note');
     els.change = byId('price-history-change');
     // Shop traces are opt-in: with them on, the scale must fit every shop
@@ -116,7 +120,7 @@
     function showChange(point) {
       if (!els.change) return;
       const first = state.geometry && state.geometry.points[0];
-      if (!point || !first || point === first || !(first.average_price > 0)) {
+      if (!point || point.partial || !first || first.partial || point === first || !(first.average_price > 0)) {
         els.change.textContent = '';
         els.change.hidden = true;
         return;
@@ -134,11 +138,11 @@
       els.plot.innerHTML = chartSvg(state.geometry, state.selected, scope.name);
       els.value.textContent = money(point.average_price);
       showChange(point);
-      els.date.textContent = `${point.kind === 'current' ? 'Latest snapshot' : 'Recorded average'} · ${dateLabel(point.date)}`;
+      els.date.textContent = `${point.partial ? 'Incomplete latest snapshot' : point.kind === 'current' ? 'Latest snapshot' : 'Recorded average'} · ${dateLabel(point.date)}`;
       const strainCoverage = scope.id === 'custom-benchmark'
         ? `${point.strain_count.toLocaleString()} shop strain ${point.strain_count === 1 ? 'entry' : 'entries'}`
         : counted(point.strain_count, 'strain');
-      els.coverage.textContent = `${counted(point.shop_count, 'shop')} · ${strainCoverage} · ${counted(point.listing_count, 'listing')}`;
+      els.coverage.textContent = `${point.partial ? `${point.shop_count} of ${(scope.shops || state.data.benchmarkShops).length} shops` : counted(point.shop_count, 'shop')} · ${strainCoverage} · ${counted(point.listing_count, 'listing')}`;
       if (announce) els.live.textContent = `${dateLabel(point.date)}: ${money(point.average_price)}, ${els.coverage.textContent}`;
     }
 
@@ -149,18 +153,34 @@
       const strainHeader = byId('price-history-strain-header');
       if (strainHeader) strainHeader.textContent = scope.id === 'custom-benchmark' ? 'Shop strain entries' : 'Strains';
       state.points = selectPoints(scope, state.period, state.data.latest);
+      // When a benchmark is incomplete, plot the actual latest reporting-shop
+      // average separately rather than pretending it is a full benchmark.
+      const latestPoint = state.points.at(-1);
+      if (scope.kind === 'benchmark' && latestPoint?.average_price == null && latestPoint?.shop_count > 0) {
+        const reported = benchmarkShops.map(shop => state.data.series.find(row => row.id === `shop-${shop.shopId}`)?.points.find(point => point.date === latestPoint.date))
+          .filter(point => point && point.average_price != null);
+        if (reported.length === latestPoint.shop_count) {
+          const average = reported.reduce((sum, point) => sum + point.average_price, 0) / reported.length;
+          state.points = [...state.points.slice(0, -1), { ...latestPoint, average_price: average, partial: true }];
+        }
+      }
       const oldDate = state.geometry?.points[state.selected]?.date;
       const width = els.plot.clientWidth || 800;
       const selectedShopIds = new Set(benchmarkShops.map(shop => `shop-${shop.shopId}`));
       const traces = scope.kind === 'benchmark' && state.showTraces ? state.data.series.filter(row => row.kind === 'shop' && selectedShopIds.has(row.id))
         .map(row => ({ name: row.name, points: selectPoints(row, state.period, state.data.latest) })) : [];
-      state.geometry = buildGeometry(state.points, width, width < 500 ? 240 : 260, traces);
+      // Short ranges begin at their first available observation, so their
+      // timeline never reserves blank space for dates without a price.
+      const firstObservation = state.points.find(point => point.average_price != null);
+      const axisStart = state.period === 'all' ? dateTime(HISTORY_START) : dateTime(firstObservation?.date);
+      state.geometry = buildGeometry(state.points, width, width < 500 ? 240 : 260, traces, axisStart, dateTime(state.data.latest));
       els.traceControl.hidden = scope.kind !== 'benchmark';
       els.traceToggle.checked = state.showTraces;
+      if (els.partial) { els.partial.hidden = true; els.partialResult.hidden = true; els.partialToggle.setAttribute('aria-expanded', 'false'); }
       const coverage = state.points.filter(point => point.average_price != null).map(point => point.shop_count);
       if (scope.kind === 'benchmark') {
         els.note.textContent = `The same ${benchmarkShops.length} shops are used for every marker, with each shop given equal weight. Changes in the strains they stock can still move the average.${scope.id === 'custom-benchmark' ? ' Strain entries count each shop’s strains, so the same strain may be counted more than once.' : ''}`;
-        els.benchmarkDescription.textContent = `The same ${benchmarkShops.length} shops are tracked throughout. Each shop contributes its average once, so larger menus do not dominate. A marker is shown only when every tracked shop has usable recorded prices. Missing shops are never silently replaced.`;
+        els.benchmarkDescription.textContent = `The same ${benchmarkShops.length} shops are tracked throughout. Each shop contributes its average once, so larger menus do not dominate. The latest incomplete snapshot is shown separately using only shops with prices and is marked on the chart. Missing shops are never silently replaced.`;
         els.shops.innerHTML = benchmarkShops.map(shop => `<a href="database.html?detail=shop&amp;shop_id=${shop.shopId}"><strong>${escape(shop.name)}</strong><span>${escape(shop.city)}</span></a>`).join('');
       } else if (scope.kind === 'shop') {
         els.note.textContent = 'This shop’s average reflects the strains listed at each observation. Changes in the menu mix can move the average.';
@@ -170,7 +190,7 @@
       } else {
         els.note.textContent = 'There are no usable observations in this period. Choose another location or time range.';
       }
-      els.table.innerHTML = state.points.slice().reverse().map(point => `<tr><th scope="row">${escape(dateLabel(point.date))}</th><td>${point.average_price == null ? 'No recorded price' : money(point.average_price)}</td><td>${point.shop_count.toLocaleString()}</td><td>${point.strain_count.toLocaleString()}</td></tr>`).join('');
+      els.table.innerHTML = state.points.slice().reverse().map(point => `<tr><th scope="row">${escape(dateLabel(point.date))}</th><td>${point.average_price == null ? 'No recorded price' : `${money(point.average_price)}${point.partial ? ' (incomplete)' : ''}`}</td><td>${point.shop_count.toLocaleString()}</td><td>${point.strain_count.toLocaleString()}</td></tr>`).join('');
       els.ranges.querySelectorAll('[data-price-range]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.priceRange === state.period)));
       if (!state.geometry) {
         els.plot.hidden = true;
@@ -191,19 +211,35 @@
       if (state.selected < 0) state.selected = state.geometry.points.length - 1;
       els.status.hidden = state.geometry.points.length > 1;
       els.status.textContent = state.geometry.points.length === 1 ? 'One snapshot is available. More history will appear as menus are recorded.' : '';
-      if (scope.kind === 'benchmark' && state.points.at(-1)?.average_price == null) {
+      if (scope.kind === 'benchmark' && (state.points.at(-1)?.average_price == null || state.points.at(-1)?.partial)) {
         els.status.hidden = false;
         const missing = scope.missingLatest || benchmarkShops.filter(shop => {
           const row = state.data.series.find(item => item.id === `shop-${shop.shopId}`);
           const latest = row?.points.at(-1);
           return latest?.date === state.data.latest && latest.average_price == null;
         }).map(shop => shop.name);
-        els.status.textContent = `The latest benchmark is incomplete (${state.points.at(-1)?.shop_count || 0} of ${benchmarkShops.length} shops).${missing.length ? ` No current price: ${missing.join(', ')}.` : ''} Showing the most recent complete observation.`;
+        const lastComplete = state.geometry.points.filter(point => !point.partial).at(-1);
+        els.status.textContent = `${lastComplete ? `Latest complete benchmark: ${dateLabel(lastComplete.date)}. ` : ''}Latest snapshot is incomplete (${state.points.at(-1)?.shop_count || 0} of ${benchmarkShops.length} shops).${missing.length ? ` No current price: ${missing.join(', ')}.` : ''} ${state.points.at(-1)?.partial ? 'The latest point is the average of the shops with prices; it is not directly comparable with the complete benchmark.' : ''}`;
+        // Use the latest point for each selected shop only when every reported
+        // value is present; otherwise do not suggest a partial result.
+        const latestDate = state.points.at(-1).date;
+        const latestRows = benchmarkShops.map(shop => state.data.series.find(row => row.id === `shop-${shop.shopId}`)?.points.find(point => point.date === latestDate));
+        const reported = latestRows.filter(point => point && point.average_price != null);
+        if (els.partial && reported.length && reported.length === state.points.at(-1).shop_count) {
+          const subsetAverage = reported.reduce((sum, point) => sum + point.average_price, 0) / reported.length;
+          els.partialResult.textContent = `${dateLabel(latestDate)}: ${money(subsetAverage)} across ${reported.length} of ${benchmarkShops.length} shops. This incomplete subset is not directly comparable with the full benchmark.`;
+          els.partial.hidden = false;
+        }
       }
       if (state.customWarning) { els.status.hidden = false; els.status.textContent = state.customWarning; }
       paint();
     }
 
+    els.partialToggle?.addEventListener('click', () => {
+      const expanded = els.partialToggle.getAttribute('aria-expanded') === 'true';
+      els.partialToggle.setAttribute('aria-expanded', String(!expanded));
+      els.partialResult.hidden = expanded;
+    });
     els.scope.addEventListener('change', () => render());
     els.traceToggle.addEventListener('change', () => {
       state.showTraces = els.traceToggle.checked;
@@ -294,7 +330,7 @@
         els.details.hidden = true;
         els.benchmark.hidden = true;
         els.status.hidden = false;
-        els.status.textContent = 'Price history could not be loaded or is still updating. Current prices are available in Price & Menus.';
+        els.status.textContent = 'Price history could not be loaded or is still updating. Current prices are available in Menus & prices.';
       } finally {
         controller.abort();
         runtime.clearTimeout(timeout);

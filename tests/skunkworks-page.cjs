@@ -9,7 +9,7 @@ const source = fs.readFileSync(require.resolve('../scripts/budfinder-skunkworks-
 function harness() {
   const memory=new Map();
   const localStorage={getItem:key=>memory.has(key)?memory.get(key):null,setItem:(key,value)=>memory.set(key,value),removeItem:key=>memory.delete(key)};
-  const ids=['skunk-status','skunk-shop-search','skunk-strain-list','skunk-shop-results','skunk-shop-status','skunk-saved-shops','skunk-radius','skunk-unvisited','skunk-recent','skunk-matt-defaults','skunk-strain-form','skunk-strain-input','skunk-preferences-form','skunk-strain-options'];
+  const ids=['skunk-status','skunk-shop-search','skunk-strain-list','skunk-shop-results','skunk-shop-status','skunk-saved-shops','skunk-radius','skunk-unvisited','skunk-recent','skunk-site-defaults','skunk-strain-form','skunk-strain-input','skunk-preferences-form','skunk-strain-options'];
   const els=Object.fromEntries(ids.map(id=>[id,{id,value:'',checked:false,innerHTML:'',textContent:'',listeners:{},addEventListener(type,fn){this.listeners[type]=fn;},focus(){}}]));
   const types=['sativa','indica','hybrid','hash'].map(value=>({value,checked:false}));
   const doc={getElementById:id=>els[id]||null,querySelectorAll:selector=>selector==='input[name="type"]'?types:selector==='input[name="type"]:checked'?types.filter(x=>x.checked):[]};
@@ -21,19 +21,19 @@ function harness() {
 }
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 
-test('turning Matt’s defaults off and on leaves personal visits untouched',async()=>{
+test('turning site defaults off and on leaves personal visits untouched',async()=>{
   const h=harness();await settle();
   h.els['skunk-shop-search'].value='Abraxas';h.els['skunk-shop-search'].listeners.input();
-  assert.equal(h.els['skunk-matt-defaults'].checked,true);
+  assert.equal(h.els['skunk-site-defaults'].checked,true);
   assert.match(h.els['skunk-shop-results'].innerHTML,/>Visited<\/button>/);
-  h.els['skunk-matt-defaults'].checked=false;
+  h.els['skunk-site-defaults'].checked=false;
   h.els['skunk-preferences-form'].listeners.submit({preventDefault(){}});
-  assert.equal(api.readMattDefaults(h.localStorage),false);
+  assert.equal(api.readSiteDefaults(h.localStorage),false);
   assert.match(h.els['skunk-shop-results'].innerHTML,/>Mark visited<\/button>/);
   h.els['skunk-shop-results'].listeners.click({target:{closest:()=>({dataset:{shopKey:'cs-abraxas',shopAction:'visited'}})}});
-  h.els['skunk-matt-defaults'].checked=true;
+  h.els['skunk-site-defaults'].checked=true;
   h.els['skunk-preferences-form'].listeners.submit({preventDefault(){}});
-  assert.equal(api.readMattDefaults(h.localStorage),true);
+  assert.equal(api.readSiteDefaults(h.localStorage),true);
   assert.equal(api.readLocations(h.localStorage)['url:/cs-abraxas.html'].visited,true);
 });
 

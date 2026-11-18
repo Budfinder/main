@@ -61,9 +61,40 @@ function harness(kind, initialLabel = '') {
   vm.runInContext(functions, sandbox, { filename: 'shipped-map-marker-functions.js' });
   sandbox.categoryIcons.hotel = sandbox.createCategoryFallbackIcon('hotel');
   marker.icon = sandbox.chooseMarkerIcon(loc, initialLabel);
-  return { marker, coords, popup, prices, highlights, tones,
+  return { marker, coords, popup, prices, highlights, tones, sandbox,
     sync: (visible = true, showPrice = true) => sandbox.syncMarkerPriceDisplay(0, visible, showPrice) };
 }
+
+test('strain maps retain listed prices with more than 36 desktop or 12 mobile matches', () => {
+  for (const compact of [false, true]) {
+    const app = harness(kinds[0]);
+    const state = app.sandbox;
+    state.locations = Array.from({ length: 123 }, (_, index) => ({
+      name: `Shop ${index}`, db_shop_id: `shop-${index}`, coffee: true, logo: 'shop.png'
+    }));
+    state.strainPriceByShopId = new Map(state.locations.slice(0, 122).map(loc => [loc.db_shop_id, '€10/g']));
+    state.markers = state.locations.map(() => ({
+      ...app.marker, _priceLabelText: '', iconUpdates: 0, getElement: () => null
+    }));
+    Object.assign(state, {
+      document: { getElementById: () => null },
+      map: { hasLayer: () => true },
+      sharedMenuFilters: {}, offeringAttributeFilterKind: '', offeringAttributeFilterValue: '',
+      selectedCategories: [], strainCheapestPriceLabel: '', activePopupLocationIndex: null,
+      journeyLayerGroup: null, markerLayoutController: null,
+      isCompactMobileLayout: () => compact,
+      refreshSharedMenuMatchIds() {}, shouldShowMarkerOnMap: () => true,
+      getCategoryFilterLabel: value => value, updateMapSearchArea() {}
+    });
+    vm.runInContext(shippedFunction('updateMarkers'), state);
+    state.updateMarkers();
+    assert.ok(state.markers.slice(0, 122).every(marker => marker._priceLabelText === '€10/g'));
+    assert.equal(state.markers[122]._priceLabelText, '', 'A shop without a comparable price keeps its plain marker');
+    state.strainFilterText = '';
+    state.updateMarkers();
+    assert.ok(state.markers.every(marker => marker._priceLabelText === ''));
+  }
+});
 
 for (const kind of kinds) {
   test(`${kind.kind}: changed prices regenerate the same icon kind and remove legacy tooltips`, () => {

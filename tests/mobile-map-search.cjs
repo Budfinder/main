@@ -19,7 +19,7 @@ function harness({viewport = {height: 360, offsetTop: 50, scale: 1}, compact = t
     getElementById: id => id === 'destination-search' ? input : id === 'route-tools-dropdown' ? route : null
   };
   const context = vm.createContext({document, window: {visualViewport: viewport,innerWidth:390,innerHeight:844}, controlsVisible: true,
-    mobileSearchUnoccludedHeight:0,mobileSearchViewportWidth:0,
+    mobileSearchUnoccludedHeight:0,mobileSearchViewportWidth:0,mobileSearchMenuOffset:280,
     controlsCollapsed: false, isCompactMobileLayout: () => compact, getViewportSize: () => ({height: 844,width:390})});
   vm.runInContext(shipped, context);
   return {context, document, input, route, properties, classes};
@@ -30,6 +30,7 @@ test('focused phone search uses the area above the keyboard, including browser p
   h.context.syncMobileSearchViewport();
   assert.equal(h.properties.get('--app-search-visible-height'), '360px');
   assert.equal(h.properties.get('--app-search-visible-top'), '50px');
+  assert.equal(h.properties.get('--app-search-menu-top'), '190px'); // 50px viewport offset + 140px
   assert.equal(h.classes.has('mobile-map-search-active'), true);
   // A further keyboard resize must update the existing panel without losing search focus.
   h.context.window.visualViewport.height = 280;
@@ -109,4 +110,15 @@ test('Clear all filters is present once in the on-screen map action bar', () => 
   const dock = html.slice(html.indexOf('<div id="ui-toggles"'), html.indexOf('<dialog id="mobile-shop-sheet"'));
   assert.match(dock, /id="clear-map-filters"[^>]+aria-label="Clear all filters"/);
   assert.equal((html.match(/id="clear-map-filters"/g) || []).length, 1);
+});
+
+// Leave room for suggestions while keeping the sheet near its original position.
+test('keyboard lifts the menu slightly and leaves room for suggestions', () => {
+  const h = harness({viewport:{height:420,offsetTop:0,scale:1}});
+  h.context.mobileSearchMenuOffset = 260;
+  h.context.syncMobileSearchViewport();
+  assert.equal(h.properties.get('--app-search-menu-top'), '160px');
+  h.context.window.visualViewport.height = 300;
+  h.context.syncMobileSearchViewport();
+  assert.equal(h.properties.get('--app-search-menu-top'), '80px');
 });

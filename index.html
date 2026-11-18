@@ -35,11 +35,11 @@
   </script>
   <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
   <!-- Keep base styles before shared polish, followed by homepage overrides. -->
-  <link rel="stylesheet" href="styles/budfinder-home-base.css?v=20260905-refine1" />
+  <link rel="stylesheet" href="styles/budfinder-home-base.css?v=20261118-names1" />
   <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261118-review1" />
   <link rel="stylesheet" href="styles/budfinder-home-search.css?v=20261118-review1" />
   <link id="budfinder-home-tlc" rel="stylesheet" href="styles/budfinder-home-layout.css?v=20261028-review2" />
-  <link rel="stylesheet" href="styles/budfinder-price-history.css?v=20261118-review1" />
+  <link rel="stylesheet" href="styles/budfinder-price-history.css?v=20261118-benchmark4" />
 </head>
 <body class="has-floating-nav nav-floats-wide">
   <a class="skip-link" href="#home-search-input">Skip to search</a>
@@ -86,7 +86,8 @@
 
         <div class="hero-follow">
           <a class="intent-action" href="map.html?source=home&amp;intent=nearby">Coffeeshops near me</a>
-          <p class="availability-note">Prices come from published menus and can change. <a href="#market-snapshot-title">How this works</a></p>
+          <a class="intent-action" href="/coffeeshops/">Browse by city</a>
+          <p class="availability-note">Menus are a guide: stock changes and shops may have unlisted items. <a href="#market-snapshot-title">How this works</a></p>
         </div>
       </div>
 
@@ -132,7 +133,7 @@
         <article class="insight-panel market-list-card">
           <span>Random 2–3 shop finds</span>
           <strong id="home-rare-count">Loading…</strong>
-          <p>Strains only two or three shops stock. Shuffled on each visit.</p>
+          <p>Strains listed by two or three shops in Budfinder. Shuffled on each visit.</p>
           <ul id="home-rare-list" class="insight-list" aria-label="Random strains listed in two or three shops"></ul>
           <a class="market-list-footer" href="database.html?mode=rare">Explore all 2–3 shop finds →</a>
         </article>
@@ -170,7 +171,7 @@
             <div>
               <span class="eyebrow">Menu price history</span>
               <h3 id="price-history-title">Average price over time</h3>
-              <p>Recorded prices from the menus in Budfinder.</p>
+              <p>Recorded prices from menus in Budfinder, shown from 1 August 2026.</p>
             </div>
             <span id="price-history-stamp" class="price-history-stamp"></span>
           </div>
@@ -188,13 +189,14 @@
             <div><strong id="price-history-value">Loading…</strong><span id="price-history-change" class="price-history-change" hidden></span><span id="price-history-date"></span></div>
             <p id="price-history-coverage"></p>
           </div>
+          <p id="price-history-status" class="price-history-status" role="status">Loading recorded averages…</p>
+          <div id="price-history-partial" hidden><button type="button" id="price-history-partial-toggle" aria-expanded="false">Show latest incomplete benchmark</button><p id="price-history-partial-result" hidden></p></div>
           <div id="price-history-trace-control" class="price-history-trace-control" hidden>
             <span class="price-history-main-legend">Benchmark average</span>
             <label><input id="price-history-trace-toggle" type="checkbox" /> Show individual shop traces</label>
           </div>
-          <p id="price-history-status" class="price-history-status" role="status">Loading recorded averages…</p>
           <div id="price-history-plot" class="price-history-plot" role="group" aria-label="Interactive average price chart" aria-describedby="price-history-instructions price-history-note" hidden></div>
-          <p id="price-history-instructions" class="price-history-instructions">Tap or hover a marker to see that day, or focus the chart and use ← → Home End.</p>
+          <p id="price-history-instructions" class="price-history-instructions">Tap or hover a marker to see that day, or focus the chart and use ← → Home End. The line connects recorded observations; the status above identifies an incomplete latest benchmark.</p>
           <p id="price-history-note" class="price-history-note">Shop and strain coverage changes over time. These are database averages, rather than a measure of like-for-like market price changes.</p>
           <p id="price-history-live" class="price-history-sr-only" role="status" aria-live="polite"></p>
           <details id="price-history-benchmark" class="price-history-details" hidden>
@@ -204,8 +206,8 @@
           </details>
           <details id="price-history-details" class="price-history-details" hidden>
             <summary>How it works &amp; price history table</summary>
-            <p>The benchmark averages the same 20 shops, giving each shop equal weight. Within each shop, each strain contributes its average price per gram once. The location views average across strains in the full database. Repeat checks do not add extra weight. For a personal benchmark, strain totals count each shop’s strains separately.</p>
-            <p>Markers are recorded observations. The continuous line joins those points; prices between markers are unknown. Dates show when Budfinder recorded listings, rather than when shops published menus. Last known listings are carried forward until a replacement or removal is recorded. Earlier coverage is incomplete and edits without historical records cannot be reconstructed. The latest snapshot uses the current database.</p>
+            <p>The public benchmark averages the same 20 shops. A personal benchmark can contain any number of shops; each shop has equal weight. Within each shop, each strain contributes its average price per gram once. The location views average across strains in the full database. Repeat checks do not add extra weight. For a personal benchmark, strain totals count each shop’s strains separately.</p>
+            <p>Markers are recorded observations. The solid line joins those points; prices between markers are unknown. An incomplete latest benchmark is labelled with the number of shops represented. Dates show when Budfinder recorded listings, rather than when shops published menus. Last known listings are carried forward until a replacement or removal is recorded. Earlier coverage is incomplete and edits without historical records cannot be reconstructed. The latest snapshot uses the current database.</p>
             <div class="price-history-table" role="region" aria-label="Price history values" tabindex="0">
               <table><thead><tr><th scope="col">Recorded date</th><th scope="col">Average / g</th><th scope="col">Shops</th><th id="price-history-strain-header" scope="col">Strains</th></tr></thead><tbody id="price-history-rows"></tbody></table>
             </div>
@@ -252,10 +254,10 @@
   <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
   <script src="scripts/budfinder-page-settings.js?v=20261115-benchmark1"></script>
   <script src="scripts/budfinder-data.js?v=20261031-usability1"></script>
-  <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
+  <script src="scripts/budfinder-search.js?v=20261118-menu-evidence1"></script>
   <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
-  <script src="scripts/budfinder-home.js?v=20261118-prices2"></script>
-  <script src="scripts/budfinder-benchmark.js?v=20261115-benchmark1"></script>
-  <script src="scripts/budfinder-price-history.js?v=20261118-review1"></script>
+  <script src="scripts/budfinder-home.js?v=20261118-names1"></script>
+  <script src="scripts/budfinder-benchmark.js?v=20261118-benchmark2"></script>
+  <script src="scripts/budfinder-price-history.js?v=20261118-names1"></script>
 </body>
 </html>

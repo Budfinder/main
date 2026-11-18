@@ -8,6 +8,17 @@ const search = context.window.BudfinderSearch;
 const names = ['G13 Haze', 'G-13', 'G13 Amnesia', 'Amnesia G-13', 'G13 x AMG Haze'];
 const candidates = names.map(name => ({ kind: 'strain', name, shopCount: name === 'G-13' ? 14 : 500 }));
 
+test('typo recovery offers a unique transposed spelling without changing ordinary matches', () => {
+  assert.equal(search.typoCorrection('amneisa haez', ['Amnesia Haze', 'Amnesia Haze Master Cut']), 'Amnesia Haze');
+  assert.equal(search.typoCorrection('g13', ['G14']), '');
+  assert.equal(search.typoCorrection('Lemon Haze', ['Lemon Haze', 'Lemon Haze CBD']), '');
+  assert.equal(search.typoCorrection('Lemon Haze', ['Lemon Haze CBD']), '');
+  assert.equal(search.typoCorrection('berry', ['Berry', 'Berry']), '');
+  assert.equal(search.typoCorrection('berri', ['Berry', 'Berri']), '');
+  assert.equal(search.typoCorrection('cherr', ['Cherry', 'Cherri']), '');
+  assert.equal(search.score('Amnesia Haze', 'amneisa haez'), 0);
+});
+
 for (const query of ['g13', 'G-13', 'g 13']) {
   test(`${query} puts the exact strain before popular crosses without collapsing them`, () => {
     const results = search.suggest(query, candidates);

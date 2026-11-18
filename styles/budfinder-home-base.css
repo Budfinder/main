@@ -1312,7 +1312,7 @@ h1 {
 }
 
 .market-signal-card::after {
-  content: "Open Price & Menus →";
+  content: "Open Menus & prices →";
   align-self: end;
   margin-top: 12px;
   color: var(--ink);

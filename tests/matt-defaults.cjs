@@ -11,18 +11,18 @@ const extract = name => {
   return match[0];
 };
 
-test('device overrides survive hiding and restoring Matt’s published values', () => {
+test('device overrides survive hiding and restoring Budfinder’s published values', () => {
   const data = new Map();
   const localStorage = {getItem:key => data.get(key) ?? null, setItem:(key,value) => data.set(key,value)};
   const locations = [
-    {name:'Published',mattVisited:true,mattRating:4},
-    {name:'Personal',mattVisited:true,mattRating:3}
+    {name:'Published',siteVisited:true,siteRating:4},
+    {name:'Personal',siteVisited:true,siteRating:3}
   ];
   const prefs = {Personal:{visited:false,rating:5,favorite:true}};
   const fields = {
     '.visited-checkbox':{checked:false},
     '.rating-stars':{setAttribute(key,value){this[key]=value;}},
-    '.popup-matt-review':{hidden:true,textContent:''}
+    '.popup-site-review':{hidden:true,textContent:''}
   };
   const context = vm.createContext({
     locations, localStorage, window:{BudfinderSkunkworks:api},
@@ -36,15 +36,15 @@ test('device overrides survive hiding and restoring Matt’s published values', 
   context.hydrateLocationPreferences();
   assert.deepEqual(locations.map(loc=>[loc.visited,loc.rating]),[[true,4],[false,5]]);
   context.syncPopupPersonalState(1);
-  assert.equal(fields['.popup-matt-review'].textContent,'Visited by Matt · Matt’s rating: 3/5');
-  assert.equal(fields['.popup-matt-review'].hidden,false);
+  assert.equal(fields['.popup-site-review'].textContent,'Visited by Budfinder · Budfinder rating: 3/5');
+  assert.equal(fields['.popup-site-review'].hidden,false);
   assert.equal(fields['.rating-stars']['data-rating'],'5');
-  api.writeMattDefaults(localStorage,false);
+  api.writeSiteDefaults(localStorage,false);
   context.hydrateLocationPreferences();
   context.syncPopupPersonalState(1);
   assert.deepEqual(locations.map(loc=>[loc.visited,loc.rating]),[[false,0],[false,5]]);
-  assert.equal(fields['.popup-matt-review'].hidden,true);
-  api.writeMattDefaults(localStorage,true);
+  assert.equal(fields['.popup-site-review'].hidden,true);
+  api.writeSiteDefaults(localStorage,true);
   context.hydrateLocationPreferences();
   assert.deepEqual(locations.map(loc=>[loc.visited,loc.rating]),[[true,4],[false,5]]);
   assert.equal(prefs.Personal.favorite,true);

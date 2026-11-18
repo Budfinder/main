@@ -1,4 +1,4 @@
-/* Let a visitor choose a private, fixed 20-shop price-history benchmark. */
+/* Let a visitor choose a private, fixed price-history benchmark. */
 (() => {
   'use strict';
   const api = window.BudfinderBenchmark;
@@ -22,7 +22,7 @@
     results.innerHTML = matches.slice(0, 20).map(shop => {
       const chosen = selected.includes(shop.shopId);
       const hasCurrent = shop.points.at(-1)?.average_price != null;
-      return `<li><span><strong>${escape(shop.name)}</strong><small>${escape(shop.city)}${hasCurrent ? '' : ' · no current price'}</small></span><button type="button" data-benchmark-add="${shop.shopId}" ${chosen || selected.length >= api.SHOP_LIMIT ? 'disabled' : ''}>${chosen ? 'Selected' : 'Add'}</button></li>`;
+      return `<li><span><strong>${escape(shop.name)}</strong><small>${escape(shop.city)}${hasCurrent ? '' : ' · no current price'}</small></span><button type="button" data-benchmark-add="${shop.shopId}" ${chosen ? 'disabled' : ''}>${chosen ? 'Selected' : 'Add'}</button></li>`;
     }).join('');
     selectedList.innerHTML = selected.map(id => {
       const shop = byShopId.get(id);
@@ -30,8 +30,8 @@
       const note = shop && shop.points.at(-1)?.average_price == null ? ' · no current price' : '';
       return `<li><span><strong>${escape(name)}</strong><small>${escape(shop?.city || '')}${note}</small></span><button type="button" data-benchmark-remove="${id}" aria-label="Remove ${escape(name)}">Remove</button></li>`;
     }).join('');
-    byId('benchmark-selected-heading').textContent = `Selected shops · ${selected.length} of ${api.SHOP_LIMIT}`;
-    save.disabled = selected.length !== api.SHOP_LIMIT || selected.some(id => !byShopId.has(id));
+    byId('benchmark-selected-heading').textContent = `Selected shops · ${selected.length}`;
+    save.disabled = selected.length === 0 || selected.some(id => !byShopId.has(id));
     reset.disabled = !defaults.length;
   }
   search.addEventListener('input', render);
@@ -39,7 +39,7 @@
     const button = event.target.closest('[data-benchmark-add]');
     if (!button || button.disabled) return;
     const id = Number(button.dataset.benchmarkAdd);
-    if (shops.some(shop => shop.shopId === id) && !selected.includes(id) && selected.length < api.SHOP_LIMIT) selected.push(id);
+    if (shops.some(shop => shop.shopId === id) && !selected.includes(id)) selected.push(id);
     render();
   });
   selectedList.addEventListener('click', event => {
@@ -52,7 +52,7 @@
     try {
       api.write(localStorage, selected);
       const missing = selected.map(id => shops.find(shop => shop.shopId === id)).filter(shop => shop && shop.points.at(-1)?.average_price == null);
-      status.textContent = missing.length ? `Saved on this device. ${missing.map(shop => shop.name).join(', ')} ${missing.length === 1 ? 'has' : 'have'} no current price, so the latest benchmark may be incomplete.` : 'Saved on this device. Your homepage graph will use these 20 shops.';
+      status.textContent = missing.length ? `Saved on this device. ${missing.map(shop => shop.name).join(', ')} ${missing.length === 1 ? 'has' : 'have'} no current price, so the latest benchmark may be incomplete.` : 'Saved on this device. Your homepage graph will use your selected shops.';
     } catch (_) { status.textContent = 'Could not save this benchmark on this device.'; }
   });
   reset.addEventListener('click', () => {

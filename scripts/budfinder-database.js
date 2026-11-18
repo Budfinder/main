@@ -690,6 +690,17 @@ function missingPriceLabel(listings) {
   return 'Price to check';
 }
 
+// The quick answer at the top of a strain page; the full figures stay below the table.
+function strainPriceLineHtml(profile, listings) {
+  const note = comparedListingsNote(listings, profile.count);
+  if (!profile.count) {
+    return `<p class="strain-price-line">${escapeHtml(missingPriceLabel(listings))} · ${escapeHtml(note)}</p>`;
+  }
+  return `<p class="strain-price-line"><strong>From ${escapeHtml(money(profile.low))}</strong>` +
+    ` · average ${escapeHtml(money(profile.average))} · ${escapeHtml(note)}` +
+    ` · <a href="#strain-price-details">Price details</a></p>`;
+}
+
 // "30 compared · 19 old menus" rather than "30 priced", which hid the rest.
 function comparedListingsNote(listings, comparedCount) {
   const oldCount = (listings || []).filter(item => isOldMenu(item) && !isPriceChecked(item)).length;
@@ -1293,7 +1304,7 @@ const INITIAL_STRAIN_LIMIT = 12;
 const STRAIN_LIMIT_STEP = 12;
 const BROWSE_MODES = [
   { key: 'value', label: 'Best value', summary: 'best value' },
-  { key: 'available', label: 'Most stocked', summary: 'most stocked' },
+  { key: 'available', label: 'Most listed', summary: 'most listed' },
   { key: 'fresh', label: 'Fresh menus', summary: 'fresh menus' },
   { key: 'under10', label: 'Under €10', summary: 'under €10' },
   { key: 'rare', label: '2–3-shop finds', summary: '2–3-shop' },
@@ -1742,7 +1753,7 @@ function setSearchScope(pathLike) {
     const scopeLabel = state.searchScope === 'all'
       ? 'all Netherlands'
       : (activeLocationDataset()?.label || 'the selected city');
-    els.status.textContent = `Searching ${scopeLabel}: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains.`;
+    els.status.textContent = `Searching ${scopeLabel}: ${state.offerings.length.toLocaleString()} known menu listings across ${state.strainStats.length.toLocaleString()} strains.`;
   }
 }
 
@@ -2170,7 +2181,7 @@ function renderQuickAnswer(filteredOfferings, filteredStats) {
     const alternatives = filters.q ? alternativeStrainsForQuery(els.search.value, state.strainStats, 4) : [];
     els.quickAnswer.innerHTML = filters.q
       ? `
-        <p>No current listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name, clear a filter, or pick an available alternative.</p>
+        <p>No known menu listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name, clear a filter, or pick an available alternative.</p>
         ${alternativeLinksHtml(alternatives)}
       `
       : 'Search a strain or coffeeshop to see prices, menus, and useful next actions.';
@@ -2687,7 +2698,7 @@ function renderPriceGuide(filteredStats) {
         <div class="price-guide-head">
           <div>
             <h3>No price profile found</h3>
-            <p>No current strain listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name or one of the available alternatives.</p>
+            <p>No known strain listings matched "${escapeHtml(els.search.value)}". Try a shorter strain name or one of the available alternatives.</p>
           </div>
         </div>
         ${alternativeLinksHtml(alternatives)}
@@ -3036,7 +3047,7 @@ function syncDiscoveryBrowserSortOptions(isShopBrowser) {
       ['freshness', 'Menu age · freshest'],
       ['price-low', 'Average price · low to high'],
       ['price-high', 'Average price · high to low'],
-      ['stocked', 'Availability · most shops']
+      ['stocked', 'Listed at most shops']
     ];
   if (!options.some(([value]) => value === state.discoveryBrowserSort)) state.discoveryBrowserSort = 'name';
   els.discoveryBrowserSort.innerHTML = options
@@ -3050,7 +3061,7 @@ function discoverySortLabel(sort) {
     freshness: 'Freshest first',
     'price-low': 'Lowest average price first',
     'price-high': 'Highest average price first',
-    stocked: 'Most stocked first',
+    stocked: 'Most listings first',
     distance: 'Nearest first'
   }[sort] || 'A–Z';
 }
@@ -3394,7 +3405,9 @@ function renderDiscovery() {
 
   els.discoveryResultGroups.innerHTML = groups.length
     ? groups.join('')
-    : '<div class="discovery-empty">No locations, coffeeshops, growers or strains match yet. Try a shorter name.</div>';
+    : menuSearchEmptyHtml(exploreFilters.city, window.BudfinderSearch?.typoCorrection?.(query, [
+      ...state.strainStats.map(stat => stat.name), ...shopRows.map(row => row.shopName)
+    ]));
 }
 
 function shopBrowserRows() {
@@ -3582,7 +3595,7 @@ function sortStrainListings(listings, sort = state.detailSort) {
     // Unknown prices and dates stay at the bottom in either direction.
     if (key === 'price' && (sortPrice(a) == null) !== (sortPrice(b) == null)) return sortPrice(a) == null ? 1 : -1;
     if (key === 'date' && (displayListingTime(a) == null) !== (displayListingTime(b) == null)) return displayListingTime(a) == null ? 1 : -1;
-    return (primary(a, b) * direction) || byPrice(a, b) || compareShopName(a, b);
+    return (primary(a, b) * direction) || byPrice(a, b) || (byDate(b, a) || 0) || compareShopName(a, b);
   });
 }
 
@@ -3620,24 +3633,28 @@ function strainListingRowHtml(item, profile, options = {}) {
     String(item.notes || '').trim()
   ].filter(Boolean).join(' · ');
   const selected = isShopSelected(shopId);
+  const menuDate = displayListingDateValue(item);
+  const evidence = menuDate
+    ? listingHasPostedDate(item) ? `Listed on the ${formatDate(menuDate)} menu` : `Seen on a menu ${formatDate(menuDate)}`
+    : 'Menu date unknown';
   return `
-    <tr class="listing-row">
-      <td class="listing-shop">
+    <tr class="listing-row" role="row">
+      <td class="listing-shop" role="cell">
         <a class="listing-menu-link" href="${escapeHtmlAttr(menuUrl)}" data-focus-shop-menu="${escapeHtmlAttr(shopId)}" aria-label="View full menu for ${escapeHtmlAttr(shopName)}">
           ${getShopLogoHtml(item.shop_key, shopName)}
           <strong>${escapeHtml(shopName)}</strong>
         </a>
         ${notes ? `<small>${escapeHtml(notes)}</small>` : ''}
       </td>
-      <td class="listing-city">${escapeHtml(item.shop_city || '')}</td>
-      <td class="num listing-price">
+      <td class="listing-city" role="cell">${escapeHtml(item.shop_city || '')}</td>
+      <td class="num listing-price" role="cell">
         <strong>${escapeHtml(priceText)}</strong>
         ${packText ? `<small>${escapeHtml(packText)}</small>` : ''}
         ${judgement && judgement.rank !== 2 ? `<small class="price-judgement ${judgement.className}">${escapeHtml(judgement.label)}</small>` : ''}
         ${priceCheckBadgeHtml(item, 'small')}
       </td>
-      <td class="num listing-date">${ageBadgeHtml(displayListingDateValue(item), item)}</td>
-      <td class="listing-row-actions">
+      <td class="num listing-date" role="cell">${isOldMenu(item) ? '<span class="age-badge is-old">Old menu</span> ' : ''}<span>${escapeHtml(evidence)}</span></td>
+      <td class="listing-row-actions" role="cell">
         <a href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(shopName)} on map">Map</a>
         <button type="button" data-toggle-map-shop="${escapeHtmlAttr(shopId)}" class="${selected ? 'is-active' : ''}" aria-pressed="${selected}" aria-label="${selected ? 'Remove saved shop' : 'Save shop'} ${escapeHtmlAttr(shopName)}">${selected ? 'Saved' : 'Save'}</button>
       </td>
@@ -3696,6 +3713,7 @@ function shopMenuHeaderHtml(row, listings, { detail = false } = {}) {
   const selected = isShopSelected(row.shopId);
   const mapUrl = buildShopMapLink(row.shopId);
   const address = shopAddress(row.shopId);
+  const menuSource = row.shopUrl || shopLinkForId(row.shopId);
   const count = `${listings.length.toLocaleString()} menu item${listings.length === 1 ? '' : 's'}`;
   const stat = (label, value) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`;
   return `
@@ -3706,7 +3724,8 @@ function shopMenuHeaderHtml(row, listings, { detail = false } = {}) {
           <p class="shop-menu-eyebrow">Coffeeshop in ${escapeHtml(row.city || 'an unknown city')}</p>
           <${heading} class="shop-menu-name">${escapeHtml(row.shopName)}</${heading}>
           ${address ? `<p class="shop-menu-address">${escapeHtml(address)}</p>` : ''}
-          <p class="shop-menu-location">${escapeHtml(count)} ${ageBadgeHtml(newestDate, commonMenuDateItem(listings))}</p>
+          <p class="shop-menu-location">${escapeHtml(count)} ${ageBadgeHtml(newestDate, commonMenuDateItem(listings))}
+            ${menuSource ? `<a href="${escapeHtmlAttr(menuSource)}" target="_blank" rel="noopener noreferrer">View source menu</a>` : ''}</p>
         </div>
       </div>
       ${oldMenu ? '<p class="shop-menu-old-note">This menu is over a year old, so its prices are left out of comparisons.</p>' : ''}
@@ -3715,9 +3734,9 @@ function shopMenuHeaderHtml(row, listings, { detail = false } = {}) {
         ${stat('Cheapest', prices.length ? money(Math.min(...prices)) : 'Unknown')}
         ${stat(`${row.city || 'City'} typical`, cityPrices.length ? money(median(cityPrices)) : 'Unknown')}
       </dl>
+      <p class="shop-menu-key">Typical prices are medians: the middle listed price per gram, so a menu's mix (Cali items, for example) affects them. Menus are a guide and stock changes, so check with the shop before travelling for a specific item.</p>
       <div class="shop-menu-actions">
         <a class="is-primary" href="${escapeHtmlAttr(mapUrl)}">View on map</a>
-        <a href="${escapeHtmlAttr(row.shopUrl || shopLinkForId(row.shopId))}" target="_blank" rel="noopener noreferrer">Menu source</a>
         <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${selected ? 'is-active' : ''}" aria-pressed="${selected}">${selected ? 'Saved shop' : 'Save shop'}</button>
       </div>
       ${shopHoursHtml(shopOpeningHours(row.shopId))}
@@ -4009,6 +4028,36 @@ function strainCityFilterHtml(listings, selectedCity) {
   </label>`;
 }
 
+function menuSearchEmptyHtml(city, correction = '') {
+  const scope = city ? ` in ${escapeHtml(city)}` : '';
+  const age = exploreFilters.age;
+  const ageText = {
+    fresh: ' Only menus dated within 14 days are shown.',
+    ageing: ' Only menus dated 15–60 days ago are shown.',
+    stale: ' Only menus dated over 60 days ago are shown.',
+    unknown: ' Only menus with an unknown date are shown.'
+  }[age] || '';
+  return `<div class="empty menu-search-empty">
+    <p>No matches in the menus we’ve seen${scope}.${ageText} Shops may have unlisted items.</p>
+    ${correction ? `<button type="button" data-similar-strain="${escapeHtmlAttr(correction)}">Search for ${escapeHtml(correction)}</button>` : ''}
+    ${age ? `<button type="button" data-include-menu-dates>${['fresh', 'ageing'].includes(age) ? 'Include older menus' : 'Include all menu dates'}</button>` : ''}
+  </div>`;
+}
+
+function listingSortSelectHtml() {
+  const sorts = [
+    ['price:asc', 'Lowest listed price'], ['price:desc', 'Highest listed price'],
+    ['date:desc', 'Newest menu'], ['date:asc', 'Oldest menu'],
+    ['shop:asc', 'Coffeeshop A–Z'], ['shop:desc', 'Coffeeshop Z–A'],
+    ['city:asc', 'City A–Z'], ['city:desc', 'City Z–A']
+  ];
+  const { key, dir } = state.detailSort;
+  return `<label class="strain-city-filter strain-listing-sort"><span>Sort</span>
+    <select data-profile-sort>${sorts.map(([value, label]) =>
+      `<option value="${value}"${value === `${key}:${dir}` ? ' selected' : ''}>${label}</option>`).join('')}</select>
+  </label>`;
+}
+
 function renderDetailContents() {
   if (!els.detailView || !els.databaseLayout) return;
   const detail = state.detail;
@@ -4048,11 +4097,11 @@ function renderDetailContents() {
       </div>
       <header class="detail-header strain-profile-header">
         <div class="detail-header-main">
-          ${getStrainDetailImageHtml(stat.name)}
           <div class="detail-header-copy">
             <p class="detail-eyebrow">Strain profile</p>
             <h2>${escapeHtml(stat.name)}</h2>
             <p class="strain-profile-summary">${shopIds.length.toLocaleString()} shop${shopIds.length === 1 ? '' : 's'} · ${listings.length.toLocaleString()} listing${listings.length === 1 ? '' : 's'} · Exact strain name${explore?.active(exploreFilters).length ? ' · Filters applied' : ''}</p>
+            ${listings.length ? strainPriceLineHtml(profile, listings) : ''}
             <div class="detail-meta-row">
               ${filteredStat.topType ? `<span class="chip type-${escapeHtml(filteredStat.topType)}">${escapeHtml(filteredStat.topType)}</span>` : ''}
               ${filteredStat.caliCount ? `<span class="chip cali">${filteredStat.caliCount} cali listing${filteredStat.caliCount === 1 ? '' : 's'}</span>` : ''}
@@ -4060,30 +4109,26 @@ function renderDetailContents() {
             </div>
           </div>
         </div>
-        ${strainCityFilterHtml(acrossCities, city)}
-        <div class="shop-menu-summary-grid">
-          ${statTileHtml('Average price', profile.average == null ? 'Unknown' : money(profile.average), 'Across compared listings')}
-          ${priceExtremeTileHtml('Lowest price', profile, profile.low)}
-          ${priceExtremeTileHtml('Highest price', profile, profile.high)}
-          ${statTileHtml('Known listings', listings.length.toLocaleString(), comparedListingsNote(listings, profile.count))}
+        <div class="strain-profile-filters">
+          ${strainCityFilterHtml(acrossCities, city)}
+          <label class="strain-city-filter"><span>Menu age</span><select data-profile-age>
+            ${[['', 'Any menu age'], ['fresh', 'Within 14 days'], ['ageing', '15–60 days'], ['stale', 'Over 60 days'], ['unknown', 'Date unknown']].map(([value, label]) => `<option value="${value}"${exploreFilters.age === value ? ' selected' : ''}>${label}</option>`).join('')}
+          </select></label>
+          ${listingSortSelectHtml()}
         </div>
         <div class="detail-actions">
           <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Remove saved strain' : 'Save strain'}</button>
           <a href="${escapeHtmlAttr(mapUrl)}" data-map-strain-shops="${escapeHtmlAttr(shopIds.join(','))}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(shopIds.join(','))}">View on map</a>
         </div>
       </header>
-      <div id="detail-explore-filters" class="explore-filters"></div>
-      <section class="detail-section">
-        <div>
-          <h3>Where to find it</h3>
-          <p class="muted">${listings.length.toLocaleString()} listing${listings.length === 1 ? '' : 's'} at ${shopIds.length.toLocaleString()} shop${shopIds.length === 1 ? '' : 's'}. Select a column to sort, or a shop for its full menu.</p>
-        </div>
-        ${visibleListings.length ? `<div class="detail-listing-table" role="region" aria-label="Where to find ${escapeHtmlAttr(stat.name)}" tabindex="0">
-          <table>
+      <section class="detail-section strain-profile-results">
+        <h3>Listed prices and shops</h3>
+        ${visibleListings.length ? `<div class="detail-listing-table" role="region" aria-label="Listed prices for ${escapeHtmlAttr(stat.name)}" tabindex="0">
+          <table role="table" aria-label="Listed prices for ${escapeHtmlAttr(stat.name)}">
             ${strainListingHeaderHtml()}
-            <tbody>${visibleListings.map(item => strainListingRowHtml(item, profile, { strainName: stat.name })).join('')}</tbody>
+            <tbody role="rowgroup">${visibleListings.map(item => strainListingRowHtml(item, profile, { strainName: stat.name })).join('')}</tbody>
           </table>
-        </div>` : '<div class="empty">No listings match these filters. Clear a filter above to see more.</div>'}
+        </div>` : menuSearchEmptyHtml(city)}
         ${remainingListings ? `
           <div class="detail-load-more-row">
             <button type="button" data-load-more-detail>
@@ -4092,6 +4137,16 @@ function renderDetailContents() {
             </button>
           </div>
         ` : ''}
+      </section>
+      <div id="detail-explore-filters" class="explore-filters"></div>
+      <section class="detail-section strain-profile-statistics" id="strain-price-details" tabindex="-1">
+        ${getStrainDetailImageHtml(stat.name)}
+        <div class="shop-menu-summary-grid">
+          ${statTileHtml('Average price', profile.average == null ? 'Unknown' : money(profile.average), 'Across compared listings')}
+          ${priceExtremeTileHtml('Lowest price', profile, profile.low)}
+          ${priceExtremeTileHtml('Highest price', profile, profile.high)}
+          ${statTileHtml('Known listings', listings.length.toLocaleString(), comparedListingsNote(listings, profile.count))}
+        </div>
       </section>
     `;
     return;
@@ -4458,7 +4513,7 @@ function renderRoutePlanBoard(stats) {
 
 function renderCommonShopBoard(stats) {
   if (!stats.length) {
-    els.commonShopBoard.innerHTML = '<div class="empty">Save strains to find coffeeshops carrying the full set.</div>';
+    els.commonShopBoard.innerHTML = '<div class="empty">Save strains to find coffeeshops listing the full set.</div>';
     return;
   }
 
@@ -4610,7 +4665,7 @@ function renderCompare() {
           </div>
         </div>
         <dl class="comparison-lines">
-          <div><dt>Shops carrying it</dt><dd>${stat.shopCount} shops</dd></div>
+          <div><dt>Shops listing it</dt><dd>${stat.shopCount} shops</dd></div>
           <div><dt>Listings</dt><dd>${stat.listingCount}</dd></div>
           <div><dt>Lowest price</dt><dd>${cheapestListing ? `${money(cheapestListing.price_amount, cheapestListing.price_currency, cheapestListing.price_unit)} at ${escapeHtml(cheapestListing.shop_name)}` : '--'}</dd></div>
           <div><dt>Average price</dt><dd>${stat.avg == null ? '--' : money(stat.avg)}</dd></div>
@@ -5132,7 +5187,7 @@ async function init() {
     state.snapshotTime = parseTime(manifest && manifest.exported_at_utc) || Date.now();
     if (els.dataNote) {
       const snapshotDate = formatDate(manifest && manifest.exported_at_utc);
-      els.dataNote.textContent = `${snapshotDate ? `Data snapshot ${snapshotDate}. ` : ''}Prices come from published menus and can change.`;
+      els.dataNote.textContent = `${snapshotDate ? `Data snapshot ${snapshotDate}. ` : ''}Stock changes and shops may have unlisted items.`;
     }
     const catalogCityLabels = new Map(
       (Array.isArray(locationCatalog && locationCatalog.datasets) ? locationCatalog.datasets : [])
@@ -5198,7 +5253,7 @@ async function init() {
           ? ` Excluded ${scopedUnavailableListingCount.toLocaleString()} unavailable ${datasetLabel} listing${scopedUnavailableListingCount === 1 ? '' : 's'}.`
           : ` Excluded ${scopedUnavailableListingCount.toLocaleString()} unavailable listing${scopedUnavailableListingCount === 1 ? '' : 's'} nationwide.`)
       : '';
-    els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains in ${datasetLabel}.${exported}${hidden}${listingCheckBatchNote()}`;
+    els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} known menu listings across ${state.strainStats.length.toLocaleString()} strains in ${datasetLabel}.${exported}${hidden}${listingCheckBatchNote()}`;
     applyInitialUrlState();
     initExploreFilters();
     setView(state.view);
@@ -5643,6 +5698,17 @@ if (els.shopMenuBrowser) {
 }
 
 function handleDiscoveryClick(event) {
+  if (event.target.closest('[data-include-menu-dates]')) {
+    setExploreFilters({ ...exploreFilters, age: '' });
+    submitDatabaseSearch();
+    return;
+  }
+  const correction = event.target.closest('button[data-similar-strain]');
+  if (correction) {
+    els.search.value = correction.dataset.similarStrain;
+    submitDatabaseSearch();
+    return;
+  }
   const browserLink = event.target.closest('[data-open-discovery-browser]');
   if (browserLink) {
     event.preventDefault();
@@ -5733,8 +5799,19 @@ if (els.discoveryBrowserFilterReset) {
 if (els.detailView) {
   els.detailView.addEventListener('change', event => {
     if (event.target.matches('[data-profile-city]')) setExploreFilters({ ...exploreFilters, city: event.target.value });
+    if (event.target.matches('[data-profile-age]')) setExploreFilters({ ...exploreFilters, age: event.target.value });
+    if (event.target.matches('[data-profile-sort]')) {
+      const [key, dir] = event.target.value.split(':');
+      state.detailSort = { key, dir };
+      renderDetail();
+    }
   });
   els.detailView.addEventListener('click', event => {
+    if (event.target.closest('[data-include-menu-dates]')) {
+      setExploreFilters({ ...exploreFilters, age: '' });
+      els.detailView.querySelector('[data-profile-age]')?.focus({ preventScroll: true });
+      return;
+    }
     const loadMoreButton = event.target.closest('[data-load-more-detail]');
     if (loadMoreButton) {
       const previousLimit = state.detailVisibleLimit;

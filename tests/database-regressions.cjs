@@ -326,6 +326,7 @@ test('shop headers show the address, key prices, opening hours and the existing 
   assert.match(result, /<p class="shop-menu-address">Handboogstraat 29, 1012 XM Amsterdam<\/p>/);
   assert.match(result, /1 menu item/);
   assert.match(result, /<dt>Typical price<\/dt><dd>€16\/g<\/dd>/);
+  assert.equal((result.match(/class="shop-menu-key"/g) || []).length, 1, 'One note, not several');
   assert.match(result, /<dt>Amsterdam typical<\/dt><dd>€12\/g<\/dd>/);
   assert.match(result, /Menu dated 1 Aug 2026/);
   assert.match(result, /<details class="shop-menu-hours">/);
@@ -467,7 +468,7 @@ test('strain profile city choices count shops, update prices, and retain the oth
   selectCity('Rotterdam');
   assert.match(view.innerHTML, /value="Amsterdam">Amsterdam · 1 shop</);
   assert.match(view.innerHTML, /Lowest price<\/span>\s*<strong>€12\/g/);
-  const cards = view.innerHTML.match(/<tr class="listing-row">[\s\S]*?<\/tr>/g);
+  const cards = view.innerHTML.match(/<tr class="listing-row"[^>]*>[\s\S]*?<\/tr>/g);
   assert.equal(cards.length, 1);
   assert.match(cards[0], /<a class="listing-menu-link" href="[^\"]*detail=shop[^\"]*shop_id=2"[^>]*>[^]*?<strong>Harbour<\/strong>/);
   assert.equal((cards[0].match(/<a href="map\.html\?/g) || []).length, 1);
@@ -549,7 +550,7 @@ test('a price marked for checking stays visible but never sets the lowest price 
   h.context.renderDetailContents();
   const view = h.elements.get('detail-view');
   assert.match(view.innerHTML, /Lowest price<\/span>\s*<strong>€9\/g/);
-  const rows = view.innerHTML.match(/<tr class="listing-row">[\s\S]*?<\/tr>/g);
+  const rows = view.innerHTML.match(/<tr class="listing-row"[^>]*>[\s\S]*?<\/tr>/g);
   assert.equal(rows.length, 3);
   assert.match(rows[2], /<strong>Canal<\/strong>[\s\S]*€1\/g[\s\S]*Check price/, 'flagged price sorts last and is labelled');
   assert.doesNotMatch(rows[2], /Great price|Good price/);
@@ -574,7 +575,7 @@ test('a listing from an old menu keeps its price and date but is left out of com
   h.context.renderDetailContents();
   const view = h.elements.get('detail-view');
   assert.match(view.innerHTML, /Lowest price<\/span>\s*<strong>€9\/g/);
-  const rows = view.innerHTML.match(/<tr class="listing-row">[\s\S]*?<\/tr>/g);
+  const rows = view.innerHTML.match(/<tr class="listing-row"[^>]*>[\s\S]*?<\/tr>/g);
   assert.match(rows[2], /<strong>Canal<\/strong>[\s\S]*€5\/g[\s\S]*Old menu[\s\S]*28 Jan 2016/, 'old menu sorts last with its date');
   const profile = h.context.priceProfileForListings(h.state.offerings);
   assert.equal(profile.low, 9);
@@ -601,4 +602,14 @@ test('old menus are named as such instead of looking unpriced, and posted dates 
   assert.match(card, /Menu dated 9 Nov 2025/);
   assert.equal(c.latestListingDateInfo(old).dated, true);
   assert.equal(c.latestListingDateInfo([{ source_seen_at: '2026-09-04T10:00:00Z' }]).dated, false);
+});
+
+test('a strain page opens with its quick price answer and links to the full figures', () => {
+  const { context: c } = harness();
+  const listing = (shop, price, extra = {}) => ({ shop_id: shop, strain_name: 'Gelato', price_amount: price, price_unit: 'g', price_currency: '€', ...extra });
+  const listings = [listing(1, 7), listing(2, 12), listing(3, 20), listing(4, 9, { old_menu: 1 })];
+  const line = c.strainPriceLineHtml(c.priceProfileForListings(listings), listings);
+  assert.match(line, /<strong>From €7\/g<\/strong> · average €13\/g · 3 compared · 1 old menu · <a href="#strain-price-details">Price details<\/a>/);
+  const old = [listing(4, 9, { old_menu: 1 })];
+  assert.equal(c.strainPriceLineHtml(c.priceProfileForListings(old), old), '<p class="strain-price-line">Old menu · 0 compared · 1 old menu</p>');
 });

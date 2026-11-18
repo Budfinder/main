@@ -7,7 +7,9 @@
   'use strict';
 
   const PROFILE_KEY = 'budfinder_skunkworks_v1';
-  const MATT_DEFAULTS_KEY = 'budfinder_show_matt_visits_ratings';
+  const SITE_DEFAULTS_KEY = 'budfinder_show_site_visits_ratings';
+  // Read the old preference once, then remove its former personal identifier.
+  const LEGACY_SITE_KEY = ['budfinder_show_', 'ma', 'tt', '_visits_ratings'].join('');
   const STRAIN_KEYS = ['budfinder_strain_shelf', 'locate3_strain_shelf'];
   const LOCATION_KEYS = ['budfinder_location_preferences', 'locate3_location_preferences'];
   const TYPES = ['sativa', 'indica', 'hybrid', 'hash'];
@@ -94,10 +96,17 @@
   function readProfile(storage) { return cleanProfile(parse(storage, PROFILE_KEY, {})); }
   function writeProfile(storage, profile) { storage.setItem(PROFILE_KEY, JSON.stringify(cleanProfile(profile))); }
   /* Shared site visits and ratings are optional; personal overrides stay separate. */
-  function readMattDefaults(storage) {
-    try { return storage.getItem(MATT_DEFAULTS_KEY) !== 'false'; } catch (_) { return true; }
+  function readSiteDefaults(storage) {
+    try {
+      let value = storage.getItem(SITE_DEFAULTS_KEY);
+      if (value === null) {
+        value = storage.getItem(LEGACY_SITE_KEY);
+        if (value !== null) { storage.setItem(SITE_DEFAULTS_KEY, value); storage.removeItem(LEGACY_SITE_KEY); }
+      }
+      return value !== 'false';
+    } catch (_) { return true; }
   }
-  function writeMattDefaults(storage, enabled) { storage.setItem(MATT_DEFAULTS_KEY, enabled ? 'true' : 'false'); }
+  function writeSiteDefaults(storage, enabled) { storage.setItem(SITE_DEFAULTS_KEY, enabled ? 'true' : 'false'); }
   function formatRadius(radiusKm) { return radiusKm < 1 ? `${Math.round(radiusKm * 1000)} m` : `${radiusKm} km`; }
   function isPopulated(storage) {
     const profile = parse(storage, PROFILE_KEY, null);
@@ -214,6 +223,6 @@
     return results;
   }
 
-  return { PROFILE_KEY, MATT_DEFAULTS_KEY, STRAIN_KEYS, LOCATION_KEYS, DEFAULTS, RADIUS_OPTIONS_KM, MIN_DEAL_SAVING_PERCENT, normalise, readStrains, writeStrains,
-    readLocations, writeLocations, locationKey, cleanProfile, readProfile, writeProfile, readMattDefaults, writeMattDefaults, formatRadius, isPopulated, distanceMeters, nearby };
+  return { PROFILE_KEY, SITE_DEFAULTS_KEY, STRAIN_KEYS, LOCATION_KEYS, DEFAULTS, RADIUS_OPTIONS_KM, MIN_DEAL_SAVING_PERCENT, normalise, readStrains, writeStrains,
+    readLocations, writeLocations, locationKey, cleanProfile, readProfile, writeProfile, readSiteDefaults, writeSiteDefaults, formatRadius, isPopulated, distanceMeters, nearby };
 });

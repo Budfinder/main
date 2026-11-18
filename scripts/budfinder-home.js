@@ -374,7 +374,7 @@
         <li class="insight-item">
           <a href="${escapeHtml(`${url.pathname.split('/').pop()}${url.search}`)}">
             <b>${escapeHtml(displayName(row.name))}</b>
-            <span>${shopCount.toLocaleString()} active shop${shopCount === 1 ? '' : 's'}${row.average_price == null ? '' : ` · ${escapeHtml(price(row.average_price))}`}</span>
+            <span>Listed by ${shopCount.toLocaleString()} shop${shopCount === 1 ? '' : 's'}${row.average_price == null ? '' : ` · ${escapeHtml(price(row.average_price))}`}</span>
           </a>
         </li>
       `;
@@ -477,7 +477,7 @@
     });
     const note = byId('coverage-filter-note');
     if (note) note.textContent = message || 'The menu summary could not be loaded. Search and map browsing are still available.';
-    byId('home-most-common-note').textContent = 'Strain rankings could not be loaded. Explore Price & Menus to try again.';
+    byId('home-most-common-note').textContent = 'Strain rankings could not be loaded. Explore Menus & prices to try again.';
     byId('home-most-common-list').innerHTML = '<li class="insight-empty">Strain rankings are currently unavailable.</li>';
     byId('home-rare-list').innerHTML = '<li class="insight-empty">The current selection could not be loaded.</li>';
     renderLocations([]);
