@@ -484,3 +484,29 @@ html body .controls .best-match-list .best-match-action.best-match-name {
 }
 html body .controls .best-match-list .best-match-action.best-match-name:hover,
 html body .controls .best-match-list .best-match-action.best-match-name:focus-visible { text-decoration: underline; }
+
+/* The rest of the matches, one page at a time. */
+html body .controls .best-match-list .best-match-more-row {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0 2px;
+}
+
+html body .controls .best-match-list .best-match-more {
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 1px solid var(--control-border, rgba(22, 64, 48, 0.24)) !important;
+  border-radius: 999px;
+  background: var(--control-bg-strong, var(--control-bg, #fff)) !important;
+  color: var(--control-text, var(--ink)) !important;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+
+html body .controls .best-match-list .best-match-more:hover,
+html body .controls .best-match-list .best-match-more:focus-visible {
+  border-color: var(--accent) !important;
+}

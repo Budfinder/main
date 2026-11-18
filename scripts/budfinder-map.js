@@ -272,6 +272,14 @@
     let activeMapSessionDatasetKey = '';
     let initialViewportRestored = false;
     let initialCameraSettled = false;
+    // How many best matches are open for the current result set. A different
+    // search, city, filter or sort starts again from the first page.
+    let bestMatchReveal = { key: '', count: 0 };
+    // For a moment after the first framing, the layout can still change the
+    // map's size (on desktop the search panel docks beside it). Until then, or
+    // until the visitor drags the map, a resize frames the city again rather
+    // than leaving it pushed to one side.
+    let reframeInitialViewUntil = 0;
     let lastDestinationSelectValue = '';
     let guideVisible = false;
     let journeyPlanner = {
@@ -2394,7 +2402,10 @@
       if (!map) return;
       const run = () => {
         if (!map) return;
-        map.invalidateSize({ pan: false });
+        const reframe = Date.now() < reframeInitialViewUntil;
+        const before = map.getSize();
+        map.invalidateSize({ pan: reframe });
+        if (reframe && !map.getSize().equals(before)) frameInitialView();
       };
       requestAnimationFrame(run);
       delays.forEach(delay => {
@@ -7811,6 +7822,14 @@
         waitForInitialMapTiles();
         return;
       }
+      frameInitialView();
+      reframeInitialViewUntil = Date.now() + 4000;
+      map.once('dragstart', () => { reframeInitialViewUntil = 0; });
+      initialCameraSettled = true;
+      waitForInitialMapTiles();
+    }
+
+    function frameInitialView() {
       const hasActiveSearchResults = Boolean(
         (locationSearchText || '').trim() ||
         (strainFilterText || '').trim() ||
@@ -7822,8 +7841,6 @@
       } else if (!focusMapViewArea(currentCsvPath, { animate: false })) {
         fitMapToVisibleMarkers();
       }
-      initialCameraSettled = true;
-      waitForInitialMapTiles();
     }
 
     function fitMapToVisibleMarkers(options = {}) {
@@ -9915,6 +9932,19 @@
     });
     if (bestMatchList) {
       bestMatchList.addEventListener('click', e => {
+        const moreBtn = e.target.closest('[data-best-match-more]');
+        if (moreBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          const firstNew = bestMatchList.querySelectorAll('.best-match-card').length;
+          bestMatchReveal.count = firstNew + bestMatchPageSize();
+          refreshDestinationCards();
+          // Keep keyboard and screen-reader users at the first newly shown match.
+          const next = bestMatchList.querySelectorAll('.best-match-card')[firstNew];
+          const name = next && next.querySelector('.best-match-name');
+          if (name) name.focus({ preventScroll: false });
+          return;
+        }
         const actionBtn = e.target.closest('[data-best-match-action]');
         if (actionBtn) {
           e.preventDefault();
@@ -11257,6 +11287,10 @@
       return 'Useful visible stop from the current map filters.';
     }
 
+    function bestMatchPageSize() {
+      return isCompactMobileLayout() ? 6 : 10;
+    }
+
     function renderBestMatches(items) {
       renderMapStrainResult();
       const listEl = document.getElementById('best-match-list');
@@ -11280,8 +11314,12 @@
           return time(b) - time(a) || 0;
         });
       }
-      const displayLimit = isCompactMobileLayout() ? 6 : 10;
-      const displayItems = relevantItems.slice(0, displayLimit);
+      const pageSize = bestMatchPageSize();
+      const resultKey = [order ? order.value : '', city || '',
+        relevantItems.map(item => item.index).sort((a, b) => a - b).join(',')].join('|');
+      if (bestMatchReveal.key !== resultKey) bestMatchReveal = { key: resultKey, count: pageSize };
+      const displayItems = relevantItems.slice(0, Math.max(pageSize, bestMatchReveal.count));
+      const remaining = relevantItems.length - displayItems.length;
       const baseSummary = city ? `${relevantItems.length} match${relevantItems.length === 1 ? '' : 'es'} in ${city}.` : getBestMatchSummary(coffeeItems);
       summaryEl.textContent = relevantItems.length > displayItems.length
         ? `${baseSummary} Showing ${displayItems.length} ${order && order.value === 'freshest' ? 'in date order' : 'best matches'}.`
@@ -11339,7 +11377,10 @@
             `</div>` +
           `</article>`
         );
-      }).join('');
+      }).join('') + (remaining > 0
+        ? `<div class="best-match-more-row"><button type="button" class="best-match-more" data-best-match-more>` +
+            `Show ${Math.min(pageSize, remaining).toLocaleString()} more</button></div>`
+        : '');
     }
 
     function refreshDestinationCards(items = null) {

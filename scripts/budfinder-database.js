@@ -587,9 +587,12 @@ function ageDaysFromTime(time) {
   return Math.max(0, Math.floor((referenceDay - checkedDay) / 86400000));
 }
 
-function formatFreshness(value) {
+function formatFreshness(value, options = {}) {
   const time = parseTime(value);
   if (!Number.isFinite(time)) return 'Menu date unknown';
+  // A date posted with the menu itself (coffeeshopmenus) reads as such; scrape
+  // or edit times describe when Budfinder saw the menu instead.
+  if (options.dated) return `Menu dated ${formatDate(value)}`;
   const days = ageDaysFromTime(time);
   if (days === 0) return 'Menu observed today';
   if (days === 1) return 'Menu observed yesterday';
@@ -607,29 +610,47 @@ function listingUpdatedLabel(item) {
   const value = displayListingDateValue(item);
   if (!value) return 'Menu date unknown';
   const source = listingDateSource(item, { includeBatchFields: false });
-  if (['source_menu_date', 'menu_date', 'listing_date'].includes(source.field)) {
-    return `Source menu dated ${formatDate(value)}`;
+  if (POSTED_DATE_FIELDS.includes(source.field)) {
+    return `Menu dated ${formatDate(value)}`;
   }
   return formatFreshness(value);
 }
 
-function freshnessBadgeInfo(value) {
+const POSTED_DATE_FIELDS = ['source_menu_date', 'menu_date', 'listing_date'];
+
+function listingHasPostedDate(item) {
+  return POSTED_DATE_FIELDS.includes(listingDateSource(item, { includeBatchFields: false }).field);
+}
+
+// The newest menu date among some listings, and whether it was posted with the menu.
+function latestListingDateInfo(listings) {
+  let best = null;
+  (listings || []).forEach(item => {
+    const time = listingTime(item);
+    if (Number.isFinite(time) && (!best || time > best.time)) best = { time, item };
+  });
+  return best
+    ? { value: new Date(best.time).toISOString(), dated: listingHasPostedDate(best.item) }
+    : { value: '', dated: false };
+}
+
+function freshnessBadgeInfo(value, options = {}) {
   const time = parseTime(value);
   if (!Number.isFinite(time)) return null;
   const days = ageDaysFromTime(time);
-  const label = formatFreshness(value);
+  const label = formatFreshness(value, options);
   if (days <= 14) return { label, className: 'is-fresh' };
   if (days <= 60) return { label, className: 'is-likely' };
   return { label, className: 'is-old-intel' };
 }
 
-function menuAgeInfo(value) {
+function menuAgeInfo(value, options = {}) {
   const time = parseTime(value);
   if (!Number.isFinite(time)) {
     return { label: 'Menu date unknown', display: 'Menu date unknown', className: 'age-unknown', bucket: 'unknown', days: Infinity, sourceField: '' };
   }
   const days = ageDaysFromTime(time);
-  const label = formatFreshness(value);
+  const label = formatFreshness(value, options);
   if (days <= 14) return { label, display: label, className: 'age-fresh', bucket: 'fresh', days, sourceField: '' };
   if (days <= 60) return { label, display: label, className: 'age-older', bucket: 'ageing', days, sourceField: '' };
   return { label, display: label, className: 'age-stale', bucket: 'stale', days, sourceField: '' };
@@ -655,6 +676,29 @@ function isOldMenu(item) {
 
 function hasComparablePrice(item) {
   return !isPriceChecked(item) && !isOldMenu(item);
+}
+
+// When a shop or strain has prices but none can be compared, say why
+// instead of "Price unknown".
+function missingPriceLabel(listings) {
+  const priced = (listings || []).filter(item => {
+    const price = pricePerGram(item);
+    return Number.isFinite(price) && price > 0;
+  });
+  if (!priced.length) return 'Price unknown';
+  if (priced.every(isOldMenu)) return 'Old menu';
+  return 'Price to check';
+}
+
+// "30 compared · 19 old menus" rather than "30 priced", which hid the rest.
+function comparedListingsNote(listings, comparedCount) {
+  const oldCount = (listings || []).filter(item => isOldMenu(item) && !isPriceChecked(item)).length;
+  const checkCount = (listings || []).filter(isPriceChecked).length;
+  return [
+    `${comparedCount.toLocaleString()} compared`,
+    oldCount ? `${oldCount.toLocaleString()} old menu${oldCount === 1 ? '' : 's'}` : '',
+    checkCount ? `${checkCount.toLocaleString()} to check` : ''
+  ].filter(Boolean).join(' · ');
 }
 
 const PRICE_CHECK_NOTE = 'Check price: this looks like a menu typo, so it is left out of comparisons.';
@@ -1814,11 +1858,12 @@ function statsFromOfferings(offerings) {
     const topType = Array.from(stat.types.entries()).sort((a, b) => b[1] - a[1])[0];
     const topTypeName = topType ? topType[0] : '';
     const latestTime = latestListingTime(stat.offerings);
+    const latestInfo = latestListingDateInfo(stat.offerings);
     return {
       ...stat,
       latestTime,
       latestDate: latestTime ? new Date(latestTime).toISOString() : '',
-      freshness: menuAgeInfo(latestTime ? new Date(latestTime).toISOString() : ''),
+      freshness: menuAgeInfo(latestInfo.value, { dated: latestInfo.dated }),
       shopCount: stat.shops.size,
       listingCount: stat.offerings.length,
       cities: Array.from(stat.cities).filter(Boolean).sort(compareText),
@@ -2693,7 +2738,7 @@ function renderPriceGuide(filteredStats) {
         ${statTileHtml('Median', profile.median == null ? 'Unknown' : money(profile.median), 'Price judgement baseline')}
         ${priceExtremeTileHtml('Lowest', profile, profile.low)}
         ${priceExtremeTileHtml('Highest', profile, profile.high)}
-        ${statTileHtml('Listings', listings.length.toLocaleString(), `${profile.count.toLocaleString()} priced`)}
+        ${statTileHtml('Listings', listings.length.toLocaleString(), comparedListingsNote(listings, profile.count))}
         ${statTileHtml('Shop count', profile.shopCount.toLocaleString(), 'Unique browsable shops')}
         ${statTileHtml('Latest menu date', newestLabel, ageBreakdownLabel(profile.ageBreakdown))}
       </div>
@@ -2755,12 +2800,13 @@ function shopRowsFromOfferings(offerings) {
   return Array.from(grouped.values()).map(row => {
     const priced = row.offerings.filter(hasComparablePrice).map(pricePerGram).filter(Number.isFinite);
     const latestTime = latestListingTime(row.offerings);
+    const latestInfo = latestListingDateInfo(row.offerings);
     return {
       ...row,
       averagePrice: priced.length ? average(priced) : null,
       latestTime,
       latestDate: latestTime ? new Date(latestTime).toISOString() : '',
-      freshness: menuAgeInfo(latestTime ? new Date(latestTime).toISOString() : '')
+      freshness: menuAgeInfo(latestInfo.value, { dated: latestInfo.dated })
     };
   }).sort(compareShopName);
 }
@@ -2875,7 +2921,7 @@ function categoryPillsHtml(row, limit = 4) {
 }
 
 function discoveryShopCardHtml(row) {
-  const averagePrice = row.averagePrice != null && Number.isFinite(Number(row.averagePrice)) ? `Avg ${money(row.averagePrice)}` : 'Price unknown';
+  const averagePrice = row.averagePrice != null && Number.isFinite(Number(row.averagePrice)) ? `Avg ${money(row.averagePrice)}` : missingPriceLabel(row.offerings);
   const freshness = row.freshness || menuAgeInfo(row.latestDate);
   const distance = Number.isFinite(row.distanceMeters) ? ` · ${formatDiscoveryDistance(row.distanceMeters)}` : '';
   return `
@@ -2892,7 +2938,7 @@ function discoveryShopCardHtml(row) {
 }
 
 function discoveryStrainCardHtml(stat, options = {}) {
-  const averagePrice = stat.avg != null && Number.isFinite(Number(stat.avg)) ? money(stat.avg) : 'Price unknown';
+  const averagePrice = stat.avg != null && Number.isFinite(Number(stat.avg)) ? money(stat.avg) : missingPriceLabel(stat.offerings);
   const typeLabel = stat.topType ? ` · ${stat.topType}` : '';
   const freshness = stat.freshness || menuAgeInfo(stat.latestDate || '');
   return `
@@ -2952,8 +2998,8 @@ function discoveryAveragePrice(item, isShopBrowser) {
 
 function discoveryFreshness(item, isShopBrowser) {
   if (isShopBrowser) return item.freshness || menuAgeInfo(item.latestDate || '');
-  const latestTime = latestListingTime(item.offerings || []);
-  return menuAgeInfo(latestTime ? new Date(latestTime).toISOString() : '');
+  const latestInfo = latestListingDateInfo(item.offerings || []);
+  return menuAgeInfo(latestInfo.value, { dated: latestInfo.dated });
 }
 
 function discoveryTypeMatches(item, isShopBrowser, type) {
@@ -4016,10 +4062,10 @@ function renderDetailContents() {
         </div>
         ${strainCityFilterHtml(acrossCities, city)}
         <div class="shop-menu-summary-grid">
-          ${statTileHtml('Average price', profile.average == null ? 'Unknown' : money(profile.average), 'Across priced listings')}
+          ${statTileHtml('Average price', profile.average == null ? 'Unknown' : money(profile.average), 'Across compared listings')}
           ${priceExtremeTileHtml('Lowest price', profile, profile.low)}
           ${priceExtremeTileHtml('Highest price', profile, profile.high)}
-          ${statTileHtml('Known listings', listings.length.toLocaleString(), `${profile.count.toLocaleString()} priced`)}
+          ${statTileHtml('Known listings', listings.length.toLocaleString(), comparedListingsNote(listings, profile.count))}
         </div>
         <div class="detail-actions">
           <button type="button" data-select-strain="${escapeHtmlAttr(stat.key)}">${isSelected(stat.key) ? 'Remove saved strain' : 'Save strain'}</button>
@@ -4138,7 +4184,7 @@ function renderFreshStrainRows(stats) {
     const shopsLabel = row.sampleShops.length
       ? `${row.sampleShops.join(', ')}${row.shopCount > row.sampleShops.length ? ` +${row.shopCount - row.sampleShops.length}` : ''}`
       : 'Shop details available';
-    const lowLabel = row.low == null ? 'Price unknown' : `Lowest ${money(row.low)}`;
+    const lowLabel = row.low == null ? missingPriceLabel(row.stat && row.stat.offerings) : `Lowest ${money(row.low)}`;
     const allMapUrl = mapUrlForShopIds(row.shopIds, { strainName: row.stat.name, strainShopIds: row.shopIds });
     const freshness = freshnessBadgeInfo(row.latestDate);
     return `
@@ -4446,7 +4492,7 @@ function renderCommonShopBoard(stats) {
           const price = Number.isFinite(Number(item.price_amount))
             ? money(item.price_amount, item.price_currency, item.price_unit)
             : 'Price unknown';
-          const freshness = freshnessBadgeInfo(displayListingDateValue(item));
+          const freshness = freshnessBadgeInfo(displayListingDateValue(item), { dated: listingHasPostedDate(item) });
           return `<span class="chip">${escapeHtml(item.strain_name)} ${escapeHtml(price)}</span>${freshness ? `<span class="chip ${freshness.className}">${escapeHtml(freshness.label)}</span>` : ''}`;
         }).join('');
         return `
@@ -4623,7 +4669,7 @@ function renderFreshShopRows(rows, mode = 'fresh', options = {}) {
       ? `${sampleStrains.join(', ')}${extraCount ? ` +${extraCount}` : ''}`
       : 'Menu details available';
     const searchPreview = `${row.uniqueStrains.toLocaleString()} known strain${row.uniqueStrains === 1 ? '' : 's'}`;
-    const priceLabel = row.cheapest == null ? 'Price unknown' : `Lowest ${money(row.cheapest)}`;
+    const priceLabel = row.cheapest == null ? missingPriceLabel(row.offerings) : `Lowest ${money(row.cheapest)}`;
     const menuValueLabel = row.medianPrice == null
       ? (row.averagePrice == null ? 'Menu value unclear' : `Avg ${money(row.averagePrice)}`)
       : `Median ${money(row.medianPrice)}${row.averagePrice == null ? '' : ` · Avg ${money(row.averagePrice)}`}`;
@@ -4752,7 +4798,7 @@ function renderShops(filteredOfferings) {
             `</button>`
           );
         }
-        const freshness = freshnessBadgeInfo(displayListingDateValue(item));
+        const freshness = freshnessBadgeInfo(displayListingDateValue(item), { dated: listingHasPostedDate(item) });
         const meta = [
           grower ? `Grower: ${grower}` : '',
           Number(item.is_legal) === 1 ? 'Legal project' : '',
@@ -4813,9 +4859,9 @@ function renderShops(filteredOfferings) {
               <div class="shop-card-meta">${escapeHtml(row.city)}${updatedLabel ? ` · Menu changed ${escapeHtml(updatedLabel).replace(/^checked\s+/, '')}` : ''}</div>
               <div class="shop-card-metrics">
                 <span class="chip">${escapeHtml(matchLabel)}</span>
-                <span class="chip ${row.cheapest == null ? 'is-price-unknown' : ''}">${row.cheapest == null ? 'Price unknown' : `Lowest ${money(row.cheapest)}`}</span>
+                <span class="chip ${row.cheapest == null ? 'is-price-unknown' : ''}">${row.cheapest == null ? missingPriceLabel(row.offerings) : `Lowest ${money(row.cheapest)}`}</span>
                 ${freshness ? `<span class="chip ${freshness.className}">${escapeHtml(freshness.label)}</span>` : ''}
-                <span class="chip ${row.cheapest == null ? 'is-price-unknown' : 'deal-chip'}">${row.cheapest == null ? 'Price unknown' : 'Price known'}</span>
+                <span class="chip ${row.cheapest == null ? 'is-price-unknown' : 'deal-chip'}">${row.cheapest == null ? missingPriceLabel(row.offerings) : 'Price known'}</span>
                 <span class="chip">${row.selectedMatches.length ? 'Strong match' : 'Possible match'}</span>
                 <span class="chip is-old-intel">Check before travelling</span>
                 ${row.averagePrice == null ? '' : `<span class="chip">Avg ${money(row.averagePrice)}</span>`}

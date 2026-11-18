@@ -102,8 +102,8 @@ test('freshest-first map results put unknown dates last and preserve the result 
     getFreshnessTime:value=>{const time=Date.parse(value);return Number.isFinite(time)?time:null;},
     inferCityFromCsvPath:()=>'',currentCsvPath:'',buildBestMatchReason:()=> 'Matching strain',
     escapeHtml:String,escapeHtmlAttr:String,bestMatchLogoHtml:()=>'',offeringAttributeFilterKind:'',strainFilterText:'',
-    getCanonicalStrainName:()=>'',priceMenusUrl:()=>''});
-  load(context,['renderBestMatches']);
+    getCanonicalStrainName:()=>'',priceMenusUrl:()=>'',bestMatchReveal:{key:'',count:0}});
+  load(context,['bestMatchPageSize','renderBestMatches']);
   context.renderBestMatches([
     {index:0,name:'Old',updatedAt:'2024-01-01',freshnessLabel:'Menu dated 2024',freshnessTone:'old'},
     {index:1,name:'Unknown',updatedAt:'',freshnessLabel:'Menu date unknown',freshnessTone:'unknown'},
@@ -117,3 +117,43 @@ test('freshest-first map results put unknown dates last and preserve the result 
   assert.match(html,/data-best-match-action="details"/);
   assert.match(html,/data-best-match-action="itinerary"/);
 });
+
+test('a phone shows the first six matches and a Show more button reveals the rest', () => {
+  const elements = {
+    'best-match-order':{value:'best'},
+    'best-match-list':{innerHTML:'',closest:()=>({hidden:false})},
+    'best-match-summary':{textContent:''}
+  };
+  const locations = Array.from({length:8},(_,i)=>({name:`Shop ${i+1}`,city:'Nijmegen',Coffeeshop:true}));
+  let city = 'Nijmegen';
+  const context = vm.createContext({document:{getElementById:id=>elements[id]||null}, locations,
+    menuExplore:explore, shelfStrainNames:[], renderMapStrainResult(){}, hasBestMatchContext:()=>true,
+    isCoffeeShopLocation:loc=>loc.Coffeeshop, localMapSearchCity:()=>city,
+    locationIsInSearchCity:(loc,name)=>loc.city===name, isCompactMobileLayout:()=>true,
+    getBestMatchSummary:()=> '8 visible stops.', getFreshnessTime:()=>null, inferCityFromCsvPath:()=>'',
+    currentCsvPath:'', buildBestMatchReason:()=> 'Matches Amnesia Haze', escapeHtml:String, escapeHtmlAttr:String,
+    bestMatchLogoHtml:()=>'', offeringAttributeFilterKind:'', strainFilterText:'Amnesia Haze',
+    getCanonicalStrainName:()=> 'Amnesia Haze', priceMenusUrl:()=>'', bestMatchReveal:{key:'',count:0}});
+  load(context,['bestMatchPageSize','renderBestMatches']);
+  const items = locations.map((loc,index)=>({index,name:loc.name,city:'Nijmegen'}));
+  const cards = () => (elements['best-match-list'].innerHTML.match(/class="best-match-card"/g) || []).length;
+  context.renderBestMatches(items);
+  assert.equal(cards(), 6);
+  assert.match(elements['best-match-summary'].textContent, /8 matches in Nijmegen\. Showing 6 best matches\./);
+  assert.match(elements['best-match-list'].innerHTML, /data-best-match-more>Show 2 more<\/button>/);
+  // What the button's click handler does: open the next page and render again.
+  context.bestMatchReveal.count = 6 + context.bestMatchPageSize();
+  context.renderBestMatches(items);
+  assert.equal(cards(), 8);
+  assert.doesNotMatch(elements['best-match-list'].innerHTML, /data-best-match-more/);
+  assert.equal(elements['best-match-summary'].textContent, '8 matches in Nijmegen.');
+  // A refresh of the same results keeps them open; a different search starts again.
+  context.renderBestMatches(items.slice().reverse());
+  assert.equal(cards(), 8);
+  const more = Array.from({length:14},(_,i)=>({name:`Other ${i}`,city:'Nijmegen',Coffeeshop:true}));
+  locations.push(...more);
+  context.renderBestMatches(more.map((loc,i)=>({index:8+i,name:loc.name,city:'Nijmegen'})));
+  assert.equal(cards(), 6);
+  assert.match(elements['best-match-list'].innerHTML, /Show 6 more/);
+});
+

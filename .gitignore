@@ -1,0 +1,7 @@
+# Local-only files: they stay on this computer and are never uploaded to GitHub.
+# Ignoring them also means a pull can no longer delete them here.
+database/coffeeshops.sqlite
+.venv/
+.claude/
+recovery_backups/
+__pycache__/

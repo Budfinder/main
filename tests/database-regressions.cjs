@@ -242,7 +242,7 @@ test('freshness labels retain date priority, age boundaries and unknown batch da
   const observed = { source_seen_at: '2026-09-04T10:00:00Z' };
   const sourceDated = { ...observed, source_menu_date: '2026-08-01' };
   assert.equal(c.displayListingDateValue(sourceDated), '2026-08-01');
-  assert.equal(c.listingUpdatedLabel(sourceDated), 'Source menu dated 1 Aug 2026');
+  assert.equal(c.listingUpdatedLabel(sourceDated), 'Menu dated 1 Aug 2026');
   assert.equal(c.listingUpdatedLabel(observed), 'Menu observed yesterday');
   assert.equal(c.menuAgeInfo('2026-08-22').bucket, 'fresh');
   assert.equal(c.menuAgeInfo('2026-08-21').bucket, 'ageing');
@@ -289,7 +289,7 @@ test('menu rows retain grower, flags, notes, dates and safe strain navigation', 
   assert.match(result, />Long strain x Wild Cherry<\/button>/);
   assert.match(result, /Cali · Legal project · Grower: Wizard Trees/);
   assert.match(result, /Limited &lt;batch&gt;/);
-  assert.match(result, /Source menu dated 1 Aug 2026/);
+  assert.match(result, /Menu dated 1 Aug 2026/);
   assert.match(result, /€70 \/ 3.5g/);
   assert.match(result, /€20\/g/);
   assert.equal(JSON.stringify(row), before);
@@ -327,7 +327,7 @@ test('shop headers show the address, key prices, opening hours and the existing 
   assert.match(result, /1 menu item/);
   assert.match(result, /<dt>Typical price<\/dt><dd>€16\/g<\/dd>/);
   assert.match(result, /<dt>Amsterdam typical<\/dt><dd>€12\/g<\/dd>/);
-  assert.match(result, /Source menu/);
+  assert.match(result, /Menu dated 1 Aug 2026/);
   assert.match(result, /<details class="shop-menu-hours">/);
   assert.doesNotMatch(result, /<details[^>]*\bopen\b/);
   assert.match(result, /<th scope="row">Sunday<\/th><td>Closed<\/td>/);
@@ -389,11 +389,11 @@ test('dates appear once only when every menu item has the same known date label'
   assert.equal(c.commonMenuDateItem([]), null);
   const groups = new Map([['sativa', same]]);
   const grouped = c.shopMenuSectionsHtml(groups, 'known-date', { sharedDateItem: c.commonMenuDateItem(same) });
-  assert.doesNotMatch(grouped, /Source menu dated/);
+  assert.doesNotMatch(grouped, /Menu dated/);
   const header = c.shopMenuHeaderHtml({ shopId: '1', shopName: 'Test' }, same);
-  assert.match(header, /Source menu dated 1 Aug 2026/);
+  assert.match(header, /Menu dated 1 Aug 2026/);
   const mixed = c.shopMenuSectionsHtml(groups, 'mixed-dates');
-  assert.equal((mixed.match(/Source menu dated 1 Aug 2026/g) || []).length, 2);
+  assert.equal((mixed.match(/Menu dated 1 Aug 2026/g) || []).length, 2);
 });
 
 
@@ -581,4 +581,24 @@ test('a listing from an old menu keeps its price and date but is left out of com
   assert.equal(profile.count, 2);
   assert.match(h.context.priceComparisonHtml(h.state.offerings[0], h.state.offerings, 'median'), /Old menu/);
   assert.equal(h.context.priceComparisonHtml(h.state.offerings[0], h.state.offerings, 'average', { oldMenuBadge: false }), '');
+});
+
+test('old menus are named as such instead of looking unpriced, and posted dates read "Menu dated"', () => {
+  const { context: c } = harness();
+  const listing = (shop, price, extra = {}) => ({ shop_id: shop, strain_name: 'Gelato', strain_name_normalised: 'gelato',
+    price_amount: price, price_unit: 'g', price_currency: '€', source_menu_date: '2026-09-07', ...extra });
+  const old = [listing(1, 9, { old_menu: 1, source_menu_date: '2025-11-09' }), listing(1, 11, { old_menu: 1, source_menu_date: '2025-11-09' })];
+  assert.equal(c.missingPriceLabel(old), 'Old menu');
+  assert.equal(c.missingPriceLabel([listing(1, 1, { price_check: 'below_floor' })]), 'Price to check');
+  assert.equal(c.missingPriceLabel([listing(1, null)]), 'Price unknown');
+  const mixed = [listing(2, 12), listing(3, 13), ...old, listing(4, 1, { price_check: 'below_floor' })];
+  assert.equal(c.comparedListingsNote(mixed, 2), '2 compared · 2 old menus · 1 to check');
+  assert.equal(c.comparedListingsNote([listing(2, 12)], 1), '1 compared');
+  const card = c.discoveryShopCardHtml({ shopId: '1', shopName: 'Buggy', city: 'Nijmegen', offerings: old,
+    averagePrice: null, latestDate: '2025-11-09T00:00:00.000Z', freshness: c.menuAgeInfo('2025-11-09', { dated: true }) });
+  assert.match(card, /Old menu/);
+  assert.doesNotMatch(card, /Price unknown|Menu observed/);
+  assert.match(card, /Menu dated 9 Nov 2025/);
+  assert.equal(c.latestListingDateInfo(old).dated, true);
+  assert.equal(c.latestListingDateInfo([{ source_seen_at: '2026-09-04T10:00:00Z' }]).dated, false);
 });
