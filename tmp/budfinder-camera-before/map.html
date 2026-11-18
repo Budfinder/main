@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Netherlands Coffeeshop Map &amp; Ranked Matches | Budfinder</title>
+  <meta name="description" content="Search strains, growers, coffeeshops, towns and neighbourhoods across the Netherlands, then compare matches by price, distance and menu freshness." />
+  <link rel="canonical" href="https://budfinder.org/map.html" />
+  <meta property="og:title" content="Netherlands Coffeeshop Map &amp; Ranked Matches | Budfinder" />
+  <meta property="og:description" content="Compare all ranked coffeeshop matches and open directions or add a stop to your route." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://budfinder.org/map.html" />
+  <meta property="og:image" content="https://budfinder.org/static/images/budfinder-social.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://budfinder.org/static/images/budfinder-social.png" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://budfinder.org/"},
+        {"@type": "ListItem", "position": 2, "name": "Map", "item": "https://budfinder.org/map.html"}
+      ]
+    }
+  </script>
+  <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
+
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js" integrity="sha384-6kRQDsV2kVYRSENnw7WnekWKCx8/Lmv7rFKpDuR2AoIbjlBShlYcs3x0QlE3kuRh" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="styles/budfinder-map-base.css?v=20260905-clarity1" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261028-review2" />
+  <link rel="stylesheet" href="styles/budfinder-map-layout.css?v=20260905-clarity1" />
+  <link rel="stylesheet" href="styles/budfinder-map-refinements.css?v=20260906-scaled1" />
+  <link rel="stylesheet" href="styles/budfinder-explore.css?v=20261028-explore1" />
+  <link rel="stylesheet" href="styles/budfinder-map-controls.css?v=20261031-keyboard1" />
+  <link rel="stylesheet" href="styles/budfinder-information.css?v=20261031-help2" />
+</head>
+
+<body class="hero-popup-hidden map-is-loading">
+  <nav class="app-mode-toggle" aria-label="Switch app view">
+    <a href="index.html">Home</a>
+    <a class="is-active" href="map.html" aria-current="page">Map</a>
+    <a id="nav-price-menus-link" href="database.html">Menus &amp; prices</a>
+    <button id="nav-settings-btn" type="button">Settings</button>
+  </nav>
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere-leaves"></div>
+    <div class="smoke-plume smoke-plume-one"></div>
+    <div class="smoke-plume smoke-plume-two"></div>
+    <div class="smoke-plume smoke-plume-three"></div>
+  </div>
+
+  <section id="landing-page" class="landing-page is-dismissed" aria-labelledby="landing-title" aria-hidden="true" hidden>
+    <div class="landing-shell">
+      <div class="landing-hero">
+        <div class="landing-brand-row">
+          <span class="landing-mark">Budfinder</span>
+          <span id="landing-location-kicker">Coffeeshop intelligence across the Netherlands</span>
+        </div>
+        <div class="landing-copy">
+          <h1 id="landing-title">Find coffeeshops carrying the strains you actually want.</h1>
+          <p>Search strains, growers, coffeeshops, towns, or areas, compare nearby matches, spot useful price signals, and plan the next Destination from your Starting point.</p>
+          <div class="landing-actions">
+            <button id="open-budfinder-btn" class="landing-primary" type="button">Start planning</button>
+            <a class="landing-secondary" href="database.html">Open Price &amp; Menus</a>
+            <button id="landing-guide-btn" class="landing-secondary" type="button">How it works</button>
+          </div>
+        </div>
+        <div class="landing-route-brief" aria-label="Budfinder journey">
+          <span>Search</span>
+          <span>Compare</span>
+          <span>Choose</span>
+          <span>Navigate</span>
+        </div>
+      </div>
+      <aside class="landing-panel" aria-label="What Budfinder helps with">
+        <h2>Plan your next coffeeshop move</h2>
+        <div class="landing-feature-grid">
+          <div class="landing-feature">
+            <strong>Find map matches</strong>
+            <span>Search Gelato, Amnesia Haze, Zkittlez, hash, Cali, and more across known menu listings.</span>
+          </div>
+          <div class="landing-feature">
+            <strong>Explore from wherever you are</strong>
+            <span>Already sat in a shop? Set it as your Starting point and see nearby Destinations.</span>
+          </div>
+          <div class="landing-feature">
+            <strong>Compare nearby coffeeshops</strong>
+          <span>Balance direct distance, direct walking estimates, data age, saved-strain matches, and useful price signals.</span>
+          </div>
+          <div class="landing-feature">
+            <strong>Find good deals</strong>
+            <span>Look for cheapest nearby, good deal, under €10/g, and price unknown labels where data allows.</span>
+          </div>
+          <div class="landing-feature">
+            <strong>Save strains and shops</strong>
+            <span>Save useful strains before your trip and keep Saved shops close to hand.</span>
+          </div>
+          <div class="landing-feature">
+            <strong>Plan your next Destination</strong>
+            <span>Send Destinations to the map, compare direct distances, and open external directions only when you are ready to navigate.</span>
+          </div>
+        </div>
+        <p class="landing-note">Menus, prices, and availability can change quickly. Treat Budfinder as planning intel and check with the shop before travelling far.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Initial panel while loading location data -->
+  <div id="upload-panel">
+    <h3 id="upload-title">Opening your map</h3>
+    <p id="upload-message" class="upload-hint">Loading nationwide coffeeshop coverage...</p>
+  </div>
+
+  <!-- Map and directions containers -->
+  <div id="map"></div>
+  <div id="instructions" hidden></div>
+  <div id="controls-backdrop" class="controls-backdrop"></div>
+
+  <section id="selection-card" class="overlay-card is-empty" hidden aria-hidden="true">
+    <div id="selection-card-head" class="selection-card-head" role="button" tabindex="0" aria-controls="selection-card-body" aria-expanded="true" aria-label="Toggle selected place details">
+      <div class="selection-card-head-copy">
+        <span class="selection-eyebrow">Selected place</span>
+        <h2 id="selected-destination-name">Choose a shop</h2>
+        <span id="selection-card-summary" class="selection-card-summary">Choose a shop or use Near me</span>
+      </div>
+      <button id="selection-card-toggle" class="selection-card-toggle" type="button" hidden>Collapse</button>
+    </div>
+    <div id="selection-card-body" class="selection-card-body">
+      <p id="selected-destination-meta">Choose a shop, use Near me, or pick a Best match to preview a Destination.</p>
+      <div class="selection-chip-row">
+        <span class="selection-chip" id="selected-destination-city">Location data is loading</span>
+        <span class="selection-chip" id="selected-destination-eta">Direct time --</span>
+      </div>
+      <div class="selection-actions">
+        <button id="selection-directions-btn" type="button">Direct distance</button>
+        <button id="selection-add-stop-btn" type="button" class="neutral-btn">Add to route</button>
+        <button id="selection-move-up-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place earlier in route" title="Move earlier">−</button>
+        <button id="selection-move-down-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place later in route" title="Move later">+</button>
+        <button id="selection-center-btn" type="button" class="ghost-btn">Centre on map</button>
+        <a id="selection-price-menus-link" class="selection-link" href="database.html">View menu</a>
+        <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="stash-shelf" class="overlay-card">
+    <div class="stash-shelf-head">
+      <div class="stash-shelf-head-copy">
+        <span class="selection-eyebrow">Saved for later</span>
+        <h3>Your saved strains</h3>
+        <p id="stash-shelf-summary" class="stash-shelf-summary">Saved strains stay available for quick map matching.</p>
+      </div>
+      <button id="stash-shelf-close" class="stash-shelf-close" type="button">Close</button>
+    </div>
+    <div class="stash-shelf-stage">
+      <div id="stash-shelf-grid" class="stash-shelf-grid"></div>
+    </div>
+  </section>
+
+  <!-- Compact map actions. Shop markers remain individual and unchanged. -->
+  <div id="ui-toggles" data-ready="false" role="group" aria-label="Map actions">
+    <button id="toggle-controls" type="button" aria-controls="map-tools-content" aria-expanded="false">Search</button>
+    <button id="toggle-shelf" type="button" aria-controls="stash-shelf" aria-expanded="false">Saved strains</button>
+    <button id="toggle-route" type="button" aria-controls="route-tools-dropdown" aria-expanded="false">Your route</button>
+    <button id="clear-map-filters" type="button" aria-label="Clear all filters">Clear filters</button>
+  </div>
+  <!-- Mobile shop details reuse the live popup card inside one scrolling sheet. -->
+  <dialog id="mobile-shop-sheet" class="mobile-shop-sheet" aria-labelledby="mobile-shop-title">
+    <header class="mobile-shop-header">
+      <div><span class="selection-eyebrow">Shop details</span><h2 id="mobile-shop-title"></h2></div>
+      <button type="button" id="mobile-shop-close" aria-label="Close shop details">Close</button>
+    </header>
+    <div id="mobile-shop-content" class="mobile-shop-content"></div>
+    <footer id="mobile-shop-actions" class="mobile-shop-actions"></footer>
+  </dialog>
+  <!-- Main controls panel -->
+  <div class="controls">
+    <div class="controls-header" id="controls-header">
+      <button class="controls-header-main" id="controls-header-toggle" type="button" aria-expanded="true" aria-controls="map-tools-content">
+        <span class="controls-handle" aria-hidden="true"></span>
+        <span class="controls-title" id="map-tools-title">Explore the map</span>
+        <span class="controls-summary" id="controls-summary">Choose a Destination</span>
+      </button>
+      <div class="controls-header-actions">
+        <button id="mobile-hide-controls" class="controls-hide" type="button" aria-label="Close map panel">Close</button>
+      </div>
+    </div>
+    <div class="controls-content" id="map-tools-content">
+      <details class="panel-section map-category-shortcuts control-group">
+        <summary class="sidebar-drawer-summary">
+          <span><strong id="map-category-title">Places on the map</strong><small id="map-filter-summary">Coffeeshops</small></span>
+        </summary>
+        <div class="sidebar-drawer-content">
+        <div id="category-filters" role="group" aria-labelledby="map-category-title">
+          <!-- Multi-select category controls injected here by JS -->
+        </div>
+        <div class="button-row">
+          <button id="reset-filters-btn" type="button" class="secondary-btn">Reset map</button>
+        </div>
+        </div>
+      </details>
+      <section class="panel-section search-wanted-panel control-group" aria-labelledby="map-intent-title">
+        <div class="intent-head">
+          <strong id="map-intent-title">Search the map</strong>
+        </div>
+        <label class="map-search-label" for="destination-search">Search strains, growers, coffeeshops, towns, and areas</label>
+        <div class="map-search-row">
+          <input id="destination-search" type="search" aria-label="Search strains, growers, coffeeshops, towns, and areas" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="global-search-suggestions" aria-expanded="false" placeholder="Strain, shop, grower or place…" autocomplete="off" enterkeyhint="search" />
+          <button id="map-search-submit" type="button">Search</button>
+        </div>
+        <div id="global-search-suggestions" class="map-search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
+        <p id="map-suggestion-status" class="map-suggestion-status" role="status" aria-live="polite"></p>
+        <article id="map-strain-result" class="map-strain-result" aria-labelledby="map-strain-result-name" aria-live="polite" hidden>
+          <span>Selected strain · Exact name</span>
+          <h3 id="map-strain-result-name"></h3>
+          <p id="map-strain-result-count"></p>
+          <p id="map-match-rule" class="map-match-rule"></p>
+          <a id="map-strain-result-prices" href="database.html">View prices &amp; menus →</a>
+        </article>
+        <div class="map-search-context">
+          <div class="global-search-scope"><span id="explore-search-scope">Across the Netherlands</span></div>
+          <a id="explore-menu-results-link" href="database.html">Menus &amp; prices →</a>
+        </div>
+        <div id="map-search-area" class="map-search-area" hidden>
+          <p id="map-search-area-status" role="status" aria-live="polite"></p>
+          <button id="map-search-area-toggle" type="button" class="secondary-btn" hidden>Show all cities</button>
+        </div>
+        <a id="explore-back-results-link" class="explore-return-link" hidden>← Back to menu results</a>
+        <div id="map-explore-filters" class="explore-filters"></div>
+        <div class="map-search-actions" hidden>
+          <button id="clear-selection-toggle" class="secondary-btn" type="button" hidden>Undo last change</button>
+        </div>
+        <div id="destination-search-status" class="field-note" role="status" aria-live="polite">Loading shops…</div>
+        <div class="best-match-panel" aria-labelledby="best-match-title" hidden>
+          <div class="best-match-head">
+            <strong id="best-match-title">Best matches</strong>
+            <span id="best-match-summary">Search for a strain, grower, shop, or area to see suggested stops.</span>
+          </div>
+          <div id="best-match-list" class="best-match-list" aria-live="polite">
+            <p class="best-match-empty">Search for a strain, grower, shop, or area to see suggested stops.</p>
+          </div>
+        </div>
+        <details class="map-matching-help">
+          <summary>How search matches work</summary>
+          <p>An exact strain name uses listings for that name only. A partial name can match several strains. Shops are counted once even when they list several pack sizes.</p>
+          <p>The map starts around your selected city; other cities remain available through Show all cities. Location filters narrow results separately. Counts exclude unavailable and incorrectly attributed menus.</p>
+          <a href="about.html#matching">More about matching and coverage</a>
+        </details>
+        <details class="map-price-help">
+          <summary>How price comparisons work</summary>
+          <p>Map averages use the lowest listed price per shop for the same strain, currency and unit, across at least two shops nationwide. Menu value averages the percentage differences for the strains that can be compared.</p>
+          <p>Menu dates appear on shop results. Growers, batches, origins and pack sizes may differ. These are listed-price signals, not quality ratings or live stock. Open a menu for its source and a detailed price comparison.</p>
+        </details>
+        <details class="map-quick-searches">
+          <summary>Popular searches</summary>
+          <div class="map-quick-chips" aria-label="Quick searches">
+            <button class="map-quick-chip" type="button" data-map-quick-search="Gelato">Gelato</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Amnesia Haze">Amnesia Haze</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="White Widow">White Widow</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Zkittlez">Zkittlez</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="The Plug">The Plug</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Family First">Family First</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="De Pijp">De Pijp</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Centrum">Centrum</button>
+            <button class="map-quick-chip" type="button" data-map-quick-search="Jordaan">Jordaan</button>
+          </div>
+        </details>
+        <details class="map-secondary-tools" aria-label="Quick planning shortcuts" hidden>
+          <summary>More tools</summary>
+          <div class="workflow-shortcuts">
+          <button class="intent-card" type="button" data-map-intent="wanted">
+            <strong>Find strain matches</strong>
+            <span>Highlight shops likely to list saved strains.</span>
+          </button>
+          <button class="intent-card" type="button" data-map-intent="value">
+            <strong>Find good value</strong>
+            <span>Sort by price signals and nearby options.</span>
+          </button>
+          <button class="intent-card is-primary" type="button" data-map-intent="nearby">
+            <strong>Build Route</strong>
+            <span>Add stops, direct walking estimates, direct distance, and spend.</span>
+          </button>
+          <a id="map-price-menus-link" class="intent-link" href="database.html">
+            <strong>Menus &amp; prices</strong>
+            <span>Compare known prices and menu dates.</span>
+          </a>
+          </div>
+        </details>
+      </section>
+
+      <details id="route-tools-dropdown" class="panel-section route-panel control-group route-tools-dropdown">
+        <summary class="sidebar-drawer-summary">
+          <span>
+            <strong>Your route</strong>
+            <small>Choose a start and add shops.</small>
+          </span>
+        </summary>
+        <div class="route-tools-dropdown-content">
+        <div class="route-panel-topline">
+          <span class="panel-kicker">Your route</span>
+          <p class="panel-copy">Add shops from Best matches, choose a start, then review the route in one place.</p>
+        </div>
+        <div class="map-mode-strip" aria-live="polite">
+          <span>Route status</span>
+          <strong id="current-mode-status">No stops yet</strong>
+        </div>
+        <details class="journey-planner-card journey-progressive" id="journey-planner-card" open>
+          <summary class="journey-progressive-summary">
+            <span>
+              <strong>Plan a route</strong>
+              <small id="journey-planner-summary-text">Choose a start and add your first stop.</small>
+            </span>
+          </summary>
+          <div id="journey-progressive-content" class="journey-progressive-content" aria-label="Route planner">
+          <section class="journey-section is-primary" aria-labelledby="journey-section-title">
+            <div class="journey-section-head">
+              <strong id="journey-section-title" class="journey-section-title">Build your route</strong>
+              <p class="journey-section-copy">1. Choose a start &nbsp; 2. Add stops &nbsp; 3. Adjust their order</p>
+            </div>
+
+            <div class="journey-builder-grid">
+              <label for="journey-start-select">1. Start
+                <select id="journey-start-select"></select>
+              </label>
+              <label for="journey-stop-select">2. Next stop
+                <select id="journey-stop-select"></select>
+              </label>
+            </div>
+            <div class="journey-add-row">
+              <div id="journey-status" class="field-note">Choose a start, then add mapped places to build your route.</div>
+              <button id="journey-add-stop-btn" type="button">Add stop</button>
+            </div>
+            <div id="journey-timeline" class="journey-timeline"></div>
+          </section>
+
+          <section class="journey-section is-summary" aria-labelledby="journey-summary-title">
+            <div class="journey-section-head">
+              <strong id="journey-summary-title" class="journey-section-title">Route summary</strong>
+            </div>
+            <div class="journey-summary-grid" aria-live="polite">
+              <div class="journey-summary-item">
+                <span>Direct distance</span>
+                <strong id="journey-summary-distance">--</strong>
+              </div>
+              <div class="journey-summary-item">
+                <span>Direct-time estimate</span>
+                <strong id="journey-summary-time">--</strong>
+              </div>
+              <div class="journey-summary-item">
+                <span>Spend</span>
+                <strong id="journey-summary-spend">--</strong>
+              </div>
+              <div class="journey-summary-item">
+                <span>Stops</span>
+                <strong id="journey-summary-stops">0</strong>
+              </div>
+            </div>
+            <p class="panel-copy">Distances are measured as the crow flies between each stop; streets, bridges, canals, and traffic rules are not included.</p>
+            <div class="journey-map-actions">
+              <button id="journey-fit-map-btn" type="button" class="secondary-btn">View direct route on map</button>
+            </div>
+          </section>
+
+          <details class="journey-save-progressive">
+            <summary>Save or load a route</summary>
+            <div class="journey-save-progressive-content">
+              <div class="journey-save-row">
+                <label for="journey-name-input">Route name
+                  <input id="journey-name-input" type="text" maxlength="48" placeholder="Saturday route" />
+                </label>
+                <button id="journey-save-btn" type="button" class="secondary-btn">Save route</button>
+              </div>
+              <div class="journey-saved-actions">
+                <label for="journey-saved-select">Saved routes
+                  <select id="journey-saved-select"></select>
+                </label>
+                <button id="journey-load-btn" type="button" class="secondary-btn">Load</button>
+                <button id="journey-delete-btn" type="button" class="secondary-btn">Delete</button>
+              </div>
+            </div>
+          </details>
+          </div>
+        </details>
+
+        <details id="destination-picker-wrap" class="destination-picker-progressive">
+          <summary>Choose from all places</summary>
+          <label for="destination-select" style="margin-top:12px;">Place</label>
+          <select id="destination-select"></select>
+        </details>
+
+        <details id="destination-card-deck" class="destination-results-progressive">
+          <summary>Compare more places</summary>
+          <div class="destination-cards-head">
+            <div class="destination-cards-copy">
+              <strong id="destination-card-title">Best matches</strong>
+              <div id="destination-card-status" class="field-note">Pick a strain to unlock stronger Destination cards.</div>
+            </div>
+            <label class="destination-sort-label" for="destination-sort">
+              Sort
+              <select id="destination-sort">
+                <option value="best-match">Best matches</option>
+                <option value="cheapest">Cheapest</option>
+                <option value="closest">Closest</option>
+                <option value="best-rated">Best rated</option>
+                <option value="alphabetical">A-Z</option>
+              </select>
+            </label>
+          </div>
+          <div id="destination-card-list" class="destination-card-list"></div>
+        </details>
+
+        <select id="mission-mode" hidden aria-hidden="true" aria-label="Map mission mode">
+          <option value="free-roam">Free roam</option>
+        </select>
+
+        <details class="route-secondary-tools">
+          <summary>Distance and navigation</summary>
+          <div class="route-secondary-tools-content">
+            <div class="control-divider travel-mode-divider">
+              <span class="panel-kicker">Distance</span>
+              <p class="panel-copy">Compare direct distance first, then open external directions only when you need navigation.</p>
+            </div>
+            <div class="route-mode-row">
+              <label for="mode">Travel mode
+                <select id="mode">
+                  <option value="walking">Walking</option>
+                  <option value="driving">Driving</option>
+                  <option value="cycling">Cycling</option>
+                </select>
+              </label>
+              <button id="center-on-me-btn" type="button" class="secondary-btn">Near me</button>
+            </div>
+
+            <button id="toggle-directions" type="button">Direct distance</button>
+
+            <div class="route-action-row">
+              <button id="nearest-btn">Closest</button>
+              <button id="add-destination-stop-btn" type="button" class="secondary-btn">Add selected stop</button>
+              <button id="surprise-btn" type="button" class="secondary-btn">Pick a random shop</button>
+              <button id="show-strain-shops-btn" type="button" class="secondary-btn" hidden>Show strain matches</button>
+              <button id="clear-route-focus-btn" type="button" class="secondary-btn">Clear selected place</button>
+            </div>
+          </div>
+        </details>
+        <div id="route-status" class="field-note">Location is only used after you choose Closest, Near me, or direct distance.</div>
+        </div>
+      </details>
+
+      <details class="panel-section location-file-panel control-group">
+        <summary class="sidebar-drawer-summary"><span><strong id="location-file-title">Jump to a city</strong></span></summary>
+        <div class="sidebar-drawer-content">
+        <p class="panel-copy">Move the map without changing your search or filters.</p>
+        <div id="csv-switch-wrap" style="display:none;">
+          <label class="field-label" for="csv-switch-select">
+            Centre map on
+            <select id="csv-switch-select"></select>
+          </label>
+        </div>
+        </div>
+      </details>
+
+      <details id="map-strain-tools" class="panel-section wanted-list-panel control-group" hidden>
+        <summary class="sidebar-drawer-summary">
+          <span>
+            <strong>Match a strain</strong>
+            <small>Show shops that list a strain you want.</small>
+          </span>
+        </summary>
+        <div class="sidebar-drawer-content">
+        <div id="strain-list-panel">
+          <div class="strain-list-head">
+            <strong>Find strain matches</strong>
+          </div>
+          <input id="strain-list-search" type="text" placeholder="Filter strains..." aria-label="Filter strains" />
+          <div id="strain-list-status">Loading strain matches...</div>
+          <div id="strain-list"></div>
+        </div>
+
+        <div class="button-row">
+          <button id="toggle-current-strain-shelf-btn" type="button" class="secondary-btn" disabled>Save strain</button>
+          <a id="explore-current-strain-btn" class="strain-explore-btn is-disabled" href="database.html" aria-disabled="true">Explore strain</a>
+          <button id="clear-strain-btn" type="button" class="secondary-btn">Clear map match</button>
+        </div>
+        <div id="strain-status">No map matching strains selected yet.</div>
+
+        <details class="detail-drawer">
+          <summary>Map strain match preview</summary>
+          <div id="strain-spotlight-card">
+            <div class="strain-spotlight-hero">
+              <div id="strain-spotlight-media" class="strain-spotlight-media">
+                <div class="strain-spotlight-fallback">Pick a strain to open its profile.</div>
+              </div>
+              <div class="strain-spotlight-copy">
+                <span class="selection-eyebrow">Map matching strain</span>
+                <h3 id="strain-spotlight-name">No strain selected</h3>
+                <p id="strain-spotlight-summary" class="strain-spotlight-summary">Choose a strain to see map matches. For average prices and full listings, open Price &amp; Menus.</p>
+                <div class="strain-spotlight-chip-row">
+                  <span id="strain-spotlight-type" class="strain-spotlight-chip">Type loads after search</span>
+                  <span id="strain-spotlight-price" class="strain-spotlight-chip">Price signal pending</span>
+                  <span id="strain-spotlight-count" class="strain-spotlight-chip">Matches load after search</span>
+                </div>
+              </div>
+            </div>
+            <p id="strain-spotlight-notes" class="strain-spotlight-notes">No map match selected yet. Once a strain is selected, this card stays focused on useful shops to visit next.</p>
+            <a id="strain-price-guide-link" class="panel-link-button" href="database.html">View menu</a>
+            <div class="strain-spotlight-top">
+              <div class="strain-spotlight-top-head">
+                <strong>Top shops</strong>
+                <span id="strain-spotlight-city" class="strain-spotlight-city">Waiting on a strain</span>
+              </div>
+              <div id="strain-spotlight-top-shops" class="strain-spotlight-shops">
+                <div class="strain-spotlight-empty">Search or tap a strain to see matching shops.</div>
+              </div>
+            </div>
+          </div>
+        </details>
+        </div>
+      </details>
+
+      <section id="settings-panel" class="panel-section settings-panel control-group" aria-labelledby="settings-title" tabindex="-1" hidden>
+        <div class="settings-panel-head">
+          <div>
+            <span class="panel-kicker">Settings</span>
+            <h3 id="settings-title">Map settings</h3>
+          </div>
+          <button id="close-map-settings-btn" type="button" class="secondary-btn">Done</button>
+        </div>
+
+        <section class="settings-section" aria-labelledby="settings-preferences-title">
+          <h4 id="settings-preferences-title">Preferences</h4>
+          <div class="field-grid">
+            <label class="field-label" for="settings-default-city-select">
+              Default opening view
+              <select id="settings-default-city-select"></select>
+            </label>
+            <label class="field-label" for="settings-distance-unit-select">
+              Distance units
+              <select id="settings-distance-unit-select">
+                <option value="metric">Metric (km / m)</option>
+                <option value="miles">Miles (mi)</option>
+              </select>
+            </label>
+            <label class="field-label" for="display-name-input">
+              Your name (optional)
+              <input id="display-name-input" type="text" maxlength="24" placeholder="Explorer" />
+            </label>
+          </div>
+        </section>
+
+        <section class="settings-section" aria-labelledby="settings-data-title">
+          <h4 id="settings-data-title">Data</h4>
+          <nav class="site-information-links" aria-label="About and guides"><a href="about.html">About &amp; data sources</a><a href="guides/index.html">Trip guides</a><a href="cities/index.html">City &amp; shop directory</a></nav>
+          <p class="panel-copy">Manage saved places and open Price &amp; Menus.</p>
+          <a class="panel-link-button" href="database.html">View menu</a>
+          <div class="button-row">
+            <button id="clear-saved-data-btn" type="button" class="secondary-btn">Clear saved data</button>
+          </div>
+          <div id="clear-saved-data-confirm" class="settings-confirm" hidden>
+            <p>This clears Saved shops, visit notes, ratings, recent Destinations, and saved strains from this device. Map data and display settings stay available.</p>
+            <div class="settings-confirm-actions">
+              <button id="confirm-clear-saved-data-btn" type="button" class="danger-btn">Clear saved data</button>
+              <button id="cancel-clear-saved-data-btn" type="button" class="secondary-btn">Cancel</button>
+            </div>
+          </div>
+          <div id="clear-saved-data-note" class="field-note">Saved shops, recent Destinations, ratings, visit notes, and saved strains stay on this device.</div>
+          <div id="db-status" class="field-note" style="display:none; margin-top:10px;"></div>
+        </section>
+
+        <details class="settings-section" aria-labelledby="settings-display-title">
+          <summary id="settings-display-title">Appearance</summary>
+          <div class="field-grid">
+            <label class="field-label" for="accent-select">
+              Colour theme
+              <select id="accent-select" data-budfinder-vibe-selector>
+                <option value="kings-juice">Kings Juice</option>
+                <option value="blue-zushi">Blue Zushi</option>
+                <option value="shoreline">Shoreline</option>
+                <option value="amazing-haze">Amazing Haze</option>
+                <option value="moonrocks">Moonrocks</option>
+                <option value="classic-budfinder">Classic Budfinder</option>
+                <option value="northern-lights">Northern Lights</option>
+                <option value="lemon-haze">Lemon Haze</option>
+                <option value="mimosa">Mimosa</option>
+                <option value="og-kush">OG Kush</option>
+                <option value="sour-diesel">Sour Diesel</option>
+                <option value="wizard-fuel-pheno">Wizard Fuel Pheno</option>
+                <option value="pineapple-express">Pineapple Express</option>
+                <option value="super-silver-haze">Super Silver Haze</option>
+                <option value="tropicana-cherry">Tropicana Cherry</option>
+                <option value="gelonade">Gelonade</option>
+                <option value="blue-dream">Blue Dream</option>
+                <option value="cherry-gelato">Cherry Gelato</option>
+                <option value="white-widow">White Widow</option>
+                <option value="wedding-cake">Wedding Cake</option>
+                <option value="runtz">Runtz</option>
+                <option value="zkittlez">Zkittlez</option>
+                <option value="strawberry-cough">Strawberry Cough</option>
+                <option value="purple-haze">Purple Haze</option>
+                <option value="granddaddy-purple">Granddaddy Purple</option>
+                <option value="west-ham-united">West Ham United</option>
+                <option value="spurs">Spurs</option>
+              </select>
+            </label>
+          </div>
+          <label class="settings-check" for="settings-reduce-motion-input">
+            <input id="settings-reduce-motion-input" type="checkbox" />
+            Reduce animation and motion
+          </label>
+          <div class="button-row">
+            <button id="reset-personalisation-btn" type="button" class="secondary-btn">Reset preferences</button>
+          </div>
+        </details>
+      </section>
+      <!-- Secondary help stays in the panel, away from the map and its controls. -->
+      <p class="map-information-footer"><a class="map-information-link" href="about.html">About &amp; help</a></p>
+      <p class="data-disclaimer">Menus, prices, and availability can change quickly. Use Budfinder as planning guidance, not a guarantee. Check before travelling across town for one item, follow local laws and coffeeshop rules, and use location only when you choose location features.</p>
+    </div>
+  </div>
+
+  <!-- Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+  <script src="scripts/budfinder-logos.js?v=20260830-missing2"></script>
+  <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
+  <script src="scripts/budfinder-data.js?v=20261031-usability1"></script>
+  <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
+
+  <script src="scripts/budfinder-marker-layout.js?v=20260906-scaled2"></script>
+  <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
+  <script src="scripts/budfinder-map.js?v=20261031-keyboard1"></script>
+</body>
+</html>

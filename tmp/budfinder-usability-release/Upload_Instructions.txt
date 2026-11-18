@@ -1,0 +1,21 @@
+Budfinder usability update — 31 October 2026
+
+This is a local release bundle; it has not been deployed to budfinder.org.
+Extract the ZIP contents into the existing website root, preserving the folders.
+Publish scripts/styles and public data before the entry HTML pages.
+Upload database/manifest.json last. Existing images remain on the server.
+The bundle contains no SQLite databases, private files or admin routes.
+
+Changes:
+- One mobile shop sheet with a fixed title, actions and a single scrolling body.
+- Short mobile strain summaries and an expandable city list.
+- Shared map/database eligibility rules; Amnesia now agrees at 244 shops.
+- Places on the map at the top of Explore the map.
+- Clear source labels, About/data sources and listing-check guidance.
+- Two practical guides, 15 city pages, 302 shop pages and an expanded sitemap.
+- No contact form, email link or error-report submission.
+
+Local admin: restart the admin app once to load the updated export hook.
+Subsequent canonical exports regenerate the directory and sitemap automatically.
+Standalone rebuild: python3 public_pages.py
+Read README.md in the repository for authoring and later-release cleanup notes.

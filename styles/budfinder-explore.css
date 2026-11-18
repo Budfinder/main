@@ -1,0 +1,204 @@
+/* Shared controls for switching views and narrowing menu results. */
+.explore-filters, .explore-filters *, .explore-view-links, .explore-view-links > * { box-sizing: border-box; }
+.explore-filters {
+  min-width: 0;
+  margin-top: 14px;
+}
+
+.explore-filter-panel {
+  padding: 0 14px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  background: var(--panel-strong, var(--panel));
+}
+
+.explore-filter-panel:not([open]) {
+  padding-bottom: 0;
+}
+
+.explore-filter-panel > summary {
+  min-height: 48px;
+  padding: 14px 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.explore-filter-panel > summary span {
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.explore-filter-fields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 2px 0 8px;
+}
+
+.explore-filter-fields label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.explore-filter-fields select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  background: var(--control-bg-strong, var(--panel));
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.explore-more-filters > summary {
+  min-height: 44px;
+  padding: 12px 0;
+  color: var(--ink);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.explore-filter-help {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.explore-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 8px 0 0;
+}
+
+.explore-filter-chips:empty {
+  display: none;
+}
+
+.explore-filter-chips button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+.explore-filter-chips .explore-clear-filters {
+  border-color: var(--panel-border);
+  background: transparent;
+}
+
+.explore-view-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.explore-view-links a,
+.explore-view-links > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 9px 15px;
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  background: var(--panel-strong, var(--panel));
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.explore-view-links > [aria-current="page"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.explore-filters :focus-visible,
+.explore-view-links a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.explore-return-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.search-scope-row[hidden],
+.discovery-browser-filter[hidden],
+.discovery-browser-filter-reset[hidden] {
+  display: none !important;
+}
+
+#map-explore-filters .explore-filter-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.discovery-browser-filters {
+  grid-template-columns: minmax(180px, 260px);
+}
+
+@media (max-width: 680px) {
+  .explore-filter-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 8px;
+  }
+
+  .explore-filter-chips button {
+    min-height: 44px;
+  }
+
+  .explore-view-links a,
+  .explore-view-links > span {
+    flex: 1;
+  }
+}
+
+/* Keep map controls as compact as their menu-page counterparts. */
+.search-wanted-panel .intent-head { display: grid; gap: 5px; }
+.search-wanted-panel .intent-head > span { font-size: 12px; line-height: 1.45; color: var(--muted); }
+.search-wanted-panel > label { font-size: 12px; line-height: 1.45; }
+.search-wanted-panel .explore-view-links { gap: 6px; margin: 8px 0; }
+.search-wanted-panel .explore-view-links > a,
+.search-wanted-panel .explore-view-links > span {
+  box-sizing: border-box; min-height: 44px; padding: 9px 12px; margin: 0; font-size: 12px; line-height: 1.4;
+}
+.search-wanted-panel .explore-return-link { box-sizing: border-box; margin: 0; padding: 8px 0; font-size: 12px; }
+.explore-return-link[hidden] { display: none !important; }
+.explore-filter-chips button { min-height: 44px; }
+#detail-explore-filters { margin: 14px 0; }

@@ -245,3 +245,22 @@
     padding: 14px;
   }
 }
+
+/* Discovery comes before statistics and site news in the reading order. */
+.home-discovery {
+  margin: 8px 0 36px;
+  padding: 24px 0;
+}
+.home-discovery h2 { margin: 5px 0 0; font-size: clamp(26px, 3vw, 34px); }
+.home-discovery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.home-discovery-grid .location-price-panel { grid-column: 1 / -1; }
+.home-discovery-grid .insight-panel { padding: 22px; border: 1px solid var(--panel-border); border-radius: 16px; background: var(--panel); }
+.home-discovery-grid .insight-panel > span { display: block; color: var(--muted); font-size: 13px; }
+.home-discovery-grid .insight-panel > strong { display: block; margin-top: 8px; font-size: 24px; }
+.home-discovery-grid .insight-panel > p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.home-discovery-grid .insight-item span { font-size: 13px; }
+@media (max-width: 680px) {
+  .home-discovery { padding: 12px 0; }
+  .home-discovery-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .home-discovery-grid .insight-panel { padding: 18px; }
+}

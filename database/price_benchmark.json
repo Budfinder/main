@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "name": "Amsterdam 20-shop benchmark",
+  "shop_ids": [
+    4,
+    94,
+    9724,
+    162,
+    148,
+    175,
+    296,
+    21,
+    221,
+    239,
+    307,
+    311,
+    314,
+    329,
+    369,
+    289,
+    114,
+    12298,
+    359,
+    60
+  ],
+  "selection_note": "Fixed on 28 October 2026: 20 currently listed Amsterdam shops with the earliest archived complete-menu observations and at least 10 days of observations. IDs remain fixed on subsequent exports; this is not a nationwide representative sample."
+}

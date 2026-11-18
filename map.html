@@ -34,17 +34,21 @@
   <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js" integrity="sha384-6kRQDsV2kVYRSENnw7WnekWKCx8/Lmv7rFKpDuR2AoIbjlBShlYcs3x0QlE3kuRh" crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="styles/budfinder-map-base.css?v=20260905-clarity1" />
-  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260905-review1" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261028-review2" />
   <link rel="stylesheet" href="styles/budfinder-map-layout.css?v=20260905-clarity1" />
   <link rel="stylesheet" href="styles/budfinder-map-refinements.css?v=20260906-scaled1" />
+  <link rel="stylesheet" href="styles/budfinder-explore.css?v=20261028-explore1" />
+  <link rel="stylesheet" href="styles/budfinder-map-controls.css?v=20261117-navigation" />
+  <link rel="stylesheet" href="styles/budfinder-skunkworks.css?v=20261115-tidy1" />
 </head>
 
 <body class="hero-popup-hidden map-is-loading">
+  <a class="map-skip-link" href="#map">Skip to map</a>
   <nav class="app-mode-toggle" aria-label="Switch app view">
     <a href="index.html">Home</a>
     <a class="is-active" href="map.html" aria-current="page">Map</a>
-    <a id="nav-price-menus-link" href="database.html">Price &amp; Menus</a>
-    <button id="nav-settings-btn" type="button">Settings</button>
+    <a id="nav-price-menus-link" href="database.html">Menus &amp; prices</a>
+    <button id="nav-settings-btn" type="button" aria-controls="settings-panel" aria-expanded="false">Settings</button>
   </nav>
   <div class="atmosphere" aria-hidden="true">
     <div class="atmosphere-leaves"></div>
@@ -116,96 +120,143 @@
   </div>
 
   <!-- Map and directions containers -->
-  <div id="map"></div>
+  <main id="map" aria-label="Map of places" tabindex="0"><h1 class="map-visually-hidden">Budfinder map</h1></main>
   <div id="instructions" hidden></div>
   <div id="controls-backdrop" class="controls-backdrop"></div>
 
-  <section id="selection-card" class="overlay-card is-empty" hidden aria-hidden="true">
-    <div id="selection-card-head" class="selection-card-head" role="button" tabindex="0" aria-controls="selection-card-body" aria-expanded="true" aria-label="Toggle selected Destination card">
-      <div class="selection-card-head-copy">
-        <span class="selection-eyebrow">Destination</span>
-        <h2 id="selected-destination-name">Choose a Destination</h2>
-        <span id="selection-card-summary" class="selection-card-summary">Choose a shop or use Near me</span>
-      </div>
-      <button id="selection-card-toggle" class="selection-card-toggle" type="button" hidden>Collapse</button>
-    </div>
-    <div id="selection-card-body" class="selection-card-body">
-      <p id="selected-destination-meta">Choose a shop, use Near me, or pick a Best match to preview a Destination.</p>
-      <div class="selection-chip-row">
-        <span class="selection-chip" id="selected-destination-city">Location data is loading</span>
-        <span class="selection-chip" id="selected-destination-eta">Direct time --</span>
-      </div>
-      <div class="selection-actions">
-        <button id="selection-directions-btn" type="button">Direct distance</button>
-        <button id="selection-add-stop-btn" type="button" class="neutral-btn">Add to route</button>
-        <button id="selection-move-up-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place earlier in route" title="Move earlier">−</button>
-        <button id="selection-move-down-btn" type="button" class="ghost-btn selection-order-btn" hidden aria-label="Move selected place later in route" title="Move later">+</button>
-        <button id="selection-center-btn" type="button" class="ghost-btn">View on Map</button>
-        <a id="selection-price-menus-link" class="selection-link" href="database.html">Price &amp; Menus</a>
-        <a id="selection-website-link" class="selection-link" href="#" target="_blank" rel="noopener noreferrer">Open site</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="stash-shelf" class="overlay-card">
+  <section id="stash-shelf" class="overlay-card" aria-labelledby="stash-shelf-title">
     <div class="stash-shelf-head">
       <div class="stash-shelf-head-copy">
-        <span class="selection-eyebrow">Map matching strains</span>
-        <h3>Map matching strains</h3>
+        <span class="selection-eyebrow">Saved for later</span>
+        <h3 id="stash-shelf-title" tabindex="-1">Your saved strains</h3>
         <p id="stash-shelf-summary" class="stash-shelf-summary">Saved strains stay available for quick map matching.</p>
       </div>
-      <button id="stash-shelf-close" class="stash-shelf-close" type="button">Hide</button>
+      <button id="stash-shelf-close" class="stash-shelf-close" type="button">Close</button>
     </div>
+    <button id="stash-compare-toggle" class="stash-compare-toggle" type="button" aria-pressed="false">Compare saved strains at shops</button>
     <div class="stash-shelf-stage">
       <div id="stash-shelf-grid" class="stash-shelf-grid"></div>
     </div>
   </section>
 
-  <!-- Top-level controls button -->
-  <div id="ui-toggles" data-ready="false">
-    <button id="toggle-controls" type="button">Map tools</button>
-    <button id="toggle-shelf" type="button">Saved strains</button>
-    <button id="clear-selection-toggle" type="button" hidden>Clear Destination</button>
+  <!-- Compact map actions. Shop markers remain individual and unchanged. -->
+  <div id="ui-toggles" data-ready="false" role="group" aria-label="Map actions">
+    <button id="toggle-controls" type="button" aria-controls="map-tools-content" aria-expanded="false">Search</button>
+    <button id="toggle-shelf" type="button" aria-controls="stash-shelf" aria-expanded="false">Saved strains</button>
+    <button id="toggle-route" type="button" aria-controls="route-tools-dropdown" aria-expanded="false">Your route</button>
+    <button id="clear-map-filters" type="button" aria-label="Clear all filters">Clear filters</button>
+    <button id="skunk-nearby-button" type="button" aria-controls="skunk-nearby-dialog" hidden>What’s around?</button>
   </div>
+  <dialog id="skunk-nearby-dialog" class="skunk-nearby-dialog" aria-labelledby="skunk-nearby-title">
+    <header class="skunk-nearby-header"><div><span class="skunk-nearby-eyebrow">Skunkworks</span><h2 id="skunk-nearby-title">What’s around?</h2></div><button id="skunk-nearby-close" type="button">Close</button></header>
+    <div class="skunk-nearby-content">
+      <p id="skunk-nearby-origin">Choose where to look.</p>
+      <div class="skunk-nearby-actions"><button id="skunk-nearby-location" type="button">Use my location</button><button id="skunk-nearby-centre" type="button">Use map centre</button><a id="skunk-nearby-edit">Edit preferences</a></div>
+      <label class="skunk-nearby-radius" for="skunk-nearby-radius">Search radius <select id="skunk-nearby-radius"><option value="0.1">100 m</option><option value="0.25">250 m</option><option value="0.5">500 m</option><option value="1">1 km</option><option value="2">2 km</option><option value="5">5 km</option></select></label>
+      <label class="skunk-nearby-preference"><input id="skunk-nearby-recent" type="checkbox" /> Prioritise recent menu dates</label>
+      <p class="skunk-nearby-note">Distances are straight-line; menus and prices can change.</p>
+      <p id="skunk-nearby-status" role="status" aria-live="polite"></p>
+      <div id="skunk-nearby-results"></div>
+      <details class="skunk-nearby-help">
+        <summary>How distances and dates work</summary>
+        <p class="skunk-nearby-note">Distances are measured in a straight line, not along walking routes. Recent-date priority sorts dates within 14 days first, then within 60 days, older and unknown. Dates may describe when a menu was observed.</p>
+      </details>
+    </div>
+  </dialog>
+  <!-- Shared shop details: bottom sheet on phones and a tall side panel on desktop. -->
+  <dialog id="mobile-shop-sheet" class="mobile-shop-sheet" aria-labelledby="mobile-shop-title">
+    <header class="mobile-shop-header">
+      <div><span id="mobile-shop-eyebrow" class="selection-eyebrow">Shop details</span><h2 id="mobile-shop-title"></h2></div>
+      <button type="button" id="mobile-shop-close" aria-label="Close shop details">Close</button>
+    </header>
+    <div id="mobile-shop-content" class="mobile-shop-content"></div>
+    <footer id="mobile-shop-actions" class="mobile-shop-actions"></footer>
+  </dialog>
   <!-- Main controls panel -->
   <div class="controls">
     <div class="controls-header" id="controls-header">
       <button class="controls-header-main" id="controls-header-toggle" type="button" aria-expanded="true" aria-controls="map-tools-content">
         <span class="controls-handle" aria-hidden="true"></span>
-        <span class="controls-title" id="map-tools-title">Map tools</span>
+        <span class="controls-title" id="map-tools-title">Explore the map</span>
         <span class="controls-summary" id="controls-summary">Choose a Destination</span>
       </button>
       <div class="controls-header-actions">
-        <button id="mobile-hide-controls" class="controls-hide" type="button">Hide</button>
+        <button id="mobile-hide-controls" class="controls-hide" type="button" aria-label="Close map panel">Close</button>
       </div>
     </div>
     <div class="controls-content" id="map-tools-content">
       <details class="panel-section map-category-shortcuts control-group">
         <summary class="sidebar-drawer-summary">
-          <span><strong id="map-category-title">Map filters</strong><small id="map-filter-summary">Coffeeshops</small></span>
+          <span><strong id="map-category-title">Places on the map</strong><small id="map-filter-summary">Coffeeshops</small></span>
         </summary>
         <div class="sidebar-drawer-content">
         <div id="category-filters" role="group" aria-labelledby="map-category-title">
           <!-- Multi-select category controls injected here by JS -->
         </div>
         <div class="button-row">
-          <button id="reset-filters-btn" type="button" class="secondary-btn">Reset map filters</button>
+          <button id="reset-filters-btn" type="button" class="secondary-btn">Reset map</button>
         </div>
         </div>
       </details>
-
       <section class="panel-section search-wanted-panel control-group" aria-labelledby="map-intent-title">
         <div class="intent-head">
           <strong id="map-intent-title">Search the map</strong>
-          <span>Find a strain, grower, coffeeshop, town, or area.</span>
         </div>
-        <label for="destination-search">Search strains, growers, coffeeshops, towns, and areas</label>
-        <input id="destination-search" type="search" placeholder="Amnesia Haze, Karma, De Wedren, Nijmegen…" autocomplete="off" list="global-search-suggestions" />
-        <datalist id="global-search-suggestions"></datalist>
-        <div class="global-search-scope" aria-label="Nationwide search coverage">
-          <span>Nationwide search · all towns included</span>
+        <label class="map-search-label" for="destination-search">Search strains, growers, coffeeshops, towns, and areas</label>
+        <div class="map-search-row">
+          <input id="destination-search" type="search" aria-label="Search strains, growers, coffeeshops, towns, and areas" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-controls="global-search-suggestions" aria-expanded="false" placeholder="Strain, shop, grower or place…" autocomplete="off" enterkeyhint="search" />
+          <button id="map-search-submit" type="button">Search</button>
         </div>
-        <div id="destination-search-status" class="field-note">Loading nationwide search...</div>
+        <div id="global-search-suggestions" class="map-search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
+        <p id="map-suggestion-status" class="map-suggestion-status" role="status" aria-live="polite"></p>
+        <article id="map-strain-result" class="map-strain-result" aria-labelledby="map-strain-result-name" aria-live="polite" hidden>
+          <span>Selected strain · Exact name</span>
+          <h3 id="map-strain-result-name"></h3>
+          <p id="map-strain-result-count"></p>
+          <p id="map-match-rule" class="map-match-rule"></p>
+          <a id="map-strain-result-prices" href="database.html">View prices &amp; menus →</a>
+        </article>
+        <div class="map-search-context">
+          <div class="global-search-scope"><span id="explore-search-scope">Across the Netherlands</span></div>
+          <a id="explore-menu-results-link" href="database.html">Menus &amp; prices →</a>
+        </div>
+        <div id="map-search-area" class="map-search-area" hidden>
+          <p id="map-search-area-status" role="status" aria-live="polite" tabindex="-1"></p>
+          <button id="map-show-matches" type="button" class="secondary-btn" hidden>Show matches on map</button>
+          <button id="map-search-area-toggle" type="button" class="secondary-btn" hidden>Show all cities</button>
+        </div>
+        <a id="explore-back-results-link" class="explore-return-link" hidden>← Back to menu results</a>
+        <div id="map-explore-filters" class="explore-filters"></div>
+        <div class="map-search-actions" hidden>
+          <button id="clear-selection-toggle" class="secondary-btn" type="button" hidden>Undo last change</button>
+        </div>
+        <div id="destination-search-status" class="field-note" role="status" aria-live="polite">Loading shops…</div>
+        <div class="best-match-panel" aria-labelledby="best-match-title" hidden>
+          <div class="best-match-head">
+            <h2 id="best-match-title" aria-describedby="best-match-summary" tabindex="-1">Best matches</h2>
+            <span id="best-match-summary">Search for a strain, grower, shop, or area to see suggested stops.</span>
+          </div>
+          <div class="best-match-options">
+            <label for="best-match-order">Sort results</label>
+            <select id="best-match-order">
+              <option value="recommended">Recommended</option>
+              <option value="freshest">Most recent menu information</option>
+            </select>
+            <button id="best-match-compact" type="button" aria-pressed="false" aria-controls="best-match-list">Detailed view</button>
+          </div>
+          <div id="best-match-list" class="best-match-list is-compact" aria-live="polite">
+            <p class="best-match-empty">Search for a strain, grower, shop, or area to see suggested stops.</p>
+          </div>
+        </div>
+        <details class="map-matching-help">
+          <summary>How search and prices work</summary>
+          <h3>Search matches</h3>
+          <p>An exact strain name uses listings for that name only. A partial name can match several strains. Shops are counted once even when they list several pack sizes.</p>
+          <p>The map starts around your selected city; other cities remain available through Show all cities. Location filters narrow results separately. Counts exclude unavailable and incorrectly attributed menus.</p>
+          <h3>Price comparisons</h3>
+          <p>Map averages use the mean of the lowest listed price per shop for the same strain, currency and unit, across at least two shops nationwide. Menu value averages the percentage differences for the strains that can be compared. Menus &amp; prices may instead use a median or count each pack listing, so its signals can differ.</p>
+          <p>Menu dates appear on shop results. Growers, batches, origins and pack sizes may differ. These are listed-price signals, not quality ratings or live stock. Open a menu for its source and a detailed price comparison.</p>
+        </details>
         <details class="map-quick-searches">
           <summary>Popular searches</summary>
           <div class="map-quick-chips" aria-label="Quick searches">
@@ -220,15 +271,6 @@
             <button class="map-quick-chip" type="button" data-map-quick-search="Jordaan">Jordaan</button>
           </div>
         </details>
-        <div class="best-match-panel" aria-labelledby="best-match-title">
-          <div class="best-match-head">
-            <strong id="best-match-title">Best matches</strong>
-            <span id="best-match-summary">Search for a strain, grower, shop, or area to see suggested stops.</span>
-          </div>
-          <div id="best-match-list" class="best-match-list" aria-live="polite">
-            <p class="best-match-empty">Search for a strain, grower, shop, or area to see suggested stops.</p>
-          </div>
-        </div>
         <details class="map-secondary-tools" aria-label="Quick planning shortcuts" hidden>
           <summary>More tools</summary>
           <div class="workflow-shortcuts">
@@ -245,7 +287,7 @@
             <span>Add stops, direct walking estimates, direct distance, and spend.</span>
           </button>
           <a id="map-price-menus-link" class="intent-link" href="database.html">
-            <strong>Price &amp; Menus</strong>
+            <strong>Menus &amp; prices</strong>
             <span>Compare known prices and menu dates.</span>
           </a>
           </div>
@@ -255,8 +297,8 @@
       <details id="route-tools-dropdown" class="panel-section route-panel control-group route-tools-dropdown">
         <summary class="sidebar-drawer-summary">
           <span>
-            <strong>Route building</strong>
-            <small>Plan stops, direct distance, direct-time estimates, and spend.</small>
+            <strong>Your route</strong>
+            <small>Choose a start and add shops.</small>
           </span>
         </summary>
         <div class="route-tools-dropdown-content">
@@ -410,18 +452,18 @@
         </div>
       </details>
 
-      <section class="panel-section location-file-panel control-group" aria-labelledby="location-file-title">
-        <div class="intent-head">
-          <strong id="location-file-title">Centre the map</strong>
-          <span>Move the map to a town. Search continues to include all Netherlands.</span>
-        </div>
+      <details class="panel-section location-file-panel control-group">
+        <summary class="sidebar-drawer-summary"><span><strong id="location-file-title">Jump to a city</strong></span></summary>
+        <div class="sidebar-drawer-content">
+        <p class="panel-copy">Move the map without changing your search or filters.</p>
         <div id="csv-switch-wrap" style="display:none;">
           <label class="field-label" for="csv-switch-select">
             Centre map on
             <select id="csv-switch-select"></select>
           </label>
         </div>
-      </section>
+        </div>
+      </details>
 
       <details id="map-strain-tools" class="panel-section wanted-list-panel control-group" hidden>
         <summary class="sidebar-drawer-summary">
@@ -466,7 +508,7 @@
               </div>
             </div>
             <p id="strain-spotlight-notes" class="strain-spotlight-notes">No map match selected yet. Once a strain is selected, this card stays focused on useful shops to visit next.</p>
-            <a id="strain-price-guide-link" class="panel-link-button" href="database.html">Price &amp; Menus</a>
+            <a id="strain-price-guide-link" class="panel-link-button" href="database.html">View menu</a>
             <div class="strain-spotlight-top">
               <div class="strain-spotlight-top-head">
                 <strong>Top shops</strong>
@@ -509,17 +551,20 @@
               <input id="display-name-input" type="text" maxlength="24" placeholder="Explorer" />
             </label>
           </div>
+          <label class="field-label settings-matt-toggle" for="settings-matt-defaults"><input id="settings-matt-defaults" type="checkbox" /> Include Matt’s visits and ratings</label>
+          <p class="field-note">Your own visit marks and ratings are saved on this device and take precedence.</p>
+          <p id="settings-matt-defaults-status" role="status" class="field-note"></p>
         </section>
 
         <section class="settings-section" aria-labelledby="settings-data-title">
           <h4 id="settings-data-title">Data</h4>
           <p class="panel-copy">Manage saved places and open Price &amp; Menus.</p>
-          <a class="panel-link-button" href="database.html">Price &amp; Menus</a>
+          <a class="panel-link-button" href="database.html">View menu</a>
           <div class="button-row">
             <button id="clear-saved-data-btn" type="button" class="secondary-btn">Clear saved data</button>
           </div>
           <div id="clear-saved-data-confirm" class="settings-confirm" hidden>
-            <p>This clears Saved shops, visit notes, ratings, recent Destinations, and saved strains from this device. Map data and display settings stay available.</p>
+            <p>This clears saved shops, visit notes, ratings, recent destinations, saved strains and personal discovery preferences from this device. Map data and display settings stay available.</p>
             <div class="settings-confirm-actions">
               <button id="confirm-clear-saved-data-btn" type="button" class="danger-btn">Clear saved data</button>
               <button id="cancel-clear-saved-data-btn" type="button" class="secondary-btn">Cancel</button>
@@ -581,10 +626,13 @@
   <!-- Leaflet -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
   <script src="scripts/budfinder-logos.js?v=20260830-missing2"></script>
-  <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
-  <script src="scripts/budfinder-search.js?v=20260830-search1"></script>
+  <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
+  <script src="scripts/budfinder-data.js?v=20261031-usability1"></script>
+  <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
 
   <script src="scripts/budfinder-marker-layout.js?v=20260906-scaled2"></script>
-  <script src="scripts/budfinder-map.js?v=20260906-final1"></script>
+  <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
+  <script src="scripts/budfinder-skunkworks.js?v=20261115-personal2"></script>
+  <script src="scripts/budfinder-map.js?v=20261117-navigation"></script>
 </body>
 </html>

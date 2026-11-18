@@ -1,0 +1,19 @@
+Budfinder: consistent search across homepage, map and menus
+
+This is the complete website update, including the preceding usability changes.
+Extract the archive locally. Replace files in the EXISTING website root:
+
+1. Upload the 5 files inside scripts/ to the website scripts/ folder.
+2. Upload the 5 files inside styles/ to the website styles/ folder.
+3. Upload index.html, map.html and database.html to the website ROOT LAST.
+4. Reload. Updated pages reference cache version 20261028-search3.
+
+Do not put the HTML or styles in scripts/, and do not upload this enclosing folder.
+No database files or admin app files are required for this release.
+
+Verify: g13, G-13 and g 13 all show G-13 as the exact strain; crosses remain
+separate suggestions. Choose it on the map or use Search / Enter, then open its
+prices. K2 can also be submitted. Amsterdam remains a city search.
+
+Local validation: 123 JavaScript regression tests passed, together with static,
+Python and data checks. Desktop and phone layouts were inspected.

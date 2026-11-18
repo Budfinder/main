@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skunkworks | Budfinder</title>
+  <meta name="description" content="Choose your favourite strains and shops and personalise nearby discoveries on the Budfinder map." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://budfinder.org/skunkworks.html" />
+  <link rel="icon" href="images/budfinder-badge-v3.ico" />
+  <link rel="stylesheet" href="styles/budfinder-home-base.css?v=20260905-refine1" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261028-review2" />
+  <link rel="stylesheet" href="styles/budfinder-skunkworks.css?v=20261115-benchmark1" />
+  <script src="https://unpkg.com/papaparse@5.3.2/papaparse.min.js" integrity="sha384-6kRQDsV2kVYRSENnw7WnekWKCx8/Lmv7rFKpDuR2AoIbjlBShlYcs3x0QlE3kuRh" crossorigin="anonymous"></script>
+</head>
+<body>
+  <a class="skip-link" href="#skunkworks-main">Skip to Skunkworks</a>
+  <nav class="app-mode-toggle" aria-label="Main navigation">
+    <a href="index.html">Home</a><a href="map.html">Map</a><a href="database.html">Menus &amp; prices</a><a href="#settings" data-budfinder-settings-toggle>Settings</a>
+  </nav>
+  <main id="skunkworks-main" class="skunkworks-page">
+    <header class="skunkworks-intro">
+      <span class="skunkworks-eyebrow">Your personal Budfinder</span>
+      <h1>Welcome to Skunkworks.</h1>
+        <p>Keep track of the strains and shops you like. Then ask the map what’s around to discover nearby favourites, below-average prices and places you haven’t visited.</p>
+      <p class="skunkworks-note">Saved on this device. The map uses your location only when you choose to share it.</p>
+      <a class="skunkworks-primary" href="map.html">Open the map</a>
+    </header>
+    <div id="skunk-status" class="skunkworks-status" role="status" aria-live="polite"></div>
+    <div class="skunkworks-grid">
+      <section class="skunkworks-card" aria-labelledby="skunk-strains-heading">
+        <span class="skunkworks-eyebrow">Your favourites</span>
+        <h2 id="skunk-strains-heading">Strains you like</h2>
+        <p>These are the same saved strains used by the map and menu search. You can save up to 10. Matches use the exact strain name.</p>
+        <form id="skunk-strain-form" class="skunkworks-form">
+          <label for="skunk-strain-input">Find a strain</label>
+          <div class="skunkworks-input-row"><input id="skunk-strain-input" list="skunk-strain-options" maxlength="120" autocomplete="off" placeholder="Start typing a strain name" /><datalist id="skunk-strain-options"></datalist><button type="submit">Save strain</button></div>
+        </form>
+        <ul id="skunk-strain-list" class="skunkworks-saved-list" aria-label="Saved strains"></ul>
+      </section>
+      <section class="skunkworks-card" aria-labelledby="skunk-shops-heading">
+        <span class="skunkworks-eyebrow">Places worth keeping</span>
+        <h2 id="skunk-shops-heading">Your shops</h2>
+        <p>Save up to 10 favourites and mark places you’ve visited. Your existing map choices appear here.</p>
+        <label for="skunk-shop-search">Find a shop or city</label>
+        <input id="skunk-shop-search" type="search" autocomplete="off" placeholder="Search shops or towns" />
+        <p id="skunk-shop-status" class="skunkworks-note" role="status"></p>
+        <ul id="skunk-shop-results" class="skunkworks-shop-list" aria-label="Shop search results"></ul>
+        <h3>Saved shops</h3>
+        <ul id="skunk-saved-shops" class="skunkworks-shop-list" aria-label="Saved shops"></ul>
+      </section>
+      <section class="skunkworks-card skunkworks-preferences" aria-labelledby="skunk-preferences-heading">
+        <span class="skunkworks-eyebrow">Make it yours</span>
+        <h2 id="skunk-preferences-heading">What’s around settings</h2>
+        <form id="skunk-preferences-form" class="skunkworks-form">
+          <div class="skunkworks-fields">
+            <label for="skunk-radius">Search radius<select id="skunk-radius"><option value="0.1">100 m</option><option value="0.25">250 m</option><option value="0.5">500 m</option><option value="1">1 km</option><option value="2">2 km</option><option value="5">5 km</option></select></label>
+          </div>
+          <fieldset><legend>Strain types to include</legend><p class="skunkworks-note">Leave all unchecked to include every type.</p>
+            <div class="skunkworks-checks"><label><input type="checkbox" name="type" value="sativa" /> Sativa</label><label><input type="checkbox" name="type" value="indica" /> Indica</label><label><input type="checkbox" name="type" value="hybrid" /> Hybrid</label><label><input type="checkbox" name="type" value="hash" /> Hash</label></div>
+          </fieldset>
+          <label class="skunkworks-check"><input id="skunk-unvisited" type="checkbox" /> Suggest shops I haven’t marked as visited</label>
+          <label class="skunkworks-check"><input id="skunk-recent" type="checkbox" /> Prioritise recent menu dates</label>
+          <label class="skunkworks-check"><input id="skunk-matt-defaults" type="checkbox" /> Include Matt’s visits and ratings</label>
+          <p class="skunkworks-note">Your own visit marks and ratings are saved on this device and take precedence.</p>
+          <button type="submit">Save preferences</button>
+        </form>
+        <p class="skunkworks-note">Good deals are at least 10% below the average for that strain across at least two shops; the average may include older menus. Within each date group, more comparison shops rank higher. Prioritising recent dates puts menus dated or observed within 14 days first, then within 60 days, older and unknown dates. Distances are straight-line distances. Listed prices and menus can change.</p>
+      </section>
+      <section class="skunkworks-card skunkworks-preferences" aria-labelledby="benchmark-heading">
+        <span class="skunkworks-eyebrow">Your price history</span>
+        <h2 id="benchmark-heading">Choose your 20 benchmark shops</h2>
+        <p>Choose the shops used for your homepage price graph. Each shop has equal weight. Your selection stays on this device; the public benchmark stays unchanged.</p>
+        <p class="skunkworks-note">Choose from shops in the exported price histories. The graph can show an average only on dates when all 20 chosen shops have recorded prices. Replacing a shop recalculates the whole history using the new selection.</p>
+        <label for="benchmark-shop-search">Find a shop or town</label>
+        <input id="benchmark-shop-search" type="search" autocomplete="off" placeholder="Search the available shop histories" />
+        <p id="benchmark-search-status" class="skunkworks-note" role="status">Loading shop histories…</p>
+        <ul id="benchmark-search-results" class="skunkworks-shop-list" aria-label="Available benchmark shops"></ul>
+        <h3 id="benchmark-selected-heading">Selected shops</h3>
+        <ul id="benchmark-selected" class="skunkworks-shop-list" aria-labelledby="benchmark-selected-heading"></ul>
+        <div class="benchmark-actions"><button id="benchmark-save" type="button" disabled>Save benchmark</button><button id="benchmark-reset" type="button" disabled>Use public benchmark</button></div>
+        <p id="benchmark-status" class="skunkworks-note" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+  </main>
+  <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20261115-benchmark1"></script>
+  <script src="scripts/budfinder-skunkworks.js?v=20261115-personal2"></script>
+  <script src="scripts/budfinder-benchmark.js?v=20261115-benchmark1"></script>
+  <script src="scripts/budfinder-skunkworks-page.js?v=20261115-personal2"></script>
+  <script src="scripts/budfinder-benchmark-page.js?v=20261115-benchmark1"></script>
+</body>
+</html>

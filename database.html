@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Amsterdam Strain Prices &amp; Coffeeshop Menus | Budfinder</title>
-  <meta name="description" content="Compare known Amsterdam strain prices, shop counts and listing freshness, then open detailed coffeeshop menu comparisons." />
+  <title>Netherlands Strain Prices &amp; Coffeeshop Menus | Budfinder</title>
+  <meta name="description" content="Search Netherlands coffeeshop menus, filter prices and menu dates, then continue with the same search on the map." />
   <link rel="canonical" href="https://budfinder.org/database.html" />
-  <meta property="og:title" content="Amsterdam Strain Prices &amp; Coffeeshop Menus | Budfinder" />
+  <meta property="og:title" content="Netherlands Strain Prices &amp; Coffeeshop Menus | Budfinder" />
   <meta property="og:description" content="Compare lowest and typical prices, shop counts and freshness before opening a detailed comparison." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://budfinder.org/database.html" />
@@ -27,16 +27,18 @@
   </script>
   <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
   <link rel="stylesheet" href="styles/budfinder-database.css?v=20260905-clarity1" />
-  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20260905-review1" />
-  <link rel="stylesheet" href="styles/budfinder-database-refinements.css?v=20260905-clarity1" />
-  <link rel="stylesheet" href="styles/budfinder-menu.css?v=20261028-menu1" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261028-review2" />
+  <link rel="stylesheet" href="styles/budfinder-database-refinements.css?v=20261117-city-menus" />
+  <link rel="stylesheet" href="styles/budfinder-menu.css?v=20261028-review2" />
+  <link rel="stylesheet" href="styles/budfinder-explore.css?v=20261028-explore1" />
 
 </head>
 <body>
+  <a id="database-skip" class="database-skip-link" href="#search">Skip to search</a>
   <nav class="app-mode-toggle" aria-label="Switch app view">
     <a href="index.html">Home</a>
     <a href="map.html">Map</a>
-    <a class="is-active" href="database.html" aria-current="page">Price &amp; Menus</a>
+    <a class="is-active" href="database.html" aria-current="page">Menus &amp; prices</a>
     <a href="#settings" data-budfinder-settings-toggle>Settings</a>
   </nav>
   <div class="atmosphere" aria-hidden="true">
@@ -65,6 +67,7 @@
         <div class="database-search-input">
           <label id="search-label" for="search">Search strains, growers, coffeeshops, towns, and areas</label>
           <input id="search" type="search" placeholder="Amnesia Haze, Karma, De Wedren, Nijmegen…" autocomplete="off" aria-controls="discovery-results" />
+          <button id="database-search-submit" type="button">Search</button>
         </div>
         <div id="search-chip-row" class="database-quick-chips" aria-label="Quick searches">
           <button type="button" data-search-chip="Gelato">Gelato</button>
@@ -74,13 +77,17 @@
           <button type="button" data-search-chip="Legal weed">Legal weed</button>
         </div>
         <div class="field-note">Coffeeshop names open the menu browser automatically.</div>
-        <div class="search-scope-row">
+        <div class="search-scope-row" hidden>
           <label for="search-city-scope">Search in</label>
           <select id="search-city-scope">
             <option value="">All Netherlands</option>
           </select>
         </div>
       </div>
+      <div class="explore-view-links" aria-label="View these results">
+        <span aria-current="page">Menus &amp; prices</span><a href="map.html" data-explore-map-link>Map results</a>
+      </div>
+      <div id="database-explore-filters" class="explore-filters"></div>
     </section>
 
     <p id="status" class="status is-visible" role="status" aria-live="polite" aria-atomic="true">Loading nationwide menu data...</p>
@@ -114,12 +121,16 @@
         <label id="discovery-browser-search-label" for="discovery-browser-search">Filter</label>
         <input id="discovery-browser-search" type="search" autocomplete="off" />
       </div>
+      <div class="explore-view-links" aria-label="View these results">
+        <span aria-current="page">Menus &amp; prices</span><a href="map.html" data-explore-map-link>Map results</a>
+      </div>
+      <div id="browser-explore-filters" class="explore-filters"></div>
       <div class="discovery-browser-filters" aria-label="Browse filters">
         <label class="discovery-browser-filter" for="discovery-browser-sort">
           Sort by
           <select id="discovery-browser-sort"></select>
         </label>
-        <label class="discovery-browser-filter" for="discovery-browser-freshness">
+        <label class="discovery-browser-filter" for="discovery-browser-freshness" hidden>
           Menu age
           <select id="discovery-browser-freshness">
             <option value="all">Any menu age</option>
@@ -129,7 +140,7 @@
             <option value="unknown">Menu date unknown</option>
           </select>
         </label>
-        <label class="discovery-browser-filter" for="discovery-browser-price">
+        <label class="discovery-browser-filter" for="discovery-browser-price" hidden>
           Average price
           <select id="discovery-browser-price">
             <option value="all">Any price</option>
@@ -140,7 +151,7 @@
             <option value="unknown">Price unknown</option>
           </select>
         </label>
-        <label class="discovery-browser-filter" for="discovery-browser-type">
+        <label class="discovery-browser-filter" for="discovery-browser-type" hidden>
           Type
           <select id="discovery-browser-type">
             <option value="all">All types</option>
@@ -150,7 +161,7 @@
             <option value="hash">Hash</option>
           </select>
         </label>
-        <button id="discovery-browser-filter-reset" class="discovery-browser-filter-reset" type="button">Reset filters</button>
+        <button id="discovery-browser-filter-reset" class="discovery-browser-filter-reset" type="button" hidden>Reset filters</button>
         <div id="discovery-browser-filter-status" class="discovery-browser-filter-status" role="status" aria-live="polite"></div>
       </div>
       <div class="discovery-browser-results-head">
@@ -163,7 +174,7 @@
       </div>
     </section>
 
-    <section id="detail-view" class="database-detail panel" aria-live="polite" hidden></section>
+    <section id="detail-view" class="database-detail panel" aria-live="polite" tabindex="-1" hidden></section>
 
     <div id="database-layout" class="layout">
       <aside class="panel side-panel">
@@ -411,9 +422,11 @@
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
   <script src="scripts/budfinder-logos.js?v=20260830-missing1"></script>
-  <script src="scripts/budfinder-theme.js?v=20260719-contrast2"></script>
-  <script src="scripts/budfinder-page-settings.js?v=20260905-refine1"></script>
-  <script src="scripts/budfinder-search.js?v=20260830-search1"></script>
-  <script src="scripts/budfinder-database.js?v=20261028-menu1"></script>
+  <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20261115-benchmark1"></script>
+  <script src="scripts/budfinder-data.js?v=20261031-usability1"></script>
+  <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
+  <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
+  <script src="scripts/budfinder-database.js?v=20261117-city-menus"></script>
 </body>
 </html>

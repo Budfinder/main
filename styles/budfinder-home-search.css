@@ -89,7 +89,8 @@
 
 .hero-search .search-row input {
   min-height: 58px;
-  font-size: 18px;
+  grid-column: 1 / -1;
+  font-size: 16px;
   border-radius: 10px;
 }
 
@@ -110,16 +111,23 @@
 .hero-map-link {
   display: block;
   border-radius: 22px;
+  text-decoration: none;
 }
 
 .hero-map-link:hover .hero-image-card {
   border-color: var(--accent);
 }
 
-.hero-search .search-row button {
-  min-height: 58px;
-  padding-inline: 22px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+.home-search-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.home-search-actions button {
+  min-height: 46px;
+  padding: 8px 5px;
+  border-radius: 12px;
 }
 
 .intent-actions {
@@ -204,6 +212,10 @@
 }
 
 @media (max-width: 680px) {
+  html {
+    scroll-padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+
   body {
     padding-bottom: calc(76px + env(safe-area-inset-bottom));
   }
@@ -253,11 +265,6 @@
 
   .hero-search .search-row {
     grid-template-columns: 1fr;
-  }
-
-  .hero-search .search-row input,
-  .hero-search .search-row button {
-    width: 100%;
   }
 
   .intent-actions {

@@ -57,6 +57,7 @@ import argparse
 import csv
 import json
 import os
+from pathlib import Path
 import re
 import sqlite3
 import subprocess
@@ -68,6 +69,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 from urllib.parse import unquote, urlparse
 
 from flask import Flask, Response, jsonify, redirect, render_template_string, request, send_file, url_for
+from price_history import build_price_history
 
 # -----------------------------------------------------------------------------
 # Configuration
@@ -288,14 +290,29 @@ def run_watch_update(
             "uploaded": False,
         }
 
+    upload_ok = uploaded.returncode == 0
+    upload_error = uploaded.stderr or ""
+    if upload_ok and not dry_run:
+        acknowledgements = [
+            line for line in (uploaded.stdout or "").splitlines()
+            if "BFMAP_DONE_OK" in line
+        ]
+        if not acknowledgements or "menus=1" not in acknowledgements[-1].split():
+            upload_ok = False
+            upload_error = "\n".join(filter(None, (
+                upload_error,
+                "The watch did not confirm loading the menu package. "
+                "It may still be showing old built-in menus; update its firmware and retry.",
+            )))
+
     return {
-        "ok": uploaded.returncode == 0,
+        "ok": upload_ok,
         "stage": "upload",
         "returncode": uploaded.returncode,
         "stdout": "\n".join(part for part in (generated.stdout, uploaded.stdout) if part),
-        "stderr": "\n".join(part for part in (generated.stderr, uploaded.stderr) if part),
+        "stderr": "\n".join(part for part in (generated.stderr, upload_error) if part),
         "duration_s": time.monotonic() - started,
-        "uploaded": uploaded.returncode == 0 and not dry_run,
+        "uploaded": upload_ok and not dry_run,
         "dry_run": dry_run,
     }
 
@@ -1045,13 +1062,8 @@ def _home_source_token(value: Any) -> str:
     return re.sub(r"[^a-z0-9]+", "", decoded)
 
 
-def _home_summary(
-    shops: List[Dict[str, Any]],
-    offerings: List[Dict[str, Any]],
-    exported_at_utc: str,
-    amsterdam_mapped_shops: Optional[int] = None,
-) -> Dict[str, Any]:
-    """Build the small, internally consistent payload used by the public homepage."""
+def _home_unavailable_shop_ids(shops: List[Dict[str, Any]]) -> set:
+    """Share publication exclusions between current and historical averages."""
     unavailable_statuses = {"closed", "archived", "archive", "previous", "old", "error", "failed"}
     closed_tokens = {
         token
@@ -1078,7 +1090,7 @@ def _home_summary(
         }
         return any(token not in own_tokens and token in source for token in closed_tokens)
 
-    unavailable_shop_ids = {
+    return {
         str(shop.get("shop_id") or "")
         for shop in shops
         if (
@@ -1088,6 +1100,16 @@ def _home_summary(
             or source_conflicts(shop)
         )
     }
+
+
+def _home_summary(
+    shops: List[Dict[str, Any]],
+    offerings: List[Dict[str, Any]],
+    exported_at_utc: str,
+    amsterdam_mapped_shops: Optional[int] = None,
+) -> Dict[str, Any]:
+    """Build the small, internally consistent payload used by the public homepage."""
+    unavailable_shop_ids = _home_unavailable_shop_ids(shops)
     browsable = [
         row
         for row in offerings
@@ -1396,6 +1418,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
     - strain_index.json
     - search_index.json
     - home_summary.json
+    - price_history.json
+    - price_history_shops.json
     - manifest.json
     """
     os.makedirs(out_dir, exist_ok=True)
@@ -1688,6 +1712,27 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
         amsterdam_mapped_shops=mapped_amsterdam_shops,
     )
     json_dump(os.path.join(out_dir, "home_summary.json"), home_summary)
+    price_history = build_price_history(
+        conn, shops, active_offerings, exported_at_utc,
+        excluded_shop_ids=_home_unavailable_shop_ids(shops),
+        benchmark_shop_ids=load_price_benchmark(conn, out_dir),
+        extra_shop_ids=[shop["shop_id"] for shop in shops],
+    )
+    # Keep the usual homepage download small; personalised benchmarks fetch the
+    # individual shop histories separately when the visitor chooses to use them.
+    benchmark_ids = {shop["shop_id"] for shop in price_history["benchmark"]["shops"]}
+    individual_series = [row for row in price_history["series"] if row["kind"] == "shop"]
+    shops_by_id = {shop["shop_id"]: shop for shop in shops}
+    json_dump(os.path.join(out_dir, "price_history_shops.json"), {
+        "version": 1, "exported_at_utc": exported_at_utc,
+        "currency": "€", "unit": "g", "date_basis": "recorded_observation",
+        "shops": [{"shop_id": row["shop_id"], "name": row["name"],
+                   "city": shops_by_id.get(row["shop_id"], {}).get("city", ""),
+                   "points": row["points"]} for row in individual_series],
+    })
+    price_history["series"] = [row for row in price_history["series"]
+                               if row["kind"] != "shop" or row["shop_id"] in benchmark_ids]
+    json_dump(os.path.join(out_dir, "price_history.json"), price_history)
 
     manifest = {
         "exported_at_utc": exported_at_utc,
@@ -1715,6 +1760,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "search_index.json",
             "updates.json",
             "home_summary.json",
+            "price_history.json",
+            "price_history_shops.json",
         ],
         "linking": {
             "shop_key_note": "Use shops.shop_key as the stable CSV link key.",
@@ -1723,6 +1770,23 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
     }
     json_dump(os.path.join(out_dir, "manifest.json"), manifest)
     return manifest
+
+
+def load_price_benchmark(conn: sqlite3.Connection, out_dir: str) -> List[int]:
+    """Read the fixed sample beside its SQLite database; never select replacements."""
+    databases = conn.execute("PRAGMA database_list").fetchall()
+    database_path = next((row["file"] for row in databases if row["name"] == "main"), "")
+    path = os.path.join(os.path.dirname(database_path) if database_path else out_dir, "price_benchmark.json")
+    if not os.path.isfile(path):
+        return []
+    with open(path, encoding="utf-8") as handle:
+        settings = json.load(handle)
+    values = settings.get("shop_ids", [])
+    if settings.get("version") != 1 or not isinstance(values, list) or not 1 <= len(values) <= 20:
+        raise ValueError("Price benchmark needs between 1 and 20 fixed shop IDs")
+    if any(type(value) is not int or value <= 0 for value in values) or len(set(values)) != len(values):
+        raise ValueError("Price benchmark IDs must be unique positive integers")
+    return values
 
 
 # -----------------------------------------------------------------------------
@@ -4887,7 +4951,7 @@ MAIN_TMPL = """
         <div class="cardHeader">
           <div>
             <div style="font-weight:800;">Export JSON</div>
-            <div class="small">Generate static JSON files for locate.html / GitHub Pages.</div>
+            <div class="small">Generate the public JSON snapshot for Budfinder.</div>
           </div>
         </div>
         <div class="cardBody">
@@ -7450,6 +7514,8 @@ def create_app(
             "strain_index",
             "updates",
             "home_summary",
+            "price_history",
+            "price_history_shops",
             "manifest",
         }
         if snapshot_name not in allowed:

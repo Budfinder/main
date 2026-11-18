@@ -29,7 +29,7 @@ class Element {
   focus() {}
 }
 
-function harness() {
+function harness({ shared = false } = {}) {
   const elements = new Map([...html.matchAll(/\bid="([^"]+)"/g)]
     .map(([, id]) => [id, new Element()]));
   const modes = [...html.matchAll(/data-browse-mode="([^"]+)"/g)].map(([, mode]) => {
@@ -48,6 +48,7 @@ function harness() {
   };
   const location = { href: 'https://budfinder.org/database.html', search: '', origin: 'https://budfinder.org' };
   const window = new Element();
+  if (shared) window.BudfinderExplore = require('../scripts/budfinder-explore.js');
   const navigate = route => {
     const url = new URL(route, location.href);
     location.href = url.href; location.search = url.search;
@@ -61,7 +62,7 @@ function harness() {
   class FixedDate extends Date { static now() { return fixedNow; } }
   // Initialization waits for a mocked network response, allowing the shipped
   // script to register its real handlers without loading the production dataset.
-  const context = vm.createContext({ document, window, localStorage, URL, URLSearchParams,
+  const context = vm.createContext({ document, window, localStorage, URL, URLSearchParams, AbortController,
     Date: FixedDate, fetch: () => new Promise(() => {}) });
   vm.runInContext(source, context, { filename: 'budfinder-database.js' });
   vm.runInContext('render = () => {}', context);
@@ -83,6 +84,87 @@ test('extracted database assets load in the original cascade and classic script 
   assert.ok(assets.indexOf('styles/budfinder-database-refinements.css') < assets.indexOf('styles/budfinder-menu.css'));
   assert.ok(assets.indexOf('scripts/budfinder-search.js') < assets.indexOf('scripts/budfinder-database.js'));
   assert.match(html, /<script src="scripts\/budfinder-database\.js\?[^"\n]+"><\/script>/);
+});
+
+test('a missing or incomplete shop catalogue never overwrites saved choices', async () => {
+  for (const shops of [null, [], [{}]]) {
+    const h = harness();
+    const before = JSON.stringify(['37','42']);
+    h.memory.set('budfinder_explorer_selected_shops', before);
+    h.memory.set('budfinder_strain_shelf', JSON.stringify(['Gelato']));
+    vm.runInContext('databaseLoading = false', h.context);
+    h.context.loadJson = async path => {
+      if (path.includes('shops.json')) {
+        if (shops === null) throw new Error('offline');
+        return shops;
+      }
+      return path.includes('active_offerings') ? [{shop_id:37}] : {};
+    };
+    h.context.loadText = async () => '';
+    h.context.loadLocationCatalog = async () => ({});
+    await h.context.init();
+    assert.equal(h.memory.get('budfinder_explorer_selected_shops'), before);
+    assert.equal(h.memory.get('budfinder_strain_shelf'), JSON.stringify(['Gelato']));
+    assert.match(h.elements.get('status').innerHTML, /Your saved choices are still on this device/);
+    assert.match(h.elements.get('status').innerHTML, /data-retry-database/);
+  }
+});
+
+test('keyboard users can skip straight to the menu search', () => {
+  const css = fs.readFileSync(path.join(root, 'styles/budfinder-database-refinements.css'), 'utf8');
+  assert.match(html, /class="database-skip-link" href="#search"/);
+  assert.match(css, /\.database-skip-link:focus/);
+  const h = harness();
+  for (const [browser, detail, target] of [
+    ['', null, '#search'], ['rare', null, '#discovery-browser-search'],
+    ['rare', { type: 'strain', key: 'test' }, '#detail-view']
+  ]) {
+    h.state.discoveryBrowser = browser;
+    h.state.detail = detail;
+    h.context.syncDatabaseSkipLink();
+    assert.equal(h.elements.get('database-skip').getAttribute('href'), target);
+  }
+});
+
+test('homepage rare finds opens a directory restricted to two or three distinct shops nationwide', () => {
+  const h = harness({ shared: true });
+  h.state.offerings = [['Solo', [1, 1]], ['Pair', [1, 2]], ['Trio', [1, 2, 3]], ['Common', [1, 2, 3, 4]]]
+    .flatMap(([strain, ids]) => ids.map(id => ({ shop_id: id, shop_city: id === 1 ? 'Breda' : 'Delft',
+      strain_name: strain, strain_name_normalised: strain.toLowerCase(), base_type: 'hybrid', price_amount: 10 })));
+  h.context.buildStats();
+  h.navigate('database.html?mode=rare');
+  h.context.applyInitialUrlState();
+  h.context.renderDiscoveryBrowser();
+  assert.equal(h.elements.get('discovery-browser-count').textContent, '2 available');
+  const route = h.context.navigationUrlForCurrentState();
+  h.navigate(route);
+  h.context.applyInitialUrlState();
+  h.context.setExploreFilters({ city: 'Breda' });
+  h.context.renderDiscoveryBrowser();
+  assert.equal(h.state.discoveryBrowser, 'rare');
+  assert.equal(h.elements.get('discovery-browser-count').textContent, '2 available');
+  const grid = h.elements.get('discovery-browser-grid').innerHTML;
+  assert.match(grid, />Pair</);
+  assert.match(grid, />Trio</);
+  assert.doesNotMatch(grid, />Solo<|>Common</);
+});
+
+test('a stalled database request stops after the timeout instead of hanging on alternate URLs', async () => {
+  const h = harness();
+  let timeout, requests = 0, cleared = false;
+  h.window.setTimeout = callback => { timeout = callback; return 7; };
+  h.window.clearTimeout = id => { if (id === 7) cleared = true; };
+  h.context.fetch = (_url, {signal}) => {
+    requests++;
+    return new Promise((_resolve, reject) => signal.addEventListener('abort', () => {
+      const error = new Error('Aborted'); error.name = 'AbortError'; reject(error);
+    }));
+  };
+  const request = h.context.loadJson('database/active_offerings.json');
+  timeout();
+  await assert.rejects(request, {name:'AbortError'});
+  assert.equal(requests, 1);
+  assert.equal(cleared, true);
 });
 
 test('browser Back restores search, browse mode, comparison view and city context', () => {
@@ -139,6 +221,22 @@ test('saved shops remain separate from strains and preserve map links', () => {
   assert.deepEqual(Array.from(h.state.selected), ['gelato']);
 });
 
+test('price extrema use dates from matching prices only and ignore unknown prices', () => {
+  const { context } = harness();
+  const profile = context.priceProfileForListings([
+    { price_amount: 7, source_menu_date: '2026-05-18' },
+    { price_amount: 7, checked_at: '2026-06-01' },
+    { price_amount: 10, source_menu_date: '2026-09-04' },
+    { price_amount: 16, updated_at: '2026-09-05' },
+    { price_amount: null, source_menu_date: '2026-09-05' }
+  ]);
+  assert.equal(profile.count, 4);
+  assert.equal(profile.low, 7);
+  assert.match(context.priceExtremeTileHtml('Lowest price', profile, profile.low), /Latest menu at this price · 1 Jun 2026/);
+  assert.match(context.priceExtremeTileHtml('Highest price', profile, profile.high), /Menu date unknown/);
+  assert.match(context.priceExtremeTileHtml('Lowest price', profile, null), /No priced listings/);
+});
+
 test('freshness labels retain date priority, age boundaries and unknown batch dates', () => {
   const { context: c, state } = harness();
   const observed = { source_seen_at: '2026-09-04T10:00:00Z' };
@@ -174,6 +272,10 @@ test('menu prices show one-gram amounts once and retain real pack totals and cur
   }
   assert.deepEqual(parts({ package_price_amount: 50, package_weight_g: 3.5, price_amount: null }),
     { primary: '€50 / 3.5g', secondary: '' });
+  assert.equal(c.listingPriceLabel({ price_amount: null }), 'Price unknown');
+  assert.equal(c.listingPriceLabel({ price_amount: 8, package_weight_g: 1, package_price_amount: 8 }), '€8/g');
+  assert.equal(c.listingPriceLabel({ price_amount: 6, price_unit: 'piece' }), '€6/piece');
+  assert.equal(c.listingPriceLabel({ price_amount: 10, package_weight_g: 5, package_price_amount: 50 }), '€50 / 5g · €10/g');
 });
 
 test('menu rows retain grower, flags, notes, dates and safe strain navigation', () => {
@@ -264,4 +366,142 @@ test('dates appear once only when every menu item has the same known date label'
   assert.match(header, /Source menu dated 1 Aug 2026/);
   const mixed = c.shopMenuSectionsHtml(groups, 'mixed-dates');
   assert.equal((mixed.match(/Source menu dated 1 Aug 2026/g) || []).length, 2);
+});
+
+
+test('shared filters survive menu/map handoffs, profile navigation and browser Back', () => {
+  const h = harness({shared:true});
+  h.state.offerings = [
+    {shop_id:105,shop_name:'Jollygood',shop_city:'Amsterdam',strain_name:'Gelato',strain_name_normalised:'gelato',base_type:'hybrid',price_amount:12},
+    {shop_id:106,shop_name:'Other',shop_city:'Utrecht',strain_name:'Gelato',strain_name_normalised:'gelato',base_type:'hybrid',price_amount:8}
+  ];
+  h.state.shopById = new Map([['105',{name:'Jollygood',city:'Amsterdam'}],['106',{name:'Other',city:'Utrecht'}]]);
+  h.state.shops = [{shop_id:105,name:'Jollygood',city:'Amsterdam'},{shop_id:106,name:'Other',city:'Utrecht'}];
+  h.context.buildStats();
+  h.context.setExploreFilters({city:'Amsterdam',price:'under15'});
+  h.elements.get('search').value='Gelato';
+  assert.equal(h.context.exploreRows().length,1);
+  const map = new URL(h.context.exploreMapUrl(),'https://budfinder.org');
+  assert.equal(map.searchParams.get('search'),'Gelato');
+  assert.equal(map.searchParams.get('filter_city'),'Amsterdam');
+  assert.equal(map.searchParams.get('filter_price'),'under15');
+  h.context.openStrainDetail('gelato');
+  assert.equal(new URL(h.location.href).searchParams.get('filter_price'),'under15');
+  assert.equal(h.context.exploreRows().length,1);
+  const route = h.context.detailUrl({browser:'strains'});
+  h.navigate(route+'&browse_search=Gelato&browse_sort=price-low');
+  h.context.applyInitialUrlState();
+  assert.equal(h.elements.get('discovery-browser-search').value,'Gelato');
+  assert.equal(h.state.discoveryBrowserSort,'price-low');
+  assert.equal(h.context.exploreRows().length,1);
+  h.context.setExploreFilters({});
+  assert.equal(h.context.exploreRows().length,2);
+  assert.equal(h.elements.get('discovery-browser-search').value,'Gelato');
+});
+
+
+test('native Back through a shop menu retains the previous strain and search return path', () => {
+  const h=harness({shared:true});
+  h.state.offerings=[{shop_id:105,shop_name:'Jollygood',shop_city:'Amsterdam',strain_name:'Gelato',strain_name_normalised:'gelato',price_amount:12}];
+  h.state.shopById=new Map([['105',{name:'Jollygood',city:'Amsterdam'}]]);
+  h.context.buildStats();h.elements.get('search').value='Gelato';
+  h.context.openStrainDetail('gelato');
+  const profileUrl=h.location.href, profileHistory=h.window.history.state;
+  h.context.openShopDetail('105');
+  h.window.history.state=profileHistory;h.navigate(profileUrl);h.window.listeners.get('popstate')();
+  assert.equal(h.state.detail.type,'strain');
+  assert.equal(h.context.detailBackLabel('fallback'),'← Back to search results');
+  h.context.closeDetail();assert.equal(h.state.detail,null);assert.equal(h.elements.get('search').value,'Gelato');
+});
+
+test('strain profile city choices count shops, update prices, and retain the other filters', () => {
+  const h = harness({ shared: true });
+  const listing = { strain_name: 'Gelato', strain_name_normalised: 'gelato', price_unit: 'g' };
+  h.state.offerings = [
+    { ...listing, shop_id: 1, shop_name: 'Canal', shop_city: 'Amsterdam', price_amount: 9 },
+    { ...listing, shop_id: 1, shop_name: 'Canal', shop_city: 'Amsterdam', price_amount: 8 },
+    { ...listing, shop_id: 2, shop_name: 'Harbour', shop_city: 'Rotterdam', price_amount: 12 },
+    { ...listing, shop_id: 3, shop_name: 'Square', shop_city: 'Utrecht', price_amount: 17 }
+  ];
+  h.state.shopById = new Map(h.state.offerings.map(row => [String(row.shop_id), { name: row.shop_name, city: row.shop_city }]));
+  h.context.buildStats();
+  h.navigate('?detail=strain&strain=Gelato&city=Amsterdam&filter_price=under15');
+  h.context.applyInitialUrlState();
+  const view = h.elements.get('detail-view');
+  const selectCity = value => {
+    view.listeners.get('change')({ target: { value, matches: selector => selector === '[data-profile-city]' } });
+    h.context.renderDetailContents();
+  };
+  h.context.renderDetailContents();
+  assert.match(view.innerHTML, /value="Amsterdam" selected>Amsterdam · 1 shop</);
+  assert.match(view.innerHTML, /All cities · 2 shops/);
+  assert.doesNotMatch(view.innerHTML, /<option[^>]*>Utrecht/);
+  selectCity('Rotterdam');
+  assert.match(view.innerHTML, /value="Amsterdam">Amsterdam · 1 shop</);
+  assert.match(view.innerHTML, /Lowest price<\/span>\s*<strong>€12\/g/);
+  const cards = view.innerHTML.match(/<article class="listing-card">[\s\S]*?<\/article>/g);
+  assert.equal(cards.length, 1);
+  assert.match(cards[0], /<a class="listing-menu-link" href="[^\"]*detail=shop[^\"]*shop_id=2"[^>]*>[^]*?<strong>Harbour<\/strong>/);
+  assert.equal((cards[0].match(/<a href="map\.html\?/g) || []).length, 1);
+  h.context.openShopDetail('2');
+  assert.equal(h.state.detail.shopId, '2');
+  h.context.closeDetail();
+  assert.equal(new URL(h.location.href).searchParams.get('filter_city'), 'Rotterdam');
+  selectCity('');
+  h.context.applyInitialUrlState();
+  h.context.renderDetailContents();
+  assert.match(view.innerHTML, /value="" selected>All cities · 2 shops</);
+  assert.match(view.innerHTML, /Lowest price<\/span>\s*<strong>€8\/g/);
+  assert.equal(new URL(h.location.href).searchParams.get('filter_price'), 'under15');
+});
+
+test('price comparisons reveal their sample and dates, without mixing currencies or unknown prices', () => {
+  const { context: c } = harness();
+  const item = { shop_id: 1, strain_name: 'Test', price_amount: 10, price_currency: '€', source_menu_date: '2026-09-03' };
+  const rows = [item,
+    { ...item, shop_id: 2, price_amount: 20, source_menu_date: '2026-01-01' },
+    { ...item, shop_id: 3, price_amount: 1000, price_currency: '$' },
+    { ...item, shop_id: 4, price_amount: null }];
+  const html = c.priceComparisonHtml(item, rows);
+  assert.match(html, /33% below average/);
+  assert.match(html, /Mean €15\/g/);
+  assert.match(html, /2 priced listings from 2 shops/);
+  assert.match(html, /Mean · 2 shops · small sample · How compared/);
+  const medianHtml = c.priceComparisonHtml(item, rows, 'median');
+  assert.match(medianHtml, /Median · 2 shops · small sample · How compared/);
+  assert.match(medianHtml, /map compares the mean/);
+  assert.match(html, /1 within 14 days · 1 over 60 days old/);
+  assert.match(html, /<details class="price-comparison">/);
+  assert.match(html, /<summary>[^]*How compared/);
+  assert.match(html, /including this listing/);
+  assert.match(html, /not product quality or live stock/);
+  assert.doesNotMatch(html, /1000/);
+});
+
+test('several pack options at one shop are limited data, rather than an average-price endorsement', () => {
+  const { context: c } = harness();
+  const item = { shop_id: 1, strain_name: 'Test', price_amount: 10 };
+  const html = c.priceComparisonHtml(item, [item, { ...item, price_amount: 20 }]);
+  assert.match(html, /Limited price data/);
+  assert.match(html, /At least two shops/);
+  assert.match(html, /2 priced listings from 1 shop/);
+  assert.match(html, /2 with date unknown/);
+  assert.doesNotMatch(html, /Around average|below average|above average/);
+});
+
+
+test('menu searches and strain profile URLs share aliases without merging related records', () => {
+  const {context:c,state} = harness();
+  vm.runInContext(fs.readFileSync(path.join(root,'scripts/budfinder-search.js'),'utf8'), c);
+  state.offerings = [
+    {strain_name:'G-13',strain_name_normalised:'g-13',shop_name:'Shop',shop_city:'Amsterdam',grower:'G13 Genetics'},
+    {strain_name:'G13 Haze',strain_name_normalised:'g13 haze',shop_name:'Other',shop_city:'Amsterdam'}
+  ];
+  state.strainStats = [{key:'g-13',name:'G-13'}, {key:'g13 haze',name:'G13 Haze'}];
+  for (const query of ['g13','G-13','g 13']) {
+    assert.equal(c.discoveryMatchScore('G-13',query),100);
+    assert.equal(c.resolvedGrowerForSearch(query),'');
+    assert.equal(c.getStatByKey(query).key,'g-13');
+  }
+  assert.equal(c.getStatByKey('G13 Haze').key,'g13 haze');
 });

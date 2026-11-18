@@ -14,6 +14,7 @@ import sys
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+from price_history import price_history_errors, shop_price_history_errors
 
 
 ROOT = Path(__file__).resolve().parent
@@ -27,6 +28,8 @@ REQUIRED_JSON = [
     "strain_index.json",
     "search_index.json",
     "home_summary.json",
+    "price_history.json",
+    "price_history_shops.json",
     "updates.json",
 ]
 
@@ -361,6 +364,12 @@ def main() -> int:
                 )
             if summary.get("exported_at_utc") != manifest.get("exported_at_utc"):
                 errors.append("home_summary export timestamp does not match manifest.json")
+            history_path = DATABASE_DIR / "price_history.json"
+            if history_path.exists():
+                errors.extend(price_history_errors(load_json(history_path), summary, manifest))
+            shop_history_path = DATABASE_DIR / "price_history_shops.json"
+            if shop_history_path.exists():
+                errors.extend(shop_price_history_errors(load_json(shop_history_path), manifest))
 
     if warnings:
         print("")

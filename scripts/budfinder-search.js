@@ -30,6 +30,9 @@
       .replace(/&/g, ' and ')
       .replace(/[^a-z0-9]+/g, ' ')
       .replace(/\s+/g, ' ')
+      // Short alphanumeric names use the same search spelling: G-13 / G 13 /
+      // G13, AK-47 / AK47, RS-11 / RS11. Keep suffixes and crosses intact.
+      .replace(/\b([a-z]{1,3}) (\d{1,3})\b/g, '$1$2')
       .trim();
     text = CITY_ALIASES.get(text) || text;
     return memoise(normaliseCache, raw, text);
@@ -146,7 +149,29 @@
       .slice(0, limit);
   }
 
-  const api = Object.freeze({ normalise, simplify, tokens, editDistance, score, matches, rank });
+  function entities(index = {}) {
+    return [
+      ...(index.shops || []).map(row => ({ kind: 'shop', name: row.name, city: row.city, shopId: row.shop_id })),
+      ...(index.strains || []).map(row => ({ kind: 'strain', name: row.name, shopCount: row.shop_count })),
+      ...(index.growers || []).map(row => ({ kind: 'grower', name: row.name, shopCount: row.shop_count, strainCount: row.strain_count })),
+      ...(index.cities || []).map(row => ({ kind: 'city', name: row.name, shopCount: row.shop_count })),
+      ...(index.intents || []).map(row => ({ kind: 'legal', name: row.name, aliases: row.aliases || [] }))
+    ].filter(row => row.name);
+  }
+
+  function suggest(query, candidates, limit = 8) {
+    const priority = { city: 0, shop: 1, area: 2, strain: 3, grower: 4, legal: 5 };
+    return rank(query, candidates, { threshold: normalise(query).length < 3 ? 0.86 : 0.70 })
+      .map(result => ({ ...result, exact: normalise(result.item.name) === normalise(query),
+        rankScore: result.score + (result.item.kind === 'strain'
+          ? Math.min(0.08, Math.log10(Number(result.item.shopCount || 0) + 1) * 0.035) : 0) }))
+      .sort((a, b) => Number(b.exact) - Number(a.exact) || b.rankScore - a.rankScore ||
+        Number(b.item.shopCount || 0) - Number(a.item.shopCount || 0) ||
+        (priority[a.item.kind] ?? 9) - (priority[b.item.kind] ?? 9) || a.item.name.localeCompare(b.item.name))
+      .slice(0, limit);
+  }
+
+  const api = Object.freeze({ normalise, simplify, tokens, editDistance, score, matches, rank, entities, suggest });
   window.BudfinderSearch = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })();

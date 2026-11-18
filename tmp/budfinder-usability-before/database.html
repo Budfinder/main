@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Netherlands Strain Prices &amp; Coffeeshop Menus | Budfinder</title>
+  <meta name="description" content="Search Netherlands coffeeshop menus, filter prices and menu dates, then continue with the same search on the map." />
+  <link rel="canonical" href="https://budfinder.org/database.html" />
+  <meta property="og:title" content="Netherlands Strain Prices &amp; Coffeeshop Menus | Budfinder" />
+  <meta property="og:description" content="Compare lowest and typical prices, shop counts and freshness before opening a detailed comparison." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://budfinder.org/database.html" />
+  <meta property="og:image" content="https://budfinder.org/static/images/budfinder-social.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://budfinder.org/static/images/budfinder-social.png" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://budfinder.org/"},
+        {"@type": "ListItem", "position": 2, "name": "Price & Menus", "item": "https://budfinder.org/database.html"}
+      ]
+    }
+  </script>
+  <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
+  <link rel="stylesheet" href="styles/budfinder-database.css?v=20260905-clarity1" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261028-review2" />
+  <link rel="stylesheet" href="styles/budfinder-database-refinements.css?v=20261028-search3" />
+  <link rel="stylesheet" href="styles/budfinder-menu.css?v=20261028-review2" />
+  <link rel="stylesheet" href="styles/budfinder-explore.css?v=20261028-explore1" />
+
+</head>
+<body>
+  <nav class="app-mode-toggle" aria-label="Switch app view">
+    <a href="index.html">Home</a>
+    <a href="map.html">Map</a>
+    <a class="is-active" href="database.html" aria-current="page">Menus &amp; prices</a>
+    <a href="#settings" data-budfinder-settings-toggle>Settings</a>
+  </nav>
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere-leaves"></div>
+    <div class="smoke-plume smoke-plume-one"></div>
+    <div class="smoke-plume smoke-plume-two"></div>
+    <div class="smoke-plume smoke-plume-three"></div>
+  </div>
+  <main class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="kicker" id="database-personal-greeting">Explore the database</span>
+        <h1>Find a coffeeshop, strain, grower or area</h1>
+        <p class="intro-copy">Start with a name. Budfinder will keep everything else out of the way until you need it.</p>
+      </div>
+    </header>
+
+    <section class="database-search-panel" aria-labelledby="database-search-title">
+      <div class="database-search-head">
+        <div class="database-search-title">
+          <strong id="database-search-title">What are you looking for?</strong>
+          <span>Search strains, growers, coffeeshops, towns, and areas.</span>
+        </div>
+      </div>
+      <div class="field database-search-field">
+        <div class="database-search-input">
+          <label id="search-label" for="search">Search strains, growers, coffeeshops, towns, and areas</label>
+          <input id="search" type="search" placeholder="Amnesia Haze, Karma, De Wedren, Nijmegen…" autocomplete="off" aria-controls="discovery-results" />
+          <button id="database-search-submit" type="button">Search</button>
+        </div>
+        <div id="search-chip-row" class="database-quick-chips" aria-label="Quick searches">
+          <button type="button" data-search-chip="Gelato">Gelato</button>
+          <button type="button" data-search-chip="Amnesia Haze">Amnesia Haze</button>
+          <button type="button" data-search-chip="Karma">Karma</button>
+          <button type="button" data-search-chip="Family First">Family First</button>
+          <button type="button" data-search-chip="Legal weed">Legal weed</button>
+        </div>
+        <div class="field-note">Coffeeshop names open the menu browser automatically.</div>
+        <div class="search-scope-row" hidden>
+          <label for="search-city-scope">Search in</label>
+          <select id="search-city-scope">
+            <option value="">All Netherlands</option>
+          </select>
+        </div>
+      </div>
+      <div class="explore-view-links" aria-label="View these results">
+        <span aria-current="page">Menus &amp; prices</span><a href="map.html" data-explore-map-link>Map results</a>
+      </div>
+      <div id="database-explore-filters" class="explore-filters"></div>
+    </section>
+
+    <p id="status" class="status is-visible" role="status" aria-live="polite" aria-atomic="true">Loading nationwide menu data...</p>
+
+    <p id="database-data-note" class="database-data-note">Menu dates describe source menus or observations. Prices and availability may have changed.</p>
+
+    <section id="discovery-suggestions" class="discovery-suggestions" aria-labelledby="discovery-suggestions-title">
+      <h2 id="discovery-suggestions-title" class="discovery-intro">A few useful places to begin.</h2>
+      <div id="discovery-suggestion-groups"></div>
+    </section>
+
+    <section id="discovery-results" class="discovery-results" aria-live="polite" hidden>
+      <div class="discovery-group-head">
+        <h2 id="discovery-results-title">Search results</h2>
+        <span id="discovery-results-count"></span>
+      </div>
+      <div id="discovery-result-groups"></div>
+    </section>
+
+    <section id="discovery-browser" class="discovery-browser" aria-live="polite" hidden>
+      <div class="discovery-browser-topbar">
+        <button class="discovery-browser-back" type="button" data-close-discovery-browser>← Back to database home</button>
+      </div>
+      <div class="discovery-browser-heading">
+        <div>
+          <h2 id="discovery-browser-title" tabindex="-1">Browse</h2>
+          <p id="discovery-browser-copy"></p>
+        </div>
+      </div>
+      <div class="discovery-browser-search">
+        <label id="discovery-browser-search-label" for="discovery-browser-search">Filter</label>
+        <input id="discovery-browser-search" type="search" autocomplete="off" />
+      </div>
+      <div class="explore-view-links" aria-label="View these results">
+        <span aria-current="page">Menus &amp; prices</span><a href="map.html" data-explore-map-link>Map results</a>
+      </div>
+      <div id="browser-explore-filters" class="explore-filters"></div>
+      <div class="discovery-browser-filters" aria-label="Browse filters">
+        <label class="discovery-browser-filter" for="discovery-browser-sort">
+          Sort by
+          <select id="discovery-browser-sort"></select>
+        </label>
+        <label class="discovery-browser-filter" for="discovery-browser-freshness" hidden>
+          Menu age
+          <select id="discovery-browser-freshness">
+            <option value="all">Any menu age</option>
+            <option value="fresh">Menu date within 14 days</option>
+            <option value="ageing">Menu date 15–60 days ago</option>
+            <option value="stale">Menu date over 60 days ago</option>
+            <option value="unknown">Menu date unknown</option>
+          </select>
+        </label>
+        <label class="discovery-browser-filter" for="discovery-browser-price" hidden>
+          Average price
+          <select id="discovery-browser-price">
+            <option value="all">Any price</option>
+            <option value="under10">Under €10/g</option>
+            <option value="under15">Under €15/g</option>
+            <option value="under20">Under €20/g</option>
+            <option value="over20">€20/g and over</option>
+            <option value="unknown">Price unknown</option>
+          </select>
+        </label>
+        <label class="discovery-browser-filter" for="discovery-browser-type" hidden>
+          Type
+          <select id="discovery-browser-type">
+            <option value="all">All types</option>
+            <option value="sativa">Sativa</option>
+            <option value="indica">Indica</option>
+            <option value="hybrid">Hybrid</option>
+            <option value="hash">Hash</option>
+          </select>
+        </label>
+        <button id="discovery-browser-filter-reset" class="discovery-browser-filter-reset" type="button" hidden>Reset filters</button>
+        <div id="discovery-browser-filter-status" class="discovery-browser-filter-status" role="status" aria-live="polite"></div>
+      </div>
+      <div class="discovery-browser-results-head">
+        <span id="discovery-browser-count"></span>
+        <span id="discovery-browser-order">A–Z</span>
+      </div>
+      <div id="discovery-browser-grid" class="discovery-grid"></div>
+      <div id="discovery-browser-more" class="discovery-browser-more" hidden>
+        <button type="button" data-load-more-discovery-browser>Show more</button>
+      </div>
+    </section>
+
+    <section id="detail-view" class="database-detail panel" aria-live="polite" hidden></section>
+
+    <div id="database-layout" class="layout">
+      <aside class="panel side-panel">
+        <span class="filter-label">Browse mode</span>
+        <div class="segmented" role="group" aria-label="View mode">
+          <button class="is-active" type="button" data-view="strains">Strain Price Guide</button>
+          <button type="button" data-view="shops">Shop Menu Browser</button>
+        </div>
+
+        <details class="research-disclosure">
+          <summary>Refine results</summary>
+        <div class="field">
+          <span class="filter-label">Quick filters</span>
+          <div id="browse-mode-grid" class="browse-mode-grid" role="group" aria-label="Browse mode">
+            <button class="is-active" type="button" data-browse-mode="value">Best value</button>
+            <button type="button" data-browse-mode="available">Most stocked</button>
+            <button type="button" data-browse-mode="fresh">Fresh menus</button>
+            <button type="button" data-browse-mode="under10">Under €10</button>
+            <button type="button" data-browse-mode="rare">2-3 shop finds</button>
+            <button type="button" data-browse-mode="cali">Cali available</button>
+            <button type="button" data-browse-mode="sativa">Sativa</button>
+            <button type="button" data-browse-mode="hybrid">Hybrid</button>
+            <button type="button" data-browse-mode="indica">Indica</button>
+            <button type="button" data-browse-mode="az">A-Z</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="filter-label">Family</span>
+          <div id="family-filter-grid" class="family-filter-grid" role="group" aria-label="Strain family">
+            <button class="is-active" type="button" data-family-filter="">
+              <span>All families</span>
+              <small>Loading</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-grid location-filter-grid">
+          <div class="field location-filter-field">
+            <label for="location-dataset-filter">Town or city</label>
+            <select id="location-dataset-filter">
+              <option value="">All Netherlands</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-grid">
+          <div class="field">
+            <label for="type-filter">Type</label>
+            <select id="type-filter">
+              <option value="">All types</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="legal-filter">Legal project</label>
+            <select id="legal-filter">
+              <option value="">All products</option>
+              <option value="1">Legal-project products</option>
+              <option value="0">Other products</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-grid">
+          <div class="field">
+            <label for="cali-filter">Cali</label>
+            <select id="cali-filter">
+              <option value="">All</option>
+              <option value="1">Cali only</option>
+              <option value="0">Non-Cali</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sort-filter">Sort</label>
+            <select id="sort-filter">
+              <option value="">Mode order</option>
+              <option value="deals">Best deals</option>
+              <option value="availability">Most available</option>
+              <option value="cheapest">Lowest price</option>
+              <option value="average">Average price</option>
+              <option value="name">A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="price-band">
+          <div class="price-band-head">
+            <span class="filter-label">Price band</span>
+            <span id="price-band-value" class="price-band-value">Any price</span>
+          </div>
+          <div class="range-stack">
+            <input id="price-min" type="range" min="0" max="50" step="0.5" value="0" aria-label="Minimum price" />
+            <input id="price-max" type="range" min="0" max="50" step="0.5" value="50" aria-label="Maximum price" />
+          </div>
+        </div>
+        </details>
+
+        <details class="saved-disclosure">
+          <summary>Saved strains and shops</summary>
+        <div class="field">
+          <label>Saved strains</label>
+          <div id="selected-list" class="selected-list">
+            <div class="empty">No saved strains yet. Search a strain, then save it for comparison.</div>
+          </div>
+          <button id="show-wanted-map" type="button" disabled>View on map</button>
+        </div>
+
+        <button id="clear-selected" type="button">Clear saved strains</button>
+
+        <div class="field" style="margin-top:14px;">
+          <label>Saved shops</label>
+          <div id="selected-shop-list" class="selected-list">
+            <div class="empty">No saved shops yet. Save shops from the results, then view them on the map.</div>
+          </div>
+          <div class="side-action-row">
+            <button id="show-selected-shops-map" type="button" disabled>View on map</button>
+            <button id="clear-selected-shops" type="button">Clear saved shops</button>
+          </div>
+        </div>
+        </details>
+      </aside>
+
+      <section class="main-stack">
+        <section id="quick-answer" class="quick-answer panel is-empty" aria-live="polite" hidden></section>
+
+        <section class="metrics" aria-label="Explorer totals">
+          <div class="metric">
+            <span id="metric-average" class="metric-value">Loading...</span>
+            <span class="metric-label">Average price / g</span>
+          </div>
+          <button class="metric" type="button" data-metric-browse-mode="available" aria-label="Show strains ordered by most commonly stocked">
+            <span id="metric-most-stocked" class="metric-value">Loading...</span>
+            <span class="metric-label">Most commonly stocked</span>
+          </button>
+          <button class="metric" type="button" data-metric-browse-mode="rare" aria-label="Show strains stocked in two or three shops">
+            <span id="metric-rare" class="metric-value">Loading...</span>
+            <span class="metric-label">In 2–3 shops</span>
+          </button>
+          <div class="metric">
+            <span id="metric-shops" class="metric-value">Loading...</span>
+            <span class="metric-label">Shops represented</span>
+          </div>
+        </section>
+
+        <section id="strains-view" class="panel">
+          <div class="section-head">
+            <div>
+              <h2>Strain Price Guide</h2>
+              <p id="strains-summary">Search a strain to compare typical prices, value signals, shops, and data age.</p>
+            </div>
+          </div>
+          <div id="price-guide-panel" class="price-guide-panel" aria-live="polite" hidden></div>
+          <div id="browse-summary" class="browse-summary" aria-label="Active browse filters"></div>
+          <div id="strain-grid" class="strain-grid"></div>
+          <div id="strain-more-row" class="strain-more-row" hidden>
+            <button id="load-more-strains" type="button">Show more</button>
+          </div>
+        </section>
+
+        <section id="compare-view" class="panel" hidden>
+          <div class="section-head">
+            <div>
+              <h2>Compare saved strains</h2>
+              <p id="compare-summary">Find shops carrying several saved strains at once.</p>
+            </div>
+          </div>
+          <div id="common-shop-board" class="common-shop-board"></div>
+          <div id="route-plan-board" class="route-plan-board"></div>
+          <div id="comparison-grid" class="comparison-grid"></div>
+        </section>
+
+        <section id="shops-view" class="panel" hidden>
+          <div class="section-head">
+            <div>
+              <h2>Shop Menu Browser</h2>
+              <p id="shops-summary">Select a coffeeshop to scan its known menu by category, price, and data age.</p>
+            </div>
+          </div>
+          <div class="shop-browser-controls" aria-label="Shop menu browser controls">
+            <div class="field">
+              <label for="shop-browser-search">Find a coffeeshop</label>
+              <input id="shop-browser-search" type="search" placeholder="Try Terps Army, Family First, or The Plug..." autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="shop-browser-select">Selected shop</label>
+              <select id="shop-browser-select">
+                <option value="">Loading shops...</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="shop-menu-sort">Sort menu</label>
+              <select id="shop-menu-sort">
+                <option value="name">A-Z</option>
+                <option value="cheapest">Lowest price</option>
+                <option value="newest">Newest data signal</option>
+                <option value="judgement">Best value label</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="shop-category-filter">Category</label>
+              <select id="shop-category-filter">
+                <option value="">All categories</option>
+              </select>
+            </div>
+            <label class="shop-browser-check">
+              <input id="shop-hide-unknown-prices" type="checkbox" />
+              <span>Hide price unknown</span>
+            </label>
+          </div>
+          <div id="shop-menu-browser" class="shop-menu-browser" aria-live="polite"></div>
+          <div id="shop-list" class="shop-list"></div>
+        </section>
+      </section>
+    </div>
+
+    <div class="result-toolbar" aria-label="Database navigation">
+      <span id="result-context" class="result-context">Loading Amsterdam menu data...</span>
+      <div class="result-toolbar-actions">
+        <button id="jump-filters" type="button">Filters</button>
+        <button id="jump-results" type="button">Results</button>
+      </div>
+    </div>
+
+    <details class="workflow-strip launch-notes" aria-label="Database workflow">
+      <summary>Data notes</summary>
+      <div class="workflow-step">
+        <span>Mode 1</span>
+        <strong>Strain Price Guide</strong>
+        <p>Search a strain, compare typical prices, and spot good-value listings.</p>
+      </div>
+      <div class="workflow-step">
+        <span>Mode 2</span>
+        <strong>Shop Menu Browser</strong>
+        <p>Pick a coffeeshop and scan the full known menu by category, price, and data age.</p>
+      </div>
+      <div class="workflow-step">
+        <span>Data note</span>
+        <strong>Check before travelling</strong>
+        <p>Data age badges show when a known listing was last seen, using real listing dates only.</p>
+      </div>
+      <p class="trust-note">Menus change quickly. Budfinder compares known menu listings and prices as planning guidance, not stock guarantees. Check before travelling across town for a specific item, follow local laws and coffeeshop rules, and use location only when you choose location-based map features.</p>
+    </details>
+  </main>
+
+  <button id="jump-top" class="jump-top-btn" type="button">Top</button>
+
+  <script src="scripts/budfinder-logos.js?v=20260830-missing1"></script>
+  <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260905-refine1"></script>
+  <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
+  <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
+  <script src="scripts/budfinder-database.js?v=20261028-search3"></script>
+</body>
+</html>

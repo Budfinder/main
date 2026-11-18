@@ -1,0 +1,413 @@
+/* A dependency-free chart using the same colours and controls as the homepage. */
+.market-snapshot {
+  /* Make layout available for chart sizing and links to this section. */
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}
+
+.price-history [hidden] {
+  display: none !important;
+}
+
+.price-history {
+  scroll-margin-top: 84px;
+  grid-column: 1 / -1;
+  min-width: 0;
+  padding: clamp(16px, 3vw, 26px);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  background: var(--panel-alt);
+}
+
+.price-history-head,
+.price-history-controls,
+.price-history-readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.price-history h3 {
+  margin: 5px 0 7px;
+  color: var(--ink);
+  font-size: clamp(22px, 2.6vw, 28px);
+  line-height: 1.2;
+}
+
+.price-history-head p,
+.price-history-note,
+.price-history-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.price-history-controls {
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.price-history-location {
+  display: grid;
+  gap: 6px;
+  flex: 1 1 190px;
+  max-width: 300px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.price-history select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  background: var(--panel-strong);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  text-transform: none;
+}
+
+.price-history-ranges {
+  display: flex;
+  gap: 4px;
+  align-self: end;
+  padding: 3px;
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  background: var(--panel-strong);
+}
+
+.price-history-ranges button {
+  min-width: 54px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.price-history-ranges button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.price-history-stamp {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.price-history-readout {
+  align-items: end;
+  min-height: 88px;
+  margin: 18px 0 8px;
+}
+
+.price-history-readout strong {
+  display: block;
+  color: var(--ink);
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 800;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.price-history-readout span,
+.price-history-readout p {
+  display: block;
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.price-history-plot {
+  min-width: 0;
+  width: 100%;
+  min-height: 260px;
+  color: var(--accent);
+  border-radius: 10px;
+  touch-action: pan-y;
+}
+
+.price-history-plot svg {
+  display: block;
+  width: 100%;
+  height: 260px;
+  overflow: visible;
+}
+
+.price-history-grid {
+  stroke: var(--panel-border);
+  stroke-width: 1;
+}
+
+.price-history-axis {
+  fill: var(--muted);
+  font: 11px system-ui, sans-serif;
+}
+
+.price-history-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.price-history-shop-trace path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .18;
+  pointer-events: stroke;
+}
+
+.price-history-shop-trace:hover path {
+  opacity: .7;
+  stroke-width: 2;
+}
+
+.price-history-trace-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  margin: 4px 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.price-history-main-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.price-history-main-legend::before {
+  content: '';
+  width: 24px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--accent);
+}
+
+.price-history-trace-control label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.price-history-trace-control input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.price-history-dot {
+  fill: currentColor;
+  opacity: .65;
+}
+
+.price-history-guide {
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+  opacity: .5;
+}
+
+.price-history-selected {
+  fill: var(--panel-strong);
+  stroke: currentColor;
+  stroke-width: 3;
+}
+
+.price-history-instructions {
+  margin: 3px 0 12px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.price-history-status:not([hidden]) {
+  padding: 14px 0;
+}
+
+.price-history-details {
+  margin-top: 14px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.price-history-details summary {
+  display: list-item;
+  min-height: 44px;
+  padding-top: 13px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.price-history-details p {
+  max-width: 85ch;
+  margin: 10px 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.price-history-table {
+  max-height: 280px;
+  margin-top: 16px;
+  overflow: auto;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  scrollbar-width: thin;
+}
+
+.price-history-shops {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px 0 14px;
+}
+
+.price-history-shops a {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.price-history-shops strong {
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.price-history-shops span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.price-history-shops a:hover {
+  border-color: var(--accent);
+}
+
+.price-history table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--ink);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.price-history th,
+.price-history td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--panel-border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.price-history th:first-child {
+  text-align: left;
+}
+
+.price-history thead th {
+  position: sticky;
+  top: 0;
+  background: var(--panel-strong);
+}
+
+.price-history :focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.price-history-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 680px) {
+  .price-history {
+    scroll-margin-top: 16px;
+  }
+
+  .price-history-location {
+    max-width: none;
+    flex-basis: 100%;
+  }
+
+  .price-history-shops {
+    grid-template-columns: 1fr;
+  }
+
+  .price-history-ranges {
+    width: 100%;
+  }
+
+  .price-history-ranges button {
+    flex: 1;
+  }
+
+  .price-history-readout {
+    display: block;
+    min-height: 94px;
+    margin-top: 14px;
+  }
+
+  .price-history-head {
+    gap: 8px;
+  }
+
+  .price-history-controls {
+    margin-top: 16px;
+  }
+
+  .price-history-plot,
+  .price-history-plot svg {
+    min-height: 240px;
+    height: 240px;
+  }
+
+  .price-history th,
+  .price-history td {
+    padding-inline: 9px;
+  }
+}

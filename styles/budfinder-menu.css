@@ -365,3 +365,21 @@ body .menu-row-signals > .menu-listing-meta {
     display: none;
   }
 }
+
+/* Every price signal explains its sample and dates by keyboard or touch. */
+body .menu-row-signals > .price-comparison { padding: 0; font-size: 12px; font-weight: 400; }
+.price-comparison { max-width: 100%; min-width: 0; }
+.price-comparison summary {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  min-height: 44px; cursor: pointer; list-style: none;
+}
+.price-comparison summary::-webkit-details-marker { display: none; }
+.price-comparison summary::before { content: '▸'; color: var(--muted); }
+.price-comparison[open] summary::before { content: '▾'; }
+.comparison-prompt { color: var(--muted); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.price-comparison summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 5px; }
+.price-comparison[open] { flex-basis: 100%; }
+.price-comparison-copy { padding: 10px 12px; border-left: 2px solid var(--panel-border); background: var(--panel-alt); }
+.price-comparison-copy p { margin: 0 0 8px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.price-comparison-copy p:first-child { color: var(--ink); }
+.price-comparison-copy p:last-child { margin-bottom: 0; }

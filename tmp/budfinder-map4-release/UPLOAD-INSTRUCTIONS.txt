@@ -1,0 +1,21 @@
+Budfinder map view and clear-filters fixes (29 October 2026)
+
+Complete upload package, including the preceding usability and search releases.
+Keep the existing folder structure and replace files in the website root:
+1. Upload the 5 JavaScript files inside scripts/ to scripts/.
+2. Upload the 5 CSS files inside styles/ to styles/.
+3. Upload index.html, database.html and map.html to the website root LAST.
+4. Reload. The map script and map controls use cache version 20261029-map4.
+
+For this latest fix alone, the changed website files are:
+- scripts/budfinder-map.js
+- styles/budfinder-map-controls.css
+- map.html
+
+No database/menu export is required. No admin application files are included.
+
+Verify: zoom into a city, switch to menus and back; the view should be retained.
+A new browser defaults to Amsterdam. Clear all filters removes searches and menu
+filters without zooming out or deleting planned route stops.
+
+Validation: 128 JavaScript tests, Python/static/data checks, and browser checks.

@@ -11,6 +11,8 @@
     'budfinder_strain_shelf',
     'locate3_strain_shelf',
     'budfinder_saved_journeys',
+    'budfinder_skunkworks_v1',
+    'budfinder_custom_price_benchmark_v1',
     'budfinder_map_focus_shops',
     'budfinder_map_sessions_v1',
     'budfinder_explorer_selected_shops',
@@ -380,7 +382,7 @@
             <button id="site-confirm-clear-data" class="site-settings-button danger" type="button">Confirm clear</button>
             <button id="site-cancel-clear-data" class="site-settings-button" type="button">Cancel</button>
           </div>
-          <p class="site-settings-note">Saved shops, saved strains, routes, ratings, notes and recent destinations are stored on this device.</p>
+          <p class="site-settings-note">Saved shops, saved strains, routes, ratings, notes, recent destinations and personal discovery preferences are stored on this device.</p>
         </section>
 
         <details class="site-settings-section site-settings-appearance">
@@ -606,6 +608,7 @@
 
     panel.querySelector('#site-confirm-clear-data').addEventListener('click', () => {
       SAVED_DATA_STORAGE_KEYS.forEach(removeStorageKey);
+      window.dispatchEvent(new CustomEvent('budfinder:saved-data-cleared'));
       confirmWrap.hidden = true;
       clearDataButton.setAttribute('aria-expanded', 'false');
       clearDataButton.focus();

@@ -136,7 +136,7 @@ function harness(options = {}) {
   const data = {
     'database/home_summary.json': summary(averagePrice),
     'database/manifest.json': { exported_at_utc: snapshot },
-    'database/search_index.json': {
+    'database/search_index.json': options.searchIndex || {
       strains: [
         { name: 'Gelato', shop_count: 6 },
         { name: 'Gelato 33', shop_count: 4 },
@@ -148,6 +148,7 @@ function harness(options = {}) {
   };
   const windowEvents = new Element('window');
   const window = {
+    BudfinderExplore: options.noExplore ? undefined : require('../scripts/budfinder-explore.js'),
     location: { href: 'https://budfinder.org/index.html' },
     addEventListener: windowEvents.addEventListener.bind(windowEvents),
     dispatch: windowEvents.dispatch.bind(windowEvents),
@@ -173,10 +174,10 @@ function harness(options = {}) {
     observe(element) { this.elements.push(element); }
     disconnect() { this.elements = []; }
   }
-  const context = vm.createContext({ window, document, fetch, URL, AbortController, ResizeObserver, console });
+  const context = vm.createContext({ window, document, fetch, URL, URLSearchParams, AbortController, ResizeObserver, console });
   vm.runInContext(searchSource, context, { filename: 'budfinder-search.js' });
   vm.runInContext(homeSource, context, { filename: 'budfinder-home.js' });
-  return { get, window, timers, requests, observers };
+  return { get, window, timers, requests, observers, document };
 }
 
 const settle = () => new Promise(resolve => setImmediate(resolve));
@@ -215,9 +216,63 @@ test('editing a selected suggestion and immediately submitting uses the new quer
   assert.equal(app.get('home-search-results').hidden, true);
   app.get('home-search-form').dispatch('submit');
   const target = new URL(app.window.location.href, 'https://budfinder.org/');
-  assert.equal(target.pathname, '/map.html');
+  assert.equal(target.pathname, '/database.html');
   assert.equal(target.searchParams.get('search'), 'Amnesia Haze');
-  assert.equal(target.searchParams.get('city'), 'Netherlands');
+  assert.equal(target.searchParams.get('detail'), 'strain');
+  assert.equal(target.searchParams.get('strain'), 'Amnesia Haze');
+});
+
+test('featured strain links open a specific profile and the all-strains link opens the browser', async () => {
+  const app = harness();
+  await settle();
+  const href = app.get('home-most-common-list').innerHTML.match(/href="([^"]+)"/)[1].replaceAll('&amp;', '&');
+  const url = new URL(href, app.window.location.href);
+  assert.equal(url.pathname, '/database.html');
+  assert.equal(url.searchParams.get('detail'), 'strain');
+  assert.equal(url.searchParams.get('strain'), 'Gelato');
+  assert.match(homepage, /href="database\.html\?browser=strains">Explore all strains/);
+});
+
+test('a whitespace-only search invokes the required-field feedback', async () => {
+  const app = harness();
+  await settle();
+  const input = app.get('home-search-input');
+  let validityReported = false;
+  input.focus = () => { app.document.activeElement = input; };
+  input.reportValidity = () => { validityReported = true; };
+  input.value = '   ';
+  app.get('home-search-form').dispatch('submit');
+  assert.equal(input.value, '');
+  assert.equal(app.document.activeElement, input);
+  assert.equal(validityReported, true);
+  assert.equal(app.window.location.href, 'https://budfinder.org/index.html');
+});
+
+test('Escape preserves the typed query and a late search-index response respects dismissal', async () => {
+  const app = harness({ hang: ['database/search_index.json'] });
+  await settle();
+  const input = app.get('home-search-input');
+  app.document.activeElement = input;
+  enterQuery(app, 'Gelato');
+  assert.equal(input.getAttribute('aria-expanded'), 'true');
+  assert.equal(input.dispatch('keydown', { key: 'Escape' }).defaultPrevented, true);
+  app.timers.advance(12000);
+  await settle();
+  assert.equal(input.getAttribute('aria-expanded'), 'false');
+  assert.equal(app.get('home-search-results').hidden, true);
+  assert.equal(input.value, 'Gelato');
+});
+
+test('an unmatched query announces feedback separately from the listbox, and Tab dismisses it', async () => {
+  const app = harness();
+  await settle();
+  const input = app.get('home-search-input');
+  enterQuery(app, 'zzzzqqx');
+  assert.equal(input.getAttribute('aria-expanded'), 'false');
+  assert.equal(app.get('home-search-results').hidden, true);
+  assert.match(app.get('home-search-status').textContent, /No close suggestion/);
+  assert.equal(input.dispatch('keydown', { key: 'Tab' }).defaultPrevented, false);
+  assert.equal(app.get('home-search-status').textContent, '');
 });
 
 test('Escape cancels a pending suggestion render and keeps the dropdown dismissed', async () => {
@@ -234,7 +289,7 @@ test('Escape cancels a pending suggestion render and keeps the dropdown dismisse
   assert.equal(app.get('home-search-status').textContent, '');
 });
 
-test('ArrowUp starts at the last suggestion, wraps, and Enter opens the active result', async () => {
+test('ArrowUp starts at the last suggestion, wraps, and Enter selects without leaving the form', async () => {
   const app = harness();
   await settle();
   enterQuery(app, 'Gelato');
@@ -248,6 +303,9 @@ test('ArrowUp starts at the last suggestion, wraps, and Enter opens the active r
   input.dispatch('keydown', { key: 'ArrowDown' });
   assert.equal(input.getAttribute('aria-activedescendant'), options[0].id);
   input.dispatch('keydown', { key: 'Enter' });
+  assert.equal(input.value, 'Gelato');
+  assert.equal(app.window.location.href, 'https://budfinder.org/index.html');
+  app.get('home-search-form').dispatch('submit', { submitter: app.get('home-search-map') });
   assert.equal(new URL(app.window.location.href, 'https://budfinder.org/').searchParams.get('search'), 'Gelato');
 });
 
@@ -265,11 +323,12 @@ test('immediate keyboard selection survives the input debounce interval', async 
   assert.equal(input.getAttribute('aria-activedescendant'), 'home-search-result-0');
   assert.equal(options[0].getAttribute('aria-selected'), 'true');
   input.dispatch('keydown', { key: 'Enter' });
+  app.get('home-search-form').dispatch('submit');
   assert.equal(new URL(app.window.location.href, 'https://budfinder.org/').searchParams.get('search'), 'Gelato');
 });
 
-test('failed data requests replace loading placeholders and leave search usable', async () => {
-  const app = harness({ fail: ['database/home_summary.json', 'database/updates.json'] });
+test('failed data requests and a missing shared search script leave plain search usable', async () => {
+  const app = harness({ noExplore: true, fail: ['database/home_summary.json', 'database/updates.json'] });
   await settle();
   for (const id of [
     'catalog-shop-count', 'catalog-listing-count', 'home-average-price', 'home-most-common',
@@ -295,6 +354,27 @@ test('a stalled request is aborted and the dashboard settles instead of loading 
   assert.equal(app.get('amsterdam-insights').dataset.ready, 'true');
   assert.equal(app.get('home-average-price').textContent, 'Unavailable');
   assert.equal(app.timers.pending, 0);
+});
+
+test('a slow updates feed does not delay the summary or search suggestions', async () => {
+  const app = harness({ hang: ['database/updates.json'] });
+  await settle();
+  assert.equal(app.get('amsterdam-insights').dataset.ready, 'true');
+  assert.equal(app.get('home-average-price').textContent, '€10/g');
+  enterQuery(app, 'Gelato');
+  assert.match(app.get('home-search-results').innerHTML, /Gelato/);
+  app.timers.advance(12000);
+  await settle();
+  assert.match(app.get('home-updates').innerHTML, /could not be loaded/i);
+});
+
+test('the search index remains usable while the summary is slow', async () => {
+  const app = harness({ hang: ['database/home_summary.json'] });
+  await settle();
+  enterQuery(app, 'Amnesia Haze');
+  assert.match(app.get('home-search-results').innerHTML, /Amnesia Haze/);
+  app.timers.advance(12000);
+  await settle();
 });
 
 const updates = count => Array.from({ length: count }, (_, index) => ({
@@ -355,3 +435,42 @@ test('update text stays escaped and only web links are offered', async () => {
   assert.match(html, /href="database.html\?browser=shops">Browse &lt;menus&gt;/);
   assert.match(html, /href="https:\/\/example.com\/news" target="_blank" rel="noopener noreferrer"/);
 });
+
+
+test('exact city suggestions lead popular partial strains and submit without changing the place', async () => {
+  const app = harness({ searchIndex: {
+    cities: [{ name: 'Amsterdam', shop_count: 163 }],
+    strains: [{ name: 'Amsterdam Haze', shop_count: 500 }],
+    growers: [{ name: 'Amsterdam Exotics', shop_count: 1, strain_count: 1 }]
+  } });
+  await settle();
+  enterQuery(app, 'Amsterdam');
+  const options = app.get('home-search-results').innerHTML;
+  assert.ok(options.indexOf('<strong>Amsterdam</strong>') < options.indexOf('<strong>Amsterdam Haze</strong>'));
+  assert.match(options, />Town<\/span>/);
+  assert.match(options, />Grower<\/span>/);
+  app.get('home-search-form').dispatch('submit');
+  const target = new URL(app.window.location.href, 'https://budfinder.org/');
+  assert.equal(target.searchParams.get('search'), 'Amsterdam');
+  assert.equal(target.searchParams.get('filter_city'), 'Amsterdam');
+  assert.equal(target.searchParams.get('browser'), 'shops');
+});
+
+
+for (const query of ['g13', 'G-13', 'g 13']) {
+  test(`homepage ${query} keeps the exact strain and type through the map URL`, async () => {
+    const app = harness({searchIndex:{strains:[
+      {name:'G13 Haze',shop_count:500}, {name:'G-13',shop_count:14}
+    ]}});
+    await settle();
+    enterQuery(app, query);
+    const html = app.get('home-search-results').innerHTML;
+    assert.ok(html.indexOf('<strong>G-13</strong>') < html.indexOf('<strong>G13 Haze</strong>'));
+    assert.match(html, /Exact match/);
+    app.get('home-search-form').dispatch('submit', { submitter: app.get('home-search-map') });
+    const url = new URL(app.window.location.href, 'https://budfinder.org/');
+    assert.equal(url.pathname, '/map.html');
+    assert.equal(url.searchParams.get('search'), 'G-13');
+    assert.equal(url.searchParams.get('search_kind'), 'strain');
+  });
+}

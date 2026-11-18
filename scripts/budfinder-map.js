@@ -3,6 +3,7 @@
     // =========================================================
 
     let map = null;
+    let mapFocusRequestId = 0; // Prevent an old map flight reopening a cleared place.
     let baseTileLayer = null;
     let initialMapReadyFallbackTimer = null;
     let initialMapPanelHideTimer = null;
@@ -25,15 +26,215 @@
     let directionsVisible = false; // directions panel visibility
     let shelfVisible = false;      // stash shelf overlay visibility
     let heroPopupVisible = false; // intro popup is opt-in from settings.
-    let selectionCardCollapsed = false; // compact landscape destination card state
-    let previousCompactLandscapeLayout = false;
     let strainListVisible = false; // Strain matching stays collapsed until requested.
     let viewportResyncTimers = [];
     let uiTogglePositionTimer = null;
     let locationSearchText = '';
+    let mapSearchViewCity = '';
+    let mapSearchViewAllCities = false;
+    let mapSearchViewQuery = '';
+    let mobileShopState = null; // Live popup DOM is temporarily hosted by the mobile dialog.
+    let mobileSearchUnoccludedHeight = 0; // Remember the phone viewport before its keyboard opens.
+    let mobileSearchViewportWidth = 0; // Reset the keyboard baseline after an orientation change.
+
+    function currentMapSearchCity(useViewport = true) {
+      if (sharedMenuFilters.city) return sharedMenuFilters.city;
+      // A panned, zoomed-in map is stronger context than its opening city selector.
+      if (useViewport && map && map.getZoom() >= 10) {
+        const center = map.getCenter();
+        let closest = null;
+        locations.forEach(loc => {
+          if (!loc || !loc.city || !isCoffeeShopLocation(loc) || !Array.isArray(loc.coords) || !loc.coords.every(Number.isFinite)) return;
+          const distance = haversineDistance([center.lat, center.lng], loc.coords);
+          if (distance <= 25000 && (!closest || distance < closest.distance)) closest = { city: loc.city, distance };
+        });
+        if (closest) return closest.city;
+      }
+      return currentCsvPath && !isMasterCoffeeshopPath(currentCsvPath) ? csvLabelFromPath(currentCsvPath) : '';
+    }
+
+    function beginMapSearchView(query, options = {}) {
+      const text = String(query || '').trim();
+      if (!text) {
+        mapSearchViewCity = '';
+        mapSearchViewAllCities = false;
+        mapSearchViewQuery = '';
+        return;
+      }
+      if (!options.force && normaliseText(text) === normaliseText(mapSearchViewQuery)) return;
+      const params = new URLSearchParams(window.location.search || '');
+      mapSearchViewCity = options.fromUrl ? String(params.get('search_city') || '').trim().slice(0, 100) : '';
+      if (!mapSearchViewCity) mapSearchViewCity = currentMapSearchCity(!options.fromUrl);
+      mapSearchViewAllCities = Boolean(options.fromUrl && params.get('search_view') === 'all');
+      mapSearchViewQuery = text;
+    }
+
+    function hasMapSearchQuery() {
+      return Boolean(String(document.getElementById('destination-search')?.value || locationSearchText || strainFilterText || '').trim());
+    }
+
+    function localMapSearchCity() {
+      if (!hasMapSearchQuery()) return '';
+      return sharedMenuFilters.city || (mapSearchViewAllCities ? '' : mapSearchViewCity);
+    }
+
+    function locationIsInSearchCity(loc, city = mapSearchViewCity) {
+      return Boolean(city && normaliseGlobalSearchCity(loc?.city) === normaliseGlobalSearchCity(city));
+    }
+
+    function mapSearchAreaInfo({ shopsOnly = false } = {}) {
+      // A search can also find cafés, areas and other places, not just shops.
+      const matches = locations.filter((loc, index) => (!shopsOnly || isCoffeeShopLocation(loc)) && passesCategoryFilter(loc, index));
+      const city = sharedMenuFilters.city || mapSearchViewCity;
+      const local = matches.filter(loc => locationIsInSearchCity(loc, city));
+      const displayed = localMapSearchCity() ? local : matches;
+      const noun = displayed.length && displayed.every(isCoffeeShopLocation) ? 'shop' : 'place';
+      return { city, total: matches.length, local: local.length, elsewhere: matches.length - local.length, noun };
+    }
+
+    function updateMapSearchArea() {
+      const host = document.getElementById('map-search-area');
+      if (!host) return;
+      host.hidden = !hasMapSearchQuery();
+      if (host.hidden) return;
+      const info = mapSearchAreaInfo();
+      const areaLabel = document.getElementById('explore-search-scope');
+      const acrossCities = !localMapSearchCity();
+      if (areaLabel) areaLabel.textContent = acrossCities ? 'Across the Netherlands' : `Around ${info.city}`;
+      const status = document.getElementById('map-search-area-status');
+      const button = document.getElementById('map-search-area-toggle');
+      const showMatches = document.getElementById('map-show-matches');
+      const count = acrossCities ? info.total : info.local;
+      const label = `${count} match${count === 1 ? '' : 'es'}`;
+      const summary = acrossCities ? `${label} across all cities`
+        : `${label} in ${info.city}${info.elsewhere ? ` · ${info.elsewhere} elsewhere` : ''}`;
+      if (status) status.textContent = summary;
+      if (showMatches) showMatches.hidden = !(acrossCities ? info.total : info.local);
+      if (button) {
+        button.hidden = Boolean(sharedMenuFilters.city) || !info.city || (!mapSearchViewAllCities && !info.elsewhere);
+        button.textContent = mapSearchViewAllCities ? `Back to ${info.city}` : 'Show all cities';
+      }
+      const scope = document.getElementById('map-scope-summary');
+      if (scope) scope.textContent = acrossCities
+        ? `${count} matching ${info.noun}${count === 1 ? '' : 's'} · Netherlands`
+        : `${count} matching ${info.noun}${count === 1 ? '' : 's'} · ${info.city}`;
+      return summary;
+    }
+
+    function toggleMapSearchArea() {
+      if (!mapSearchViewCity || !hasMapSearchQuery()) return;
+      rememberMapFilterState();
+      mapSearchViewAllCities = !mapSearchViewAllCities;
+      syncMapSearchUrl(document.getElementById('destination-search')?.value || mapSearchViewQuery);
+      refreshDestinationCards();
+      updateControlsSummary();
+      fitMapToVisibleMarkers({ searchResults: true });
+      schedulePersistMapSession();
+    }
+
+    const menuExplore = window.BudfinderExplore;
+    let sharedMenuFilters = menuExplore ? menuExplore.fromUrl(window.location.href) : {};
+    let sharedMenuFilterControl = null;
+    let sharedMenuMatchIds = null;
+    let sharedMenuMatchKey = '';
+    let sharedMenuMatchRows = null;
+
+    function currentMapReturnUrl() {
+      return `map.html${window.location.search || ''}`;
+    }
+
+    function sharedFilteredOfferingRows(rows) {
+      if (!menuExplore) return rows;
+      return rows.filter(row => menuExplore.matches(row, sharedMenuFilters, { date: getDisplayOfferingUpdatedAt(row) }));
+    }
+
+    function refreshSharedMenuMatchIds() {
+      if (!menuExplore) return;
+      const needsRows = menuExplore.active(sharedMenuFilters).some(key => key !== 'city');
+      const key = JSON.stringify([sharedMenuFilters, strainFilterText, offeringAttributeFilterKind, offeringAttributeFilterValue, locations.length, dbUnavailableShopIds.size]);
+      if (key === sharedMenuMatchKey && sharedMenuMatchRows === activeOfferingsRows) return;
+      sharedMenuMatchKey = key;
+      sharedMenuMatchRows = activeOfferingsRows;
+      let rows = (activeOfferingsRows || []).filter(isActiveOfferingRowAvailable);
+      if (offeringAttributeFilterKind === 'grower') {
+        rows = rows.filter(row => normaliseText(row.grower) === normaliseText(offeringAttributeFilterValue));
+      } else if (offeringAttributeFilterKind === 'legal') {
+        rows = rows.filter(row => Number(row.is_legal) === 1);
+      } else if (strainFilterText) {
+        rows = collectMatchedActiveOfferingRows(normaliseText(strainFilterText), rows);
+      }
+      sharedMenuMatchIds = needsRows ? new Set(sharedFilteredOfferingRows(rows).map(row => String(row.shop_id))) : null;
+      if (strainFilterText && !offeringAttributeFilterKind && activeOfferingsRows) {
+        const pricing = buildStrainPricingInsightFromRows(strainFilterText, activeOfferingsRows);
+        strainPriceByShopId = pricing.byShopId;
+        strainPriceByNameCity = pricing.byNameCity;
+        strainCheapestShopIds = pricing.cheapestShopIds.size ? pricing.cheapestShopIds : null;
+        strainCheapestNameCityKeys = pricing.cheapestNameCityKeys.size ? pricing.cheapestNameCityKeys : null;
+        strainCheapestPriceLabel = pricing.cheapestPriceLabel || '';
+      }
+    }
+
+    function passesSharedMenuFilters(loc) {
+      if (!menuExplore) return true;
+      if (sharedMenuFilters.city && normaliseText(loc.city) !== normaliseText(sharedMenuFilters.city)) return false;
+      return sharedMenuMatchIds === null || sharedMenuMatchIds.has(String(loc.db_shop_id));
+    }
+
+    async function setSharedMenuFilters(next) {
+      rememberMapFilterState();
+      const previousCity = sharedMenuFilters.city;
+      sharedMenuFilters = menuExplore.clean(next);
+      if (hasMapSearchQuery() && sharedMenuFilters.city && normaliseText(previousCity) !== normaliseText(sharedMenuFilters.city)) {
+        mapSearchViewCity = sharedMenuFilters.city;
+        mapSearchViewAllCities = false;
+      }
+      sharedMenuFilterControl?.set(sharedMenuFilters);
+      syncMapSearchUrl(document.getElementById('destination-search')?.value || '');
+      updateMarkers();
+      updateDestinationDropdown();
+      updateDestinationSearchStatus();
+      refreshDestinationCards();
+      updateControlsSummary();
+      schedulePersistMapSession();
+      try {
+        await loadActiveOfferingsRows();
+        updateMarkers();
+        updateDestinationDropdown();
+        refreshDestinationCards();
+        updateDestinationSearchStatus();
+        fitMapToVisibleMarkers();
+      } catch (_) {
+        const help = document.querySelector('#map-explore-filters .explore-filter-help');
+        if (help) help.textContent = 'Menu filters are unavailable. Clear filters or try again.';
+      }
+    }
+
+    async function initSharedMenuFilters() {
+      if (!menuExplore) return;
+      const host = document.getElementById('map-explore-filters');
+      try {
+        const rows = await loadActiveOfferingsRows();
+        sharedMenuFilterControl = menuExplore.mount(host, {
+          filters: sharedMenuFilters, cities: rows.map(row => row.shop_city), collapsed: true, onChange: setSharedMenuFilters
+        });
+        updateMarkers();
+        updateDestinationDropdown();
+        refreshDestinationCards();
+        updateDestinationSearchStatus();
+        syncPriceMenusLinks();
+      } catch (_) {
+        if (host) host.innerHTML = '<p class="explore-filter-help" role="status">Menu filters could not load. Refresh to try again.</p>';
+      }
+    }
+
     let locationSearchAreaAnchorCache = { key: '', anchors: [] };
+    let mapSearchCandidates = [];
+    let mapSearchSuggestionRows = [];
+    let mapSearchSuggestionIndex = -1;
+    let mapSearchIndexState = '';
+    let mapSuggestionsDismissedQuery = '';
+    let mapSearchEntityKind = '';
     let globalSearchStrainTimer = null;
-    let globalSearchFocusTimer = null;
     let globalSearchAppliedStrainKey = '';
     let globalSearchResolveRequestId = 0;
     let destinationSearchComposing = false;
@@ -48,6 +249,7 @@
     let mapSessionSaveTimer = null;
     let activeMapSessionDatasetKey = '';
     let initialViewportRestored = false;
+    let initialCameraSettled = false;
     let lastDestinationSelectValue = '';
     let guideVisible = false;
     let journeyPlanner = {
@@ -148,8 +350,8 @@
     let popupStrainsByNameCity = new Map();    // "name|city" -> [strain names]
     let popupStrainDetailsByShopId = new Map();   // shop_id -> Map(strain_key -> {priceText, growerText, notesText, priceEntries})
     let popupStrainDetailsByNameCity = new Map(); // "name|city" -> Map(strain_key -> {priceText, growerText, notesText, priceEntries})
-    let popupMenuUpdatedByShopId = new Map();     // shop_id -> latest offering updated timestamp
-    let popupMenuUpdatedByNameCity = new Map();   // "name|city" -> latest offering updated timestamp
+    let popupMenuUpdatedByShopId = new Map();     // shop_id -> latest date and its source field
+    let popupMenuUpdatedByNameCity = new Map();   // "name|city" -> latest date and its source field
     let popupMenuBatchSignal = null;              // shared export refresh window, if detected
     let strainAveragePricesByKey = new Map(); // strain_key -> Map("currency|unit" -> average price info)
     let popupStrainIndexReady = false;
@@ -175,6 +377,7 @@
     const TOP_SHELF_RAIL_COLLAPSED_STORAGE_KEYS = ['budfinder_top_shelf_rail_collapsed', 'locate3_top_shelf_rail_collapsed'];
     const MAP_FOCUS_SHOPS_STORAGE_KEY = 'budfinder_map_focus_shops';
     const MAP_SESSION_STORAGE_KEY = 'budfinder_map_sessions_v1';
+    const MAP_VIEW_STORAGE_KEY = 'budfinder_map_view_v1';
     const MAP_SESSION_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
     const MAP_SESSION_VIEWPORT_MAX_DISTANCE_METERS = 100000;
     const HOW_GUIDE_DISABLED_STORAGE_KEY = 'budfinder_how_guide_disabled';
@@ -770,6 +973,7 @@
     let legacyFavoriteIndices = loadStoredJson(LEGACY_FAVORITES_STORAGE_KEY, []);
     let recentDestinationKeys = loadStoredArray(RECENT_DESTINATIONS_STORAGE_KEYS, []);
     let shelfStrainNames = loadStoredArray(STRAIN_SHELF_STORAGE_KEYS, []);
+    let showingSavedStrainMatches = false;
     savedJourneys = loadStoredArray(SAVED_JOURNEYS_STORAGE_KEYS, []);
     const storedTopShelfRailCollapsed = loadStoredJson(TOP_SHELF_RAIL_COLLAPSED_STORAGE_KEYS, null);
     let topShelfRailCollapsed = typeof storedTopShelfRailCollapsed === 'boolean'
@@ -880,6 +1084,10 @@
     }
 
     function priceMenusUrl(context = {}) {
+      if (menuExplore) return menuExplore.link('menus', {
+        ...context, filters: sharedMenuFilters, source: 'map', returnTo: currentMapReturnUrl(),
+        query: context.strain || document.getElementById('destination-search')?.value || ''
+      });
       const params = new URLSearchParams();
       const strain = (context.strain || '').toString().trim();
       const rawShopId = context.shopId == null ? '' : String(context.shopId).trim();
@@ -907,17 +1115,20 @@
       const selectedShopId = selectedLocation && Number.isFinite(Number(selectedLocation.db_shop_id))
         ? Number(selectedLocation.db_shop_id)
         : null;
-      const href = activeName || selectedShopId
-        ? priceMenusUrl({ strain: activeName, shopId: selectedShopId })
-        : 'database.html';
+      const href = menuExplore ? menuExplore.link('menus', {
+        query: document.getElementById('destination-search')?.value || activeName || '',
+        filters: sharedMenuFilters, source: 'map', returnTo: currentMapReturnUrl()
+      }) : (activeName || selectedShopId ? priceMenusUrl({ strain: activeName, shopId: selectedShopId }) : 'database.html');
       if (mapResearchLink) mapResearchLink.href = activeName ? priceMenusUrl({ strain: activeName }) : href;
-      if (navResearchLink) {
-        navResearchLink.href = href;
-        navResearchLink.title = activeName
-          ? `Continue viewing ${activeName} in Price & Menus`
-          : selectedLocation
-            ? `Open the known menu for ${selectedLocation.name || 'this coffeeshop'}`
-            : 'Open Price & Menus';
+      if (navResearchLink) { navResearchLink.href = href; navResearchLink.title = 'View this search in Menus & prices'; }
+      const resultsLink = document.getElementById('explore-menu-results-link');
+      if (resultsLink) resultsLink.href = href;
+      const back = document.getElementById('explore-back-results-link');
+      if (back && menuExplore) {
+        const params = new URLSearchParams(window.location.search);
+        const returnTo = menuExplore.safeReturn(params.get('return_to') || '');
+        back.hidden = params.get('source') !== 'menus' || !returnTo;
+        if (!back.hidden) back.href = returnTo;
       }
     }
 
@@ -953,8 +1164,10 @@
 
     function applyInitialSearchFromUrlAfterCsvLoad() {
       const query = getInitialSearchFromUrl();
+      mapSearchEntityKind = new URLSearchParams(window.location.search).get('search_kind') || '';
       if (!query || explorerFocusStrainName) return;
 
+      beginMapSearchView(query, { fromUrl: true });
       pendingInitialSearchPresentation = true;
       const searchInput = document.getElementById('destination-search');
       locationSearchText = query;
@@ -964,37 +1177,18 @@
       updateMarkers();
       updateControlsSummary();
       refreshDestinationCards();
-      setControlsVisible(true, { collapsed: false });
+      setControlsVisible(true, { collapsed: isCompactMobileLayout() });
       const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
       scheduleGlobalSearchStrainResolve(query, visibleLocationCount, {
         immediate: true,
-        allowTownSwitch: true
+        allowTownSwitch: true, entityKind: mapSearchEntityKind
       });
-      scheduleInitialSearchPresentation();
     }
 
-    function focusSearchResultsPanel() {
-      if (!isCompactMobileLayout()) return;
-      setControlsVisible(true, { collapsed: false });
-      const content = document.getElementById('map-tools-content');
-      const panel = document.querySelector('.search-wanted-panel');
-      if (!content || !panel) return;
-      const searchInput = document.getElementById('destination-search');
-      const target = searchInput || panel;
-      const contentRect = content.getBoundingClientRect();
-      const targetRect = target.getBoundingClientRect();
-      const targetTop = Math.max(0, content.scrollTop + targetRect.top - contentRect.top - 12);
-      content.scrollTo({ top: targetTop, behavior: 'auto' });
-    }
-
-    function scheduleInitialSearchPresentation() {
-      [120, 520, 1100].forEach(delay => {
-        window.setTimeout(() => {
-          if (!pendingInitialSearchPresentation) return;
-          focusSearchResultsPanel();
-          fitMapToVisibleMarkers({ searchResults: true });
-        }, delay);
-      });
+    function collapseMapSearchResults({ focus = false } = {}) {
+      if (!isCompactMobileLayout() || document.getElementById('route-tools-dropdown')?.open) return;
+      setControlsVisible(true, { collapsed: true });
+      if (focus) focusMapPanelTarget(document.getElementById('controls-header-toggle'));
     }
 
     function applyExplorerFocusContext(context) {
@@ -1259,15 +1453,11 @@
 
       locations.forEach((loc, index) => {
         const pref = readLocationPreference(loc);
+        const includeMatt = window.BudfinderSkunkworks?.readMattDefaults(localStorage) !== false;
+        // Retain the catalogue values so turning the option back on restores them.
+        loc.visited = pref && typeof pref.visited === 'boolean' ? pref.visited : Boolean(includeMatt && loc.mattVisited);
+        loc.rating = pref && Number.isFinite(pref.rating) ? Math.max(0, Math.min(5, Math.round(pref.rating))) : (includeMatt ? loc.mattRating || 0 : 0);
         if (!pref) return;
-
-        if (typeof pref.visited === 'boolean') {
-          loc.visited = pref.visited;
-        }
-
-        if (Number.isFinite(pref.rating)) {
-          loc.rating = Math.max(0, Math.min(5, Math.round(pref.rating)));
-        }
 
         if (pref.favorite) {
           favorites.push(index);
@@ -1431,8 +1621,9 @@
       root.setAttribute('data-map-theme', personalisation.accent);
       root.setAttribute('data-map-theme-tone', tone.dark ? 'dark' : 'light');
       root.style.setProperty('--ink', tone.text);
-      root.style.setProperty('--muted', tone.muted);
-      root.style.setProperty('--soft', rgbaFromHex(tone.text, tone.dark ? 0.58 : 0.62));
+      root.style.setProperty('--muted', `color-mix(in srgb, ${tone.muted} 80%, ${tone.text})`);
+      root.style.setProperty('--soft', rgbaFromHex(tone.text, tone.dark ? 0.74 : 0.76));
+      root.style.setProperty('--panel-border', rgbaFromHex(tone.text, tone.dark ? 0.26 : 0.28));
       root.style.setProperty('--secondary-accent', tone.secondary);
       root.style.setProperty('--button-text', tone.dark ? '#06100e' : bestTextForBackground(theme.accent));
       root.style.setProperty('--map-primary-button-bg', tone.dark
@@ -1445,9 +1636,9 @@
       root.style.setProperty('--control-bg', tone.dark ? rgbaFromHex(tone.surface, 0.94) : 'rgba(255, 255, 255, 0.72)');
       root.style.setProperty('--control-bg-strong', tone.dark ? rgbaFromHex(tone.surfaceStrong, 0.98) : 'rgba(255, 255, 255, 0.88)');
       root.style.setProperty('--control-bg-hover', tone.dark ? rgbaFromHex(tone.surfaceStrong, 1) : 'rgba(255, 255, 255, 0.96)');
-      root.style.setProperty('--control-border', tone.dark ? rgbaFromHex(tone.text, 0.34) : 'rgba(92, 107, 97, 0.16)');
+      root.style.setProperty('--control-border', tone.dark ? rgbaFromHex(tone.text, 0.34) : 'rgba(66, 85, 73, 0.34)');
       root.style.setProperty('--control-text', tone.text);
-      root.style.setProperty('--control-muted', tone.muted);
+      root.style.setProperty('--control-muted', 'var(--muted)');
       root.style.setProperty('--control-selected-bg', tone.dark ? rgbaFromHex(theme.accent, 0.28) : rgbaFromHex(theme.accent, 0.14));
       root.style.setProperty('--control-selected-border', rgbaFromHex(theme.accent, tone.dark ? 0.62 : 0.3));
       root.style.setProperty('--leaf-pattern-opacity', tone.dark ? '0.035' : '0.065');
@@ -1466,7 +1657,7 @@
       const heroPopupBtn = document.getElementById('toggle-hero-popup-pref-btn');
       const heroPopupNote = document.getElementById('hero-popup-pref-note');
       if (kicker) kicker.textContent = userName ? `Map for ${userName}` : 'Mission map';
-      if (mapToolsTitle) mapToolsTitle.textContent = userName ? `Map tools · ${userName}` : 'Map tools';
+      if (mapToolsTitle) mapToolsTitle.textContent = userName ? `Explore, ${userName}` : 'Explore the map';
       if (mapIntentTitle) {
         mapIntentTitle.textContent = userName
           ? `Where do you want to go next, ${userName}?`
@@ -1488,6 +1679,8 @@
       }
       if (distanceUnitSelect) distanceUnitSelect.value = personalisation.distanceUnit;
       if (reduceMotionInput) reduceMotionInput.checked = personalisation.reduceMotion;
+      const mattDefaultsInput = document.getElementById('settings-matt-defaults');
+      if (mattDefaultsInput) mattDefaultsInput.checked = window.BudfinderSkunkworks?.readMattDefaults(localStorage) !== false;
       document.querySelectorAll('[data-budfinder-vibe-selector], #accent-select').forEach(select => {
         if (select && select.value !== personalisation.accent) select.value = personalisation.accent;
       });
@@ -1593,6 +1786,38 @@
       };
     }
 
+    /** Keep focused phone search inside the area actually visible above the keyboard. */
+    function syncMobileSearchViewport() {
+      const root = document.documentElement;
+      const input = document.getElementById('destination-search');
+      if (!root || !input) return;
+      const viewport = window.visualViewport;
+      // Pinch zoom must not be mistaken for a software-keyboard resize.
+      const normalScale = !viewport || Math.abs((viewport.scale || 1) - 1) < 0.05;
+      const height = viewport && Number.isFinite(viewport.height) ? viewport.height : getViewportSize().height;
+      const top = viewport && Number.isFinite(viewport.offsetTop) ? Math.max(0, viewport.offsetTop) : 0;
+      const width = root.clientWidth || window.innerWidth || getViewportSize().width;
+      const layoutHeight = Math.max(root.clientHeight || 0, window.innerHeight || 0, height);
+      const focused = input === document.activeElement;
+      // Focus alone does not mean a keyboard exists. Save the unoccluded size
+      // for Android browsers which shrink their layout as well as their visual viewport.
+      if (normalScale) {
+        if (!focused || !mobileSearchUnoccludedHeight || Math.abs(width - mobileSearchViewportWidth) > 60) {
+          mobileSearchUnoccludedHeight = layoutHeight;
+          mobileSearchViewportWidth = width;
+        } else {
+          mobileSearchUnoccludedHeight = Math.max(mobileSearchUnoccludedHeight, layoutHeight);
+        }
+      }
+      const keyboardVisible = Boolean(viewport) &&
+        mobileSearchUnoccludedHeight - height > Math.max(100, mobileSearchUnoccludedHeight * 0.15);
+      const active = normalScale && keyboardVisible && isCompactMobileLayout() && controlsVisible && !controlsCollapsed &&
+        focused && !document.getElementById('route-tools-dropdown')?.open;
+      root.style.setProperty('--app-search-visible-height', `${Math.max(0, Math.floor(height))}px`);
+      root.style.setProperty('--app-search-visible-top', `${Math.floor(top)}px`);
+      document.body.classList.toggle('mobile-map-search-active', active);
+    }
+
     function syncViewportCssVars() {
       const root = document.documentElement;
       if (!root) return;
@@ -1623,6 +1848,7 @@
       root.style.setProperty('--app-mobile-controls-content-max-height', `${mobileControlsContentMaxHeight}px`);
       root.style.setProperty('--app-mobile-strain-panel-max-height', `${mobileStrainPanelMaxHeight}px`);
       root.style.setProperty('--app-mobile-strain-list-max-height', `${mobileStrainListMaxHeight}px`);
+      syncMobileSearchViewport();
     }
 
     function isCompactMobileLayout() {
@@ -1639,46 +1865,93 @@
          (viewport.height <= 560 || screenShortSide <= 500));
     }
 
-    function isCompactLandscapeLayout() {
-      const viewport = getViewportSize();
-      return isCompactMobileLayout() && viewport.width > viewport.height;
-    }
-
     function syncCompactLayoutState() {
       document.body.classList.toggle('compact-layout', isCompactMobileLayout());
     }
 
-    function syncSelectionCardChrome() {
-      const isLandscapeCompact = isCompactLandscapeLayout();
-      const card = document.getElementById('selection-card');
-      const toggleBtn = document.getElementById('selection-card-toggle');
-      const summaryEl = document.getElementById('selection-card-summary');
-      const head = document.getElementById('selection-card-head');
-      const selectedIndex = getSelectedDestinationIndex();
-      const shouldShow = selectedIndex !== null && !!locations[selectedIndex];
-      if (card) {
-        card.hidden = !shouldShow;
-        card.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
-        card.style.display = shouldShow ? 'block' : 'none';
-        card.classList.toggle('is-empty', !shouldShow);
-        card.classList.toggle('is-collapsed', shouldShow && selectionCardCollapsed);
-      }
-      if (toggleBtn) {
-        toggleBtn.hidden = !shouldShow || !isCompactMobileLayout();
-        toggleBtn.textContent = selectionCardCollapsed ? 'Expand' : 'Collapse';
-      }
-      if (summaryEl) summaryEl.hidden = !shouldShow;
-      if (head) head.setAttribute('aria-expanded', shouldShow && !selectionCardCollapsed ? 'true' : 'false');
-      document.body.classList.toggle('mobile-selection-visible', shouldShow && isCompactMobileLayout());
-      document.body.classList.toggle('selection-card-collapsed', shouldShow && selectionCardCollapsed);
-      document.body.classList.toggle('compact-landscape-layout', isLandscapeCompact);
+    function getControlsToggleLabel() {
+      return 'Search';
     }
 
-    function getControlsToggleLabel() {
-      if (isCompactMobileLayout()) {
-        return controlsVisible ? 'Close tools' : 'Map tools';
+    function syncMapActionDock() {
+      const search = document.getElementById('toggle-controls');
+      const saved = document.getElementById('toggle-shelf');
+      const route = document.getElementById('toggle-route');
+      const routeOpen = Boolean(document.getElementById('route-tools-dropdown')?.open);
+      const panelOpen = controlsVisible && !controlsCollapsed;
+      const settingsOpen = panelOpen && document.getElementById('settings-panel')?.hidden === false;
+      document.getElementById('nav-settings-btn')?.setAttribute('aria-expanded', String(settingsOpen));
+      document.body.classList.toggle('map-route-panel-open', panelOpen && routeOpen);
+      const title = document.getElementById('map-tools-title');
+      const userName = currentMapUserName();
+      const collapsedResults = controlsVisible && controlsCollapsed && !routeOpen && hasMapSearchQuery();
+      if (title) title.textContent = settingsOpen ? 'Map settings' : collapsedResults ? 'Show results'
+        : panelOpen && routeOpen ? 'Your route' : userName ? `Explore, ${userName}` : 'Explore the map';
+      const header = document.getElementById('controls-header-toggle');
+      if (header) {
+        header.setAttribute('aria-label', collapsedResults ? 'Show results' : controlsCollapsed ? 'Expand map panel' : 'Minimise map panel');
+        if (collapsedResults) header.setAttribute('aria-describedby', 'controls-summary');
+        else header.removeAttribute('aria-describedby');
       }
-      return controlsVisible ? 'Hide map tools' : 'Show map tools';
+      [[search, panelOpen && !routeOpen && !settingsOpen], [saved, shelfVisible], [route, panelOpen && routeOpen]].forEach(([button, active]) => {
+        if (!button) return;
+        button.setAttribute('aria-expanded', String(Boolean(active)));
+        button.classList.toggle('is-active', Boolean(active));
+      });
+      if (route) {
+        const count = journeyPlanner.stops.length;
+        route.textContent = count ? `Your route · ${count}` : 'Your route';
+        route.setAttribute('aria-label', count ? `Your route, ${count} stop${count === 1 ? '' : 's'}` : 'Your route');
+      }
+    }
+
+    function focusMapPanelTarget(target) {
+      if (!target) return;
+      const content = document.getElementById('map-tools-content');
+      if (content) {
+        const top = ['destination-search', 'controls-header-toggle'].includes(target.id) ? 0
+          : target.getBoundingClientRect().top - content.getBoundingClientRect().top + content.scrollTop - 12;
+        content.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+        // Scroll only the content; scrolling the clipped outer panel hides its header.
+        if (content.parentElement) content.parentElement.scrollTop = 0;
+      }
+      target.focus({ preventScroll: true });
+    }
+
+    function openMapAction(section, { selectQuery = false } = {}) {
+      pendingInitialSearchPresentation = false;
+      closeSettingsPanel({ returnFocus: false });
+      if (directionsVisible) setDirectionsVisible(false);
+      if (section === 'saved') {
+        setShelfVisible(!shelfVisible);
+        if (shelfVisible) document.getElementById('stash-shelf-title')?.focus({ preventScroll: true });
+        return;
+      }
+      const route = document.getElementById('route-tools-dropdown');
+      if (route) route.open = section === 'route';
+      setControlsVisible(true, { collapsed: false });
+      const target = section === 'route'
+        ? openRouteTools()?.querySelector('summary')
+        // Opening the phone menu should not focus the input or summon its keyboard.
+        : document.getElementById(isCompactMobileLayout() && !selectQuery ? 'controls-header-toggle' : 'destination-search');
+      window.setTimeout(() => {
+        if (!target || !controlsVisible || controlsCollapsed || Boolean(route?.open) !== (section === 'route') || document.getElementById('settings-panel')?.hidden === false) return;
+        focusMapPanelTarget(target);
+        if (selectQuery) target.select();
+      }, 0);
+      syncMapActionDock();
+    }
+
+    function closeMapActionPanel() {
+      pendingInitialSearchPresentation = false;
+      const wasShelf = shelfVisible;
+      const wasRoute = Boolean(document.getElementById('route-tools-dropdown')?.open);
+      const wasSettings = document.getElementById('settings-panel')?.hidden === false;
+      if (wasSettings) closeSettingsPanel({ returnFocus: false });
+      if (wasShelf) setShelfVisible(false);
+      else setControlsVisible(false);
+      const button = document.getElementById(wasSettings ? 'nav-settings-btn' : wasShelf ? 'toggle-shelf' : wasRoute ? 'toggle-route' : 'toggle-controls');
+      button?.focus({ preventScroll: true });
     }
 
     function syncHeroBannerState() {
@@ -1703,7 +1976,7 @@
     }
 
     function hasAnyMapFilter() {
-      return getSelectedDestinationIndex() !== null ||
+      return (menuExplore && menuExplore.active(sharedMenuFilters).length > 0) || getSelectedDestinationIndex() !== null ||
         !!(strainFilterText || '').trim() ||
         hasExplorerFocus() ||
         hasLocationSearchFilter() ||
@@ -1711,8 +1984,15 @@
         hasCategoryFilter();
     }
 
+    function mapFilterSearchText(state) {
+      return String(state.searchText || state.locationSearchText || state.offeringAttributeFilterValue || state.strainFilterText || state.mapSearchViewQuery || '');
+    }
+
     function captureMapFilterState() {
       return {
+        searchText: document.getElementById('destination-search')?.value || '',
+        mapSearchViewCity, mapSearchViewAllCities, mapSearchViewQuery,
+        sharedMenuFilters: menuExplore ? menuExplore.clean(sharedMenuFilters) : {},
         selectedDestination: getSelectedDestinationIndex(),
         locationSearchText: (locationSearchText || '').toString(),
         missionMode,
@@ -1729,6 +2009,11 @@
 
     function serialiseMapFilterState(state) {
       return JSON.stringify({
+        searchText: mapFilterSearchText(state || {}),
+        mapSearchViewCity: state?.mapSearchViewCity || '',
+        mapSearchViewAllCities: Boolean(state?.mapSearchViewAllCities),
+        mapSearchViewQuery: state?.mapSearchViewQuery || '',
+        sharedMenuFilters: state && state.sharedMenuFilters || {},
         selectedDestination: state && state.selectedDestination !== null ? String(state.selectedDestination) : '',
         locationSearchText: (state && state.locationSearchText || '').toString(),
         missionMode: state && state.missionMode || 'free-roam',
@@ -1769,8 +2054,9 @@
     function hasExplicitMapContextInUrl() {
       const params = new URLSearchParams(window.location.search || '');
       return [
-        'q', 'query', 'search', 'strain', 'shop', 'shops', 'shop_id', 'shop_ids',
-        'strain_shops', 'all_shops', 'intent', 'destination'
+        'q', 'query', 'search', 'search_city', 'search_view', 'strain', 'shop', 'shops', 'shop_id', 'shop_ids',
+        'strain_shops', 'all_shops', 'intent', 'destination', 'explore',
+        'filter_city', 'filter_type', 'filter_price', 'filter_age', 'filter_cali', 'filter_legal'
       ].some(key => params.has(key));
     }
 
@@ -1816,6 +2102,7 @@
 
     function persistMapSessionNow() {
       if (!mapSessionReady || !activeMapSessionDatasetKey || !locations.length) return;
+      persistLastMapView();
       if (mapSessionSaveTimer !== null) {
         window.clearTimeout(mapSessionSaveTimer);
         mapSessionSaveTimer = null;
@@ -1849,13 +2136,41 @@
     }
 
     function isPersistedViewportRelevantToLocations(viewport) {
-      if (!isValidPersistedViewport(viewport) || !locations.length) return false;
+      if (!isValidPersistedViewport(viewport) || Number(viewport.zoom) < 10 || !locations.length) return false;
       const viewportCenter = [Number(viewport.lat), Number(viewport.lng)];
       return locations.some(loc => {
         if (!loc || !Array.isArray(loc.coords) || loc.coords.length !== 2) return false;
         if (!loc.coords.every(Number.isFinite)) return false;
         return haversineDistance(viewportCenter, loc.coords) <= MAP_SESSION_VIEWPORT_MAX_DISTANCE_METERS;
       });
+    }
+
+    function loadLastMapView() {
+      const saved = loadStoredJson(MAP_VIEW_STORAGE_KEY, {});
+      if (!saved.updatedAt || Date.now() - Number(saved.updatedAt) > MAP_SESSION_MAX_AGE_MS) return null;
+      return saved;
+    }
+
+    function persistLastMapView() {
+      if (!map || !mapSessionReady || !initialCameraSettled || !locations.length) return;
+      const center = map.getCenter();
+      const viewport = { lat: center.lat, lng: center.lng, zoom: map.getZoom() };
+      const previous = loadLastMapView();
+      const city = currentMapSearchCity() || previous?.city || 'Amsterdam';
+      saveStoredJson(MAP_VIEW_STORAGE_KEY, {
+        updatedAt: Date.now(), city,
+        viewport: isPersistedViewportRelevantToLocations(viewport) ? viewport : null
+      });
+    }
+
+    function openingMapViewport(pathLike) {
+      const params = new URLSearchParams(window.location.search || '');
+      // Specific searches and destinations get their own result framing.
+      if (['search', 'q', 'query', 'strain', 'shops', 'shop', 'shop_id', 'shop_ids', 'strain_shops', 'intent']
+        .some(key => params.get(key))) return null;
+      const saved = loadLastMapView();
+      if (!saved || normaliseGlobalSearchCity(saved.city) !== normaliseGlobalSearchCity(csvLabelFromPath(pathLike))) return null;
+      return isPersistedViewportRelevantToLocations(saved.viewport) ? saved.viewport : null;
     }
 
     async function restorePersistedMapSession(state) {
@@ -1904,6 +2219,14 @@
     async function restoreMapFilterState(state, options = {}) {
       if (!state) return false;
       restoringMapFilterState = true;
+      const searchViewChanged = mapSearchViewCity !== String(state.mapSearchViewCity || '') || mapSearchViewAllCities !== Boolean(state.mapSearchViewAllCities);
+      mapSearchViewCity = String(state.mapSearchViewCity || '').slice(0, 100);
+      mapSearchViewAllCities = Boolean(state.mapSearchViewAllCities);
+      mapSearchViewQuery = String(state.mapSearchViewQuery || state.locationSearchText || state.strainFilterText || '');
+      if (menuExplore) {
+        sharedMenuFilters = menuExplore.clean(state.sharedMenuFilters);
+        sharedMenuFilterControl?.set(sharedMenuFilters);
+      }
       const preserveViewport = options.preserveViewport !== false;
       const previousView = preserveViewport && map
         ? { center: map.getCenter(), zoom: map.getZoom() }
@@ -1914,7 +2237,7 @@
         const destinationSelect = document.getElementById('destination-select');
 
         locationSearchText = (state.locationSearchText || '').toString();
-        if (searchInput) searchInput.value = locationSearchText;
+        if (searchInput) searchInput.value = mapFilterSearchText(state);
 
         missionMode = state.missionMode || 'free-roam';
         if (missionSelect) missionSelect.value = missionMode;
@@ -1978,12 +2301,15 @@
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
-        updateSelectionCard();
         refreshDestinationCards();
         updateControlsSummary();
         syncClearSelectionToggle();
+        syncMapSearchUrl(searchInput?.value || '');
+        syncPriceMenusLinks();
         if (previousView && map) {
           map.setView(previousView.center, previousView.zoom, { animate: false });
+        } else if (searchViewChanged && hasMapSearchQuery()) {
+          fitMapToVisibleMarkers({ searchResults: true });
         } else if (!preserveViewport) {
           window.setTimeout(() => fitMapToVisibleMarkers(), 80);
         }
@@ -2011,32 +2337,25 @@
 
     function syncDesktopTogglePosition() {
       const uiToggles = document.getElementById('ui-toggles');
-      const selectionCard = document.getElementById('selection-card');
-      if (!uiToggles) return;
+      const navigation = document.querySelector('.app-mode-toggle');
+      if (!uiToggles || !document.body) return;
 
-      if (!selectionCard) {
-        uiToggles.style.bottom = '';
-        return;
+      // Keep map actions and the shop panel clear of the navigation.
+      // Measuring the bars also accounts for wrapped labels and the optional fifth action.
+      uiToggles.style.bottom = '';
+      const navigationRect = navigation && navigation.getBoundingClientRect();
+      const viewportHeight = document.documentElement.clientHeight || window.innerHeight;
+      if (navigationRect && navigationRect.height) {
+        if (isCompactMobileLayout()) {
+          document.body.style.setProperty('--app-mobile-nav-clearance', `${Math.ceil(Math.max(0, viewportHeight - navigationRect.top))}px`);
+        } else {
+          document.body.style.setProperty('--app-map-top-clearance', `${Math.ceil(navigationRect.bottom + 12)}px`);
+        }
       }
-
-      const style = window.getComputedStyle(selectionCard);
-      if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity || '1') === 0) {
-        uiToggles.style.bottom = '';
-        return;
+      const actionHeight = uiToggles.getBoundingClientRect().height;
+      if (actionHeight) {
+        document.body.style.setProperty('--app-map-action-height', `${Math.ceil(actionHeight)}px`);
       }
-
-      const rect = selectionCard.getBoundingClientRect();
-      if (!rect.width || !rect.height) {
-        uiToggles.style.bottom = '';
-        return;
-      }
-
-      const isCompact = isCompactMobileLayout();
-      const baseGap = isCompact ? 10 : 24;
-      const cardGap = isCompact ? 10 : 16;
-      const viewportHeight = Math.round(getViewportSize().height);
-      const offsetAboveCard = Math.max(baseGap, viewportHeight - Math.round(rect.top) + cardGap);
-      uiToggles.style.bottom = `${offsetAboveCard}px`;
     }
 
     function scheduleTogglePositionSync(delay = 0) {
@@ -2067,16 +2386,20 @@
       const hasDestination = getSelectedDestinationIndex() !== null;
       const hasStrain = !!(strainFilterText || '').trim();
       const hasMapFocus = hasExplorerFocus();
-      const hasFilters = hasAnyMapFilter();
+      const defaults = getDefaultLocationCategories();
+      const customCategories = selectedCategories.length !== defaults.length || selectedCategories.some(category => !defaults.includes(category));
+      const hasFilters = hasDestination || hasStrain || hasMapFocus || hasLocationSearchFilter() || hasMissionFilter() || customCategories || Boolean(menuExplore?.active(sharedMenuFilters).length);
       const hasOnlyDestination = hasDestination &&
         !hasStrain &&
         !hasMapFocus &&
         !hasLocationSearchFilter() &&
         !hasMissionFilter() &&
-        !hasCategoryFilter();
+        !hasCategoryFilter() &&
+        !(menuExplore && menuExplore.active(sharedMenuFilters).length);
       if (clearBtn) {
         clearBtn.hidden = !hasFilters;
-        clearBtn.textContent = hasOnlyDestination ? 'Clear Destination' : 'Clear filters';
+        if (clearBtn.parentElement?.classList.contains('map-search-actions')) clearBtn.parentElement.hidden = !hasFilters;
+        clearBtn.textContent = hasOnlyDestination ? 'Clear selection' : 'Undo last change';
       }
       if (clearRouteBtn) {
         clearRouteBtn.disabled = !hasDestination;
@@ -2108,9 +2431,7 @@
       document.body.classList.toggle('desktop-controls-hidden', hideDesktopGap);
       if (uiToggles) {
         const togglesReady = uiToggles.dataset.ready === 'true';
-        uiToggles.style.display = togglesReady && (!isMobile || (!controlsVisible && !shelfVisible))
-          ? (isMobile ? 'grid' : 'block')
-          : 'none';
+        uiToggles.style.display = togglesReady ? 'grid' : 'none';
       }
       if (backdrop) {
         backdrop.style.display = showMobileOverlay ? 'block' : 'none';
@@ -2120,17 +2441,14 @@
       }
       if (headerToggle) {
         headerToggle.setAttribute('aria-expanded', String(!controlsCollapsed));
-        headerToggle.setAttribute('aria-label', controlsCollapsed ? 'Open map tools' : 'Collapse map tools');
       }
       syncClearSelectionToggle();
       if (hideBtn) {
         if (!controlsVisible) {
           hideBtn.style.display = 'none';
-        } else if (isMobile) {
+        } else {
           hideBtn.textContent = 'Close';
           hideBtn.style.display = 'inline-flex';
-        } else {
-          hideBtn.style.display = 'none';
         }
       }
       updateControlsSummary();
@@ -2145,17 +2463,6 @@
       if (heroPopupVisible) {
         dismissHeroPopup();
       }
-      if (isCompactMobileLayout() && !selectionCardCollapsed) {
-        setSelectionCardCollapsed(true);
-      }
-    }
-
-    function setSelectionCardCollapsed(collapsed) {
-      selectionCardCollapsed = !!collapsed;
-      syncSelectionCardChrome();
-      syncDesktopTogglePosition();
-      scheduleTogglePositionSync(isCompactMobileLayout() ? 240 : 120);
-      invalidateMapSizeSettled([0, 140, 280]);
     }
 
     function setControlsCollapsed(collapsed) {
@@ -2539,19 +2846,7 @@
     }
 
     function getSavedToggleHtml(entries, isOpen) {
-      const label = isCompactMobileLayout()
-        ? (isOpen ? 'Hide strains' : 'Strains')
-        : (isOpen ? 'Hide saved strains' : 'Saved strains');
-      const visibleEntries = (entries || []).slice(0, 3);
-      if (!visibleEntries.length) {
-        return `<span class="saved-toggle-content"><span class="saved-toggle-label">${escapeHtml(label)}</span></span>`;
-      }
-      return (
-        `<span class="saved-toggle-content">` +
-          `<span class="saved-toggle-thumbs">${visibleEntries.map(entry => getSavedToggleThumbHtml(entry.name)).join('')}</span>` +
-          `<span class="saved-toggle-label">${escapeHtml(label)}</span>` +
-        `</span>`
-      );
+      return '<span class="saved-toggle-label">Saved strains</span>';
     }
 
     function getStrainSpotlightMediaHtml(name) {
@@ -2584,7 +2879,7 @@
       return tones[score] || tones[0];
     }
 
-    function getStashShelfEntries() {
+    function getStashShelfEntries(includeCurrent = false) {
       const entries = [];
       const used = new Set();
       const activeName = offeringAttributeFilterKind ? '' : getCanonicalStrainName(strainFilterText);
@@ -2597,9 +2892,9 @@
         entries.push({ name: canonical, key, source, meta: getStrainVisualMeta(canonical) });
       };
 
-      if (activeName) pushEntry(activeName, 'active');
+      if (includeCurrent && activeName) pushEntry(activeName, 'active');
       shelfStrainNames.forEach(name => pushEntry(name, 'shelf'));
-      return entries.slice(0, 8);
+      return entries;
     }
 
     function updateStashShelf() {
@@ -2607,6 +2902,7 @@
       const grid = document.getElementById('stash-shelf-grid');
       const summary = document.getElementById('stash-shelf-summary');
       const toggle = document.getElementById('toggle-shelf');
+      const compareToggle = document.getElementById('stash-compare-toggle');
       if (!shelf || !grid) return;
 
       const showShelf = shelfVisible;
@@ -2615,6 +2911,13 @@
       document.body.classList.toggle('mobile-shelf-open', showShelf && isCompactMobileLayout());
       const entries = getStashShelfEntries();
       if (toggle) toggle.innerHTML = getSavedToggleHtml(entries, showShelf);
+      if (!shelfStrainNames.length) showingSavedStrainMatches = false;
+      if (compareToggle) {
+        compareToggle.disabled = !shelfStrainNames.length;
+        compareToggle.textContent = showingSavedStrainMatches ? 'Back to saved strains' : 'Compare saved strains at shops';
+        compareToggle.setAttribute('aria-pressed', showingSavedStrainMatches ? 'true' : 'false');
+      }
+      grid.classList.toggle('showing-saved-matches', showingSavedStrainMatches);
       if (!strainImageMapReady && !strainImageMapPromise) {
         ensureStrainImageMap().then(() => {
           updateStashShelf();
@@ -2622,18 +2925,23 @@
       }
       if (!showShelf) return;
 
+      if (showingSavedStrainMatches) {
+        renderSavedStrainShopMatches(grid, summary);
+        return;
+      }
+
       if (summary) {
         if (!locations.length) {
           summary.textContent = `Once the ${getActiveLocationLabel()} data is ready, saved strains will stay available for quick map matching.`;
         } else {
-          summary.textContent = entries.length
-            ? `${entries.length} saved strain${entries.length === 1 ? '' : 's'}. Select one to show matching shops.`
-            : 'No saved strains yet. Pick a strain from the map or Price & Menus to add it here.';
+          summary.textContent = shelfStrainNames.length
+            ? `${shelfStrainNames.length} saved strain${shelfStrainNames.length === 1 ? '' : 's'}. Select one to show matching shops.`
+            : 'No saved strains yet. Save a strain from a shop menu to add it here.';
         }
       }
 
       if (!entries.length) {
-        grid.innerHTML = '<div class="stash-shelf-empty">Pick a strain from the radar or a shop popup, then save it for quick access.</div>';
+        grid.innerHTML = '<div class="stash-shelf-empty">Open a shop menu, choose a strain and save it for your next visit.</div>';
         return;
       }
 
@@ -2698,10 +3006,6 @@
         removeStrainFromShelf(canonical);
       }
 
-      if (normaliseText(strainFilterText) === key) {
-        clearStrainFilter();
-      }
-
       renderStrainList();
       updateStashShelf();
       updateControlsSummary();
@@ -2724,7 +3028,7 @@
         });
       }
 
-      const entries = getStashShelfEntries();
+      const entries = getStashShelfEntries(true).slice(0, 8);
       const shouldShowRail = !!locations.length && !!entries.length && !heroPopupVisible;
       document.body.classList.toggle('top-shelf-rail-active', shouldShowRail);
       document.body.classList.toggle('top-shelf-rail-collapsed', shouldShowRail && topShelfRailCollapsed);
@@ -3481,7 +3785,8 @@
       const packageAmount = parseFloat(row && row.package_price_amount);
       const packageWeight = parseFloat(row && row.package_weight_g);
       const currency = ((row && row.price_currency) || '€').toString().trim() || '€';
-      if (!Number.isFinite(packageAmount) || !Number.isFinite(packageWeight) || packageWeight <= 0) return '';
+      if (!Number.isFinite(packageAmount) || packageAmount <= 0 || !Number.isFinite(packageWeight) || packageWeight <= 0) return '';
+      if (packageWeight === 1) return formatPriceValue(packageAmount, currency, 'g');
       const perGram = packageAmount / packageWeight;
       return `${currency}${formatPriceAmount(packageAmount)} · ${formatPackageWeight(packageWeight)} pack (${currency}${formatPriceAmount(perGram)}/g)`;
     }
@@ -3588,18 +3893,20 @@
         return {
           tone: 'average',
           label: `At avg ${averageText}`,
-          title: `Average ${averageText} from ${averageInfo.count} listings`,
+          title: `Mean ${averageText} from ${averageInfo.count} shops nationwide; lowest listed price per shop, same strain, currency and unit. Variants and menu dates may differ.`,
           diff,
-          average: averageInfo.average
+          average: averageInfo.average,
+          sampleSize: averageInfo.count
         };
       }
 
       return {
         tone: diff < 0 ? 'cheaper' : 'expensive',
         label: `${diff < 0 ? 'Below' : 'Above'} avg ${diffText}`,
-        title: `Average ${averageText} from ${averageInfo.count} listings`,
+        title: `Mean ${averageText} from ${averageInfo.count} shops nationwide; lowest listed price per shop, same strain, currency and unit. Variants and menu dates may differ.`,
         diff,
-        average: averageInfo.average
+        average: averageInfo.average,
+        sampleSize: averageInfo.count
       };
     }
 
@@ -3723,7 +4030,7 @@
         };
       }
 
-      const matchedRows = collectMatchedActiveOfferingRows(qNorm, rows)
+      const matchedRows = sharedFilteredOfferingRows(collectMatchedActiveOfferingRows(qNorm, rows))
         .filter(isActiveOfferingRowAvailable)
         .filter(isOfferingRowInCurrentAtlas);
       const byShopRaw = new Map();
@@ -4062,6 +4369,8 @@
     }
 
     function freshnessTone(value) {
+      const time = getFreshnessTime(value);
+      if (time === null || (menuExplore && menuExplore.ageBucket(value) === 'unknown')) return 'unknown';
       const days = getAgeInDays(value);
       if (days === null) return 'unknown';
       if (days <= 14) return 'fresh';
@@ -4091,8 +4400,11 @@
       const key = (locationKey || '').toString().trim();
       const updatedAt = getDisplayOfferingUpdatedAt(row);
       if (!key || !updatedAt) return;
-      const current = rawMap.get(key) || '';
-      if (!current || updatedAt > current) rawMap.set(key, updatedAt);
+      const current = rawMap.get(key);
+      const source = offeringFreshnessDateSource(row, { includeBatchFields: false });
+      if (!current || getFreshnessTime(updatedAt) > getFreshnessTime(current.value)) {
+        rawMap.set(key, { value: updatedAt, field: source.field });
+      }
     }
 
     function pushPopupStrainDetail(rawMap, locationKey, strainName, row) {
@@ -4356,20 +4668,62 @@
       return { priceText: '', growerText: '', notesText: '', priceEntries: [], isCali: false, isLegal: false };
     }
 
-    function getPopupMenuUpdatedAt(loc) {
-      if (!loc) return '';
+    function getPopupMenuDateInfo(loc) {
+      if (!loc) return null;
 
       if (loc.db_shop_id) {
         const byId = popupMenuUpdatedByShopId.get(String(loc.db_shop_id));
         if (byId) return byId;
         const meta = dbShopMetaById.get(loc.db_shop_id);
         if (meta && meta.menu_changed_at_utc) {
-          return getDisplayShopMetaUpdatedAt(meta);
+          const value = getDisplayShopMetaUpdatedAt(meta);
+          return value ? { value, field: 'menu_changed_at_utc' } : null;
         }
       }
 
       const locationKey = normaliseNameCityKey(loc.name, loc.city || '');
-      return popupMenuUpdatedByNameCity.get(locationKey) || '';
+      return popupMenuUpdatedByNameCity.get(locationKey) || null;
+    }
+
+    function getPopupMenuUpdatedAt(loc) {
+      return getPopupMenuDateInfo(loc)?.value || '';
+    }
+
+    /** Distinguish a dated source menu from the date it was observed or edited. */
+    function formatPopupMenuDateInfo(info) {
+      if (!info || !info.value || (menuExplore && menuExplore.ageBucket(info.value) === 'unknown')) return 'Menu date unknown';
+      const date = formatDisplayDate(info.value);
+      if (['source_menu_date', 'menu_date', 'listing_date'].includes(info.field)) return `Menu dated ${date}`;
+      if (info.field === 'menu_changed_at_utc') return `Menu record updated ${date}`;
+      if (info.field === 'created_at') return `Menu record created ${date}`;
+      return `Menu observed ${date}`;
+    }
+
+    function getPopupMenuDateLabel(loc) {
+      return formatPopupMenuDateInfo(getPopupMenuDateInfo(loc));
+    }
+
+    /** Scope result dates to the same listings as active strain and menu filters. */
+    function buildMapResultMenuDates() {
+      const hasItemFilters = menuExplore && menuExplore.active(sharedMenuFilters).some(key => key !== 'city');
+      if (!strainFilterText && !offeringAttributeFilterKind && !hasItemFilters) return null;
+      let rows = (activeOfferingsRows || []).filter(isActiveOfferingRowAvailable);
+      if (offeringAttributeFilterKind === 'grower') {
+        rows = rows.filter(row => normaliseText(row.grower) === normaliseText(offeringAttributeFilterValue));
+      } else if (offeringAttributeFilterKind === 'legal') {
+        rows = rows.filter(row => Number(row.is_legal) === 1);
+      } else if (strainFilterText) {
+        rows = collectMatchedActiveOfferingRows(normaliseText(strainFilterText), rows);
+      }
+      if (hasItemFilters) rows = sharedFilteredOfferingRows(rows);
+      const byId = new Map();
+      const byNameCity = new Map();
+      rows.forEach(row => {
+        if (row.shop_id != null) pushPopupMenuUpdated(byId, String(row.shop_id), row);
+        const key = normaliseNameCityKey(row.shop_name, row.shop_city);
+        if (key !== '|') pushPopupMenuUpdated(byNameCity, key, row);
+      });
+      return { byId, byNameCity };
     }
 
     function getShopSourceMeta(loc) {
@@ -4382,9 +4736,103 @@
       return meta && meta.image_url ? meta.image_url : '';
     }
 
+    /* Keep the open place panel in step with device preferences and Matt's data. */
+    function syncPopupPersonalState(index) {
+      const loc = locations[index];
+      const card = document.getElementById(popupCardId(index));
+      if (!loc || !card) return;
+      const visit = card.querySelector('.visited-checkbox');
+      const rating = card.querySelector('.rating-stars');
+      const matt = card.querySelector('.popup-matt-review');
+      if (visit) visit.checked = Boolean(loc.visited);
+      if (rating) {
+        rating.setAttribute('data-rating', String(loc.rating || 0));
+        rating.setAttribute('aria-label', `Rating: ${loc.rating || 0} out of 5. Select to change.`);
+        rating.textContent = renderStars(loc.rating || 0);
+      }
+      if (matt) {
+        const show = window.BudfinderSkunkworks?.readMattDefaults(localStorage) !== false;
+        const details = [loc.mattVisited ? 'Visited by Matt' : '', loc.mattRating ? `Matt’s rating: ${loc.mattRating}/5` : ''].filter(Boolean);
+        matt.hidden = !show || !details.length;
+        matt.textContent = details.join(' · ');
+      }
+    }
+
+    /** Share the phone's single-scroll shop sheet with a taller, non-modal desktop panel. */
+    function openMobileShopSheet(index) {
+      const sheet = document.getElementById('mobile-shop-sheet');
+      const card = document.getElementById(popupCardId(index));
+      const marker = markers[index];
+      if (!sheet || !card || !marker) return;
+      if (mobileShopState) restoreMobileShopCard();
+      // Non-coffeeshop places need a smaller panel, not an empty menu-sized sheet.
+      sheet.classList.toggle('is-place-panel', !isCoffeeShopLocation(locations[index]));
+      document.getElementById('mobile-shop-eyebrow').textContent = isCoffeeShopLocation(locations[index]) ? 'Shop details' : 'Place details';
+      const popup = marker.getPopup();
+      const content = document.getElementById('mobile-shop-content');
+      const actions = document.getElementById('mobile-shop-actions');
+      const saveButton = card.querySelector('.fav-btn');
+      const saveAnchor = saveButton ? document.createComment('Saved-shop action position') : null;
+      if (saveButton) saveButton.before(saveAnchor);
+      mobileShopState = { index, marker, card, saveButton, saveAnchor, returnFocus: document.activeElement };
+      document.getElementById('mobile-shop-title').textContent = locations[index].name || 'Shop details';
+      content.replaceChildren(card);
+      syncPopupPersonalState(index);
+      // Leaflet update() reparents its content. Give it a harmless placeholder
+      // while the sheet owns the live card, including during delayed resize work.
+      popup.setContent(document.createElement('span'));
+      content.scrollTop = 0;
+      actions.innerHTML = (isCoffeeShopLocation(locations[index]) && locations[index].db_shop_id
+        ? `<a href="${escapeHtmlAttr(priceMenusUrl({ shopId: locations[index].db_shop_id }))}">Full menu</a>` : '') +
+        `<a href="https://www.google.com/maps/dir/?api=1&destination=${locations[index].coords.join(',')}&travelmode=walking" target="_blank" rel="noopener noreferrer">Directions</a>`;
+      if (saveButton) actions.append(saveButton);
+      document.body.classList.add('mobile-shop-sheet-open');
+      syncShopSheetPresentation();
+      document.getElementById('mobile-shop-close').focus();
+    }
+
+    /** Keep the map usable on desktop, while retaining the modal bottom sheet on phones. */
+    function syncShopSheetPresentation() {
+      if (!mobileShopState) return;
+      const sheet = document.getElementById('mobile-shop-sheet');
+      const modal = isCompactMobileLayout();
+      if (sheet.open && mobileShopState.modal === modal) return;
+      // Changing presentation keeps the live menu and its scroll position intact.
+      if (sheet.open) sheet.close();
+      mobileShopState.modal = modal;
+      if (modal) sheet.showModal();
+      else sheet.show();
+    }
+
+    /** Return the same live nodes to Leaflet when closing or changing screen size. */
+    function restoreMobileShopCard() {
+      if (!mobileShopState) return;
+      const state = mobileShopState;
+      mobileShopState = null; // Clear first so popup layout can safely settle again.
+      if (state.saveButton && state.saveAnchor) state.saveAnchor.replaceWith(state.saveButton);
+      state.marker.getPopup().setContent(state.card);
+      const sheet = document.getElementById('mobile-shop-sheet');
+      if (sheet.open) sheet.close();
+      document.body.classList.remove('mobile-shop-sheet-open');
+      document.getElementById('mobile-shop-actions').replaceChildren();
+      const focus = state.returnFocus;
+      if (focus && focus.isConnected && focus !== document.body && !focus.closest('#mobile-shop-sheet')) focus.focus();
+      else document.getElementById('toggle-controls')?.focus();
+    }
+
+    /** Close the underlying popup as well so reopening a marker starts cleanly. */
+    function closeMobileShopSheet() {
+      if (!mobileShopState) return;
+      const marker = mobileShopState.marker;
+      restoreMobileShopCard();
+      marker.closePopup();
+    }
+
     function settleOpenPopupLayout(index) {
       const marker = markers[index];
       if (!marker || typeof marker.isPopupOpen !== 'function' || !marker.isPopupOpen()) return;
+      // The dialog owns sizing and scrolling while the live card is outside Leaflet.
+      if (mobileShopState && mobileShopState.index === index) return;
       const popup = typeof marker.getPopup === 'function' ? marker.getPopup() : null;
       if (!popup || typeof popup.update !== 'function') return;
 
@@ -4429,7 +4877,7 @@
       };
 
       requestAnimationFrame(() => {
-        if (!marker.isPopupOpen()) return;
+        if (!marker.isPopupOpen() || (mobileShopState && mobileShopState.index === index)) return;
         const popupElement = typeof popup.getElement === 'function' ? popup.getElement() : null;
         const liveContent = popupElement
           ? popupElement.querySelector('.leaflet-popup-content > *')
@@ -4444,7 +4892,7 @@
         }
         panPopupInsideMap();
         window.setTimeout(() => {
-          if (!marker.isPopupOpen()) return;
+          if (!marker.isPopupOpen() || (mobileShopState && mobileShopState.index === index)) return;
           popup.update();
           panPopupInsideMap();
         }, 90);
@@ -4452,7 +4900,7 @@
     }
 
     function getLocationFreshnessLabel(loc) {
-      return formatFreshnessLabel(getPopupMenuUpdatedAt(loc));
+      return getPopupMenuDateLabel(loc);
     }
 
     async function refreshPopupStrainsForLocation(index) {
@@ -4503,8 +4951,7 @@
       }
 
       liveContainer.style.display = 'block';
-      const updatedAt = getPopupMenuUpdatedAt(loc);
-      const updatedLabel = formatFreshnessLabel(updatedAt) || formatDisplayDate(updatedAt);
+      const updatedLabel = getPopupMenuDateLabel(loc);
       const countText = `${strains.length} strain${strains.length === 1 ? '' : 's'} available${updatedLabel ? ` · ${updatedLabel}` : ''}`;
       const menuValueSummary = getLocationMenuValueSummary(loc, strains);
       setPopupCardValueTone(index, menuValueSummary);
@@ -4537,7 +4984,7 @@
         if (valueComparison) {
           metaParts.push(
             `<span class="popup-strain-value is-${escapeHtmlAttr(valueComparison.tone)}" title="${escapeHtmlAttr(valueComparison.title)}">` +
-              `${escapeHtml(valueComparison.label)}` +
+              `${escapeHtml(valueComparison.label)} · mean, ${valueComparison.sampleSize} shops${valueComparison.sampleSize === 2 ? ' (small sample)' : ''}` +
             `</span>`
           );
         }
@@ -4904,74 +5351,94 @@
       return true;
     }
 
+    async function loadMapSearchCandidates() {
+      if (mapSearchIndexState) return;
+      mapSearchIndexState = 'loading';
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 8000);
+      try {
+        const response = await fetch('database/search_index.json', { signal: controller.signal, cache: 'no-cache' });
+        if (!response.ok) throw new Error('Search index unavailable');
+        const index = await response.json();
+        mapSearchCandidates = window.BudfinderSearch.entities(index);
+        mapSearchIndexState = 'ready';
+      } catch (_err) {
+        mapSearchIndexState = 'failed';
+      } finally {
+        window.clearTimeout(timeout);
+        const input = document.getElementById('destination-search');
+        if (input === document.activeElement) updateGlobalSearchSuggestions(input.value);
+      }
+    }
+
+    function hideMapSearchSuggestions() {
+      const input = document.getElementById('destination-search');
+      const list = document.getElementById('global-search-suggestions');
+      if (list) list.hidden = true;
+      if (input) {
+        input.setAttribute('aria-expanded', 'false');
+        input.removeAttribute('aria-activedescendant');
+        mapSuggestionsDismissedQuery = normaliseText(input.value);
+      }
+      mapSearchSuggestionRows = [];
+      mapSearchSuggestionIndex = -1;
+      const status = document.getElementById('map-suggestion-status');
+      if (status) status.textContent = '';
+    }
+
     function updateGlobalSearchSuggestions(queryText = '') {
       const list = document.getElementById('global-search-suggestions');
-      if (!list) return;
-
-      const values = [];
+      const input = document.getElementById('destination-search');
+      if (!list || !input || !window.BudfinderSearch) return;
+      const query = String(queryText || '').trim();
+      if (!query || input !== document.activeElement || mapSuggestionsDismissedQuery === normaliseText(query)) return;
+      const fallback = [
+        ...Array.from(dbShopMetaById.entries()).filter(([id]) => !isUnavailableDbShopId(id)).map(([id, row]) => ({kind: 'shop', name: row.name, city: row.city, shopId: id})),
+        ...activeStrainNames.map(name => ({kind: 'strain', name})),
+        ...discoveredCsvPaths.filter(path => !isMasterCoffeeshopPath(path)).map(path => ({kind: 'city', name: csvLabelFromPath(path)}))
+      ];
+      const areas = locations.filter(isAreaLocation).map(loc => ({kind: 'area', name: loc.name, city: loc.city || 'Amsterdam'}));
       const seen = new Set();
-      const queryKey = normaliseText(queryText);
-      const push = value => {
-        const text = (value || '').toString().replace(/\s+/g, ' ').trim();
-        const key = normaliseText(text);
-        if (!text || !key || seen.has(key)) return;
-        seen.add(key);
-        values.push(text);
-      };
-
-      if (queryKey) {
-        const shopCandidates = Array.from(dbShopMetaById.entries())
-          .filter(([shopId, meta]) => meta && !isUnavailableDbShopId(shopId))
-          .map(([shopId, meta]) => ({ shopId, ...meta }));
-        const matchingShops = window.BudfinderSearch
-          ? window.BudfinderSearch.rank(queryText, shopCandidates, {
-              getLabel: meta => meta && meta.name,
-              getAliases: meta => [meta && meta.city, `${meta && meta.name} ${meta && meta.city}`],
-              threshold: 0.72,
-              limit: 60
-            }).map(result => result.item)
-          : shopCandidates
-              .filter(meta => normaliseText(`${meta.name || ''} ${meta.city || ''}`).includes(queryKey))
-              .slice(0, 60);
-        matchingShops.forEach(meta => {
-          push(meta && meta.name);
-          const cityMatches = window.BudfinderSearch
-            ? window.BudfinderSearch.matches(meta && meta.city, queryText, { threshold: 0.72 })
-            : normaliseText(meta && meta.city).includes(queryKey);
-          if (cityMatches) push(meta && meta.city);
-        });
-        const matchingStrains = window.BudfinderSearch
-          ? window.BudfinderSearch.rank(queryText, activeStrainNames, { threshold: 0.72, limit: 60 }).map(result => result.item)
-          : activeStrainNames.filter(name => normaliseText(name).includes(queryKey)).slice(0, 60);
-        matchingStrains.forEach(push);
-      } else {
-        Array.from(dbShopMetaById.values()).forEach(meta => push(meta && meta.city));
-      }
-
-      locations.filter(isCoffeeShopLocation).slice(0, 50).forEach(loc => {
-        push(loc && loc.name);
-        push(loc && loc.city);
+      const candidates = [...(mapSearchCandidates.length ? mapSearchCandidates : fallback), ...areas].filter(row => {
+        const key = `${row.kind}|${normaliseText(row.name)}|${normaliseText(row.city)}`;
+        if (!row.name || seen.has(key)) return false;
+        seen.add(key); return true;
       });
-      locations.filter(isAreaLocation).slice(0, 15).forEach(loc => push(loc && loc.name));
-      const offeringRows = Array.isArray(activeOfferingsRows) ? activeOfferingsRows : [];
-      const growerNames = Array.from(new Set(offeringRows
-        .map(row => ((row && row.grower) || '').toString().replace(/\s+/g, ' ').trim())
-        .filter(Boolean)));
-      const matchingGrowers = queryKey && window.BudfinderSearch
-        ? window.BudfinderSearch.rank(queryText, growerNames, { threshold: 0.72, limit: 60 }).map(result => result.item)
-        : growerNames.filter(grower => !queryKey || normaliseText(grower).includes(queryKey)).slice(0, 60);
-      matchingGrowers.forEach(push);
-      if (!queryKey || normaliseText('Legal project').includes(queryKey) || normaliseText('legal weed').includes(queryKey)) {
-        push('Legal weed');
-      }
-      (queryKey ? activeStrainNames.filter(name => normaliseText(name).includes(queryKey)) : activeStrainNames)
-        .slice(0, 60)
-        .forEach(push);
+      mapSearchSuggestionRows = window.BudfinderSearch.suggest(query, candidates);
+      mapSearchSuggestionIndex = -1;
+      input.removeAttribute('aria-activedescendant');
+      const kinds = {strain:'Strain', grower:'Grower', shop:'Coffeeshop', city:'Town', area:'Area', legal:'Legal project'};
+      list.innerHTML = mapSearchSuggestionRows.map(({item, exact}, index) => {
+        const meta = [kinds[item.kind], exact ? 'Exact match' : '', item.city,
+          item.shopCount ? `${item.shopCount} shop${Number(item.shopCount) === 1 ? '' : 's'} nationwide` : ''].filter(Boolean).join(' · ');
+        return `<button id="map-search-option-${index}" class="secondary-btn map-search-option" type="button" role="option" tabindex="-1" aria-selected="false" data-map-search-option="${index}"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(meta)}</span></button>`;
+      }).join('');
+      list.hidden = !mapSearchSuggestionRows.length;
+      input.setAttribute('aria-expanded', String(!list.hidden));
+      const status = document.getElementById('map-suggestion-status');
+      if (status) status.textContent = mapSearchSuggestionRows.length
+        ? `${mapSearchSuggestionRows.length} suggestions. Choose one or use Search.`
+        : mapSearchIndexState === 'loading' ? 'Loading suggestions. You can still use Search.'
+          : 'No close suggestion. Use Search to check shops and menus.';
+    }
 
-      list.innerHTML = values
-        .slice(0, 105)
-        .map(value => `<option value="${escapeHtmlAttr(value)}"></option>`)
-        .join('');
+    function renderMapStrainResult() {
+      const host = document.getElementById('map-strain-result');
+      if (!host) return;
+      const query = document.getElementById('destination-search')?.value || '';
+      const name = !offeringAttributeFilterKind && activeStrainNames.find(name =>
+        normaliseText(name) === normaliseText(strainFilterText) && normaliseText(name) === normaliseText(query));
+      host.hidden = !name;
+      if (!name) return;
+      document.getElementById('map-strain-result-name').textContent = name;
+      document.getElementById('map-match-rule').textContent = 'Exact name only · Each shop counted once · Listed menus, not live stock';
+      const info = mapSearchAreaInfo({ shopsOnly: true });
+      document.getElementById('map-strain-result-count').textContent = localMapSearchCity()
+        ? `Listed by ${info.local} shop${info.local === 1 ? '' : 's'} in ${info.city}${info.elsewhere ? ` · ${info.elsewhere} elsewhere` : ''}`
+        : `Listed by ${info.total} shop${info.total === 1 ? '' : 's'} across the Netherlands`;
+      document.getElementById('map-strain-result-prices').href = menuExplore
+        ? menuExplore.link('menus', { strain: name, filters: sharedMenuFilters, source: 'map', returnTo: `map.html${window.location.search}` })
+        : `database.html?detail=strain&strain=${encodeURIComponent(name)}`;
     }
 
     function normaliseGlobalSearchCity(value) {
@@ -5000,6 +5467,7 @@
     }
 
     function syncMapViewToSearchRows(rows, query) {
+      if (localMapSearchCity()) return false;
       const targetPath = mapViewPathForSearchRows(rows);
       if (!targetPath || canonicalCsvPath(targetPath) === canonicalCsvPath(currentCsvPath)) return false;
       return switchMapViewArea(targetPath, {
@@ -5097,6 +5565,12 @@
       const target = findGlobalDestinationSearchTarget(query);
       if (!target) return false;
       if (target.kind === 'shop' && options.allowShop === false) return false;
+      if (target.kind === 'nationwide' && localMapSearchCity()) return false;
+      // A named town or one specific shop is an intentional destination change.
+      if (target.kind === 'city' || target.kind === 'shop') {
+        mapSearchViewCity = target.city;
+        mapSearchViewAllCities = false;
+      }
 
       const status = document.getElementById('destination-search-status');
       if (status) {
@@ -5141,7 +5615,7 @@
       }
 
       const q = (query || '').toString().replace(/\s+/g, ' ').trim();
-      if (q.length < 3) return;
+      if (q.length < 2) return;
       const searchStatus = document.getElementById('destination-search-status');
       if (searchStatus && visibleLocationCount === 0) {
         searchStatus.textContent = `Checking nationwide shops and menus for "${q}"…`;
@@ -5183,6 +5657,26 @@
         }
 
         try {
+          // Menu data arrives after the catalogue. An exact place must keep its
+          // meaning even when a grower or strain starts with the same word.
+          const placeKey = normaliseText(q);
+          const exactPlace = !['strain', 'grower', 'legal'].includes(options.entityKind) && (findCsvPathForGlobalSearchCity(q) || locations.some(loc =>
+            normaliseText(loc.name) === placeKey ||
+            (isAreaLocation(loc) && getAreaSearchAliases(loc).some(alias => normaliseText(alias) === placeKey))
+          ));
+          if (exactPlace) {
+            if (options.allowTownSwitch === true) {
+              await openGlobalDestinationSearchTarget(q, isCurrentRequest, { allowShop: true });
+              if (!isCurrentRequest()) return;
+            }
+            updateDestinationSearchStatus();
+            refreshDestinationCards();
+            if (pendingInitialSearchPresentation) {
+              fitMapToVisibleMarkers({ searchResults: true });
+              pendingInitialSearchPresentation = false;
+            }
+            return;
+          }
           if (!activeStrainNames.length) {
             activeStrainNames = await fetchActiveStrainNames();
             if (!isCurrentRequest()) return;
@@ -5190,7 +5684,7 @@
           const hasExactStrainMatch = activeStrainNames.some(name => normaliseText(name) === normaliseText(q));
           const likelyStrainMatch = window.BudfinderSearch ? bestGlobalStrainMatch(q, 0) : '';
           const hasLikelyStrainMatch = hasExactStrainMatch || Boolean(likelyStrainMatch);
-          if (options.allowTownSwitch === true) {
+          if (options.allowTownSwitch === true && !['strain', 'grower', 'legal'].includes(options.entityKind)) {
             const openedDestination = await openGlobalDestinationSearchTarget(q, isCurrentRequest, {
               allowShop: !hasLikelyStrainMatch
             });
@@ -5200,7 +5694,8 @@
 
           const offeringRows = (await loadActiveOfferingsRows()).filter(isActiveOfferingRowAvailable);
           if (!isCurrentRequest()) return;
-          const attributeMatch = getOfferingAttributeMatch(q, offeringRows);
+          const attributeMatch = options.entityKind !== 'strain' && (!hasExactStrainMatch || ['grower', 'legal'].includes(options.entityKind))
+            ? getOfferingAttributeMatch(q, offeringRows) : null;
           if (attributeMatch && attributeMatch.rows.length) {
             acceptedResolvedQueryKey = normaliseText(attributeMatch.kind === 'grower' ? attributeMatch.value : 'Legal weed');
             if (options.allowTownSwitch === true) {
@@ -5221,7 +5716,6 @@
             syncMapSearchUrl(appliedLabel);
             updateGlobalSearchSuggestions(appliedLabel);
             if (pendingInitialSearchPresentation) {
-              focusSearchResultsPanel();
               fitMapToVisibleMarkers({ searchResults: true });
               pendingInitialSearchPresentation = false;
             }
@@ -5235,7 +5729,10 @@
             updateGlobalSearchSuggestions(q);
           }
 
-          const match = likelyStrainMatch || bestGlobalStrainMatch(q, visibleLocationCount);
+          // A partial search stays a partial search across the map/menu handoff.
+          const partialNameMatch = activeStrainNames.some(name => normaliseText(name).includes(normaliseText(q)));
+          const exactName = activeStrainNames.find(name => normaliseText(name) === normaliseText(q));
+          const match = exactName || (partialNameMatch ? q : likelyStrainMatch || bestGlobalStrainMatch(q, visibleLocationCount));
           if (!match || !isCurrentRequest()) {
             if (isCurrentRequest()) {
               updateDestinationSearchStatus();
@@ -5246,10 +5743,7 @@
 
           globalSearchAppliedStrainKey = normaliseText(match);
           acceptedResolvedQueryKey = normaliseText(match);
-          if (options.allowTownSwitch === true) {
-            const matchedRows = collectMatchedActiveOfferingRows(normaliseText(match), offeringRows);
-            syncMapViewToSearchRows(matchedRows, match);
-          }
+          // A strain filters the existing map; it must not switch city or zoom.
           locationSearchText = '';
           if (searchInput) searchInput.value = match;
           syncMapSearchUrl(match);
@@ -5257,11 +5751,7 @@
           if (!applied || !isCurrentRequest()) return;
           updateDestinationDropdown();
           updateMarkers();
-          if (pendingInitialSearchPresentation) {
-            focusSearchResultsPanel();
-            fitMapToVisibleMarkers({ searchResults: true });
-            pendingInitialSearchPresentation = false;
-          }
+          pendingInitialSearchPresentation = false;
         } catch (_err) {
           // Keep plain shop/city search if strain data is not available.
           if (isCurrentRequest()) {
@@ -5310,12 +5800,10 @@
       dbByPath = new Map();
       dbByNameCity = new Map();
       dbShopMetaById = new Map();
-      dbUnavailableShopIds = new Set(
-        rows
-          .filter(isUnavailableDbRow)
-          .map(r => String(r.shop_id || '').trim())
-          .filter(Boolean)
-      );
+      // Use the menu explorer's eligibility rules, including source conflicts.
+      dbUnavailableShopIds = window.BudfinderData
+        ? window.BudfinderData.unavailableShopIds(rows)
+        : new Set(rows.filter(isUnavailableDbRow).map(row => String(row.shop_id)));
       const nameCounts = new Map();
 
       rows.forEach(r => {
@@ -5361,6 +5849,13 @@
     }
 
     function bindDbShopIdToLocation(loc) {
+      // Areas and other non-shop places can share names with coffeeshops.
+      // Keep them independent of menu records and their visibility flags.
+      if (!isCoffeeShopLocation(loc)) {
+        loc.db_shop_id = null;
+        loc.db_shop_unavailable = false;
+        return;
+      }
       let shopId = null;
       const locationKey = (loc.shop_key || '').toString().trim();
       const explicitMenuKey = (loc.menu_shop_key || '').toString().trim();
@@ -5408,6 +5903,11 @@
       const isCurrentRequest = typeof options.isCurrent === 'function'
         ? options.isCurrent
         : () => true;
+      // Stop an earlier shop flight before filtering, keeping the current view.
+      if (q && map && typeof map.stop === 'function') {
+        mapFocusRequestId += 1;
+        map.stop();
+      }
       if (options.recordHistory !== false && normaliseText(q) !== normaliseText(strainFilterText)) {
         rememberMapFilterState();
       }
@@ -5782,7 +6282,11 @@
       const saved = loadSavedCsvPath();
       const defaultPath = pickDefaultCsvPath(available);
       const savedWasExplicit = loadStoredJson(LOCATION_DATA_EXPLICIT_SELECTION_STORAGE_KEYS, false) === true;
-      if (saved && available.includes(saved)) {
+      const lastView = loadLastMapView();
+      const lastCityPath = lastView && available.find(path => !isMasterCoffeeshopPath(path) &&
+        normaliseGlobalSearchCity(csvLabelFromPath(path)) === normaliseGlobalSearchCity(lastView.city));
+      if (lastCityPath) return lastCityPath;
+      if (saved && available.includes(saved) && !isMasterCoffeeshopPath(saved)) {
         const looksLikeOldAutomaticFallback =
           !savedWasExplicit &&
           saved !== defaultPath &&
@@ -6231,6 +6735,7 @@
         ? null
         : loadPersistedMapSession(csvPathLike);
       initialViewportRestored = false;
+      initialCameraSettled = false;
       // Map each CSV row into a location object.
       // NOTE:
       //  - "logo" is optional.
@@ -6265,6 +6770,9 @@
             obj.rating = Math.max(1, Math.min(5, pr));
           }
         }
+        // Keep the published values separate from this device's overrides.
+        obj.mattVisited = obj.visited;
+        obj.mattRating = obj.rating;
 
         // Parse other boolean Y/N fields as category flags.
         Object.entries(r).forEach(([k, v]) => {
@@ -6292,6 +6800,8 @@
         isPersistedViewportRelevantToLocations(persistedMapSession.viewport)
       );
 
+      const openingViewport = openingMapViewport(csvPathLike);
+      if (openingViewport) initialViewportRestored = true;
       resetMapState();
 
       // Reset per-CSV UI/filter state.
@@ -6384,6 +6894,10 @@
       if (persistedMapSession) {
         await restorePersistedMapSession(persistedMapSession);
       }
+      if (openingViewport) {
+        map.setView([Number(openingViewport.lat), Number(openingViewport.lng)], Number(openingViewport.zoom), { animate: false });
+        initialViewportRestored = true;
+      }
       if (hasSearchTextOverride) {
         locationSearchText = searchTextOverride;
         const searchInput = document.getElementById('destination-search');
@@ -6400,9 +6914,9 @@
         updateControlsSummary();
         pendingInitialSearchPresentation = !!searchTextOverride;
         if (searchTextOverride) {
+          collapseMapSearchResults();
           window.setTimeout(() => {
             if (normaliseText(locationSearchText) !== normaliseText(searchTextOverride)) return;
-            focusSearchResultsPanel();
             fitMapToVisibleMarkers({ searchResults: true });
             pendingInitialSearchPresentation = false;
           }, 180);
@@ -6497,6 +7011,16 @@
       const url = new URL(window.location.href);
       url.searchParams.delete('q');
       url.searchParams.delete('query');
+      if (typeof mapSearchEntityKind !== 'undefined' && mapSearchEntityKind && value) url.searchParams.set('search_kind', mapSearchEntityKind);
+      else url.searchParams.delete('search_kind');
+      if (menuExplore) { menuExplore.applyToUrl(url, sharedMenuFilters); url.searchParams.set('explore', '1'); }
+      if (value && mapSearchViewCity) {
+        url.searchParams.set('search_city', mapSearchViewCity);
+        url.searchParams.set('search_view', mapSearchViewAllCities ? 'all' : 'city');
+      } else {
+        url.searchParams.delete('search_city');
+        url.searchParams.delete('search_view');
+      }
       if (value) url.searchParams.set('search', value);
       else url.searchParams.delete('search');
       window.history.replaceState({}, document.title, url.href);
@@ -6523,6 +7047,10 @@
       clearRouteUi();
       if (map) map.closePopup();
 
+      if (hasMapSearchQuery() && options.persist !== false) {
+        mapSearchViewCity = isMasterCoffeeshopPath(selectedPath) ? '' : csvLabelFromPath(selectedPath);
+        mapSearchViewAllCities = isMasterCoffeeshopPath(selectedPath);
+      }
       currentCsvPath = selectedPath;
       activeMapSessionDatasetKey = getMapSessionDatasetKey(selectedPath);
       initialViewportRestored = false;
@@ -6538,6 +7066,7 @@
 
       updateLocationContext();
       syncMapViewUrl(selectedPath);
+      syncMapSearchUrl(document.getElementById('destination-search')?.value || '');
       if (options.persist !== false) {
         saveSelectedCsvPath(selectedPath, { explicit: options.explicitSelection === true });
       }
@@ -6562,6 +7091,12 @@
       return true;
     }
 
+    function pickOpeningCsvPath(paths, requestedCsv) {
+      const genericNationwideLink = requestedCsv && isMasterCoffeeshopPath(requestedCsv) &&
+        new URLSearchParams(window.location.search).get('search_view') !== 'all';
+      return !requestedCsv || genericNationwideLink ? pickInitialCsvPath(paths) : requestedCsv;
+    }
+
     async function bootstrapInitialCsvLoad() {
       const requestedLocation = requestedLocationLabelFromUrl();
       const openingLabel = requestedLocation ? csvLabelFromPath(requestedLocation) : 'Amsterdam';
@@ -6577,7 +7112,7 @@
         );
         return;
       }
-      const initialCsv = requestedCsv || pickInitialCsvPath(csvPaths);
+      const initialCsv = pickOpeningCsvPath(csvPaths, requestedCsv);
       if (!initialCsv) {
         if (window.location.protocol === 'file:') {
           setUploadPanelState(
@@ -6640,7 +7175,7 @@
      */
     function initApp() {
       // Create the Leaflet map
-      map = L.map('map').setView([0, 0], 2);
+      map = L.map('map').setView([52.3676, 4.9041], 13);
 
       map.on('moveend zoomend', () => schedulePersistMapSession());
       markerLayoutController = BudfinderMarkerLayout.attach(map, () => {
@@ -6711,11 +7246,15 @@
           : isArea
           ? 'shop-popup-card is-area-anchor'
           : 'shop-popup-card';
-        const websiteHref = (loc.website || '').toString().trim();
-        const websiteLinkHtml = websiteHref
-          ? `<a href="${escapeHtmlAttr(websiteHref)}" target="_blank">Website</a><br>`
-          : '';
-        const streetViewLinkHtml = `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank">Street View</a><br>`;
+        // Archive links identify their source; only explicitly supplied official URLs get that label.
+        const websiteHref = window.BudfinderData.webUrl(loc.official_website || loc.website);
+        const websiteLabel = window.BudfinderData.linkLabel(websiteHref, Boolean(loc.official_website));
+        const sourceHref = window.BudfinderData.webUrl(getShopSourceMeta(loc)?.shop_url);
+        const websiteLinkHtml = (websiteHref
+          ? `<a href="${escapeHtmlAttr(websiteHref)}" target="_blank" rel="noopener noreferrer">${escapeHtml(websiteLabel)}</a>` : '') +
+          (sourceHref && sourceHref !== websiteHref
+            ? `<a href="${escapeHtmlAttr(sourceHref)}" target="_blank" rel="noopener noreferrer">Menu source</a>` : '');
+        const streetViewLinkHtml = `<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${loc.coords[0]},${loc.coords[1]}" target="_blank" rel="noopener noreferrer">Street View</a>`;
         const journeyControlsHtml = isArea
           ? ''
           : (
@@ -6735,13 +7274,14 @@
         const personalControlsHtml = isArea
           ? ''
           : (
+              `<div class="popup-personal-controls">` +
               `<button class="fav-btn" data-index="${i}">` +
                 `${favorites.includes(i) ? 'Remove saved shop' : 'Save shop'}` +
               `</button>` +
-              `<br>` +
-              `<label><input type="checkbox" class="visited-checkbox" data-index="${i}" ${loc.visited ? 'checked' : ''}> Visited</label><br>` +
-              `<span class="rating-label">Rating: </span>` +
-              `<span class="rating-stars" data-index="${i}" data-rating="${loc.rating}">${renderStars(loc.rating)}</span>`
+              `<label class="popup-visited-label"><input type="checkbox" class="visited-checkbox" data-index="${i}" ${loc.visited ? 'checked' : ''}> Visited</label>` +
+              `<span class="popup-rating"><span class="rating-label">Rating: </span>` +
+              `<button type="button" class="rating-stars" data-index="${i}" data-rating="${loc.rating}" aria-label="Rating: ${loc.rating || 0} out of 5. Select to change.">${renderStars(loc.rating)}</button></span>` +
+              `</div>`
             );
 
         const marker = L.marker(loc.coords, {
@@ -6755,16 +7295,17 @@
           .addTo(map)
           .bindPopup(
             `<div id="${popupCardId(i)}" class="${popupCardClass}">` +
-            `<strong>${loc.name}</strong><br>` +
+            `<strong class="popup-shop-title">${escapeHtml(loc.name)}</strong><br>` +
             logoHtml +
+            `<p class="popup-matt-review" hidden></p>` +
+            areaControlsHtml +
+            (journeyControlsHtml ? `<div class="popup-place-route-actions">${journeyControlsHtml}</div>` : '') +
+            `<div class="popup-place-links">${websiteLinkHtml}${streetViewLinkHtml}</div>` +
+            personalControlsHtml +
             popupStrainsHtml +
             dbMenuLinks +
-            areaControlsHtml +
-            journeyControlsHtml +
-            websiteLinkHtml +
-            streetViewLinkHtml +
-            personalControlsHtml +
-            `</div>`
+            `</div>`,
+            { autoPan: false } // Shop details use a fixed panel rather than an anchored popup.
           )
           .on('click', function () {
             this.openPopup();
@@ -6772,6 +7313,7 @@
           .on('popupopen', () => {
             activePopupLocationIndex = i;
             document.body.classList.add('shop-popup-open');
+            openMobileShopSheet(i);
             updateControlsSummary();
             syncItineraryActionButtons();
             if (isCoffeeShop) {
@@ -6780,6 +7322,7 @@
             markerLayoutController.schedule();
           })
           .on('popupclose', () => {
+            if (mobileShopState && mobileShopState.index === i) restoreMobileShopCard();
             if (activePopupLocationIndex === i) {
               activePopupLocationIndex = null;
               updateControlsSummary();
@@ -6977,12 +7520,11 @@
       }
 
       applyOverlayInset('top-shelf-rail');
-      applyOverlayInset('selection-card');
       applyOverlayInset('stash-shelf');
 
-      if (isMobile && controlsVisible && !controlsCollapsed) {
+      if (isMobile && controlsVisible) {
         const controlsDiv = document.querySelector('.controls');
-        if (controlsDiv && controlsDiv.id !== 'selection-card') {
+        if (controlsDiv) {
           const style = window.getComputedStyle(controlsDiv);
           if (style.display !== 'none') {
             const rect = controlsDiv.getBoundingClientRect();
@@ -7069,6 +7611,7 @@
 
     function focusMapOnCoords(coords, options = {}) {
       if (!map) return;
+      const focusRequestId = ++mapFocusRequestId;
       const minZoom = Number.isFinite(options.minZoom) ? options.minZoom : (isCompactMobileLayout() ? 15 : 16);
       const currentZoom = Number.isFinite(map.getZoom()) ? map.getZoom() : minZoom;
       const targetZoom = Number.isFinite(options.zoom) ? options.zoom : Math.max(currentZoom, minZoom);
@@ -7086,7 +7629,7 @@
 
       if (popupIndex !== null) {
         map.once('moveend', () => {
-          if (!markers[popupIndex]) return;
+          if (focusRequestId !== mapFocusRequestId || !markers[popupIndex]) return;
           markers[popupIndex].openPopup();
           if (typeof markers[popupIndex].bringToFront === 'function') {
             markers[popupIndex].bringToFront();
@@ -7180,12 +7723,11 @@
       if (!bounds.isValid()) return false;
       const rawInsets = getMapViewportInsets();
       const mapRect = getMeasuredMapRect();
-      const insets = isCompactMobileLayout()
-        ? rawInsets
-        : clampViewportInsets(rawInsets, mapRect, {
-            minVisibleWidthRatio: 0.56,
-            minVisibleHeightRatio: 0.54
-          });
+      // Reserve usable map space even when a phone panel covers most of the viewport.
+      const insets = clampViewportInsets(rawInsets, mapRect, {
+        minVisibleWidthRatio: 0.56,
+        minVisibleHeightRatio: 0.54
+      });
       map.fitBounds(bounds, {
         animate: options.animate !== false,
         paddingTopLeft: insets.paddingTopLeft,
@@ -7198,6 +7740,7 @@
     function focusInitialMapViewport() {
       if (!map || !markers.length) return;
       if (initialViewportRestored) {
+        initialCameraSettled = true;
         waitForInitialMapTiles();
         return;
       }
@@ -7212,48 +7755,52 @@
       } else if (!focusMapViewArea(currentCsvPath, { animate: false })) {
         fitMapToVisibleMarkers();
       }
+      initialCameraSettled = true;
       waitForInitialMapTiles();
     }
 
     function fitMapToVisibleMarkers(options = {}) {
       if (!map || !markers.length) return;
+      // Typing can cover almost the whole map; frame results after the search is submitted.
+      if (document.body?.classList?.contains('mobile-map-search-active')) return;
       const visibleEntries = markers
         .map((marker, index) => ({ marker, index }))
         .filter(item => item.marker && shouldShowMarkerOnMap(locations[item.index], item.index));
-      const markerEntries = visibleEntries.length
-        ? visibleEntries
-        : markers
-            .map((marker, index) => ({ marker, index }))
-            .filter(item => item.marker);
+      const city = localMapSearchCity();
+      let markerEntries;
+      if (city) {
+        markerEntries = visibleEntries.filter(item => locationIsInSearchCity(locations[item.index], city));
+        if (!markerEntries.length) {
+          const cityPath = findCsvPathForGlobalSearchCity(city);
+          if (cityPath) focusMapViewArea(cityPath, { animate: false, respectFilters: false });
+          return;
+        }
+      } else {
+        // Empty results should not zoom out to every unrelated map marker.
+        if (!visibleEntries.length && hasMapSearchQuery()) return;
+        markerEntries = visibleEntries.length ? visibleEntries : markers
+          .map((marker, index) => ({ marker, index })).filter(item => item.marker);
+      }
       if (!markerEntries.length) return;
 
       const fitBounds = L.featureGroup(markerEntries.map(item => item.marker)).getBounds();
       if (!fitBounds.isValid()) return;
       const rawInsets = getMapViewportInsets();
       const mapRect = getMeasuredMapRect();
-      const insets = isCompactMobileLayout()
-        ? rawInsets
-        : clampViewportInsets(rawInsets, mapRect, {
-            minVisibleWidthRatio: 0.56,
-            minVisibleHeightRatio: 0.54
-          });
+      // Phone panels can cover most of the map, so their padding needs the same bounds as desktop.
+      const insets = clampViewportInsets(rawInsets, mapRect, {
+        minVisibleWidthRatio: 0.56,
+        minVisibleHeightRatio: 0.54
+      });
+      // Cancel an earlier shop fly-to before framing a newly selected strain.
+      if (typeof map.stop === 'function') map.stop();
       map.fitBounds(fitBounds, {
         animate: options.searchResults ? false : options.animate,
         paddingTopLeft: insets.paddingTopLeft,
         paddingBottomRight: insets.paddingBottomRight,
         maxZoom: isCompactMobileLayout() ? 15 : 16
       });
-      const minimumUsefulZoom = options.searchResults
-        ? (isCompactMobileLayout() ? 13 : 13)
-        : null;
-      const southWest = fitBounds.getSouthWest();
-      const northEast = fitBounds.getNorthEast();
-      const latitudeSpan = Math.abs(Number(northEast.lat) - Number(southWest.lat));
-      const longitudeSpan = Math.abs(Number(northEast.lng) - Number(southWest.lng));
-      const isCompactSearchCluster = markerEntries.length <= 40 && latitudeSpan <= 0.18 && longitudeSpan <= 0.26;
-      if (minimumUsefulZoom && isCompactSearchCluster && map.getZoom() < minimumUsefulZoom) {
-        map.setZoom(minimumUsefulZoom, { animate: false });
-      }
+      // Keep fitBounds' zoom: forcing a street zoom can hide both cities around their midpoint.
     }
 
     function selectDestinationIndex(index) {
@@ -7344,7 +7891,7 @@
       setControlsVisible(true, { collapsed: false });
       refreshDestinationCards();
       updateControlsSummary();
-      setRouteStatus(`Exploring possible Destinations from ${locations[selectedIndex].name}.`, 'good');
+      setRouteStatus(`Exploring possible places from ${locations[selectedIndex].name}.`, 'good');
     }
 
     async function clearOneActiveMapFilter() {
@@ -7392,6 +7939,13 @@
         return true;
       }
 
+      if (menuExplore && menuExplore.active(sharedMenuFilters).length) {
+        sharedMenuFilters = menuExplore.clean({});
+        sharedMenuFilterControl?.set(sharedMenuFilters);
+        syncMapSearchUrl(searchInput?.value || '');
+        return true;
+      }
+
       if (hasCategoryFilter()) {
         selectedCategories = getDefaultLocationCategories();
         syncCategoryCheckboxes();
@@ -7415,7 +7969,6 @@
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
-        updateSelectionCard();
         refreshDestinationCards();
         updateControlsSummary();
         syncClearSelectionToggle();
@@ -7424,6 +7977,9 @@
         }
         setRouteStatus('Last filter cleared.', 'good');
       }
+      syncMapSearchUrl(document.getElementById('destination-search')?.value || '');
+      syncPriceMenusLinks();
+      schedulePersistMapSession();
     }
 
     function clearActiveStrainFilterState() {
@@ -7450,11 +8006,34 @@
     }
 
     function resetMapFilters(options = {}) {
+      const previousView = map ? { center: map.getCenter(), zoom: map.getZoom() } : null;
+      ++globalSearchResolveRequestId;
+      if (globalSearchStrainTimer !== null) window.clearTimeout(globalSearchStrainTimer);
+      globalSearchStrainTimer = null;
+      pendingInitialSearchPresentation = false;
+      mapSearchEntityKind = '';
+      hideMapSearchSuggestions();
+      beginMapSearchView('');
+      if (menuExplore) {
+        sharedMenuFilters = menuExplore.clean({});
+        sharedMenuFilterControl?.set(sharedMenuFilters);
+        const url = new URL(window.location.href);
+        ['shops', 'shop', 'shop_id', 'shop_ids', 'strain', 'strain_shops', 'all_shops', 'return_to', 'source'].forEach(key => url.searchParams.delete(key));
+        window.history.replaceState({}, '', url.href);
+        syncMapSearchUrl('');
+      }
       if (!options.preserveHistory) clearMapFilterHistory();
       const searchInput = document.getElementById('destination-search');
       const missionSelect = document.getElementById('mission-mode');
+      const destinationSelect = document.getElementById('destination-select');
       locationSearchText = '';
       if (searchInput) searchInput.value = '';
+      if (destinationSelect) destinationSelect.value = '';
+      lastDestinationSelectValue = '';
+      activePopupLocationIndex = null;
+      nearbyExploreActive = false;
+      if (map) map.closePopup();
+      clearRouteUi();
 
       missionMode = 'free-roam';
       if (missionSelect) missionSelect.value = missionMode;
@@ -7468,15 +8047,14 @@
       updateDestinationDropdown();
       updateDistanceInfo();
       updateMarkers();
-      updateSelectionCard();
       refreshDestinationCards();
       updateControlsSummary();
       syncClearSelectionToggle();
       if (!options.silent) {
-        setRouteStatus('Filters reset. Showing the nationwide coffeeshop list.', 'good');
+        setRouteStatus('Filters cleared. Showing coffeeshops in your current map view.', 'good');
       }
-      if (map) {
-        window.setTimeout(() => fitMapToVisibleMarkers(), 80);
+      if (map && previousView) {
+        map.setView(previousView.center, previousView.zoom, { animate: false });
       }
       schedulePersistMapSession();
     }
@@ -7490,8 +8068,10 @@
         ...normaliseStorageKeys(SAVED_JOURNEYS_STORAGE_KEYS),
         MAP_FOCUS_SHOPS_STORAGE_KEY,
         MAP_SESSION_STORAGE_KEY,
+        MAP_VIEW_STORAGE_KEY,
         'budfinder_explorer_selected_shops',
-        'budfinder_database_navigation_state'
+        'budfinder_database_navigation_state',
+        'budfinder_custom_price_benchmark_v1'
       ]));
     }
 
@@ -7512,12 +8092,11 @@
       recentDestinationKeys = [];
       shelfStrainNames = [];
       savedJourneys = [];
+      try { localStorage.removeItem('budfinder_skunkworks_v1'); } catch (_err) { /* Storage may be unavailable. */ }
       stopLocationTracking();
 
-      locations.forEach(loc => {
-        loc.visited = false;
-        loc.rating = 0;
-      });
+      // Clearing personal data restores the published defaults when enabled.
+      hydrateLocationPreferences();
 
       saveLocationPreferences();
       persistLegacyFavorites();
@@ -7531,7 +8110,7 @@
       updateMarkers();
       updateControlsSummary();
       setSavedDataConfirmationVisible(false);
-      setRouteStatus('Saved shops, ratings, visit notes, recent Destinations, and saved strains were cleared.', 'good');
+      setRouteStatus('Saved shops, ratings, visit notes, recent places, and saved strains were cleared.', 'good');
     }
 
     function setSavedDataConfirmationVisible(confirming) {
@@ -7546,7 +8125,7 @@
       if (note) {
         note.textContent = confirming
           ? 'Confirm below to clear saved local map data.'
-          : 'Saved shops, recent Destinations, ratings, visit notes, and saved strains stay on this device.';
+          : 'Saved shops, recent places, ratings, visit notes, and saved strains stay on this device.';
       }
     }
 
@@ -8023,7 +8602,7 @@
         case 'favourites-only':
           statusEl.textContent = visibleCount
             ? `Saved shops journey keeps ${visibleCount} Saved shops on deck.`
-            : 'No Saved shops yet. Save a few Destinations first.';
+            : 'No Saved shops yet. Save a few places first.';
           return;
         case 'top-shelf':
           statusEl.textContent = visibleCount
@@ -8038,7 +8617,7 @@
     function surpriseMe() {
       const visibleIndexes = getVisibleLocationIndexes();
       if (!visibleIndexes.length) {
-        setRouteStatus(`No Destinations are available for ${getMissionLabel().toLowerCase()} right now.`, 'bad');
+        setRouteStatus(`No places are available for ${getMissionLabel().toLowerCase()} right now.`, 'bad');
         return;
       }
 
@@ -8182,9 +8761,8 @@
 
     function locationMatchesStrainMatchSets(loc, ids, nameCityKeys) {
       if (!loc) return false;
-      if (loc.db_shop_id && ids && ids.has(loc.db_shop_id)) {
-        return true;
-      }
+      // A linked database identity is authoritative; name fallback is for unlinked places.
+      if (loc.db_shop_id && ids) return ids.has(Number(loc.db_shop_id));
       if (nameCityKeys) {
         const key = normaliseNameCityKey(loc.name, loc.city || '');
         return nameCityKeys.has(key);
@@ -8407,17 +8985,12 @@
     }
 
     async function activateShelfStrain(strain, options = {}) {
+      beginMapSearchView(strain, { force: true });
       const query = (strain || '').toString().trim();
       if (!query) return;
 
       resetAtlasFiltersForShelfStrain();
       await applyStrainFilter(query, { recordHistory: false });
-      if (map) {
-        window.setTimeout(() => {
-          if (!map) return;
-          fitMapToVisibleMarkers();
-        }, 120);
-      }
       if (isCompactMobileLayout() && options.closeShelf !== false) {
         setShelfVisible(false);
       }
@@ -8427,6 +9000,8 @@
       const query = getCanonicalStrainName(strain);
       if (!query) return false;
 
+      // A new popup strain starts around the city being viewed, not an earlier nationwide search.
+      beginMapSearchView(query, { force: true });
       resetAtlasFiltersForShelfStrain();
       const applied = await applyStrainFilter(query, { recordHistory: false });
       const isActive = normaliseText(strainFilterText) === normaliseText(query);
@@ -8440,14 +9015,6 @@
 
       if (map) {
         map.closePopup();
-        window.setTimeout(() => {
-          if (!map) return;
-          map.closePopup();
-          fitMapToVisibleMarkers({ searchResults: true });
-          window.setTimeout(() => {
-            if (map) map.closePopup();
-          }, 180);
-        }, 120);
       }
 
       if (isCompactMobileLayout() || document.body.classList.contains('compact-layout')) {
@@ -8457,6 +9024,7 @@
     }
 
     function passesBaseFilters(loc, index) {
+      if (!passesSharedMenuFilters(loc)) return false;
       if (isClosedLocation(loc)) {
         return false;
       }
@@ -8519,26 +9087,27 @@
       const baseVisibleCount = locations.filter((loc, idx) => passesBaseFilters(loc, idx)).length;
       const visibleCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
       const hasSearch = !!(locationSearchText || '').trim();
+      statusEl.classList.toggle('is-empty', visibleCount === 0);
 
       if (!hasSearch) {
         if (!baseVisibleCount) {
           statusEl.textContent = hasExplorerFocus()
             ? 'No route stops are visible on this map yet. Try showing all strain matches or clearing filters.'
-          : 'No Destinations are visible yet. Clear a filter or choose another strain to widen the map.';
+          : 'No places are visible yet. Clear a filter or choose another strain to widen the map.';
           return;
         }
 
         statusEl.textContent = hasExplorerFocus()
-          ? `Scanning ${baseVisibleCount} explorer-selected coffeeshop${baseVisibleCount === 1 ? '' : 's'}.`
+          ? `${baseVisibleCount} selected coffeeshop${baseVisibleCount === 1 ? '' : 's'}.`
           : strainFilterText
-          ? `Scanning ${baseVisibleCount} strain-match Destination${baseVisibleCount === 1 ? '' : 's'}.`
-          : `Scanning ${baseVisibleCount} visible Destination${baseVisibleCount === 1 ? '' : 's'}.`;
+          ? `${baseVisibleCount} matching shop${baseVisibleCount === 1 ? '' : 's'}.`
+          : `${baseVisibleCount} places on the map.`;
         return;
       }
 
       statusEl.textContent = visibleCount
         ? `${visibleCount} Destination${visibleCount === 1 ? '' : 's'} match "${locationSearchText}".`
-        : `No visible Destinations match "${locationSearchText}". Try a broader shop, area, or strain name.`;
+        : `No visible places match "${locationSearchText}". Try a broader shop, area, or strain name.`;
     }
 
     function getLocationSourceLabel(loc) {
@@ -8581,6 +9150,40 @@
       return shelfStrainNames
         .filter(name => available.has(normaliseText(name)))
         .map(name => available.get(normaliseText(name)) || name);
+    }
+
+    /** Compare saved names with shops allowed by the current map filters. */
+    function renderSavedStrainShopMatches(grid, summary) {
+      if (summary) summary.textContent = 'Shops matching your saved strains, within the current map filters.';
+      if (!popupStrainIndexReady) {
+        grid.innerHTML = '<p class="stash-shelf-empty">Loading shop menus…</p>';
+        return;
+      }
+      const matches = locations.map((loc, index) => {
+        if (!isCoffeeShopLocation(loc) || !passesCategoryFilter(loc, index)) return null;
+        const names = getSavedStrainMatchesForLocation(loc);
+        return names.length ? { loc, index, names } : null;
+      }).filter(Boolean).sort((a, b) => b.names.length - a.names.length || compareStringsAlpha(a.loc.name, b.loc.name));
+      if (summary) summary.textContent = `${matches.length} shop${matches.length === 1 ? '' : 's'} match your saved strains within the current map filters.`;
+      if (!matches.length) {
+        grid.innerHTML = '<p class="stash-shelf-empty">No saved strains match the current map filters. Try clearing a filter.</p>';
+        return;
+      }
+      grid.innerHTML = matches.map(({ loc, index, names }) => {
+        const inRoute = isLocationInItinerary(index);
+        const freshness = getPopupMenuDateLabel(loc);
+        return `<article class="saved-match-card">
+          <strong>${escapeHtml(loc.name)}</strong>
+          <span>${escapeHtml(loc.city || '')}</span>
+          <span>${names.length} of ${shelfStrainNames.length} saved strains listed</span>
+          <span>${escapeHtml(names.join(', '))}</span>
+          <span>${escapeHtml(freshness)}</span>
+          <div class="saved-match-actions">
+            <button type="button" data-saved-match-action="view" data-index="${index}">View on map</button>
+            <button type="button" data-saved-match-action="route" data-index="${index}" aria-pressed="${inRoute}">${inRoute ? 'Added to route' : 'Add to route'}</button>
+          </div>
+        </article>`;
+      }).join('');
     }
 
     function getPriceInsightForLocation(loc, priceLabel) {
@@ -8717,131 +9320,6 @@
       }
     }
 
-    function updateSelectionCard() {
-      const card = document.getElementById('selection-card');
-      const selectedIndex = getSelectedDestinationIndex();
-      if (!card || selectedIndex === null || !locations[selectedIndex]) {
-        syncSelectionCardChrome();
-        syncDesktopTogglePosition();
-        return;
-      }
-
-      const loc = locations[selectedIndex];
-      const nameEl = document.getElementById('selected-destination-name');
-      const summaryEl = document.getElementById('selection-card-summary');
-      const metaEl = document.getElementById('selected-destination-meta');
-      const cityEl = document.getElementById('selected-destination-city');
-      const etaEl = document.getElementById('selected-destination-eta');
-      const siteLink = document.getElementById('selection-website-link');
-      const priceMenusLink = document.getElementById('selection-price-menus-link');
-      const addStopBtn = document.getElementById('selection-add-stop-btn');
-      const moveUpBtn = document.getElementById('selection-move-up-btn');
-      const moveDownBtn = document.getElementById('selection-move-down-btn');
-      const modeSelect = document.getElementById('mode');
-      const modeText = modeSelect && modeSelect.options[modeSelect.selectedIndex]
-        ? modeSelect.options[modeSelect.selectedIndex].text
-        : 'Walking';
-      const distanceMeters = lastPosition ? haversineDistance(lastPosition, loc.coords) : null;
-      const distanceText = Number.isFinite(distanceMeters) ? formatDistanceMeters(distanceMeters) : '';
-      const etaLabel = formatCompactDuration(estimateTravelSecondsForMode(distanceMeters, modeSelect ? modeSelect.value : 'walking'));
-      const strains = getPopupStrainsForLocation(loc);
-      const savedMatches = getSavedStrainMatchesForLocation(loc);
-      const priceLabel = getMarkerPriceLabel(loc);
-      const priceInsight = getPriceInsightForLocation(loc, priceLabel);
-      const menuUpdatedAt = getPopupMenuUpdatedAt(loc);
-      const freshnessLabel = formatFreshnessLabel(menuUpdatedAt);
-      const checkedDate = formatDisplayDate(menuUpdatedAt);
-      const confidence = getConfidenceInfo(loc);
-      const isArea = isAreaLocation(loc);
-      const hasMenuRecord = Number.isFinite(loc.db_shop_id);
-
-      if (nameEl) nameEl.textContent = loc.name || 'Destination';
-      if (summaryEl) {
-        summaryEl.textContent = isArea
-          ? [
-              'Area search anchor',
-              etaLabel ? `${etaLabel} direct ${modeText.toLowerCase()} estimate` : (distanceText || 'direct distance unknown')
-            ].filter(Boolean).join(' · ')
-          : [
-              loc.city || inferCityFromCsvPath(currentCsvPath) || 'Current city',
-              etaLabel ? `${etaLabel} direct ${modeText.toLowerCase()} estimate` : (distanceText || 'direct distance unknown')
-            ].filter(Boolean).join(' · ');
-      }
-      if (metaEl) {
-        const nearbyCoffeeShopCount = isArea
-          ? locations.filter(candidate =>
-              candidate &&
-              candidate !== loc &&
-              isCoffeeShopLocation(candidate) &&
-              !isClosedLocation(candidate) &&
-              Array.isArray(candidate.coords) &&
-              haversineDistance(loc.coords, candidate.coords) <= AREA_SEARCH_RADIUS_METERS
-            ).length
-          : 0;
-        const nearbyCopy = isArea
-          ? `${nearbyCoffeeShopCount} coffeeshop${nearbyCoffeeShopCount === 1 ? '' : 's'} near this area anchor. Use search to narrow nearby stops.`
-          : !hasMenuRecord
-          ? `No menu is currently available in Budfinder. Source: ${getLocationSourceLabel(loc)}.`
-          : savedMatches.length
-          ? `${savedMatches.length} saved strain${savedMatches.length === 1 ? '' : 's'} matched here.`
-          : strains.length
-          ? `${strains.length} listed strain${strains.length === 1 ? '' : 's'} in the current menu data.`
-          : 'Menu matches are still loading for this shop.';
-        metaEl.textContent = isArea || !hasMenuRecord
-          ? nearbyCopy
-          : `${nearbyCopy} ${priceInsight.text} ${freshnessLabel}. ${confidence.label}; availability is not guaranteed.`;
-      }
-      if (cityEl) cityEl.textContent = loc.address || loc.city || getActiveLocationLabel();
-      if (etaEl) etaEl.textContent = etaLabel
-        ? `${etaLabel} direct ${modeText.toLowerCase()} estimate`
-        : (lastPosition ? 'Direct distance ready' : 'Set Starting point');
-      if (siteLink) {
-        const href = (loc.website || '').toString().trim();
-        if (href) {
-          siteLink.hidden = false;
-          siteLink.href = href;
-        } else {
-          siteLink.hidden = true;
-          siteLink.removeAttribute('href');
-        }
-      }
-      if (priceMenusLink) {
-        if (Number.isFinite(loc.db_shop_id)) {
-          priceMenusLink.hidden = false;
-          priceMenusLink.href = priceMenusUrl({
-            shopId: loc.db_shop_id,
-            strain: offeringAttributeFilterKind ? '' : getCanonicalStrainName(strainFilterText)
-          });
-          priceMenusLink.textContent = 'Price & Menus';
-          priceMenusLink.setAttribute('aria-label', `Research prices for ${loc.name || 'this destination'}`);
-        } else {
-          priceMenusLink.hidden = true;
-          priceMenusLink.href = 'database.html';
-          priceMenusLink.removeAttribute('aria-label');
-        }
-      }
-      const stopIndex = getJourneyStopIndexByLocationIndex(selectedIndex);
-      const inItinerary = stopIndex >= 0;
-      if (addStopBtn) {
-        addStopBtn.hidden = isArea;
-        addStopBtn.textContent = inItinerary ? 'Remove from route' : 'Add to route';
-        addStopBtn.classList.toggle('is-remove', inItinerary);
-        addStopBtn.setAttribute('aria-pressed', inItinerary ? 'true' : 'false');
-      }
-      if (moveUpBtn) {
-        moveUpBtn.hidden = isArea || !inItinerary;
-        moveUpBtn.disabled = isArea || !inItinerary || stopIndex <= 0;
-      }
-      if (moveDownBtn) {
-        moveDownBtn.hidden = isArea || !inItinerary;
-        moveDownBtn.disabled = isArea || !inItinerary || stopIndex >= journeyPlanner.stops.length - 1;
-      }
-
-      syncPriceMenusLinks();
-      syncSelectionCardChrome();
-      syncDesktopTogglePosition();
-    }
-
     function updateStrainSpotlight() {
       const card = document.getElementById('strain-spotlight-card');
       const mediaEl = document.getElementById('strain-spotlight-media');
@@ -8869,7 +9347,7 @@
         topShopsEl.innerHTML = '<div class="strain-spotlight-empty">Search or tap a strain to see matching shops.</div>';
         if (priceGuideLink) {
           priceGuideLink.href = 'database.html';
-          priceGuideLink.textContent = 'Price & Menus';
+          priceGuideLink.textContent = 'Menus & prices';
         }
         return;
       }
@@ -8907,7 +9385,7 @@
         const metaBits = [];
         if (shop.city) metaBits.push(shop.city);
         metaBits.push(shop.isCheapest ? 'Cheapest match' : 'Tap to route');
-        const freshLabel = formatFreshnessLabel(shop.updatedAt);
+        const freshLabel = getPopupMenuDateLabel(locations[shop.index]);
         if (freshLabel) metaBits.push(freshLabel);
         if (shop.notesText) metaBits.push(shop.notesText);
         return (
@@ -8942,7 +9420,6 @@
       let summaryText = '';
       syncRoutePanelOrder();
       updateHeroStats();
-      updateSelectionCard();
       updateDestinationSearchStatus();
       updateMissionStatus();
       updateStashShelf();
@@ -8951,6 +9428,9 @@
       syncActiveStrainShelfButton();
       syncPriceMenusLinks();
       syncClearSelectionToggle();
+      syncMapActionDock();
+      syncSkunkworksButton();
+      const searchSummary = updateMapSearchArea();
       if (!summaryEl) return;
 
       if (!locations.length) {
@@ -8974,13 +9454,13 @@
         if (missionMode !== 'free-roam' && strainFilterText && locationSearchText) {
           summaryText = `${visibleCount} ${getMissionLabel().toLowerCase()} hits for ${strainFilterText}`;
         } else if (missionMode !== 'free-roam' && locationSearchText) {
-          summaryText = `${visibleCount} ${getMissionLabel().toLowerCase()} Destinations for "${locationSearchText}"`;
+          summaryText = `${visibleCount} ${getMissionLabel().toLowerCase()} places for "${locationSearchText}"`;
         } else if (missionMode !== 'free-roam' && strainFilterText) {
           summaryText = `${visibleCount} ${getMissionLabel().toLowerCase()} matches`;
         } else if (strainFilterText && locationSearchText) {
           summaryText = `${visibleCount} matches for ${strainFilterText} + ${locationSearchText}`;
         } else if (locationSearchText) {
-          summaryText = `${visibleCount} Destinations for "${locationSearchText}"`;
+          summaryText = `${visibleCount} places for "${locationSearchText}"`;
         } else if (strainFilterText) {
           summaryText = `${visibleCount} matches for ${strainFilterText}`;
         } else if (hasExplorerFocus()) {
@@ -8988,14 +9468,18 @@
         } else if ((selectedCategories || []).includes('all')) {
           summaryText = `${visibleCount} places visible`;
         } else {
-          summaryText = `${visibleCount} filtered places`;
+          summaryText = `${visibleCount} ${selectedCategories.length === 1 && selectedCategories[0] === 'Coffeeshop' ? 'coffeeshops' : 'matching places'}`;
         }
       }
 
-      if (isCompactMobileLayout() && controlsVisible && controlsCollapsed) {
-        summaryText = summaryText ? `Tap to open · ${summaryText}` : 'Tap to open';
+      const localSearchCity = localMapSearchCity();
+      if (searchSummary && (controlsCollapsed || (localSearchCity && selectedIndex === null))) {
+        summaryText = searchSummary;
       }
-
+      if (controlsVisible && !controlsCollapsed && document.getElementById('route-tools-dropdown')?.open) {
+        const stops = journeyPlanner.stops.length;
+        summaryText = stops ? `${stops} stop${stops === 1 ? '' : 's'} planned` : 'Choose a start and add shops';
+      }
       summaryEl.textContent = summaryText;
       updateTripPanelStatus(summaryText);
     }
@@ -9059,10 +9543,14 @@
     if (destinationSearchInput) {
       const handleDestinationSearch = () => {
         if (destinationSearchComposing) return;
+        mapSearchEntityKind = '';
+        mapSuggestionsDismissedQuery = '';
+        if (!destinationSearchInput.value.trim()) hideMapSearchSuggestions();
         const rawQuery = (destinationSearchInput.value || '').toString().replace(/\s+/g, ' ').trim();
         if (rawQuery !== locationSearchText) {
           rememberMapFilterState();
         }
+        beginMapSearchView(rawQuery);
         if (rawQuery && (hasExplorerFocus() || explorerFocusStrainName)) {
           clearExplorerFocus();
           syncExplorerFocusControls();
@@ -9081,22 +9569,7 @@
           allowTownSwitch: isSearchAllTownsEnabled(),
           deferFocusedSingleWord: true
         });
-        if (globalSearchFocusTimer !== null) {
-          window.clearTimeout(globalSearchFocusTimer);
-          globalSearchFocusTimer = null;
-        }
-        if (rawQuery) {
-          pendingInitialSearchPresentation = isCompactMobileLayout();
-          const expectedQueryKey = normaliseText(rawQuery);
-          globalSearchFocusTimer = window.setTimeout(() => {
-            globalSearchFocusTimer = null;
-            const currentQuery = (destinationSearchInput.value || '').toString().replace(/\s+/g, ' ').trim();
-            if (normaliseText(currentQuery) !== expectedQueryKey) return;
-            if (destinationSearchInput === document.activeElement && currentQuery.split(/\s+/).filter(Boolean).length < 2) return;
-            focusSearchResultsPanel();
-            fitMapToVisibleMarkers({ searchResults: true });
-          }, 620);
-        }
+        pendingInitialSearchPresentation = Boolean(rawQuery) && isCompactMobileLayout();
       };
 
       destinationSearchInput.addEventListener('compositionstart', () => {
@@ -9114,20 +9587,79 @@
         const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
         scheduleGlobalSearchStrainResolve(rawQuery, visibleLocationCount, {
           immediate: true,
-          allowTownSwitch: isSearchAllTownsEnabled()
+          allowTownSwitch: isSearchAllTownsEnabled(), entityKind: mapSearchEntityKind
         });
       });
-      destinationSearchInput.addEventListener('keydown', event => {
-        if (event.key !== 'Enter') return;
-        event.preventDefault();
-        const rawQuery = (destinationSearchInput.value || '').toString().replace(/\s+/g, ' ').trim();
+      const submitMapSearch = candidate => {
+        const rawQuery = String(candidate?.name || destinationSearchInput.value || '').replace(/\s+/g, ' ').trim();
         if (!rawQuery) return;
+        destinationSearchInput.value = rawQuery;
+        mapSearchEntityKind = candidate?.kind || '';
+        hideMapSearchSuggestions();
+        if (isCompactMobileLayout()) destinationSearchInput.blur();
+        clearGlobalSearchAppliedStrainIfNeeded(rawQuery);
+        locationSearchText = rawQuery;
+        beginMapSearchView(rawQuery, { force: true });
+        if (candidate?.city) {
+          mapSearchViewCity = candidate.city;
+          mapSearchViewAllCities = false;
+        }
+        pendingInitialSearchPresentation = true;
+        collapseMapSearchResults({ focus: true });
+        syncMapSearchUrl(rawQuery);
+        updateDestinationDropdown();
+        updateDistanceInfo();
+        updateMarkers();
         const visibleLocationCount = locations.filter((loc, idx) => passesCategoryFilter(loc, idx)).length;
         scheduleGlobalSearchStrainResolve(rawQuery, visibleLocationCount, {
-          immediate: true,
-          allowTownSwitch: isSearchAllTownsEnabled()
+          immediate: true, allowTownSwitch: true, entityKind: mapSearchEntityKind
         });
+      };
+      document.getElementById('map-search-submit')?.addEventListener('click', () => submitMapSearch());
+      const suggestionList = document.getElementById('global-search-suggestions');
+      suggestionList?.addEventListener('mousedown', event => event.preventDefault());
+      suggestionList?.addEventListener('click', event => {
+        const option = event.target.closest('[data-map-search-option]');
+        const candidate = option && mapSearchSuggestionRows[Number(option.dataset.mapSearchOption)]?.item;
+        if (candidate) submitMapSearch(candidate);
       });
+      destinationSearchInput.addEventListener('focus', () => {
+        mapSuggestionsDismissedQuery = '';
+        updateGlobalSearchSuggestions(destinationSearchInput.value);
+        syncMobileSearchViewport();
+        if (isCompactMobileLayout()) {
+          const content = document.getElementById('map-tools-content');
+          if (content) content.scrollTop = 0;
+        }
+      });
+      destinationSearchInput.addEventListener('blur', () => {
+        hideMapSearchSuggestions();
+        syncMobileSearchViewport();
+      });
+      destinationSearchInput.addEventListener('keydown', event => {
+        if (event.isComposing) return;
+        if (event.key === 'Escape' && !suggestionList.hidden) {
+          event.preventDefault(); event.stopPropagation(); hideMapSearchSuggestions(); return;
+        }
+        if (['ArrowDown', 'ArrowUp'].includes(event.key)) {
+          event.preventDefault();
+          if (suggestionList.hidden) { mapSuggestionsDismissedQuery = ''; updateGlobalSearchSuggestions(destinationSearchInput.value); }
+          if (!mapSearchSuggestionRows.length) return;
+          const direction = event.key === 'ArrowDown' ? 1 : -1;
+          mapSearchSuggestionIndex = mapSearchSuggestionIndex < 0
+            ? (direction === 1 ? 0 : mapSearchSuggestionRows.length - 1)
+            : (mapSearchSuggestionIndex + direction + mapSearchSuggestionRows.length) % mapSearchSuggestionRows.length;
+          suggestionList.querySelectorAll('[data-map-search-option]').forEach((option, index) => {
+            const selected = index === mapSearchSuggestionIndex;
+            option.setAttribute('aria-selected', String(selected));
+            if (selected) { destinationSearchInput.setAttribute('aria-activedescendant', option.id); option.scrollIntoView({block:'nearest'}); }
+          });
+        }
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        submitMapSearch(mapSearchSuggestionRows[mapSearchSuggestionIndex]?.item);
+      });
+      loadMapSearchCandidates();
     }
 
     document.querySelectorAll('[data-map-quick-search]').forEach(button => {
@@ -9173,14 +9705,14 @@
     const toggleShelfBtn = document.getElementById('toggle-shelf');
     if (toggleShelfBtn) {
       toggleShelfBtn.addEventListener('click', () => {
-        setShelfVisible(!shelfVisible);
+        openMapAction('saved');
       });
     }
 
     const stashShelfCloseBtn = document.getElementById('stash-shelf-close');
     if (stashShelfCloseBtn) {
       stashShelfCloseBtn.addEventListener('click', () => {
-        setShelfVisible(false);
+        closeMapActionPanel();
       });
     }
 
@@ -9191,7 +9723,34 @@
       });
     }
 
+    document.getElementById('stash-compare-toggle').addEventListener('click', async () => {
+      showingSavedStrainMatches = !showingSavedStrainMatches;
+      updateStashShelf();
+      if (!showingSavedStrainMatches || popupStrainIndexReady) return;
+      try {
+        await ensurePopupStrainIndex();
+        updateStashShelf();
+      } catch (_err) {
+        const grid = document.getElementById('stash-shelf-grid');
+        if (showingSavedStrainMatches && grid) grid.innerHTML = '<p class="stash-shelf-empty">Shop menus could not be loaded. Try again.</p>';
+      }
+    });
+
     document.getElementById('stash-shelf-grid').addEventListener('click', async e => {
+      const matchAction = e.target.closest('[data-saved-match-action]');
+      if (matchAction) {
+        const index = Number(matchAction.getAttribute('data-index'));
+        if (!Number.isInteger(index) || !locations[index]) return;
+        if (matchAction.getAttribute('data-saved-match-action') === 'route') {
+          toggleJourneyStopByIndex(index);
+          updateStashShelf();
+        } else {
+          setShelfVisible(false);
+          selectDestinationIndex(index);
+          focusDestinationOnMap(index);
+        }
+        return;
+      }
       const removeBtn = e.target.closest('[data-stash-remove]');
       if (removeBtn) {
         e.preventDefault();
@@ -9280,6 +9839,12 @@
     });
 
     const bestMatchList = document.getElementById('best-match-list');
+    document.getElementById('best-match-order').addEventListener('change', () => refreshDestinationCards());
+    document.getElementById('best-match-compact').addEventListener('click', event => {
+      const detailed = event.currentTarget.getAttribute('aria-pressed') !== 'true';
+      event.currentTarget.setAttribute('aria-pressed', String(detailed));
+      bestMatchList.classList.toggle('is-compact', !detailed);
+    });
     if (bestMatchList) {
       bestMatchList.addEventListener('click', e => {
         const actionBtn = e.target.closest('[data-best-match-action]');
@@ -10334,6 +10899,7 @@
         ? modeSelect.options[modeSelect.selectedIndex].text
         : 'Walking';
       const originInfo = getExplorationOriginInfo();
+      const resultMenuDates = buildMapResultMenuDates();
       const items = locations
         .map((loc, index) => {
           if (!passesCategoryFilter(loc, index)) return null;
@@ -10344,7 +10910,10 @@
           const etaLabel = formatCompactDuration(estimateTravelSecondsForMode(distanceMeters, mode));
           const priceLabel = getMarkerPriceLabel(loc);
           const rating = Number.isFinite(loc.rating) ? Math.max(0, Math.min(5, Math.round(loc.rating))) : 0;
-          const updatedAt = getPopupMenuUpdatedAt(loc);
+          const dateInfo = resultMenuDates
+            ? (loc.db_shop_id ? resultMenuDates.byId.get(String(loc.db_shop_id)) : resultMenuDates.byNameCity.get(normaliseNameCityKey(loc.name, loc.city || '')))
+            : getPopupMenuDateInfo(loc);
+          const updatedAt = dateInfo?.value || '';
           const savedMatches = getSavedStrainMatchesForLocation(loc);
           const priceInsight = getPriceInsightForLocation(loc, priceLabel);
           const confidence = getConfidenceInfo(loc);
@@ -10365,7 +10934,7 @@
             priceAmount: parsePriceAmountFromLabel(priceLabel),
             priceInsight,
             updatedAt,
-            freshnessLabel: formatFreshnessLabel(updatedAt),
+            freshnessLabel: formatPopupMenuDateInfo(dateInfo),
             freshnessTone: freshnessTone(updatedAt),
             confidence,
             savedMatches,
@@ -10565,6 +11134,7 @@
         nearbyExploreActive ||
         missionMode !== 'free-roam' ||
         hasFocusedCategory ||
+        Boolean(menuExplore?.active(sharedMenuFilters).length) ||
         getSelectedDestinationIndex() !== null
       );
     }
@@ -10615,17 +11185,33 @@
     }
 
     function renderBestMatches(items) {
+      renderMapStrainResult();
       const listEl = document.getElementById('best-match-list');
       const summaryEl = document.getElementById('best-match-summary');
       if (!listEl || !summaryEl) return;
+      const panel = listEl.closest('.best-match-panel');
+      if (panel) panel.hidden = !hasBestMatchContext();
 
       const coffeeItems = (Array.isArray(items) ? items : [])
         .filter(item => item && locations[item.index] && isCoffeeShopLocation(locations[item.index]));
+      const city = localMapSearchCity();
+      const relevantItems = city ? coffeeItems.filter(item => locationIsInSearchCity(locations[item.index], city)) : coffeeItems.slice();
+      const order = document.getElementById('best-match-order');
+      if (order && order.value === 'freshest') {
+        // Unknown and future dates stay at the end, preserving the existing rank for ties.
+        relevantItems.sort((a, b) => {
+          const time = item => {
+            const value = getFreshnessTime(item.updatedAt);
+            return value !== null && (!menuExplore || menuExplore.ageBucket(item.updatedAt) !== 'unknown') ? value : -Infinity;
+          };
+          return time(b) - time(a) || 0;
+        });
+      }
       const displayLimit = isCompactMobileLayout() ? 6 : 10;
-      const displayItems = coffeeItems.slice(0, displayLimit);
-      const baseSummary = getBestMatchSummary(coffeeItems);
-      summaryEl.textContent = coffeeItems.length > displayItems.length
-        ? `${baseSummary} Showing the best ${displayItems.length}.`
+      const displayItems = relevantItems.slice(0, displayLimit);
+      const baseSummary = city ? `${relevantItems.length} match${relevantItems.length === 1 ? '' : 'es'} in ${city}.` : getBestMatchSummary(coffeeItems);
+      summaryEl.textContent = relevantItems.length > displayItems.length
+        ? `${baseSummary} Showing ${displayItems.length} ${order && order.value === 'freshest' ? 'in date order' : 'best matches'}.`
         : baseSummary;
 
       if (!hasBestMatchContext()) {
@@ -10645,11 +11231,15 @@
         const freshnessLabel = item.freshnessLabel || '';
         const distanceLabel = item.etaLabel || item.distText || '';
         const reason = buildBestMatchReason(item);
+        const savedMatches = Array.isArray(item.savedMatches) ? item.savedMatches : [];
+        const savedSummary = shelfStrainNames.length && item.strainCount
+          ? `${savedMatches.length} of ${shelfStrainNames.length} saved strains listed${savedMatches.length ? `: ${savedMatches.join(', ')}` : ''}`
+          : '';
         const badges = [
           locationLabel ? `<span class="best-match-badge">${escapeHtml(locationLabel)}</span>` : '',
           priceLabel ? `<span class="best-match-badge${item.priceInsight && item.priceInsight.tone === 'deal' ? ' is-deal' : ''}">${escapeHtml(priceLabel)}</span>` : '',
           distanceLabel ? `<span class="best-match-badge">${escapeHtml(distanceLabel)}</span>` : '',
-          freshnessLabel ? `<span class="best-match-badge is-fresh">${escapeHtml(freshnessLabel)}</span>` : ''
+          freshnessLabel ? `<span class="best-match-badge is-age-${escapeHtmlAttr(item.freshnessTone || 'unknown')}">${escapeHtml(freshnessLabel)}</span>` : ''
         ].filter(Boolean).join('');
         const inItinerary = !!item.inItinerary;
         const researchUrl = loc.db_shop_id != null && Number.isFinite(Number(loc.db_shop_id))
@@ -10665,6 +11255,7 @@
               `<div class="best-match-main">` +
                 `<span class="best-match-name">${escapeHtml(item.name)}</span>` +
                 `<span class="best-match-reason">${escapeHtml(reason)}</span>` +
+                (savedSummary ? `<span class="best-match-saved">${escapeHtml(savedSummary)}</span>` : '') +
                 (badges ? `<span class="best-match-meta">${badges}</span>` : '') +
               `</div>` +
             `</div>` +
@@ -10679,6 +11270,7 @@
     }
 
     function refreshDestinationCards(items = null) {
+      refreshSharedMenuMatchIds();
       const preparedItems = sortDestinationItems(items || buildDestinationItems()).map(item => ({
         ...item,
         isSelected: getSelectedDestinationIndex() === item.index,
@@ -10693,6 +11285,7 @@
      * Rebuild the destination dropdown based on filters, sorting according to the route view.
      */
     function updateDestinationDropdown() {
+      refreshSharedMenuMatchIds();
       const destSelect = document.getElementById('destination-select');
       const previousSelection = getSelectedDestinationIndex();
       destSelect.innerHTML = '';
@@ -10704,8 +11297,8 @@
       placeholder.text = items.length
         ? 'Select a Destination...'
         : ((locationSearchText && locationSearchText.trim())
-            ? `No Destinations match "${locationSearchText}". Try a broader search.`
-            : 'No Destinations match the current filters. Try clearing one.');
+            ? `No places match "${locationSearchText}". Try a broader search.`
+            : 'No places match the current filters. Try clearing one.');
       placeholder.disabled = true;
       placeholder.selected = true;
       destSelect.appendChild(placeholder);
@@ -10826,16 +11419,20 @@
      * Show or hide markers based on category filters.
      */
     function updateMarkers() {
+      refreshSharedMenuMatchIds();
       let activePopupWasHidden = false;
       const markerVisibility = locations.map((loc, index) => shouldShowMarkerOnMap(loc, index));
       const visibleMarkerCount = markerVisibility.filter(Boolean).length;
       const scopeSummary = document.getElementById('map-scope-summary');
-      if (scopeSummary) scopeSummary.textContent = `${visibleMarkerCount} matching places · Netherlands`;
+      if (scopeSummary) scopeSummary.textContent = `${visibleMarkerCount} matching places · ${sharedMenuFilters.city || 'Netherlands'}`;
+      const searchScope = document.getElementById('explore-search-scope');
+      if (searchScope) searchScope.textContent = `${sharedMenuFilters.city || 'Across the Netherlands'}`;
       const filterSummary = document.getElementById('map-filter-summary');
       if (filterSummary) filterSummary.textContent = (selectedCategories || []).map(getCategoryFilterLabel).join(', ') || 'All places';
       const markerPriceLimit = isCompactMobileLayout() ? 12 : 36;
       const showMarkerPriceLabels = visibleMarkerCount > 0 && visibleMarkerCount <= markerPriceLimit;
       const priceContextKey = [
+        JSON.stringify(sharedMenuFilters),
         strainFilterText || '',
         offeringAttributeFilterKind || '',
         offeringAttributeFilterValue || '',
@@ -10881,6 +11478,7 @@
       }
       if (journeyLayerGroup) updateJourneyMapOverlay(getJourneyMetrics());
       if (markerLayoutController) markerLayoutController.schedule();
+      updateMapSearchArea();
     }
 
     // =========================================================
@@ -10914,6 +11512,7 @@
         const i = parseInt(journeyStartBtn.getAttribute('data-index'), 10);
         if (isNaN(i) || !locations[i]) return;
         setJourneyStartFromLocationIndex(i, { fit: true });
+        if (mobileShopState) closeMobileShopSheet();
         setControlsVisible(true, { collapsed: false });
         return;
       }
@@ -10923,6 +11522,7 @@
         const i = parseInt(journeyAddBtn.getAttribute('data-index'), 10);
         if (isNaN(i) || !locations[i]) return;
         toggleJourneyStopByIndex(i);
+        if (mobileShopState) closeMobileShopSheet();
         setControlsVisible(true, { collapsed: false });
         return;
       }
@@ -10953,7 +11553,6 @@
         updateDestinationDropdown();
         updateDistanceInfo();
         updateMarkers();
-        updateSelectionCard();
         updateControlsSummary();
         setControlsVisible(true, { collapsed: false });
         window.setTimeout(() => fitMapToVisibleMarkers(), 80);
@@ -11010,6 +11609,7 @@
         locations[i].rating = current;
         writeLocationPreference(locations[i], { rating: current });
         e.target.setAttribute('data-rating', current);
+        e.target.setAttribute('aria-label', `Rating: ${current} out of 5. Select to change.`);
         e.target.textContent = renderStars(current);
         updateDestinationDropdown();
         updateControlsSummary();
@@ -11072,7 +11672,7 @@
       // Prefer a location not essentially on top of us
       const chosenIndex = (nearestOutsideRadius !== null) ? nearestOutsideRadius : nearestAny;
       if (chosenIndex === null) {
-        setRouteStatus('No Destinations match the current filters. Clear a filter or try a broader search.', 'bad');
+        setRouteStatus('No places match the current filters. Clear a filter or try a broader search.', 'bad');
         return;
       }
 
@@ -11082,21 +11682,28 @@
       setRouteStatus(`Closest visible Destination: ${locations[chosenIndex].name}.`, 'good');
     });
 
-    document.getElementById('clear-route-focus-btn').addEventListener('click', () => {
+    // Clear only the selected place; saved stops and the current search stay intact.
+    function clearSelectedPlace() {
       const destSelect = document.getElementById('destination-select');
-      if (!destSelect || getSelectedDestinationIndex() === null) return;
+      if (!destSelect || getSelectedDestinationIndex() === null) return false;
       rememberMapFilterState();
       destSelect.value = '';
       lastDestinationSelectValue = '';
+      mapFocusRequestId += 1;
+      if (map && typeof map.stop === 'function') map.stop();
       if (map) map.closePopup();
       activePopupLocationIndex = null;
       clearRouteUi();
       destSelect.dispatchEvent(new Event('change', { bubbles: true }));
       updateDistanceInfo();
       refreshDestinationCards();
+      refreshSelectedMarkerIcons();
       syncClearSelectionToggle();
-    });
+      schedulePersistMapSession();
+      return true;
+    }
 
+    document.getElementById('clear-route-focus-btn').addEventListener('click', clearSelectedPlace);
     document.getElementById('show-strain-shops-btn').addEventListener('click', () => {
       expandExplorerFocusToStrainShops();
     });
@@ -11219,52 +11826,279 @@
       renderJourneySummary(getJourneyMetrics());
     });
 
-    document.getElementById('toggle-controls').addEventListener('click', () => {
-      if (isCompactMobileLayout()) {
-        if (!controlsVisible) {
-          if (directionsVisible) {
-            setDirectionsVisible(false);
-          }
-          setControlsVisible(true, { collapsed: false });
-          return;
-        }
-        if (controlsCollapsed) {
-          setControlsCollapsed(false);
-          return;
-        }
-        setControlsCollapsed(true);
-        return;
-      }
+    // Skunkworks remains out of the way until this device has saved preferences.
+    const skunkApi = window.BudfinderSkunkworks;
+    const skunkButton = document.getElementById('skunk-nearby-button');
+    const skunkDialog = document.getElementById('skunk-nearby-dialog');
+    let skunkRequestId = 0;
+    let skunkCurrentOrigin = null;
 
-      const nextVisible = !controlsVisible;
-      setControlsVisible(nextVisible);
+    // Reapply published defaults without discarding the visitor's own choices.
+    function refreshMattDefaults() {
+      const input = document.getElementById('settings-matt-defaults');
+      if (input) input.checked = skunkApi.readMattDefaults(localStorage);
+      if (!locations.length) return;
+      hydrateLocationPreferences();
+      if (mobileShopState) syncPopupPersonalState(mobileShopState.index);
+      updateDestinationDropdown();
+      updateMarkers();
+      updateControlsSummary();
+      refreshDestinationCards();
+      if (skunkDialog.open && skunkCurrentOrigin) showSkunkNearby(skunkCurrentOrigin.origin, skunkCurrentOrigin.originLabel);
+    }
+
+    document.getElementById('settings-matt-defaults').addEventListener('change', event => {
+      const status = document.getElementById('settings-matt-defaults-status');
+      try {
+        skunkApi.writeMattDefaults(localStorage, event.target.checked);
+        refreshMattDefaults();
+        status.textContent = 'Saved on this device.';
+      } catch (_err) {
+        event.target.checked = skunkApi.readMattDefaults(localStorage);
+        status.textContent = 'Could not save this preference on this device.';
+      }
     });
 
+    function syncSkunkworksButton() {
+      if (!skunkButton || !skunkApi) return;
+      let populated = false;
+      try { populated = skunkApi.isPopulated(localStorage); } catch (_err) { /* Storage may be unavailable. */ }
+      skunkButton.hidden = !populated;
+      document.body.classList.toggle('skunk-has-profile', populated);
+    }
+
+    function skunkPrice(row) {
+      if (row.price === null) return 'Price unknown';
+      const money = amount => Number(amount).toLocaleString('en-GB', { maximumFractionDigits: 2 });
+      const packPrice = Number(row.row?.package_price_amount);
+      const weight = Number(row.row?.package_weight_g);
+      const pack = Number.isFinite(packPrice) && packPrice > 0 && Number.isFinite(weight) && weight > 0
+        ? ` · €${money(packPrice)} for ${money(weight)}g` : '';
+      return `€${money(row.price)}/g${pack}`;
+    }
+
+    function renderSkunkNearbySection(title, items, isStrain, description = '', collapsible = false) {
+      const limit = 20;
+      const count = items.length;
+      const entries = items.slice(0, limit).map(item => {
+        const loc = locations[item.index];
+        const hasStrain = isStrain || Boolean(item.strain);
+        const titleText = hasStrain ? `${item.strain} · ${item.name}` : item.name;
+        const dateInfo = item.dateInfo;
+        const money = amount => Number(amount).toLocaleString('en-GB', { maximumFractionDigits: 2 });
+        const comparison = Number.isFinite(item.average)
+          ? `Average €${money(item.average)}/g · €${money(item.saving)}/g below average · ${item.sampleSize} shops · ${Math.floor(item.savingPercent + 1e-9)}% below average` : '';
+        const meta = [item.city, `${formatDistanceMeters(item.distance)} direct`, hasStrain ? skunkPrice(item) : '', comparison, formatPopupMenuDateInfo(dateInfo)].filter(Boolean).join(' · ');
+        const reasons = item.reasons?.length ? `<span class="skunk-nearby-reasons">${escapeHtml(item.reasons.join(' · '))}</span>` : '';
+        const canView = shouldShowMarkerOnMap(loc, item.index);
+        const menuUrl = loc.db_shop_id && menuExplore
+          ? menuExplore.link('menus', { shopId: loc.db_shop_id, source: 'map', returnTo: currentMapReturnUrl() }) : '';
+        const inRoute = isLocationInItinerary(item.index);
+        return `<li><strong>${escapeHtml(titleText)}</strong>${reasons}<span class="skunk-nearby-meta">${escapeHtml(meta)}</span>
+          <div class="skunk-result-actions">
+            ${canView ? `<button type="button" data-skunk-action="view" data-index="${item.index}">View on map</button>` : '<span class="skunk-nearby-meta">Clear map filters to show the pin.</span>'}
+            <button type="button" data-skunk-action="route" data-index="${item.index}" aria-pressed="${inRoute}">${inRoute ? 'Added to route' : 'Add to route'}</button>
+            ${menuUrl ? `<a href="${escapeHtmlAttr(menuUrl)}">Menu</a>` : ''}
+          </div></li>`;
+      }).join('');
+      const countText = `${count}${count > limit ? ` · showing ${limit}` : ''}`;
+      const body = `${description ? `<p class="skunk-nearby-meta">${escapeHtml(description)}</p>` : ''}${count ? `<ul class="skunk-nearby-list">${entries}</ul>` : '<p class="skunk-nearby-meta">No matches within this radius.</p>'}`;
+      return collapsible
+        ? `<details class="skunk-nearby-category"><summary>${escapeHtml(title)} · ${countText}</summary>${body}</details>`
+        : `<section><h3>${escapeHtml(title)} <span class="skunk-nearby-meta">${countText}</span></h3>${body}</section>`;
+    }
+
+    async function showSkunkNearby(origin, originLabel) {
+      skunkCurrentOrigin = { origin, originLabel };
+      const requestId = ++skunkRequestId;
+      const status = document.getElementById('skunk-nearby-status');
+      const results = document.getElementById('skunk-nearby-results');
+      status.textContent = 'Looking for nearby places…';
+      results.innerHTML = '';
+      let rows = [];
+      let menuFailed = false;
+      try {
+        rows = await loadActiveOfferingsRows();
+        await ensurePopupStrainIndex();
+      } catch (_err) { menuFailed = true; }
+      if (requestId !== skunkRequestId || !skunkDialog.open) return;
+      const profile = skunkApi.readProfile(localStorage);
+      const entries = locations.map((loc, index) => ({ loc, index, favorite: favorites.includes(index) }))
+        .filter(item => isCoffeeShopLocation(item.loc) && !isClosedLocation(item.loc));
+      const found = skunkApi.nearby({
+        origin, locations: entries, offerings: rows, strains: shelfStrainNames, profile,
+        isEligible: isActiveOfferingRowAvailable,
+        getDateInfo: row => ({ value: getDisplayOfferingUpdatedAt(row), field: offeringFreshnessDateSource(row, { includeBatchFields: false }).field }),
+        getShopDateInfo: getPopupMenuDateInfo,
+        compareAverage: (strain, price) => {
+          const result = getAveragePriceComparisonForEntries(strain, [{ amount: price, currency: '€', unit: 'g' }]);
+          const sample = strainAveragePricesByKey.get(normaliseText(strain))?.get('€|g');
+          return result && sample ? { ...result, sampleSize: sample.count } : null;
+        }
+      });
+      document.getElementById('skunk-nearby-origin').textContent = `Around ${originLabel} · within ${skunkApi.formatRadius(profile.radiusKm)}`;
+      status.textContent = menuFailed ? 'Menu data could not be loaded. Shop suggestions are still available.' : 'Based on recorded menus and your saved choices.';
+      const nextRadius = skunkApi.RADIUS_OPTIONS_KM.find(value => value > profile.radiusKm);
+      const emptyHelp = !found.highlights.length
+        ? `<div class="skunk-nearby-empty"><p>No suggestions within ${escapeHtml(skunkApi.formatRadius(profile.radiusKm))}.</p>${nextRadius ? `<button type="button" data-skunk-action="expand-radius" data-radius="${nextRadius}">Try ${escapeHtml(skunkApi.formatRadius(nextRadius))}</button>` : '<p>Try another starting point or change your preferences.</p>'}</div>`
+        : '';
+      results.innerHTML = [
+        emptyHelp,
+        renderSkunkNearbySection('Worth a look', found.highlights, false,
+          'Up to five shops, chosen using saved strains, deals, saved shops, unvisited places and proximity.'),
+        renderSkunkNearbySection('Your favourite strains', found.favourites, true, '', true),
+        renderSkunkNearbySection('Good deals · 10% or more below average', found.deals, true,
+          'Map deals use the mean of the lowest listed price per shop, across at least two shops nationwide. The average can include older menus. Within each date group, more comparison shops rank higher; growers and pack sizes can differ.', true),
+        renderSkunkNearbySection('Your saved shops', found.shops, false, '', true),
+        profile.showUnvisited ? renderSkunkNearbySection('Not marked visited', found.unvisited, false, '', true) : ''
+      ].join('');
+    }
+
+    function openSkunkNearby() {
+      if (!skunkDialog || !map) return;
+      document.getElementById('skunk-nearby-edit').href = 'skunkworks.html';
+      const profile = skunkApi.readProfile(localStorage);
+      document.getElementById('skunk-nearby-recent').checked = profile.preferRecent;
+      document.getElementById('skunk-nearby-radius').value = String(profile.radiusKm);
+      if (!skunkDialog.open) skunkDialog.showModal();
+      const centre = map.getCenter();
+      showSkunkNearby([centre.lat, centre.lng], 'the map centre');
+      document.getElementById('skunk-nearby-close').focus();
+    }
+
+    skunkButton.addEventListener('click', openSkunkNearby);
+    document.getElementById('skunk-nearby-close').addEventListener('click', () => skunkDialog.close());
+    skunkDialog.addEventListener('close', () => { skunkRequestId += 1; skunkButton.focus(); });
+    document.getElementById('skunk-nearby-centre').addEventListener('click', () => {
+      const centre = map.getCenter();
+      showSkunkNearby([centre.lat, centre.lng], 'the map centre');
+    });
+    document.getElementById('skunk-nearby-recent').addEventListener('change', event => {
+      try {
+        skunkApi.writeProfile(localStorage, { ...skunkApi.readProfile(localStorage), preferRecent: event.target.checked });
+        if (skunkCurrentOrigin) showSkunkNearby(skunkCurrentOrigin.origin, skunkCurrentOrigin.originLabel);
+      } catch (_err) {
+        document.getElementById('skunk-nearby-status').textContent = 'Could not save this preference on this device.';
+      }
+    });
+    document.getElementById('skunk-nearby-radius').addEventListener('change', event => {
+      try {
+        skunkApi.writeProfile(localStorage, { ...skunkApi.readProfile(localStorage), radiusKm: Number(event.target.value) });
+        if (skunkCurrentOrigin) showSkunkNearby(skunkCurrentOrigin.origin, skunkCurrentOrigin.originLabel);
+      } catch (_err) {
+        document.getElementById('skunk-nearby-status').textContent = 'Could not save this preference on this device.';
+      }
+    });
+    document.getElementById('skunk-nearby-location').addEventListener('click', () => {
+      const status = document.getElementById('skunk-nearby-status');
+      if (!navigator.geolocation) { status.textContent = 'Location is unavailable. You can use the map centre instead.'; return; }
+      const requestId = ++skunkRequestId;
+      status.textContent = 'Getting your location…';
+      document.getElementById('skunk-nearby-results').innerHTML = '';
+      navigator.geolocation.getCurrentPosition(position => {
+        if (requestId !== skunkRequestId || !skunkDialog.open) return;
+        showSkunkNearby([position.coords.latitude, position.coords.longitude], 'your location');
+      }, () => {
+        if (requestId === skunkRequestId && skunkDialog.open) status.textContent = 'Your location could not be used. Try the map centre instead.';
+      }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 60000 });
+    });
+    document.getElementById('skunk-nearby-results').addEventListener('click', event => {
+      const button = event.target.closest('[data-skunk-action]');
+      if (!button) return;
+      if (button.dataset.skunkAction === 'expand-radius') {
+        const next = Number(button.dataset.radius);
+        if (!skunkApi.RADIUS_OPTIONS_KM.includes(next) || !skunkCurrentOrigin) return;
+        try {
+          skunkApi.writeProfile(localStorage, { ...skunkApi.readProfile(localStorage), radiusKm: next });
+          document.getElementById('skunk-nearby-radius').value = String(next);
+          showSkunkNearby(skunkCurrentOrigin.origin, skunkCurrentOrigin.originLabel);
+        } catch (_err) {
+          document.getElementById('skunk-nearby-status').textContent = 'Could not save this preference on this device.';
+        }
+        return;
+      }
+      const index = Number(button.dataset.index);
+      if (!Number.isInteger(index) || !locations[index]) return;
+      if (button.dataset.skunkAction === 'route') {
+        toggleJourneyStopByIndex(index);
+        const inRoute = isLocationInItinerary(index);
+        skunkDialog.querySelectorAll('[data-skunk-action="route"]').forEach(action => {
+          if (Number(action.dataset.index) !== index) return;
+          action.textContent = inRoute ? 'Added to route' : 'Add to route';
+          action.setAttribute('aria-pressed', String(inRoute));
+        });
+      } else if (shouldShowMarkerOnMap(locations[index], index)) {
+        skunkDialog.close();
+        selectDestinationIndex(index);
+      }
+    });
+
+    window.addEventListener('storage', event => {
+      if (!skunkApi || !event.key) return;
+      if (event.key === skunkApi.MATT_DEFAULTS_KEY) { refreshMattDefaults(); return; }
+      if (skunkApi.STRAIN_KEYS.includes(event.key)) shelfStrainNames = normaliseShelfStrainNames(loadStoredArray(STRAIN_SHELF_STORAGE_KEYS, []));
+      if (skunkApi.LOCATION_KEYS.includes(event.key)) {
+        locationPreferences = loadStoredObject(LOCATION_PREFERENCES_STORAGE_KEYS, {});
+        legacyFavoriteIndices = loadStoredJson(LEGACY_FAVORITES_STORAGE_KEY, []);
+        if (locations.length) {
+          hydrateLocationPreferences();
+          if (mobileShopState) syncPopupPersonalState(mobileShopState.index);
+        }
+      }
+      if (skunkApi.STRAIN_KEYS.includes(event.key) || skunkApi.LOCATION_KEYS.includes(event.key) || event.key === skunkApi.PROFILE_KEY) {
+        syncSkunkworksButton();
+        if (locations.length) { updateMarkers(); updateControlsSummary(); refreshDestinationCards(); }
+      }
+    });
+
+    document.getElementById('toggle-controls').addEventListener('click', () => openMapAction('search'));
+    document.getElementById('toggle-route').addEventListener('click', () => openMapAction('route'));
+    document.getElementById('map-search-area-toggle').addEventListener('click', toggleMapSearchArea);
+    document.getElementById('map-show-matches').addEventListener('click', () => {
+      // Closing the phone keyboard before fitting avoids framing its covered area.
+      const input = document.getElementById('destination-search');
+      if (isCompactMobileLayout() && input && document.activeElement === input) {
+        input.blur();
+        collapseMapSearchResults({ focus: true });
+        window.setTimeout(() => fitMapToVisibleMarkers({ searchResults: true }), 160);
+      } else {
+        collapseMapSearchResults({ focus: true });
+        fitMapToVisibleMarkers({ searchResults: true });
+      }
+    });
+    document.getElementById('route-tools-dropdown').addEventListener('toggle', syncMapActionDock);
+
     function openSettingsPanel() {
+      const route = document.getElementById('route-tools-dropdown');
+      if (route) route.open = false;
       if (directionsVisible && isCompactMobileLayout()) {
         setDirectionsVisible(false);
       }
-      setControlsVisible(true, { collapsed: false });
       const panel = document.getElementById('settings-panel');
       if (panel) panel.hidden = false;
+      setControlsVisible(true, { collapsed: false });
       if (window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}#settings`);
       }
       window.setTimeout(() => {
-        if (!panel) return;
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        panel.focus({ preventScroll: true });
+        if (!panel || panel.hidden || !controlsVisible || controlsCollapsed) return;
+        focusMapPanelTarget(panel);
       }, 80);
     }
 
-    function closeSettingsPanel() {
+    function closeSettingsPanel({ returnFocus = true } = {}) {
       const panel = document.getElementById('settings-panel');
-      if (panel) panel.hidden = true;
+      if (!panel || panel.hidden) return;
+      panel.hidden = true;
       if ((window.location.hash || '').toLowerCase() === '#settings' && window.history && window.history.replaceState) {
         window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
       }
-      const searchInput = document.getElementById('destination-search');
-      if (searchInput) searchInput.focus({ preventScroll: true });
+      if (returnFocus) {
+        if (isCompactMobileLayout()) setControlsVisible(false);
+        else document.getElementById('map-tools-content')?.scrollTo({ top: 0, behavior: 'auto' });
+        document.getElementById('nav-settings-btn')?.focus({ preventScroll: true });
+      }
+      syncMapActionDock();
     }
 
     function openSettingsFromHash() {
@@ -11374,94 +12208,9 @@
       setDirectionsVisible(false);
     });
 
-    function toggleSelectionCardFromUi() {
-      const card = document.getElementById('selection-card');
-      if (!card || card.classList.contains('is-empty') || card.style.display === 'none') return;
-      setSelectionCardCollapsed(!selectionCardCollapsed);
-    }
-
-    document.getElementById('selection-card-toggle').addEventListener('click', e => {
-      e.stopPropagation();
-      toggleSelectionCardFromUi();
-    });
-
-    document.getElementById('selection-card-head').addEventListener('click', e => {
-      if (e.target.closest('button')) return;
-      toggleSelectionCardFromUi();
-    });
-
-    document.getElementById('selection-card-head').addEventListener('keydown', e => {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      e.preventDefault();
-      toggleSelectionCardFromUi();
-    });
-
-    document.getElementById('selection-directions-btn').addEventListener('click', async () => {
-      const selectedIndex = getSelectedDestinationIndex();
-      if (selectedIndex === null) {
-        setControlsVisible(true, { collapsed: false });
-        return;
-      }
-      let routedDuringLocationRequest = false;
-      if (!lastPosition) {
-        try {
-          await requestUserLocation({
-            label: 'Getting your location for direct distance...',
-            routeIfSelected: true
-          });
-          routedDuringLocationRequest = true;
-        } catch (_err) {
-          return;
-        }
-      }
-      if (!directionsVisible && !routedDuringLocationRequest) {
-        findRoute({ coords: { latitude: lastPosition[0], longitude: lastPosition[1] } });
-      }
-      setDirectionsVisible(!directionsVisible);
-    });
-
-    document.getElementById('selection-center-btn').addEventListener('click', () => {
-      const selectedIndex = getSelectedDestinationIndex();
-      if (selectedIndex === null || !map) return;
-      focusDestinationOnMap(selectedIndex, {
-        minZoom: isCompactMobileLayout() ? 15 : 16,
-        animate: true,
-        duration: 0.45
-      });
-    });
-
-    document.getElementById('selection-add-stop-btn').addEventListener('click', () => {
-      const selectedIndex = getSelectedDestinationIndex();
-      if (selectedIndex === null || !locations[selectedIndex]) {
-        setControlsVisible(true, { collapsed: false });
-        setJourneyStatus('Choose a place first, then add it to the route.', 'warn');
-        return;
-      }
-      toggleJourneyStopByIndex(selectedIndex);
-      setControlsVisible(true, { collapsed: false });
-    });
-
-    document.getElementById('selection-move-up-btn').addEventListener('click', () => {
-      const selectedIndex = getSelectedDestinationIndex();
-      if (selectedIndex === null || !locations[selectedIndex]) return;
-      moveJourneyStopByLocationIndex(selectedIndex, 'up', { fit: true });
-      setControlsVisible(true, { collapsed: false });
-    });
-
-    document.getElementById('selection-move-down-btn').addEventListener('click', () => {
-      const selectedIndex = getSelectedDestinationIndex();
-      if (selectedIndex === null || !locations[selectedIndex]) return;
-      moveJourneyStopByLocationIndex(selectedIndex, 'down', { fit: true });
-      setControlsVisible(true, { collapsed: false });
-    });
-
     document.getElementById('mobile-hide-controls').addEventListener('click', e => {
       e.stopPropagation();
-      if (isCompactMobileLayout()) {
-        setControlsVisible(false);
-        return;
-      }
-      setControlsVisible(false);
+      closeMapActionPanel();
     });
 
     const heroBannerCloseBtn = document.getElementById('hero-banner-close');
@@ -11472,18 +12221,27 @@
       });
     }
 
+    function toggleMapControlsHeader() {
+      if (!controlsVisible) return;
+      const openingResults = controlsCollapsed && hasMapSearchQuery() && !document.getElementById('route-tools-dropdown')?.open;
+      closeSettingsPanel({ returnFocus: false });
+      setControlsCollapsed(!controlsCollapsed);
+      if (openingResults) {
+        const hasCards = document.getElementById('best-match-list')?.querySelector('.best-match-card');
+        focusMapPanelTarget(document.getElementById(hasCards ? 'best-match-title' : 'map-search-area-status'));
+      } else if (!controlsVisible) {
+        document.getElementById(document.getElementById('route-tools-dropdown')?.open ? 'toggle-route' : 'toggle-controls')?.focus({ preventScroll: true });
+      }
+    }
+
     document.getElementById('controls-header').addEventListener('click', e => {
       if (e.target.closest('button')) return;
       if (controlsVisible && isCompactMobileLayout()) {
-        setControlsCollapsed(!controlsCollapsed);
+        toggleMapControlsHeader();
       }
     });
 
-    document.getElementById('controls-header-toggle').addEventListener('click', () => {
-      if (controlsVisible && isCompactMobileLayout()) {
-        setControlsCollapsed(!controlsCollapsed);
-      }
-    });
+    document.getElementById('controls-header-toggle').addEventListener('click', toggleMapControlsHeader);
 
     document.getElementById('display-name-input').addEventListener('input', e => {
       const nextName = (e.target.value || '').toString().replace(/\s+/g, ' ').trim().slice(0, 24);
@@ -11547,6 +12305,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
+      initSharedMenuFilters();
       applyPersonalisation();
       updateControlsSummary();
     }, { once: true });
@@ -11558,6 +12317,7 @@
     document.getElementById('reset-filters-btn').addEventListener('click', () => {
       resetMapFilters();
     });
+    document.getElementById('clear-map-filters')?.addEventListener('click', () => resetMapFilters());
 
     document.getElementById('clear-saved-data-btn').addEventListener('click', () => {
       setSavedDataConfirmationVisible(true);
@@ -11571,6 +12331,18 @@
       setSavedDataConfirmationVisible(false);
     });
 
+    document.getElementById('mobile-shop-close').addEventListener('click', closeMobileShopSheet);
+    document.getElementById('mobile-shop-sheet').addEventListener('cancel', event => {
+      event.preventDefault();
+      closeMobileShopSheet();
+    });
+    document.getElementById('mobile-shop-sheet').addEventListener('click', event => {
+      if (event.target === event.currentTarget) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closeMobileShopSheet();
+      }
+    });
+
     document.addEventListener('pointerdown', e => {
       if (!heroPopupVisible) return;
       if (e.target.closest('#hero-banner')) return;
@@ -11578,12 +12350,24 @@
     }, true);
 
     document.addEventListener('keydown', e => {
+      if (skunkDialog?.open) return;
+      if (e.key === 'Escape' && mobileShopState) {
+        e.preventDefault();
+        closeMobileShopSheet();
+        return;
+      }
       if (e.key === 'Escape' && guideVisible) {
         setGuideVisible(false);
         return;
       }
       if (e.key === 'Escape' && heroPopupVisible) {
         dismissHeroPopup();
+        return;
+      }
+      if (e.key === 'Escape' && (controlsVisible || shelfVisible)) {
+        e.preventDefault();
+        closeMapActionPanel();
+        return;
       }
       if (e.key !== '/' || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
 
@@ -11596,19 +12380,17 @@
 
       e.preventDefault();
       dismissHeroPopup();
-      if (!controlsVisible) {
-        setControlsVisible(true, { collapsed: false });
-      } else if (controlsCollapsed) {
-        setControlsCollapsed(false);
-      }
-
-      searchInput.focus();
-      searchInput.select();
+      openMapAction('search', { selectQuery: true });
     });
 
     function handleViewportResize() {
       syncViewportCssVars();
       syncCompactLayoutState();
+      if (mobileShopState) {
+        syncShopSheetPresentation();
+      } else if (activePopupLocationIndex !== null) {
+        openMobileShopSheet(activePopupLocationIndex);
+      }
       if (directionsVisible) {
         setDirectionsVisible(true);
       } else {
@@ -11634,6 +12416,13 @@
     }
 
     window.addEventListener('resize', handleViewportResize);
+    // Font scaling, wrapping and the optional nearby button can resize the bars
+    // without a window resize, so keep the spacing in step with their real height.
+    if (typeof ResizeObserver !== 'undefined') {
+      const mapChromeObserver = new ResizeObserver(() => scheduleTogglePositionSync());
+      [document.querySelector('.app-mode-toggle'), document.getElementById('ui-toggles')]
+        .filter(Boolean).forEach(element => mapChromeObserver.observe(element));
+    }
     window.addEventListener('orientationchange', () => scheduleViewportResync([0, 160, 420]));
     window.addEventListener('pageshow', () => scheduleViewportResync([0, 120, 360]));
     document.addEventListener('visibilitychange', () => {

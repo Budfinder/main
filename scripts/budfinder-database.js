@@ -43,8 +43,70 @@ const state = {
 };
 
 const DETAIL_LISTING_STEP = 12;
+const explore = window.BudfinderExplore;
+let exploreFilters = explore ? explore.fromUrl(window.location.href) : {};
+let exploreFilterControls = [];
+
+function exploreRows() {
+  return explore ? state.offerings.filter(item => explore.matches(item, exploreFilters, { date: displayListingDateValue(item) })) : state.offerings;
+}
+
+function setExploreFilters(next) {
+  if (!explore) return;
+  exploreFilters = explore.clean(next);
+  exploreFilterControls.forEach(control => control.set(exploreFilters));
+  state.discoveryBrowserLimit = 48;
+  state.detailVisibleLimit = DETAIL_LISTING_STEP;
+  const url = explore.applyToUrl(new URL(window.location.href), exploreFilters);
+  // The database accepts older city links on entry. From here the shared location filter owns the choice.
+  url.searchParams.delete('city');
+  url.searchParams.set('explore', '1');
+  window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}`);
+  render();
+}
+
+function initExploreFilters() {
+  if (!explore) return;
+  const cities = unique(state.offerings.map(item => item.shop_city));
+  const collapsed = true;
+  exploreFilterControls = ['database-explore-filters', 'browser-explore-filters'].map(id => explore.mount(
+    document.getElementById(id), { filters: exploreFilters, cities, collapsed, onChange: setExploreFilters }
+  )).filter(Boolean);
+}
+
+function exploreQuery() {
+  return state.discoveryBrowser ? (els.discoveryBrowserSearch?.value || '') : (els.search?.value || '');
+}
+
+function exploreMapUrl() {
+  if (!explore) return 'map.html';
+  if (state.detail?.type === 'shop') return buildShopMapLink(state.detail.shopId);
+  if (state.detail?.type === 'strain') {
+    const stat = getStatByKey(state.detail.key);
+    const rows = (stat?.offerings || []).filter(item => explore.matches(item, exploreFilters, { date: displayListingDateValue(item) }));
+    return mapUrlForShopIds(shopIdsForListings(rows), { strainName: stat?.name || state.detail.key });
+  }
+  return explore.link('map', { query: exploreQuery(), filters: exploreFilters, source: 'menus', returnTo: navigationUrlForCurrentState() });
+}
+
+function syncExploreNavigation() {
+  if (!explore) return;
+  const href = exploreMapUrl();
+  if (els.mapToggle) { els.mapToggle.href = href; els.mapToggle.title = 'View this search on the map'; }
+  document.querySelectorAll('[data-explore-map-link]').forEach(link => { link.href = href; });
+}
+
+function detailBackControlHtml(label) {
+  const params = new URLSearchParams(window.location.search);
+  const back = explore?.safeReturn(params.get('return_to') || '');
+  if (!state.detailReturnStack.length && params.get('source') === 'map' && back) {
+    return `<a class="explore-return-link" href="${escapeHtmlAttr(back)}">← Back to map results</a>`;
+  }
+  return `<button type="button" class="detail-back-button" data-close-detail>${escapeHtml(label)}</button>`;
+}
 
 const els = {
+  skip: document.getElementById('database-skip'),
   status: document.getElementById('status'),
   dataNote: document.getElementById('database-data-note'),
   search: document.getElementById('search'),
@@ -193,6 +255,12 @@ function resolvedGrowerForSearch(query) {
   const cacheKey = `${q}|${sourceOfferings.length}`;
   if (resolvedGrowerForSearch.cache && resolvedGrowerForSearch.cache.key === cacheKey) {
     return resolvedGrowerForSearch.cache.value;
+  }
+  if (sourceOfferings.some(item => normaliseSearchText(item.shop_city) === q || normaliseSearchText(item.shop_name) === q ||
+      normaliseSearchText(item.strain_name || item.strain_name_normalised) === q) ||
+      discoveryAreasForScope().some(area => normaliseSearchText(area.name) === q)) {
+    resolvedGrowerForSearch.cache = { key: cacheKey, value: '' };
+    return '';
   }
   const growers = Array.from(new Set(sourceOfferings
     .map(item => String(item && item.grower || '').replace(/\s+/g, ' ').trim())
@@ -413,19 +481,6 @@ function packageWeightLabel(value) {
   return `${Number.isInteger(weight) ? weight.toFixed(0) : weight.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}g`;
 }
 
-function packageListingPriceLabel(item) {
-  const perGram = Number(item && item.price_amount);
-  const packPrice = Number(item && item.package_price_amount);
-  const weight = Number(item && item.package_weight_g);
-  const currency = String(item && item.price_currency || '€');
-  if (Number.isFinite(packPrice) && packPrice > 0 && Number.isFinite(weight) && weight > 0) {
-    const amount = packPrice % 1 === 0 ? packPrice.toFixed(0) : packPrice.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
-    const comparison = Number.isFinite(perGram) ? ` · ${money(perGram, currency, 'g')}` : '';
-    return `${currency}${amount} · ${packageWeightLabel(weight)} pack${comparison}`;
-  }
-  return Number.isFinite(perGram) ? money(perGram, currency, item && item.price_unit) : 'Price unknown';
-}
-
 function formatDate(value) {
   if (!value) return '';
   const date = new Date(value);
@@ -539,7 +594,8 @@ function formatFreshness(value) {
 }
 
 function listingPriceLabel(item) {
-  return packageListingPriceLabel(item);
+  const { primary, secondary } = menuPriceParts(item);
+  return secondary ? `${primary} · ${secondary}` : primary;
 }
 
 function listingUpdatedLabel(item) {
@@ -581,8 +637,10 @@ function ageBadgeHtml(value, item = null) {
 }
 
 function pricePerGram(item) {
-  const amount = Number(item && item.price_amount);
-  const unit = normalise(item && item.price_unit);
+  const listedPrice = item?.price_amount;
+  if (listedPrice == null || String(listedPrice).trim() === '') return null;
+  const amount = Number(listedPrice);
+  const unit = normalise(item.price_unit);
   if (!Number.isFinite(amount)) return null;
   if (unit && !['g', 'gram', 'grams', '/g', 'per gram'].includes(unit)) return null;
   return amount;
@@ -1007,6 +1065,8 @@ function buildClosedShopSourceTokens(shops) {
 }
 
 function buildUnavailableShopIds(shops) {
+  // Share the same eligibility rules with the map and generated directory.
+  if (window.BudfinderData) return window.BudfinderData.unavailableShopIds(shops);
   return new Set(
     (Array.isArray(shops) ? shops : [])
       .filter(shop => isUnavailableCatalogShop(shop) || hasClosedShopSourceConflict(shop))
@@ -1165,6 +1225,7 @@ const BROWSE_MODES = [
   { key: 'az', label: 'A-Z', summary: 'A-Z' }
 ];
 const BROWSE_MODE_BY_KEY = new Map(BROWSE_MODES.map(mode => [mode.key, mode]));
+const DISCOVERY_BROWSERS = new Set(['shops', 'strains', 'rare']);
 const FAMILY_DEFINITIONS = [
   { key: 'amnesia', label: 'Amnesia', terms: ['amnesia', 'ammo'] },
   { key: 'haze', label: 'Haze', terms: ['haze', 'silver haze', 'ssh'] },
@@ -1250,7 +1311,7 @@ function saveSelectedShopIds() {
 
 function hasExplicitDatabaseUrlState() {
   const params = new URLSearchParams(window.location.search || '');
-  return ['strain', 'search', 'detail', 'mode', 'view', 'browser', 'shop_id', 'shopId', 'shop', 'shop_name']
+  return ['strain', 'search', 'detail', 'mode', 'view', 'browser', 'shop_id', 'shopId', 'shop', 'shop_name', 'explore', 'filter_city', 'filter_type', 'filter_price', 'filter_age', 'filter_cali', 'filter_legal']
     .some(key => params.has(key));
 }
 
@@ -1270,6 +1331,7 @@ function saveDatabaseNavigationState() {
     activeShopId: state.activeShopId,
     shopMenuExpanded: Boolean(state.shopMenuExpanded),
     discoveryBrowser: state.discoveryBrowser || '',
+    exploreFilters,
     detail,
     detailReturnSearch: state.detailReturnSearch || ''
   };
@@ -1289,7 +1351,7 @@ function restoreDatabaseNavigationState() {
   if (typeof saved.search === 'string' && els.search) els.search.value = saved.search;
   if (BROWSE_MODE_BY_KEY.has(saved.browseMode)) state.browseMode = saved.browseMode;
   if (saved.familyFilter && FAMILY_BY_KEY.has(saved.familyFilter)) state.familyFilter = saved.familyFilter;
-  if (saved.discoveryBrowser === 'shops' || saved.discoveryBrowser === 'strains') {
+  if (DISCOVERY_BROWSERS.has(saved.discoveryBrowser)) {
     state.discoveryBrowser = saved.discoveryBrowser;
   }
 
@@ -1314,15 +1376,28 @@ function restoreDatabaseNavigationState() {
   state.detailReturnSearch = typeof saved.detailReturnSearch === 'string' ? saved.detailReturnSearch : '';
 }
 
+// A stalled connection should lead to the existing retry action, not an
+// indefinite loading message. The timeout covers both the request and parsing.
+async function fetchDatabaseResource(url, type) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch(url, { cache: 'no-cache', signal: controller.signal });
+    if (!response.ok) throw new Error(`${url} returned ${response.status}`);
+    return await response[type]();
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
 async function loadJson(path) {
   const candidates = [path, `./${path}`, `/${path}`];
   let lastError = null;
   for (const url of candidates) {
     try {
-      const res = await fetch(url, { cache: 'no-cache' });
-      if (!res.ok) throw new Error(`${url} returned ${res.status}`);
-      return await res.json();
+      return await fetchDatabaseResource(url, 'json');
     } catch (err) {
+      if (err && err.name === 'AbortError') throw err;
       lastError = err;
     }
   }
@@ -1334,10 +1409,9 @@ async function loadText(path) {
   let lastError = null;
   for (const url of candidates) {
     try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`${url} returned ${res.status}`);
-      return await res.text();
+      return await fetchDatabaseResource(url, 'text');
     } catch (err) {
+      if (err && err.name === 'AbortError') throw err;
       lastError = err;
     }
   }
@@ -1674,9 +1748,9 @@ function handleShopLogoError(img) {
   img.remove();
 }
 
-function buildStats() {
+function statsFromOfferings(offerings) {
   const byStrain = new Map();
-  state.offerings.forEach(item => {
+  offerings.forEach(item => {
     const key = item.strain_name_normalised || normalise(item.strain_name);
     if (!key) return;
     if (!byStrain.has(key)) {
@@ -1698,14 +1772,18 @@ function buildStats() {
     if (Number(item.is_cali) === 1) stat.caliCount += 1;
   });
 
-  state.strainStats = Array.from(byStrain.values()).map(stat => {
-    const prices = stat.offerings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+  return Array.from(byStrain.values()).map(stat => {
+    const prices = stat.offerings.map(item => item.price_amount == null || String(item.price_amount).trim() === '' ? NaN : Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
     const cheapest = prices.length ? Math.min(...prices) : null;
     const avg = average(prices);
     const topType = Array.from(stat.types.entries()).sort((a, b) => b[1] - a[1])[0];
     const topTypeName = topType ? topType[0] : '';
+    const latestTime = latestListingTime(stat.offerings);
     return {
       ...stat,
+      latestTime,
+      latestDate: latestTime ? new Date(latestTime).toISOString() : '',
+      freshness: menuAgeInfo(latestTime ? new Date(latestTime).toISOString() : ''),
       shopCount: stat.shops.size,
       listingCount: stat.offerings.length,
       cities: Array.from(stat.cities).filter(Boolean).sort(compareText),
@@ -1716,6 +1794,10 @@ function buildStats() {
       typeCount: stat.types.size
     };
   });
+}
+
+function buildStats() {
+  state.strainStats = statsFromOfferings(state.offerings);
 }
 
 function populateFilters() {
@@ -2241,7 +2323,7 @@ function clearRoutePlan() {
 
 function mapUrlForShopIds(shopIds, context = {}) {
   const ids = sanitizeShopIds(shopIds);
-  if (!ids.length) return 'map.html';
+  if (!ids.length) return explore ? explore.link('map', { filters: exploreFilters, query: context.strainName || exploreQuery(), source: 'menus', returnTo: navigationUrlForCurrentState() }) : 'map.html';
   const params = new URLSearchParams();
   params.set('shops', ids.join(','));
   params.set('source', 'explorer');
@@ -2251,6 +2333,14 @@ function mapUrlForShopIds(shopIds, context = {}) {
   if (city) params.set('city', city);
   const strainName = String((context && context.strainName) || '').trim();
   if (strainName) params.set('strain', strainName);
+  if (explore) {
+    const url = explore.applyToUrl(new URL(`map.html?${params}`, window.location.href), exploreFilters);
+    url.searchParams.set('explore', '1');
+    url.searchParams.set('source', 'menus');
+    const back = explore.safeReturn(navigationUrlForCurrentState());
+    if (back) url.searchParams.set('return_to', back);
+    return `map.html${url.search}`;
+  }
   return `map.html?${params.toString()}`;
 }
 
@@ -2283,6 +2373,7 @@ function prepareMapHandoff(context = {}) {
 
 function updateMapToggleHref() {
   if (!els.mapToggle) return;
+  if (explore) { syncExploreNavigation(); return; }
   // The primary navigation returns to the user's previous map session.
   // Contextual actions such as "View on map" continue to use explicit
   // shop/strain handoffs through mapUrlForShopIds().
@@ -2435,10 +2526,20 @@ function statTileHtml(label, value, helper = '') {
   `;
 }
 
+function priceExtremeTileHtml(label, profile, price) {
+  if (price == null) return statTileHtml(label, 'Unknown', 'No priced listings');
+  const matchingListings = profile.usableListings.filter(row => row.price === price).map(row => row.item);
+  const latestTime = latestListingTime(matchingListings);
+  const dateLabel = matchingListings.length > 1 ? 'Latest menu at this price' : 'Menu date';
+  const helper = latestTime ? `${dateLabel} · ${formatDate(latestTime)}` : 'Menu date unknown';
+  return statTileHtml(label, money(price), helper);
+}
+
 function listingCardHtml(item, profile, options = {}) {
   const shopId = String(item.shop_id || '');
-  const price = pricePerGram(item);
-  const priceLabel = packageListingPriceLabel(item);
+  const shopName = item.shop_name || 'Unknown shop';
+  const menuUrl = detailUrl({ detail: 'shop', shop_id: shopId });
+  const priceLabel = listingPriceLabel(item);
   const meta = [
     item.shop_city || '',
     item.base_type || '',
@@ -2455,30 +2556,27 @@ function listingCardHtml(item, profile, options = {}) {
   return `
     <article class="listing-card">
       <div class="listing-card-head">
-        <a class="listing-map-link" href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(item.shop_name || 'Unknown shop')} on map">
-          ${getShopLogoHtml(item.shop_key, item.shop_name || 'Unknown shop')}
+        <a class="listing-menu-link" href="${escapeHtmlAttr(menuUrl)}" data-focus-shop-menu="${escapeHtmlAttr(shopId)}" aria-label="View full menu for ${escapeHtmlAttr(shopName)}">
+          ${getShopLogoHtml(item.shop_key, shopName)}
           <div>
-            <strong>${escapeHtml(item.shop_name || 'Unknown shop')}</strong>
+            <strong>${escapeHtml(shopName)}</strong>
             <div class="listing-card-meta">${escapeHtml(meta || 'Known menu listing')}</div>
           </div>
         </a>
         <div>
           <span class="listing-card-price">${escapeHtml(priceLabel)}</span>
-          <div class="listing-card-meta">${escapeHtml(item.strain_name || 'Unknown product')}</div>
+          ${normalise(item.strain_name) !== normalise(options.strainName) ? `<div class="listing-card-meta">${escapeHtml(item.strain_name || 'Unknown product')}</div>` : ''}
         </div>
       </div>
       <div class="chip-row">
-        ${priceJudgementBadgeHtml(price, profile && profile.median)}
+        ${priceComparisonHtml(item, profile?.listings || [item], 'median')}
         ${ageBadgeHtml(displayListingDateValue(item), item)}
-        ${item.strain_name ? `<span class="chip">${escapeHtml(item.strain_name)}</span>` : ''}
-        ${Number(item.is_legal) === 1 ? '<span class="chip deal-chip">Legal project</span>' : ''}
       </div>
       ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
       <div class="listing-card-actions">
-        <button type="button" data-focus-shop-menu="${escapeHtmlAttr(shopId)}">View full menu</button>
         <a href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(item.shop_name || 'Unknown shop')} on map">View on map</a>
         <button type="button" data-toggle-map-shop="${escapeHtmlAttr(shopId)}" class="${isShopSelected(shopId) ? 'is-active' : ''}">${isShopSelected(shopId) ? 'Remove saved shop' : 'Save shop'}</button>
-        <a href="${escapeHtmlAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">Source</a>
+        <a href="${escapeHtmlAttr(sourceUrl)}" target="_blank" rel="noopener noreferrer">Menu source</a>
       </div>
     </article>
   `;
@@ -2558,8 +2656,8 @@ function renderPriceGuide(filteredStats) {
         ${statTileHtml('Typical range', typicalRange, confidence)}
         ${statTileHtml('Average', profile.average == null ? 'Unknown' : money(profile.average), 'Mean visible price')}
         ${statTileHtml('Median', profile.median == null ? 'Unknown' : money(profile.median), 'Price judgement baseline')}
-        ${statTileHtml('Lowest', profile.low == null ? 'Unknown' : money(profile.low), 'Cheapest visible listing')}
-        ${statTileHtml('Highest', profile.high == null ? 'Unknown' : money(profile.high), 'Highest visible listing')}
+        ${priceExtremeTileHtml('Lowest', profile, profile.low)}
+        ${priceExtremeTileHtml('Highest', profile, profile.high)}
         ${statTileHtml('Listings', listings.length.toLocaleString(), `${profile.count.toLocaleString()} priced`)}
         ${statTileHtml('Shop count', profile.shopCount.toLocaleString(), 'Unique browsable shops')}
         ${statTileHtml('Latest menu date', newestLabel, ageBreakdownLabel(profile.ageBreakdown))}
@@ -2642,6 +2740,10 @@ const AMSTERDAM_DISCOVERY_AREAS = [
 ];
 
 function discoveryAreasForScope() {
+  if (explore && exploreFilters.city) {
+    return normalise(exploreFilters.city) === 'amsterdam' ? AMSTERDAM_DISCOVERY_AREAS
+      : [{ name: exploreFilters.city, city: exploreFilters.city, note: `Explore the ${exploreFilters.city} map` }];
+  }
   const dataset = activeLocationDataset();
   if (dataset) {
     if (dataset.slug === 'amsterdam') return AMSTERDAM_DISCOVERY_AREAS;
@@ -2698,8 +2800,12 @@ function discoveryAreaCardHtml(area) {
   if (normaliseSearchText(area.name) !== normaliseSearchText(area.city)) {
     params.set('search', area.name);
   }
+  const href = explore ? explore.link('map', {
+    query: params.get('search') || '', filters: { ...exploreFilters, city: area.city || exploreFilters.city },
+    source: 'menus', returnTo: navigationUrlForCurrentState()
+  }) : `map.html?${params}`;
   return `
-    <a class="discovery-card" href="map.html?${escapeHtmlAttr(params.toString())}" aria-label="Explore ${escapeHtmlAttr(area.name)} on the map">
+    <a class="discovery-card" href="${escapeHtmlAttr(href)}" aria-label="Explore ${escapeHtmlAttr(area.name)} on the map">
       <span class="discovery-area-icon" aria-hidden="true">⌖</span>
       <span class="discovery-card-copy">
         <strong>${escapeHtml(area.name)}</strong>
@@ -2742,7 +2848,7 @@ function discoveryShopCardHtml(row) {
       ${getShopLogoHtml(row.shopKey, row.shopName)}
       <span class="discovery-card-copy">
         <strong>${escapeHtml(row.shopName)}</strong>
-        <small>${escapeHtml(row.city || 'City unknown')} · ${row.offerings.length.toLocaleString()} known listing${row.offerings.length === 1 ? '' : 's'}</small>
+        <small>${escapeHtml(row.city || 'City unknown')} · ${row.offerings.length.toLocaleString()} ${explore?.active(exploreFilters).length ? 'matching' : 'known'} listing${row.offerings.length === 1 ? '' : 's'}</small>
         <small>${escapeHtml(averagePrice)} · ${escapeHtml(freshness.label)}${escapeHtml(distance)}</small>
         ${categoryPillsHtml(row)}
       </span>
@@ -2750,15 +2856,16 @@ function discoveryShopCardHtml(row) {
   `;
 }
 
-function discoveryStrainCardHtml(stat) {
+function discoveryStrainCardHtml(stat, options = {}) {
   const averagePrice = stat.avg != null && Number.isFinite(Number(stat.avg)) ? money(stat.avg) : 'Price unknown';
   const typeLabel = stat.topType ? ` · ${stat.topType}` : '';
   const freshness = stat.freshness || menuAgeInfo(stat.latestDate || '');
   return `
-    <button class="discovery-card" type="button" data-discovery-strain="${escapeHtmlAttr(stat.key)}">
+    <button class="discovery-card${options.exact ? ' is-exact-match' : ''}" type="button" data-discovery-strain="${escapeHtmlAttr(stat.key)}">
       ${getStrainImageHtml(stat.name)}
       <span class="discovery-card-copy">
         <strong>${escapeHtml(stat.name)}</strong>
+        ${options.exact ? '<small class="search-match-label">Strain · Exact match</small>' : ''}
         <small>${stat.shopCount.toLocaleString()} shop${stat.shopCount === 1 ? '' : 's'} · Avg ${escapeHtml(averagePrice)}${escapeHtml(typeLabel)}</small>
         <small>${escapeHtml(freshness.label)}</small>
       </span>
@@ -2907,26 +3014,21 @@ function renderDiscoverySuggestions(shopRows) {
 function renderDiscoveryBrowser() {
   if (!els.discoveryBrowser || !els.discoveryBrowserGrid) return;
   const browserType = state.discoveryBrowser;
-  if (browserType !== 'shops' && browserType !== 'strains') {
+  if (!DISCOVERY_BROWSERS.has(browserType)) {
     els.discoveryBrowser.hidden = true;
     els.discoveryBrowserGrid.replaceChildren();
     return;
   }
 
   const isShopBrowser = browserType === 'shops';
+  const rareKeys = browserType === 'rare'
+    ? new Set(state.strainStats.filter(stat => stat.shopCount === 2 || stat.shopCount === 3).map(stat => stat.key))
+    : null;
   syncDiscoveryBrowserSortOptions(isShopBrowser);
   const query = normaliseSearchText(els.discoveryBrowserSearch ? els.discoveryBrowserSearch.value : '');
   const allItems = (isShopBrowser
-    ? shopRowsFromOfferings(state.offerings)
-    : state.strainStats.map(stat => {
-      const latestTime = latestListingTime(stat.offerings || []);
-      return {
-        ...stat,
-        latestTime,
-        latestDate: latestTime ? new Date(latestTime).toISOString() : '',
-        freshness: menuAgeInfo(latestTime ? new Date(latestTime).toISOString() : '')
-      };
-    }))
+    ? shopRowsFromOfferings(exploreRows())
+    : statsFromOfferings(exploreRows()).filter(stat => !rareKeys || rareKeys.has(stat.key)))
     .map(item => isShopBrowser && state.discoveryBrowserPosition && Array.isArray(item.coordinates)
       ? { ...item, distanceMeters: discoveryDistanceMetres(state.discoveryBrowserPosition, item.coordinates) }
       : item);
@@ -2941,6 +3043,10 @@ function renderDiscoveryBrowser() {
     return discoveryTypeMatches(item, isShopBrowser, state.discoveryBrowserType);
   }).sort((a, b) => {
     const sort = state.discoveryBrowserSort;
+    if (query && sort === 'name' && !isShopBrowser) {
+      const exactDifference = Number(normaliseSearchText(b.name) === query) - Number(normaliseSearchText(a.name) === query);
+      if (exactDifference) return exactDifference;
+    }
     if (sort === 'freshness') {
       return discoveryFreshness(a, isShopBrowser).days - discoveryFreshness(b, isShopBrowser).days ||
         (isShopBrowser ? compareShopName(a, b) : compareStrainName(a, b));
@@ -2972,6 +3078,10 @@ function renderDiscoveryBrowser() {
   els.discoveryBrowserCopy.textContent = isShopBrowser
     ? 'Browse every coffeeshop, then sort and filter the full set without leaving the database.'
     : 'Browse every available strain, then sort and filter the full set without leaving the database.';
+  if (rareKeys) {
+    els.discoveryBrowserTitle.textContent = 'Strains listed by 2–3 shops';
+    els.discoveryBrowserCopy.textContent = 'These strains appear on menus from two or three coffeeshops nationwide.';
+  }
   els.discoveryBrowserSearchLabel.textContent = isShopBrowser ? 'Find a coffeeshop' : 'Find a strain';
   els.discoveryBrowserSearch.placeholder = isShopBrowser
     ? 'Try Abraxas, Family First, or Amsterdam...'
@@ -2984,7 +3094,9 @@ function renderDiscoveryBrowser() {
   if (els.discoveryBrowserPrice) els.discoveryBrowserPrice.value = state.discoveryBrowserPrice;
   if (els.discoveryBrowserType) els.discoveryBrowserType.value = state.discoveryBrowserType;
   els.discoveryBrowserGrid.innerHTML = visibleItems.length
-    ? visibleItems.map(isShopBrowser ? discoveryShopCardHtml : discoveryStrainCardHtml).join('')
+    ? visibleItems.map(item => isShopBrowser ? discoveryShopCardHtml(item) : discoveryStrainCardHtml(item, {
+        exact: Boolean(query && normaliseSearchText(item.name) === query)
+      })).join('')
     : `<div class="discovery-empty">No ${isShopBrowser ? 'coffeeshops' : 'strains'} match this filter.</div>`;
   els.discoveryBrowserMore.hidden = remaining === 0;
   const moreButton = els.discoveryBrowserMore.querySelector('[data-load-more-discovery-browser]');
@@ -2994,7 +3106,7 @@ function renderDiscoveryBrowser() {
 }
 
 function openDiscoveryBrowser(type, options = {}) {
-  const browserType = type === 'shops' ? 'shops' : 'strains';
+  const browserType = DISCOVERY_BROWSERS.has(type) ? type : 'strains';
   state.discoveryBrowser = browserType;
   state.discoveryBrowserLimit = 48;
   state.discoveryBrowserSort = 'name';
@@ -3068,6 +3180,8 @@ function resetDiscoveryBrowserFilters() {
 
 function renderDiscovery() {
   if (!els.discoverySuggestions || !els.discoveryResults || !els.discoveryResultGroups || !els.discoveryBrowser) return;
+  document.body.classList.toggle('database-results-open', Boolean(!state.detail && !state.discoveryBrowser &&
+    (els.search?.value.trim() || explore?.active(exploreFilters).length)));
   document.body.classList.toggle('database-browser-open', Boolean(state.discoveryBrowser && !state.detail));
   if (state.detail) {
     els.discoverySuggestions.hidden = true;
@@ -3086,8 +3200,10 @@ function renderDiscovery() {
   els.discoveryBrowser.hidden = true;
 
   const query = (els.search && els.search.value || '').replace(/\s+/g, ' ').trim();
-  const shopRows = shopRowsFromOfferings(state.offerings);
-  if (!query) {
+  const rows = exploreRows();
+  const shopRows = shopRowsFromOfferings(rows);
+  const discoveryStats = statsFromOfferings(rows);
+  if (!query && (!explore || !explore.active(exploreFilters).length)) {
     els.discoverySuggestions.hidden = false;
     els.discoveryResults.hidden = true;
     renderDiscoverySuggestions(shopRows);
@@ -3097,7 +3213,7 @@ function renderDiscovery() {
   els.discoverySuggestions.hidden = true;
   els.discoveryResults.hidden = false;
 
-  const areaMatches = discoveryAreasForScope()
+  const areaMatches = (explore?.active(exploreFilters).some(key => key !== 'city') ? [] : discoveryAreasForScope())
     .map(area => ({
       area,
       score: Math.max(
@@ -3113,7 +3229,7 @@ function renderDiscovery() {
   const shopMatches = shopRows
     .map(row => ({
       row,
-      score: Math.max(
+      score: !query ? 1 : Math.max(
         discoveryMatchScore(row.shopName, query),
         discoveryMatchScore(row.city, query),
         discoveryMatchScore(row.shopKey, query)
@@ -3127,10 +3243,10 @@ function renderDiscovery() {
     .includes(normaliseSearchText(query));
   const resolvedGrower = resolvedGrowerForSearch(query);
   const resolvedGrowerKey = normaliseSearchText(resolvedGrower);
-  const strainMatches = state.strainStats
+  const strainMatches = discoveryStats
     .map(stat => ({
       stat,
-      score: Math.max(
+      score: !query ? 1 : Math.max(
         resolvedGrower
           ? (stat.offerings.some(item => normaliseSearchText(item && item.grower) === resolvedGrowerKey) ? 96 : 0)
           : discoveryMatchScore(stat.name, query),
@@ -3143,7 +3259,7 @@ function renderDiscovery() {
     .map(match => match.stat);
 
   const growers = new Map();
-  state.offerings.forEach(item => {
+  rows.forEach(item => {
     const name = String(item && item.grower || '').trim();
     if (!name || (resolvedGrower
       ? normaliseSearchText(name) !== resolvedGrowerKey
@@ -3159,14 +3275,17 @@ function renderDiscovery() {
     .sort((a, b) => b.shopCount - a.shopCount || compareText(a.name, b.name));
 
   const visibleShopMatches = shopMatches.slice(0, 20);
-  const visibleStrainMatches = strainMatches.slice(0, 100);
+  const exactStrains = strainMatches.filter(stat => normaliseSearchText(stat.name) === normaliseSearchText(query));
+  const relatedStrains = strainMatches.filter(stat => !exactStrains.includes(stat));
+  const visibleStrainMatches = relatedStrains.slice(0, 100);
   const totalMatches = areaMatches.length + shopMatches.length + strainMatches.length + growerMatches.length;
-  if (els.discoveryResultsTitle) els.discoveryResultsTitle.textContent = `Matches for “${query}”`;
+  if (els.discoveryResultsTitle) els.discoveryResultsTitle.textContent = query ? `Matches for “${query}”` : 'Filtered menus and strains';
   if (els.discoveryResultsCount) {
     els.discoveryResultsCount.textContent = `${totalMatches.toLocaleString()} result${totalMatches === 1 ? '' : 's'}`;
   }
 
   const groups = [
+    discoveryGroupHtml('Exact strain match', 'Select to compare prices and menus', exactStrains.map(stat => discoveryStrainCardHtml(stat, { exact: true })), 'is-results'),
     discoveryGroupHtml('Locations', `${areaMatches.length.toLocaleString()} found`, areaMatches.map(discoveryAreaCardHtml), 'is-results'),
     discoveryGroupHtml(
       'Coffeeshops',
@@ -3183,10 +3302,10 @@ function renderDiscovery() {
       'is-results'
     ),
     discoveryGroupHtml(
-      'Strains',
-      strainMatches.length > visibleStrainMatches.length
-        ? `Showing ${visibleStrainMatches.length} of ${strainMatches.length}`
-        : `${strainMatches.length.toLocaleString()} found`,
+      exactStrains.length ? 'Related strains' : 'Strains',
+      relatedStrains.length > visibleStrainMatches.length
+        ? `Showing ${visibleStrainMatches.length} of ${relatedStrains.length}`
+        : `${relatedStrains.length.toLocaleString()} found`,
       visibleStrainMatches.map(discoveryStrainCardHtml),
       'is-results'
     )
@@ -3244,6 +3363,39 @@ function averageComparisonBadgeHtml(price, averagePrice) {
   return `<span class="price-judgement average-comparison is-above">${rounded}% above average</span>`;
 }
 
+function priceComparisonHtml(item, listings, baseline = 'average') {
+  const price = pricePerGram(item);
+  if (!Number.isFinite(price) || price <= 0) return '';
+  const currency = String(item.price_currency || '€');
+  const compared = (listings || []).filter(row =>
+    String(row.price_currency || '€') === currency &&
+    Number.isFinite(pricePerGram(row)) && pricePerGram(row) > 0
+  );
+  const profile = priceProfileForListings(compared);
+  // Count the actual sample, independently of whether a shop has a map link.
+  const shopCount = new Set(compared.map(row => String(row.shop_id || row.shop_key ||
+    [row.shop_name, row.shop_city].filter(Boolean).join('|'))).filter(Boolean)).size;
+  const sufficient = shopCount >= 2;
+  const badge = !sufficient
+    ? '<span class="price-judgement">Limited price data</span>'
+    : baseline === 'median'
+      ? priceJudgementBadgeHtml(price, profile.median)
+      : averageComparisonBadgeHtml(price, profile.average);
+  const method = baseline === 'median' ? 'Median' : 'Mean';
+  const value = baseline === 'median' ? profile.median : profile.average;
+  // Put the method and shop count beside the badge, including on small screens.
+  const summary = sufficient ? `${method} · ${shopCount} shops${shopCount === 2 ? ' · small sample' : ''}` : `${shopCount} shop${shopCount === 1 ? '' : 's'} · limited data`;
+  return `<details class="price-comparison">
+    <summary>${badge}<span class="comparison-prompt">${escapeHtml(summary)} · How compared</span></summary>
+    <div class="price-comparison-copy">
+      <p>${sufficient ? `${method} ${escapeHtml(money(value, currency))}. ` : 'At least two shops are needed for a comparison. '}${profile.count} priced listing${profile.count === 1 ? '' : 's'} from ${shopCount} shop${shopCount === 1 ? '' : 's'}, for this strain within ${baseline === 'median' ? 'the current results' : 'the nationwide database'}.</p>
+      <p>The map compares the mean of each shop’s lowest listed price. Here ${baseline === 'median' ? 'the label uses the median of the current listings' : 'the mean includes each listed pack option'}, so the signals can differ.</p>
+      <p>Menu dates: ${escapeHtml(ageBreakdownLabel(profile.ageBreakdown))}.</p>
+      <p>Each listed pack option counts once, including this listing. Prices use the same currency and are converted to per gram. Growers, batches, origins and pack sizes can differ; this compares listed prices, not product quality or live stock.</p>
+    </div>
+  </details>`;
+}
+
 function menuPriceParts(item) {
   const currency = String(item.price_currency || '€');
   const perGram = item.price_amount == null || String(item.price_amount).trim() === '' ? null : pricePerGram(item);
@@ -3257,7 +3409,8 @@ function menuPriceParts(item) {
       secondary: Number.isFinite(perGram) && perGram > 0 ? money(perGram, currency) : ''
     };
   }
-  return { primary: Number.isFinite(perGram) && perGram > 0 ? money(perGram, currency) : 'Price unknown', secondary: '' };
+  const amount = Number(item.price_amount);
+  return { primary: Number.isFinite(amount) && amount > 0 ? money(amount, currency, perGram == null ? item.price_unit : 'g') : 'Price unknown', secondary: '' };
 }
 
 function commonMenuDateItem(listings) {
@@ -3269,7 +3422,6 @@ function commonMenuDateItem(listings) {
 
 function menuListingCardHtml(item, { showAge = true } = {}) {
   const stat = getStatByKey(item.strain_name_normalised || normalise(item.strain_name));
-  const profile = priceProfileForListings(stat ? stat.offerings : [item]);
   const price = pricePerGram(item);
   const priceParts = menuPriceParts(item);
   const meta = [
@@ -3292,7 +3444,7 @@ function menuListingCardHtml(item, { showAge = true } = {}) {
       </div>
       <div class="menu-row-signals">
         ${meta ? `<span class="menu-listing-meta">${escapeHtml(meta)}</span>` : ''}
-        ${item.price_amount != null && String(item.price_amount).trim() !== '' && Number.isFinite(price) && price > 0 ? averageComparisonBadgeHtml(price, profile.average) : ''}
+        ${item.price_amount != null && String(item.price_amount).trim() !== '' && Number.isFinite(price) && price > 0 ? priceComparisonHtml(item, stat ? stat.offerings : [item]) : ''}
         ${showAge ? ageBadgeHtml(displayListingDateValue(item), item) : ''}
       </div>
       ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
@@ -3321,7 +3473,7 @@ function shopMenuHeaderHtml(row, listings, { detail = false, visibleCount = list
       </div>
       <div class="shop-menu-actions">
         <a href="${escapeHtmlAttr(mapUrl)}">View on map</a>
-        <a href="${escapeHtmlAttr(row.shopUrl || shopLinkForId(row.shopId))}" target="_blank" rel="noopener noreferrer">Source menu</a>
+        <a href="${escapeHtmlAttr(row.shopUrl || shopLinkForId(row.shopId))}" target="_blank" rel="noopener noreferrer">Menu source</a>
         <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${selected ? 'is-active' : ''}" aria-pressed="${selected}">${selected ? 'Saved shop' : 'Save shop'}</button>
       </div>
       <details class="shop-menu-overview">
@@ -3415,7 +3567,18 @@ function renderShopMenuBrowser() {
 
 function detailUrl(params = {}) {
   const url = new URL(window.location.href);
+  const source = url.searchParams.get('source');
+  const back = explore?.safeReturn(url.searchParams.get('return_to') || '');
   url.search = '';
+  if (explore) {
+    explore.applyToUrl(url, exploreFilters);
+    url.searchParams.set('explore', '1');
+    if (params.browser) {
+      if (els.discoveryBrowserSearch?.value) url.searchParams.set('browse_search', els.discoveryBrowserSearch.value);
+      if (state.discoveryBrowserSort !== 'name') url.searchParams.set('browse_sort', state.discoveryBrowserSort);
+    }
+    if (source === 'map' && back) { url.searchParams.set('source', 'map'); url.searchParams.set('return_to', back); }
+  }
   Object.entries(params).forEach(([key, value]) => {
     if (value) url.searchParams.set(key, value);
   });
@@ -3467,6 +3630,7 @@ function detailBackLabel(fallbackLabel) {
     return `← Back to ${stat ? stat.name : 'strain'} profile`;
   }
   if (context.discoveryBrowser === 'shops') return '← Back to coffeeshop browser';
+  if (context.discoveryBrowser === 'rare') return '← Back to 2–3 shop finds';
   if (context.discoveryBrowser === 'strains') return '← Back to strain browser';
   if (context.search) return '← Back to search results';
   return fallbackLabel;
@@ -3495,7 +3659,7 @@ function openStrainDetail(key) {
   state.view = 'strains';
   els.search.value = stat.name;
   if (window.history && window.history.pushState) {
-    window.history.pushState({ detail: 'strain', strain: stat.name }, '', detailUrl({ detail: 'strain', strain: stat.name }));
+    window.history.pushState({ detail: 'strain', strain: stat.name, detailReturnStack: state.detailReturnStack.slice() }, '', detailUrl({ detail: 'strain', strain: stat.name }));
   }
   render();
   focusDetail();
@@ -3513,7 +3677,7 @@ function openShopDetail(shopId) {
   els.search.value = row.shopName;
   if (els.shopBrowserSearch) els.shopBrowserSearch.value = row.shopName;
   if (window.history && window.history.pushState) {
-    window.history.pushState({ detail: 'shop', shopId: row.shopId }, '', detailUrl({ detail: 'shop', shop_id: row.shopId }));
+    window.history.pushState({ detail: 'shop', shopId: row.shopId, detailReturnStack: state.detailReturnStack.slice() }, '', detailUrl({ detail: 'shop', shop_id: row.shopId }));
   }
   render();
   focusDetail();
@@ -3529,7 +3693,7 @@ function closeDetail() {
   state.detailReturnSearch = context && context.detail ? returnSearch : '';
   els.search.value = returnSearch;
   if (window.history && window.history.pushState) {
-    window.history.pushState({}, '', navigationUrlForCurrentState());
+    window.history.pushState({ detailReturnStack: state.detailReturnStack.slice() }, '', navigationUrlForCurrentState());
   }
   syncUniversalSearchMode();
   render();
@@ -3569,6 +3733,9 @@ function preserveActionFocus(container = document) {
 function renderDetail() {
   const restoreFocus = preserveActionFocus(els.detailView);
   renderDetailContents();
+  if (explore && state.detail?.type === 'strain') explore.mount(document.getElementById('detail-explore-filters'), {
+    filters: exploreFilters, cities: unique(state.offerings.map(item => item.shop_city)), collapsed: true, onChange: setExploreFilters
+  });
   els.detailView?.querySelectorAll('button[data-select-strain], button[data-toggle-map-shop]').forEach(button => {
     const selected = button.hasAttribute('data-select-strain')
       ? isSelected(button.dataset.selectStrain)
@@ -3576,6 +3743,33 @@ function renderDetail() {
     button.setAttribute('aria-pressed', String(selected));
   });
   restoreFocus();
+}
+
+function strainCityFilterHtml(listings, selectedCity) {
+  const shopsByCity = new Map();
+  for (const item of listings) {
+    const city = String(item.shop_city || '').trim();
+    if (!city) continue;
+    if (!shopsByCity.has(city)) shopsByCity.set(city, new Set());
+    shopsByCity.get(city).add(String(item.shop_id));
+  }
+  if (!explore) return `<p>${escapeHtml([...shopsByCity.keys()].sort(compareText).join(', ') || 'City unknown')}</p>`;
+  if (!selectedCity && !shopsByCity.size) return '';
+  if (selectedCity && ![...shopsByCity.keys()].some(city => normalise(city) === normalise(selectedCity))) {
+    shopsByCity.set(selectedCity, new Set());
+  }
+  const choices = Array.from(shopsByCity, ([city, shops]) => [city, shops.size]);
+  choices.sort(([left], [right]) => compareText(left, right));
+  choices.unshift(['', shopIdsForListings(listings).length]);
+  const options = choices.map(([city, count]) => {
+    const selected = normalise(city) === normalise(selectedCity) ? ' selected' : '';
+    const label = `${city || 'All cities'} · ${count.toLocaleString()} shop${count === 1 ? '' : 's'}`;
+    return `<option value="${escapeHtmlAttr(city)}"${selected}>${escapeHtml(label)}</option>`;
+  });
+  return `<label class="strain-city-filter">
+    <span>City</span>
+    <select data-profile-city>${options.join('')}</select>
+  </label>`;
 }
 
 function renderDetailContents() {
@@ -3596,39 +3790,44 @@ function renderDetailContents() {
       els.detailView.innerHTML = '<button type="button" class="detail-back-button" data-close-detail>← Back to database</button><div class="empty" role="status">This strain is no longer in the current dataset.</div>';
       return;
     }
-    const listings = (stat.offerings || []).slice().sort((a, b) => {
+    const filtersWithoutCity = { ...exploreFilters, city: '' };
+    const acrossCities = (stat.offerings || []).filter(item => !explore || explore.matches(item, filtersWithoutCity, { date: displayListingDateValue(item) }));
+    const city = exploreFilters.city || '';
+    const listings = acrossCities.filter(item => !city || explore.matches(item, { city })).sort((a, b) => {
       const priceDiff = (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity);
-      return priceDiff || compareShopName(a, b);
+      if (priceDiff) return priceDiff;
+      const freshnessDiff = (displayListingTime(b) ?? -Infinity) - (displayListingTime(a) ?? -Infinity);
+      return freshnessDiff || compareShopName(a, b);
     });
+    const filteredStat = statsFromOfferings(listings)[0] || { topType: '', caliCount: 0 };
     const profile = priceProfileForListings(listings);
     const visibleListings = listings.slice(0, state.detailVisibleLimit);
     const remainingListings = Math.max(0, listings.length - visibleListings.length);
     const shopIds = shopIdsForListings(listings);
     const mapUrl = mapUrlForShopIds(shopIds, { strainName: stat.name, strainShopIds: shopIds });
-    const cities = (stat.cities || []).join(', ') || 'City unknown';
     els.detailView.innerHTML = `
       <div class="detail-topbar">
-        <button type="button" class="detail-back-button" data-close-detail>${escapeHtml(detailBackLabel('← Back to results'))}</button>
-        <span class="chip">${shopIds.length.toLocaleString()} shops</span>
+        ${detailBackControlHtml(detailBackLabel('← Back to results'))}
       </div>
-      <header class="detail-header">
+      <header class="detail-header strain-profile-header">
         <div class="detail-header-main">
           ${getStrainDetailImageHtml(stat.name)}
           <div class="detail-header-copy">
             <p class="detail-eyebrow">Strain profile</p>
             <h2>${escapeHtml(stat.name)}</h2>
-            <p>${escapeHtml(cities)} · every current menu listing for this strain, ordered from the lowest visible price.</p>
+            <p class="strain-profile-summary">${shopIds.length.toLocaleString()} shop${shopIds.length === 1 ? '' : 's'} · ${listings.length.toLocaleString()} listing${listings.length === 1 ? '' : 's'} · Exact strain name${explore?.active(exploreFilters).length ? ' · Filters applied' : ''}</p>
             <div class="detail-meta-row">
-              ${stat.topType ? `<span class="chip type-${escapeHtml(stat.topType)}">${escapeHtml(stat.topType)}</span>` : ''}
-              ${stat.caliCount ? `<span class="chip cali">${stat.caliCount} cali listing${stat.caliCount === 1 ? '' : 's'}</span>` : ''}
-              ${ageBadgeHtml(profile.newestDate)}
+              ${filteredStat.topType ? `<span class="chip type-${escapeHtml(filteredStat.topType)}">${escapeHtml(filteredStat.topType)}</span>` : ''}
+              ${filteredStat.caliCount ? `<span class="chip cali">${filteredStat.caliCount} cali listing${filteredStat.caliCount === 1 ? '' : 's'}</span>` : ''}
+              ${profile.newestDate ? `<span class="chip">Latest menu in results · ${escapeHtml(formatDate(profile.newestDate))}</span>` : ''}
             </div>
           </div>
         </div>
+        ${strainCityFilterHtml(acrossCities, city)}
         <div class="shop-menu-summary-grid">
           ${statTileHtml('Average price', profile.average == null ? 'Unknown' : money(profile.average), 'Across priced listings')}
-          ${statTileHtml('Lowest price', profile.low == null ? 'Unknown' : money(profile.low), 'Current visible listing')}
-          ${statTileHtml('Highest price', profile.high == null ? 'Unknown' : money(profile.high), 'Current visible listing')}
+          ${priceExtremeTileHtml('Lowest price', profile, profile.low)}
+          ${priceExtremeTileHtml('Highest price', profile, profile.high)}
           ${statTileHtml('Known listings', listings.length.toLocaleString(), `${profile.count.toLocaleString()} priced`)}
         </div>
         <div class="detail-actions">
@@ -3636,13 +3835,14 @@ function renderDetailContents() {
           <a href="${escapeHtmlAttr(mapUrl)}" data-map-strain-shops="${escapeHtmlAttr(shopIds.join(','))}" data-strain-name="${escapeHtmlAttr(stat.name)}" data-strain-shops="${escapeHtmlAttr(shopIds.join(','))}">View on map</a>
         </div>
       </header>
+      <div id="detail-explore-filters" class="explore-filters"></div>
       <section class="detail-section">
         <div>
           <h3>Where to find it</h3>
           <p class="muted">${listings.length.toLocaleString()} current listing${listings.length === 1 ? '' : 's'} across ${shopIds.length.toLocaleString()} shop${shopIds.length === 1 ? '' : 's'}. Select a shop to see its full known menu.</p>
         </div>
         <div class="detail-listing-grid">
-          ${visibleListings.length ? visibleListings.map(item => listingCardHtml(item, profile, { strainName: stat.name })).join('') : '<div class="empty">No current listings are available for this strain.</div>'}
+          ${visibleListings.length ? visibleListings.map(item => listingCardHtml(item, profile, { strainName: stat.name })).join('') : '<div class="empty">No listings match these filters. Clear a filter above to see more.</div>'}
         </div>
         ${remainingListings ? `
           <div class="detail-load-more-row">
@@ -3671,8 +3871,9 @@ function renderDetailContents() {
   });
   els.detailView.innerHTML = `
     <div class="detail-topbar">
-      <button type="button" class="detail-back-button" data-close-detail>${escapeHtml(detailBackLabel('← Back to shop results'))}</button>
+      ${detailBackControlHtml(detailBackLabel('← Back to shop results'))}
     </div>
+    ${explore?.active(exploreFilters).length ? '<p class="explore-filter-help">Showing the full shop menu. Your filters are kept for results.</p>' : ''}
     ${shopMenuHeaderHtml(row, listings, { detail: true })}
     ${shopMenuSectionsHtml(categories, `detail-menu-${row.shopId}`, { detail: true, sharedDateItem: commonMenuDateItem(listings) })}
   `;
@@ -4346,7 +4547,7 @@ function renderShops(filteredOfferings) {
         const grower = String(item.grower || '').trim();
         const notes = String(item.notes || '').trim();
         const price = Number.isFinite(Number(item.price_amount))
-          ? packageListingPriceLabel(item)
+          ? listingPriceLabel(item)
           : '';
         const inlinePrice = price ? ` · ${price}` : '';
         if (!grower && !notes) {
@@ -4378,7 +4579,7 @@ function renderShops(filteredOfferings) {
     const previewTags = renderTags(previewItems);
     const extraTags = renderTags(extraItems);
     const href = row.shopUrl || `/shop/${encodeURIComponent(row.shopId)}/digitised`;
-    const label = row.shopUrl ? 'Source' : 'Menu';
+    const label = row.shopUrl ? 'Menu source' : 'Menu';
     const shopSelected = isShopSelected(row.shopId);
     const matchLabel = selected.size
       ? `${row.selectedMatches.length}/${selected.size} saved`
@@ -4495,6 +4696,7 @@ function render() {
 }
 
 function renderContents() {
+  syncDatabaseSkipLink();
   const filteredStats = getFilteredStats();
   const filteredOfferings = getFilteredOfferings(filteredStats);
   const shopSearchOfferings = universalSearchIntent(els.search.value) === 'shops'
@@ -4525,7 +4727,19 @@ function renderContents() {
   }
   renderDiscovery();
   renderDetail();
+  syncExploreNavigation();
+  if (explore && !state.detail && window.history?.replaceState) {
+    window.history.replaceState(window.history.state, '', navigationUrlForCurrentState());
+  }
   saveDatabaseNavigationState();
+}
+
+function syncDatabaseSkipLink() {
+  const [target, label] = state.detail ? ['#detail-view', 'Skip to profile']
+    : state.discoveryBrowser ? ['#discovery-browser-search', 'Skip to directory search']
+    : ['#search', 'Skip to search'];
+  els.skip.setAttribute('href', target);
+  els.skip.textContent = label;
 }
 
 function renderAfterFilterChange() {
@@ -4575,16 +4789,28 @@ function scheduleMobileResultsScroll(options = {}) {
 
 function applyInitialUrlState() {
   const params = new URLSearchParams(window.location.search || '');
+  if (explore) {
+    exploreFilters = explore.fromUrl(window.location.href);
+    if (!params.has('filter_city') && params.get('city')) exploreFilters = explore.clean({ ...exploreFilters, city: params.get('city') });
+    exploreFilterControls.forEach(control => control.set(exploreFilters));
+    if (els.discoveryBrowserSearch) els.discoveryBrowserSearch.value = params.get('browse_search') || '';
+    state.discoveryBrowserSort = ['name', 'freshness', 'price-low', 'price-high', 'stocked'].includes(params.get('browse_sort')) ? params.get('browse_sort') : 'name';
+  }
   const strain = (params.get('strain') || params.get('search') || '').trim();
   const detailType = (params.get('detail') || '').trim();
   const mode = (params.get('mode') || '').trim();
-  const browserType = (params.get('browser') || '').trim();
+  const browserType = (params.get('browser') || (mode === 'rare' ? 'rare' : '')).trim();
   const shopId = (params.get('shop_id') || params.get('shopId') || '').trim();
   const shopQuery = (params.get('shop') || params.get('shop_name') || '').trim();
   state.detail = null;
-  state.discoveryBrowser = browserType === 'shops' || browserType === 'strains' ? browserType : '';
+  state.discoveryBrowser = DISCOVERY_BROWSERS.has(browserType) ? browserType : '';
   state.discoveryBrowserLimit = 48;
-  state.detailReturnStack = [];
+  const returnStack = window.history?.state?.detailReturnStack;
+  state.detailReturnStack = Array.isArray(returnStack) ? returnStack.slice(-24).map(context => ({
+    detail: context.detail && ['shop', 'strain'].includes(context.detail.type) ? { ...context.detail } : null,
+    discoveryBrowser: DISCOVERY_BROWSERS.has(context.discoveryBrowser) ? context.discoveryBrowser : '',
+    search: String(context.search || ''), view: context.view || 'strains'
+  })) : [];
   state.detailReturnSearch = '';
   state.detailVisibleLimit = DETAIL_LISTING_STEP;
   state.activeShopId = '';
@@ -4647,11 +4873,17 @@ async function init() {
   try {
     const [offerings, shops, manifest, imageMapCsv, locationCatalog] = await Promise.all([
       loadJson('database/active_offerings.json'),
-      loadJson('database/shops.json').catch(() => []),
+      // Shop records are required to validate listings and saved shop IDs.
+      loadJson('database/shops.json'),
       loadJson('database/manifest.json').catch(() => null),
       loadText('database/strain_image_map.csv').catch(() => ''),
       loadLocationCatalog()
     ]);
+    // Never replace a visitor's saved shops using a missing or malformed catalogue.
+    if (!Array.isArray(offerings) || !Array.isArray(shops) ||
+        !shops.some(shop => shop && String(shop.shop_id ?? '').trim())) {
+      throw new Error('The menu data or shop catalogue is incomplete.');
+    }
     state.snapshotTime = parseTime(manifest && manifest.exported_at_utc) || Date.now();
     if (els.dataNote) {
       const snapshotDate = formatDate(manifest && manifest.exported_at_utc);
@@ -4686,7 +4918,7 @@ async function init() {
       ? state.locationDatasets.find(dataset => dataset.slug === requestedCitySlug)
       : null;
     const savedDataset = pickDefaultLocationDataset(state.locationDatasets);
-    applyLocationDatasetScope((requestedDataset || savedDataset)?.path || '', { persist: false });
+    applyLocationDatasetScope(explore ? '' : ((requestedDataset || savedDataset)?.path || ''), { persist: false });
     syncSearchScopeControls();
     state.listingCheckBatch = buildListingCheckBatchSignal(state.offerings);
     state.hiddenUnavailableListingCount = Math.max(0, loadedOfferings.length - state.allOfferings.length);
@@ -4723,12 +4955,13 @@ async function init() {
       : '';
     els.status.textContent = `Ready: ${state.offerings.length.toLocaleString()} current menu listings across ${state.strainStats.length.toLocaleString()} strains in ${datasetLabel}.${exported}${hidden}${listingCheckBatchNote()}`;
     applyInitialUrlState();
+    initExploreFilters();
     setView(state.view);
     render();
     els.status.classList.remove('is-visible');
   } catch (err) {
     els.status.classList.add('is-visible');
-    els.status.innerHTML = '<span class="error">Nationwide menu data could not be loaded.</span> Check your connection and try again. <button type="button" data-retry-database>Try again</button>';
+    els.status.innerHTML = '<span class="error">Menus and shop information could not be loaded.</span> Check your connection and try again. Your saved choices are still on this device. <button type="button" data-retry-database>Try again</button>';
     els.metricAverage.textContent = 'Unavailable';
     els.metricMostStocked.textContent = 'Unavailable';
     els.metricRare.textContent = 'Unavailable';
@@ -4752,12 +4985,28 @@ els.status.addEventListener('click', event => {
 });
 els.search.addEventListener('keydown', event => {
   if (event.key !== 'Enter') return;
+  if (els.discoveryResults) {
+    event.preventDefault();
+    submitDatabaseSearch();
+    return;
+  }
   const query = els.search.value;
   if (universalSearchIntent(query) !== 'shops') return;
   event.preventDefault();
   openShopSearchResults();
   scheduleMobileResultsScroll({ source: 'search', delay: 80 });
 });
+function submitDatabaseSearch() {
+  syncUniversalSearchMode();
+  renderAfterFilterChange();
+  const target = document.getElementById('discovery-results-title');
+  if (target && !els.discoveryResults.hidden) {
+    target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
+}
+document.getElementById('database-search-submit')?.addEventListener('click', submitDatabaseSearch);
 if (els.searchShopsShortcut) {
   els.searchShopsShortcut.addEventListener('click', () => {
     openShopSearchResults();
@@ -4854,6 +5103,13 @@ document.querySelectorAll('[data-view]').forEach(button => {
   });
 });
 
+document.addEventListener('click', event => {
+  const menuLink = event.target.closest('a[data-focus-shop-menu]');
+  if (!menuLink || event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  openShopDetail(menuLink.dataset.focusShopMenu);
+});
+
 if (els.priceGuidePanel) {
   els.priceGuidePanel.addEventListener('click', event => {
     const strainDetail = event.target.closest('[data-open-strain-detail]');
@@ -4861,12 +5117,6 @@ if (els.priceGuidePanel) {
       openStrainDetail(strainDetail.dataset.openStrainDetail);
       return;
     }
-    const focusShop = event.target.closest('[data-focus-shop-menu]');
-    if (focusShop) {
-      openShopDetail(focusShop.dataset.focusShopMenu);
-      return;
-    }
-
     const toggleShopButton = event.target.closest('[data-toggle-map-shop]');
     if (toggleShopButton) {
       toggleSelectedShop(toggleShopButton.dataset.toggleMapShop);
@@ -5202,7 +5452,7 @@ if (els.discoveryBrowser) {
 if (els.discoveryBrowserSearch) {
   els.discoveryBrowserSearch.addEventListener('input', () => {
     state.discoveryBrowserLimit = 48;
-    renderDiscoveryBrowser();
+    render();
   });
 }
 if (els.discoveryBrowserSort) {
@@ -5215,7 +5465,7 @@ if (els.discoveryBrowserSort) {
     state.discoveryBrowserSort = nextSort;
     state.discoveryBrowserLimit = 48;
     setDiscoveryBrowserFilterStatus('');
-    renderDiscoveryBrowser();
+    render();
   });
 }
 [
@@ -5236,6 +5486,9 @@ if (els.discoveryBrowserFilterReset) {
 }
 
 if (els.detailView) {
+  els.detailView.addEventListener('change', event => {
+    if (event.target.matches('[data-profile-city]')) setExploreFilters({ ...exploreFilters, city: event.target.value });
+  });
   els.detailView.addEventListener('click', event => {
     const loadMoreButton = event.target.closest('[data-load-more-detail]');
     if (loadMoreButton) {
@@ -5255,11 +5508,6 @@ if (els.detailView) {
     const strainDetail = event.target.closest('[data-open-strain-detail]');
     if (strainDetail) {
       openStrainDetail(strainDetail.dataset.openStrainDetail);
-      return;
-    }
-    const shopDetail = event.target.closest('[data-focus-shop-menu]');
-    if (shopDetail) {
-      openShopDetail(shopDetail.dataset.focusShopMenu);
       return;
     }
     const saveStrain = event.target.closest('[data-select-strain]');

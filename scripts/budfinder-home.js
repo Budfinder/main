@@ -1,8 +1,8 @@
 (() => {
   // Keep release metadata here as the single source of truth. The homepage
   // script URL in index.html is cache-busted whenever these values change.
-  const APP_VERSION = '1.30';
-  const APP_UPDATED = '30 August 2026';
+  const APP_VERSION = '1.32';
+  const APP_UPDATED = '31 October 2026';
   const SUMMARY_URL = 'database/home_summary.json';
   const MANIFEST_URL = 'database/manifest.json';
   const SEARCH_INDEX_URL = 'database/search_index.json';
@@ -13,13 +13,14 @@
   const summaryRegion = byId('amsterdam-insights');
   const searchForm = byId('home-search-form');
   const searchInput = byId('home-search-input');
-  const searchSubmit = byId('home-search-submit');
   const searchResults = byId('home-search-results');
   const searchStatus = byId('home-search-status');
   const personalGreeting = byId('home-personal-greeting');
   let searchCandidates = [];
   let visibleSearchResults = [];
   let activeSearchResult = -1;
+  let selectedSearchCandidate = null;
+  let suggestionsRequested = false;
   let searchRenderTimer = 0;
   let updatesResizeObserver;
 
@@ -88,14 +89,38 @@
     return 'Netherlands';
   }
 
-  function openSearch(query, candidate = null) {
+  function openMapSearch(query, candidate = null) {
     const value = String(candidate && candidate.name || query || '').replace(/\s+/g, ' ').trim();
     const url = new URL('map.html', window.location.href);
     url.searchParams.set('source', 'home');
     if (value) url.searchParams.set('search', value);
+    if (candidate) url.searchParams.set('search_kind', candidate.kind);
     const city = candidateCity(candidate) || (value ? 'Netherlands' : 'Amsterdam');
     url.searchParams.set('city', city);
     window.location.href = `${url.pathname.split('/').pop()}${url.search}`;
+  }
+
+  function openPriceSearch(query, candidate) {
+    const explore = window.BudfinderExplore;
+    if (!explore) {
+      window.location.href = `database.html?${new URLSearchParams({ search: query })}`;
+      return;
+    }
+    const context = { query };
+    if (candidate?.kind === 'strain') context.strain = candidate.name;
+    if (candidate?.kind === 'shop') context.shopId = candidate.shopId;
+    if (candidate?.kind === 'city') {
+      context.browser = 'shops';
+      context.filters = { city: candidate.name };
+    }
+    window.location.href = explore.link('menus', context);
+  }
+
+  function selectSearchCandidate(candidate) {
+    selectedSearchCandidate = candidate;
+    searchInput.value = candidate.name;
+    hideSearchResults();
+    if (searchStatus) searchStatus.textContent = `${candidate.name} selected. Compare prices or show on map.`;
   }
 
   function applyPersonalisation() {
@@ -107,23 +132,33 @@
         ? `Welcome back, ${name}`
         : 'Dutch coffeeshop guide';
     }
-    if (searchSubmit) {
-      searchSubmit.textContent = 'Search';
-    }
   }
 
   function bindSearch() {
     if (searchForm) {
       searchForm.addEventListener('submit', event => {
         event.preventDefault();
-        const query = searchInput ? searchInput.value : '';
-        const active = visibleSearchResults[activeSearchResult];
-        openSearch(query, active || pickSubmitCandidate(query));
+        const query = (searchInput?.value || '').replace(/\s+/g, ' ').trim();
+        if (!query) {
+          searchInput.value = '';
+          hideSearchResults();
+          searchInput.focus();
+          searchInput.reportValidity();
+          return;
+        }
+        const selected = selectedSearchCandidate?.name === query ? selectedSearchCandidate : null;
+        const candidate = selected || visibleSearchResults[activeSearchResult] || pickSubmitCandidate(query);
+        if (event.submitter?.id === 'home-search-map') {
+          openMapSearch(query, candidate);
+        } else {
+          const exact = candidate && window.BudfinderSearch?.normalise(candidate.name) === window.BudfinderSearch?.normalise(query);
+          openPriceSearch(query, selected || (exact ? candidate : null));
+        }
       });
     }
     if (searchInput) {
       searchInput.addEventListener('input', () => {
-        window.clearTimeout(searchRenderTimer);
+        selectedSearchCandidate = null;
         // A selection belongs to the old query until new suggestions render.
         hideSearchResults();
         searchRenderTimer = window.setTimeout(() => renderSearchResults(searchInput.value), 60);
@@ -131,7 +166,12 @@
       searchInput.addEventListener('focus', () => renderSearchResults(searchInput.value));
       searchInput.addEventListener('keydown', event => {
         if (event.isComposing) return;
-        if (event.key === 'Escape') {
+        if (event.key === 'Tab') {
+          hideSearchResults();
+          return;
+        }
+        if (event.key === 'Escape' && (searchRenderTimer || suggestionsRequested)) {
+          event.preventDefault();
           hideSearchResults();
           return;
         }
@@ -143,7 +183,7 @@
         event.preventDefault();
         if (event.key === 'Enter') {
           const candidate = visibleSearchResults[activeSearchResult];
-          openSearch(candidate.name, candidate);
+          selectSearchCandidate(candidate);
           return;
         }
         const direction = event.key === 'ArrowDown' ? 1 : -1;
@@ -160,7 +200,7 @@
         const button = event.target.closest('[data-search-result-index]');
         if (!button) return;
         const candidate = visibleSearchResults[Number(button.dataset.searchResultIndex)];
-        if (candidate) openSearch(candidate.name, candidate);
+        if (candidate) selectSearchCandidate(candidate);
       });
     }
     if (searchForm) {
@@ -172,7 +212,7 @@
       if (searchForm && !searchForm.contains(event.target)) hideSearchResults();
     });
     document.querySelectorAll('[data-search]').forEach(button => {
-      button.addEventListener('click', () => openSearch(button.getAttribute('data-search') || ''));
+      button.addEventListener('click', () => openMapSearch(button.getAttribute('data-search') || ''));
     });
   }
 
@@ -221,7 +261,9 @@
       candidates.push({ kind: 'legal', name: 'Legal weed', aliases: ['legal cannabis', 'state weed', 'regulated weed'] });
     }
     searchCandidates = candidates;
-    if (searchInput && document.activeElement === searchInput && searchInput.value.trim()) {
+    // A background refresh should update open suggestions without reopening a
+    // dismissed list or changing an option while the visitor navigates it.
+    if (suggestionsRequested && activeSearchResult < 0 && document.activeElement === searchInput) {
       renderSearchResults(searchInput.value);
     }
   }
@@ -229,22 +271,7 @@
   function rankedCandidates(query, limit = 8) {
     const value = String(query || '').trim();
     if (!value || !window.BudfinderSearch) return [];
-    const priority = { shop: 0, city: 1, area: 2, grower: 3, strain: 4, legal: 5 };
-    return window.BudfinderSearch.rank(value, searchCandidates, {
-      getLabel: candidate => candidate.name,
-      getAliases: candidate => candidate.aliases,
-      threshold: value.length < 3 ? 0.86 : 0.70
-    }).map(result => ({
-      ...result,
-      rankScore: result.score + (result.item.kind === 'strain'
-        ? Math.min(0.08, Math.log10(Number(result.item.shopCount || 0) + 1) * 0.035)
-        : 0)
-    })).sort((left, right) => (
-      right.rankScore - left.rankScore ||
-      Number(right.item.shopCount || 0) - Number(left.item.shopCount || 0) ||
-      (priority[left.item.kind] ?? 9) - (priority[right.item.kind] ?? 9) ||
-      left.item.name.localeCompare(right.item.name, undefined, { sensitivity: 'base' })
-    )).slice(0, limit);
+    return window.BudfinderSearch.suggest(value, searchCandidates, limit);
   }
 
   function pickSubmitCandidate(query) {
@@ -265,10 +292,15 @@
 
   function hideSearchResults() {
     window.clearTimeout(searchRenderTimer);
+    searchRenderTimer = 0;
+    suggestionsRequested = false;
     visibleSearchResults = [];
     activeSearchResult = -1;
     if (searchResults) searchResults.hidden = true;
-    if (searchStatus) searchStatus.textContent = '';
+    if (searchStatus) {
+      searchStatus.className = 'home-search-status';
+      searchStatus.textContent = '';
+    }
     if (searchInput) {
       searchInput.setAttribute('aria-expanded', 'false');
       searchInput.removeAttribute('aria-activedescendant');
@@ -289,33 +321,33 @@
 
   function renderSearchResults(query) {
     window.clearTimeout(searchRenderTimer);
+    searchRenderTimer = 0;
     if (!searchResults || !searchInput) return;
     const value = String(query || '').replace(/\s+/g, ' ').trim();
     if (!value) {
       hideSearchResults();
-      if (searchStatus) searchStatus.textContent = '';
       return;
     }
+    suggestionsRequested = true;
     visibleSearchResults = rankedCandidates(value).map(result => result.item);
     activeSearchResult = -1;
     searchInput.removeAttribute('aria-activedescendant');
-    searchResults.innerHTML = visibleSearchResults.length
-      ? visibleSearchResults.map((candidate, index) => `
+    searchResults.innerHTML = visibleSearchResults.map((candidate, index) => `
           <button id="home-search-result-${index}" class="home-search-result" type="button" role="option" tabindex="-1" aria-selected="false" data-search-result-index="${index}">
             <span class="home-search-result-copy">
               <strong>${escapeHtml(candidate.name)}</strong>
-              <span>${escapeHtml(resultMeta(candidate))}</span>
+              <span>${window.BudfinderSearch.normalise(candidate.name) === window.BudfinderSearch.normalise(value) ? 'Exact match · ' : ''}${escapeHtml(resultMeta(candidate))}</span>
             </span>
             <span class="home-search-result-kind">${escapeHtml(kindLabel(candidate.kind))}</span>
           </button>
-        `).join('')
-      : '<p class="home-search-empty">No close suggestion yet. Press search to check the nationwide map.</p>';
-    searchResults.hidden = false;
-    searchInput.setAttribute('aria-expanded', 'true');
+        `).join('');
+    searchResults.hidden = !visibleSearchResults.length;
+    searchInput.setAttribute('aria-expanded', String(!searchResults.hidden));
     if (searchStatus) {
+      searchStatus.className = searchResults.hidden ? 'home-search-empty' : 'home-search-status';
       searchStatus.textContent = visibleSearchResults.length
         ? `${visibleSearchResults.length} search suggestion${visibleSearchResults.length === 1 ? '' : 's'} available.`
-        : 'No close suggestion. Your search can still be checked nationwide.';
+        : 'No close suggestion. Try your search in prices or on the map.';
     }
   }
 
@@ -323,6 +355,8 @@
     return (Array.isArray(rows) ? rows : []).map(row => {
       const url = new URL('database.html', window.location.href);
       url.searchParams.set('search', row.name);
+      url.searchParams.set('detail', 'strain');
+      url.searchParams.set('strain', row.name);
       const shopCount = Number(row.shop_count) || 0;
       return `
         <li class="insight-item">
@@ -504,50 +538,44 @@
     window.addEventListener('budfinder:namechange', applyPersonalisation);
     window.addEventListener('resize', sizeUpdatesViewport);
 
-    const [summaryResult, manifestResult, searchIndexResult, updatesResult] = await Promise.allSettled([
-      loadJson(SUMMARY_URL, 'Homepage summary'),
-      loadJson(MANIFEST_URL, 'Database manifest'),
-      loadJson(SEARCH_INDEX_URL, 'Search index'),
-      loadJson(UPDATES_URL, 'Homepage updates')
-    ]);
-
-    if (updatesResult.status === 'fulfilled') {
-      renderUpdates(updatesResult.value);
-    } else {
-      byId('home-updates').innerHTML = '<p class="updates-empty">Updates could not be loaded. Please try again later.</p>';
-    }
-
-    buildSearchCandidates(
-      searchIndexResult.status === 'fulfilled' ? searchIndexResult.value : {},
-      summaryResult.status === 'fulfilled' ? summaryResult.value : {}
-    );
-
-    try {
-      if (summaryResult.status !== 'fulfilled') throw summaryResult.reason;
-
-      const summary = summaryResult.value;
-      const summarySnapshot = String(summary && summary.exported_at_utc || '').trim();
-      if (!summarySnapshot) throw new Error('Homepage summary has no export timestamp');
-
+    // Each section can appear as soon as its own data arrives. A slow updates
+    // feed must not hold back the search suggestions or the price summary.
+    let loadedSummary = {};
+    let loadedIndex = {};
+    const summaryPromise = loadJson(SUMMARY_URL, 'Homepage summary').then(summary => {
+      const snapshot = String(summary && summary.exported_at_utc || '').trim();
+      if (!snapshot) throw new Error('Homepage summary has no export timestamp');
+      loadedSummary = summary;
       renderSummary(summary);
-
-      if (manifestResult.status === 'fulfilled') {
-        const manifestSnapshot = String(manifestResult.value && manifestResult.value.exported_at_utc || '').trim();
-        if (!manifestSnapshot || summarySnapshot !== manifestSnapshot) {
-          appendPublicationNote(
-            'These figures use the latest available summary while the rest of the database refresh finishes publishing.'
-          );
-        }
-      } else {
-        appendPublicationNote(
-          'The database refresh could not be fully verified. Check an individual menu before travelling.'
-        );
-      }
-    } catch (error) {
+      buildSearchCandidates(loadedIndex, loadedSummary);
+      return snapshot;
+    }).catch(() => {
       renderUnavailable('The menu summary could not be loaded. Search and map browsing are still available.');
-    }
-
-    if (summaryRegion) summaryRegion.dataset.ready = 'true';
+      return '';
+    }).finally(() => {
+      if (summaryRegion) summaryRegion.dataset.ready = 'true';
+    });
+    const manifestPromise = loadJson(MANIFEST_URL, 'Database manifest')
+      .then(manifest => ({ ok: true, value: manifest }))
+      .catch(() => ({ ok: false }));
+    const searchPromise = loadJson(SEARCH_INDEX_URL, 'Search index').then(index => {
+      loadedIndex = index && typeof index === 'object' && !Array.isArray(index) ? index : {};
+      buildSearchCandidates(loadedIndex, loadedSummary);
+    }).catch(() => {
+      buildSearchCandidates(loadedIndex, loadedSummary);
+    });
+    const updatesPromise = loadJson(UPDATES_URL, 'Homepage updates').then(renderUpdates).catch(() => {
+      byId('home-updates').innerHTML = '<p class="updates-empty">Updates could not be loaded. Please try again later.</p>';
+    });
+    const publicationPromise = Promise.all([summaryPromise, manifestPromise]).then(([snapshot, manifest]) => {
+      if (!snapshot) return;
+      if (!manifest.ok) {
+        appendPublicationNote('The database refresh could not be fully verified. Check an individual menu before travelling.');
+      } else if (snapshot !== String(manifest.value && manifest.value.exported_at_utc || '').trim()) {
+        appendPublicationNote('These figures use the latest available summary while the rest of the database refresh finishes publishing.');
+      }
+    });
+    await Promise.all([searchPromise, updatesPromise, publicationPromise]);
   }
 
   init();

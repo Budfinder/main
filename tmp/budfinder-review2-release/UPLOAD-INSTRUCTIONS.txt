@@ -1,0 +1,13 @@
+Budfinder usability update: complete upload package
+
+Extract this archive locally, then upload the contents into the existing website root.
+Keep the scripts/ and styles/ directories. Replace files of the same names.
+Do not upload everything into scripts/ or create a new enclosing directory on the server.
+
+1. Upload the 4 JavaScript files inside scripts/ and the 5 CSS files inside styles/.
+2. Upload index.html, map.html and database.html into the website root LAST.
+3. Reload the website. The HTML now references asset cache version 20261028-review2.
+
+The 4 scripts already match the live server; they are included for a complete release.
+The 3 HTML pages and 5 stylesheets still need uploading, as verified on 28 October 2026.
+No database or menu data upload is needed for this update.

@@ -1,0 +1,15 @@
+{
+  "boot_acknowledgement": "BFMAP_DONE_OK 9367552 map=1 logos=1 menus=1",
+  "update_result": {
+    "ok": true,
+    "stage": "upload",
+    "returncode": 0,
+    "stdout": "Generated 163 coffeeshops\nCompiled fallback: 1768 current strain/price records\nFull menus.bin: 2584 / 2584 active strain/price records (verified complete)\nString table: 16109 bytes\nDefault map centre: 52.370021, 4.892412\nShops without an active menu: 9\nUnmatched coffeeshop locations: 7\nHeader: /Users/matt/Documents/Arduino/bfwatch/bfwatch_data.h (90866 bytes)\nJSON:   /Users/matt/Documents/Arduino/bfwatch/bfwatch_data.json (458145 bytes)\nMenus:  /Users/matt/Documents/Arduino/bfwatch/watch_menus/menus.bin (36829 bytes)\n\nPackage: /Users/matt/Documents/Arduino/bfwatch/watch_menus\nFiles: 1\nPayload: 0.04 MiB\nPort: /dev/cu.usbmodem11401\nConnecting to BFWatch...\nConnected: BFMAP_READY 10235904 868352\nReplacing menus only; preserving the installed map and logos.\n\n[  1/1] 100.0%  menus.bin                       \nFinished: BFMAP_DONE_OK 9367552 map=1 logos=1 menus=1\nUploaded 36,829 bytes in 2.2s (16.2 KiB/s).\nOpen Map on the watch. A reboot is not required.\n",
+    "stderr": "",
+    "duration_s": 2.401695958998971,
+    "uploaded": true,
+    "dry_run": false
+  },
+  "best_friends_menu_count": 13,
+  "watch_shop_count": 163
+}

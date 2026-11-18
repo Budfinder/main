@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Budfinder | Find the right coffeeshop in the Netherlands</title>
+  <meta name="description" content="Search strains, growers, coffeeshops, towns and neighbourhoods across the Netherlands, with listed prices, source menus and clear dates." />
+  <link rel="canonical" href="https://budfinder.org/" />
+  <meta property="og:title" content="Budfinder | Find the right coffeeshop in the Netherlands" />
+  <meta property="og:description" content="Search a strain, grower, coffeeshop, town or neighbourhood and explore matching coffeeshops across the Netherlands." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://budfinder.org/" />
+  <meta property="og:image" content="https://budfinder.org/static/images/budfinder-social.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Budfinder Amsterdam map with a ranked coffeeshop result and walking route." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://budfinder.org/static/images/budfinder-social.png" />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Budfinder",
+      "url": "https://budfinder.org/",
+      "description": "Search Netherlands coffeeshop listings by name and location, with listed prices, source menus and clear dates.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://budfinder.org/map.html?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+  <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
+  <!-- Keep base styles before shared polish, followed by homepage overrides. -->
+  <link rel="stylesheet" href="styles/budfinder-home-base.css?v=20260905-refine1" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261028-review2" />
+  <link rel="stylesheet" href="styles/budfinder-home-search.css?v=20260905-refine1" />
+  <link id="budfinder-home-tlc" rel="stylesheet" href="styles/budfinder-home-layout.css?v=20261028-review2" />
+  <link rel="stylesheet" href="styles/budfinder-price-history.css?v=20261028-price3" />
+</head>
+<body>
+  <a class="skip-link" href="#home-search-input">Skip to search</a>
+  <nav class="app-mode-toggle" aria-label="Main navigation">
+    <a href="index.html" aria-current="page">Home</a>
+    <a href="map.html">Map</a>
+    <a href="database.html">Menus &amp; prices</a>
+    <a href="#settings" data-budfinder-settings-toggle>Settings</a>
+  </nav>
+
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atmosphere-leaves"></div>
+    <div class="smoke-plume smoke-plume-one"></div>
+    <div class="smoke-plume smoke-plume-two"></div>
+    <div class="smoke-plume smoke-plume-three"></div>
+  </div>
+
+  <main class="page">
+    <section class="hero hero-search-first" aria-labelledby="home-title">
+      <div class="hero-brand-row">
+        <a class="brand budfinder-brand-lockup" href="index.html" aria-label="Budfinder home">
+          <span class="budfinder-brand-mark" aria-hidden="true"></span>
+          <span class="budfinder-brand-name">Budfinder</span>
+        </a>
+        <span class="kicker" id="home-personal-greeting">Dutch coffeeshop guide</span>
+      </div>
+      <div class="hero-copy">
+        <h1 id="home-title">Find your next coffeeshop.</h1>
+        <p class="lead">Find strains, compare listed prices and explore coffeeshops across the Netherlands.</p>
+
+        <form id="home-search-form" class="home-search hero-search" action="map.html" aria-label="Search Budfinder">
+          <label class="search-input-label" for="home-search-input">Strain, grower, coffeeshop, town or area</label>
+          <div class="search-row">
+            <input id="home-search-input" name="search" type="search" role="combobox" placeholder="Amnesia Haze, Karma, Amsterdam…" autocomplete="off" enterkeyhint="search" aria-autocomplete="list" aria-controls="home-search-results" aria-expanded="false" aria-haspopup="listbox" />
+            <button class="primary-btn" id="home-search-submit" type="submit">Search</button>
+          </div>
+          <div id="home-search-results" class="home-search-results" role="listbox" aria-label="Search suggestions" hidden></div>
+          <p id="home-search-status" class="home-search-status" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="intent-actions" aria-label="Quick links">
+          <a class="intent-action" href="map.html?source=home&amp;intent=nearby">Near me</a>
+          <a class="intent-action" href="database.html?browser=shops">Browse menus</a>
+          <a class="intent-action" href="database.html">Find a strain</a>
+          <a class="intent-action" href="map.html?source=home&amp;intent=itinerary">Plan a route</a>
+        </div>
+
+        <p class="availability-note">Menus change. Use Budfinder to plan, then check before travelling. Location stays off until you choose a location feature.</p>
+      </div>
+
+      <aside class="hero-media" aria-label="Budfinder map preview">
+        <a class="hero-map-link" href="map.html" aria-label="Explore the coffeeshop map">
+        <picture class="hero-image-card">
+          <source srcset="static/images/budfinder-hero.avif" type="image/avif" />
+          <source srcset="static/images/budfinder-hero.webp" type="image/webp" />
+          <img src="static/images/budfinder-hero.png" width="1672" height="941" loading="lazy" fetchpriority="low" alt="Budfinder map showing Amsterdam coffeeshop results and a walking route." onerror="this.onerror=null; this.src='images/budfinder-hero.png';" />
+        </picture>
+        </a>
+        <div class="hero-caption" aria-hidden="true">
+          <span>Explore the map →</span>
+          <span>Prices · locations · menu dates</span>
+        </div>
+      </aside>
+    </section>
+
+    <section class="home-discovery" aria-labelledby="home-discovery-title">
+      <div class="insights-head">
+        <div><span class="eyebrow">Explore menus</span><h2 id="home-discovery-title">Find somewhere worth a visit.</h2></div>
+        <p>Explore by city or start with a strain.</p>
+      </div>
+      <div class="home-discovery-grid">
+        <article class="insight-panel location-price-panel">
+          <div class="location-price-head">
+            <div>
+              <span>Prices around the Netherlands</span>
+              <strong>Five locations in the database</strong>
+            </div>
+            <p>Average listed prices for each location, using the same database refresh.</p>
+          </div>
+          <div id="random-location-prices" class="location-price-grid" aria-live="polite">
+            <p class="location-price-empty">Loading location price averages…</p>
+          </div>
+        </article>
+        <article class="insight-panel market-list-card">
+          <span>Most widely listed strains</span>
+          <strong id="home-most-common">Loading…</strong>
+          <p id="home-most-common-note">Ranked by the number of distinct shops with a menu listing in the database.</p>
+          <ol id="home-most-common-list" class="insight-list" aria-label="Most widely listed strains"></ol>
+          <a class="market-list-footer" href="database.html">Explore all strains →</a>
+        </article>
+        <article class="insight-panel market-list-card">
+          <span>Random 2–3 shop finds</span>
+          <strong id="home-rare-count">Loading…</strong>
+          <p>A new selection on each visit, drawn from strains listed by exactly two or three shops in the database.</p>
+          <ul id="home-rare-list" class="insight-list" aria-label="Random strains listed in two or three shops"></ul>
+          <a class="market-list-footer" href="database.html?mode=rare">Explore all 2–3 shop finds →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="insights-panel market-snapshot" aria-labelledby="market-snapshot-title">
+      <div class="insights-head">
+        <div>
+          <span class="eyebrow">About the menu data</span>
+          <h2 id="market-snapshot-title">Coverage, prices and menu dates</h2>
+        </div>
+        <p>Database refreshed <strong id="snapshot-date">Loading…</strong>. Menu dates vary; check each menu before travelling.</p>
+      </div>
+      <div id="amsterdam-insights" class="insights-grid market-signal-grid" aria-live="polite">
+        <article class="insight-panel coverage-panel">
+          <span>Data coverage</span>
+          <div class="coverage-counts">
+            <span><strong id="catalog-shop-count">Loading…</strong><small id="catalog-shop-label">mapped Amsterdam shops</small></span>
+            <span><strong id="catalog-listing-count">Loading…</strong><small>Amsterdam menu listings</small></span>
+          </div>
+          <details class="coverage-details">
+            <summary>How these figures work</summary>
+            <p id="coverage-definition">Mapped shops are marked open in our Amsterdam catalogue. A menu listing is one strain-and-price entry retained in the latest database.</p>
+            <p id="coverage-filter-note" class="coverage-filter-note">Loading menu coverage…</p>
+          </details>
+        </article>
+        <a class="insight-panel market-signal-card" href="database.html">
+          <span>Nationwide average strain price</span>
+          <strong id="home-average-price">Loading…</strong>
+          <p>Each strain contributes its average listed price once, so strains with more listings do not dominate the figure.</p>
+        </a>
+        <article id="price-history" class="price-history" aria-labelledby="price-history-title" aria-busy="true">
+          <div class="price-history-head">
+            <div>
+              <span class="eyebrow">Menu price history</span>
+              <h3 id="price-history-title">Average price over time</h3>
+              <p>Recorded prices from the menus in Budfinder.</p>
+            </div>
+            <span id="price-history-stamp" class="price-history-stamp"></span>
+          </div>
+          <div id="price-history-controls" class="price-history-controls" hidden>
+            <label class="price-history-location" for="price-history-scope">Track
+              <select id="price-history-scope"><option>Loading locations…</option></select>
+            </label>
+            <div id="price-history-ranges" class="price-history-ranges" role="group" aria-label="Price history period">
+              <button type="button" data-price-range="30" aria-label="Last 30 days" aria-pressed="false">1 month</button>
+              <button type="button" data-price-range="90" aria-label="Last 90 days" aria-pressed="false">3 months</button>
+              <button type="button" data-price-range="all" aria-label="All recorded history" aria-pressed="true">All</button>
+            </div>
+          </div>
+          <div class="price-history-readout">
+            <div><strong id="price-history-value">Loading…</strong><span id="price-history-date"></span></div>
+            <p id="price-history-coverage"></p>
+          </div>
+          <div id="price-history-trace-control" class="price-history-trace-control" hidden>
+            <span class="price-history-main-legend">Benchmark average</span>
+            <label><input id="price-history-trace-toggle" type="checkbox" checked /> Show individual shop traces</label>
+          </div>
+          <p id="price-history-status" class="price-history-status" role="status">Loading recorded averages…</p>
+          <div id="price-history-plot" class="price-history-plot" role="group" aria-label="Interactive average price chart" aria-describedby="price-history-instructions price-history-note" hidden></div>
+          <p id="price-history-instructions" class="price-history-instructions">Markers are recorded observations; the line connects them. Tap or hover to inspect, or focus the chart and use ← →, Home or End.</p>
+          <p id="price-history-note" class="price-history-note">Shop and strain coverage changes over time. These are database averages, rather than a measure of like-for-like market price changes.</p>
+          <p id="price-history-live" class="price-history-sr-only" role="status" aria-live="polite"></p>
+          <details id="price-history-benchmark" class="price-history-details" hidden>
+            <summary>Shops in the fixed benchmark</summary>
+            <p id="price-history-benchmark-description">The same shops are tracked throughout, with every shop given equal weight.</p>
+            <div id="price-history-shops" class="price-history-shops"></div>
+          </details>
+          <details id="price-history-details" class="price-history-details" hidden>
+            <summary>How it works &amp; price history table</summary>
+            <p>The fixed benchmark averages the same 20 shops, giving each shop equal weight. Within each shop, each strain contributes its average price per gram once. The location views average across strains in the full database. Repeat checks do not add extra weight.</p>
+            <p>Markers are recorded observations. The continuous line joins those points; prices between markers are unknown. Dates show when Budfinder recorded listings, rather than when shops published menus. Last known listings are carried forward until a replacement or removal is recorded. Earlier coverage is incomplete and edits without historical records cannot be reconstructed. The latest snapshot uses the current database.</p>
+            <div class="price-history-table" role="region" aria-label="Price history values" tabindex="0">
+              <table><thead><tr><th scope="col">Recorded date</th><th scope="col">Average / g</th><th scope="col">Shops</th><th scope="col">Strains</th></tr></thead><tbody id="price-history-rows"></tbody></table>
+            </div>
+          </details>
+          <noscript><p>Enable JavaScript to explore price history. Current prices are available in <a href="database.html">Price &amp; Menus</a>.</p></noscript>
+        </article>
+      </div>
+    </section>
+
+    <section class="updates-panel" aria-labelledby="updates-title">
+      <div class="updates-head">
+        <div><span class="eyebrow">From Budfinder</span><h2 id="updates-title">Latest updates</h2></div>
+        <p>News, new places and improvements to Budfinder.</p>
+      </div>
+      <div id="home-updates" class="updates-grid" role="region" aria-labelledby="updates-title" aria-live="polite">
+        <p class="updates-empty">Loading the latest updates…</p>
+      </div>
+      <p id="home-updates-help" class="updates-scroll-hint" hidden></p>
+    </section>
+
+    <section class="about-card release-status" aria-labelledby="release-status-title">
+      <span class="eyebrow">Release details</span>
+      <h2 id="release-status-title">Current version and data</h2>
+      <div class="version-grid">
+        <div class="version-box">
+          <span>App version</span>
+          <strong id="app-version">Loading…</strong>
+        </div>
+        <div class="version-box">
+          <span>Site updated</span>
+          <strong id="app-updated">Loading…</strong>
+        </div>
+        <div class="version-box">
+          <span>Database refreshed</span>
+          <strong id="database-snapshot-date">Loading…</strong>
+        </div>
+      </div>
+    </section>
+
+    <p class="note">For adults planning responsibly. Follow local laws and coffeeshop rules, and check before travelling across town for a specific item.</p>
+  </main>
+
+  <script src="scripts/budfinder-logos.js?v=20260830-missing1"></script>
+  <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
+  <script src="scripts/budfinder-page-settings.js?v=20260905-refine1"></script>
+  <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
+  <script src="scripts/budfinder-home.js?v=20261028-search3"></script>
+  <script src="scripts/budfinder-price-history.js?v=20261028-price3"></script>
+</body>
+</html>

@@ -27,6 +27,29 @@ Then open `http://localhost:8000/index.html`.
   styles. It is shared by the shop detail page and the Shop Menu Browser.
   `styles/budfinder-polish.css` supplies shared improvements. Keep stylesheet and
   script order in each HTML page when editing or publishing these assets.
+- `scripts/budfinder-explore.js` and `styles/budfinder-explore.css` provide the shared
+  menu filters and map/menu navigation. Upload these assets with both page scripts
+  and `index.html`, `map.html`, and `database.html` for this release.
+  Location, type, price per gram, source menu age, Cali and legal-project filters
+  apply to the same offering. Active chips can be removed separately or cleared
+  while retaining the typed search. Filter state is encoded in shareable URLs and
+  carried between map results, menu results and strain profiles. Shop detail
+  always displays its full menu; result filters remain available when returning.
+  The map's camera selector remains separate from the Location result filter.
+- `styles/budfinder-map-controls.css` is the final map-only stylesheet. Publish it
+  with `scripts/budfinder-map.js` before the updated `map.html`. The compact action
+  bar opens Search, Saved strains and Your route; route planning has its own panel
+  view. Close and Escape retain the search and itinerary and return keyboard focus
+  to the relevant action. Background search results do not take over the route view.
+  Marker artwork, placement, visibility rules and spacing are unchanged.
+  Searches entered on the map fit matches in the current city. A zoomed-in,
+  panned map supplies the city context; otherwise the selected city view is used.
+  Generic map links reopen the last city; explicit Show all cities links retain nationwide framing.
+  Local searches keep other-city matches available through **Show all cities**,
+  with **Back to [city]** returning to the local view. With no local matches, the
+  camera stays in that city and offers the wider results explicitly. The URL's
+  `search_city` / `search_view` parameters remember camera context independently
+  of the `filter_city` result filter. Search framing never clusters or removes pins.
 - `coffeeshop_menu_app.py` maintains the SQLite/menu-entry workflow and exports the static JSON snapshot.
 - `database/*.json`, `database/*.csv`, and `database/*.sqlite` hold the menu data assets.
 - `database/locations/coffeeshops.csv` is the nationwide coffeeshop catalogue. Every shop needs a stable `shop_id`/`shop_key`, a canonical `city` and `city_slug`, valid coordinates, and a `status`.
@@ -79,6 +102,60 @@ When uploading a refreshed snapshot, upload the generated data files first and
 Always include `database/home_summary.json`; its `exported_at_utc` must match the
 manifest. Running `data_quality_report.py` before upload checks this.
 
+## Average price history
+
+The normal JSON export also builds `database/price_history.json` and
+`database/price_history_shops.json` using the read-only
+reconstruction in `price_history.py`. Publish this file with the other snapshot
+files, before `manifest.json`. The additional file contains individual shop
+histories used for optional device-local benchmarks; it does not change the
+public default. The homepage chart lives in
+`scripts/budfinder-price-history.js` and `styles/budfinder-price-history.css`; it
+loads independently so a failed history request cannot block search or current
+prices. Include `price_history.py` when updating the local admin application.
+
+Dates are UTC recording dates, not original menu publication dates. Complete
+observations replace a shop's previous snapshot; outgoing archive events remove
+rows, despite their legacy `active` status. Pack and legal variants stay distinct,
+repeated checks add no extra weight, and valid euro pack prices are converted to
+prices per gram. The calculation matches the homepage: average each strain first,
+round that mean to two decimals, then average the strain means. The export day's
+point uses current inventory, including edits without historical events.
+
+The default view is a fixed benchmark of 20 Amsterdam shops. Membership is stored
+in `database/price_benchmark.json` beside SQLite and remains unchanged between
+exports. The initial sample uses currently listed shops with the earliest archived
+observations and at least 10 recorded days. Each shop's mean strain price contributes
+once to the benchmark, so larger menus do not receive extra weight. A benchmark
+point requires usable prices for every configured shop; missing shops are never
+silently replaced or averaged as a smaller group. Individual shop series and full
+location averages remain available from the Track selector.
+Changing `price_benchmark.json` is an intentional change of sample and recomputes
+that group's full history; normal exports never edit the membership file.
+Visitors can choose a separate 20-shop benchmark in Skunkworks. That selection
+is stored on their device, does not edit the published membership, and is
+recalculated from the individual shop histories. When any selected shop has no
+recorded price, that date has no benchmark average.
+The main benchmark line is prominent, with the 20 individual shop traces shown
+faintly behind it on the same euro-per-gram scale. Hovering a trace reveals its
+shop name. The trace switch hides those lines and rescales to the benchmark alone
+when a closer view is useful; it does not change the underlying averages.
+
+Current shop eligibility applies to the full location series; historical records
+of fixed benchmark members are retained even if a member is later unavailable.
+Current strain identities apply throughout. Earlier coverage is partial, and menu
+mix changes and unrecorded edits prevent this from being a like-for-like market
+price index. The continuous line joins actual recorded markers, including across
+gaps; prices between markers are unknown. The table retains missing observations,
+and no intermediate daily prices are invented. Neither reconstruction nor export
+changes SQLite or the menu completion/replacement workflow.
+
+The history export takes about a second on the current dataset. Python fixtures
+cover replay, removals, currencies, pack options, UTC boundaries, read-only export,
+fixed membership, equal shop weighting and current-summary agreement. Node fixtures
+cover continuous connections, ranges, keyboard and pointer inspection, single points,
+incomplete benchmark coverage and failed, stalled or mismatched publications.
+
 Homepage posts are managed from **Homepage updates** in the admin. Published posts are
 exported to `database/updates.json` and appear in the “From Budfinder” panel on the
 homepage. Menu entries can keep more than one pack size for the same shop and strain;
@@ -127,6 +204,66 @@ separate `menu_shop_key`, the watch uses it to find menu data while retaining th
 local `shop_key` used for favourites and map identity. A changed shop/location list is
 also written to `bfwatch_data.h` and takes effect after the next firmware upload; menu
 and price changes can be uploaded immediately with the in-app watch updater.
+
+The updater reports success only after the watch confirms `menus=1`. Older firmware
+can reject a valid menu package when its shop list changes and continue showing
+built-in menus. The repaired firmware joins menus and logos by stable shop hashes;
+shops absent from a valid menu package have empty menus. Install that firmware once
+to support subsequent menu updates with a changed shop count.
+
+## Website usability refinements
+
+Exact city, area and shop searches retain their intent when the map's delayed
+menu lookup finishes. Homepage suggestions put exact names ahead of popularity
+bonuses on partial names. Discovery links now precede coverage statistics and
+site updates. Menu search results use a compact header with filters collapsed
+by default; active filter chips remain visible. The map keeps one results scroll
+area and reserves route planning for the Your route action.
+
+Menu and strain-profile price labels expand to show the mean or median, priced
+listing and shop counts, source-date age distribution and comparison scope.
+Comparisons use the same currency and per-gram unit; pack options each count once.
+Fewer than two distinct shops is labelled limited data. Map price help explains
+its existing, separate lowest-price-per-shop calculation. Supporting text and
+control borders have stronger contrast in the shared and map-specific themes.
+
+Publish the changed home/map/database scripts, shared theme script and referenced
+stylesheets before the three HTML pages. Their updated cache versions are already
+included. These changes do not require a data export.
+
+## Consistent search across the public pages
+
+`budfinder-search.js` supplies common normalization and typed suggestion ranking.
+Short codes such as G13, G-13 and G 13 (also AK47 / AK-47 and RS11 / RS-11)
+share a search spelling. Suffixes and crosses remain distinct; source names and
+stored strain IDs are never rewritten. Exact names lead partial and fuzzy matches.
+
+The homepage passes the selected entity kind to the map. The map shows labelled,
+keyboard-accessible suggestions, a visible Search button, and an exact selected
+strain summary with a link to its price profile. Its lightweight search index has
+an eight-second timeout; ordinary Search remains available if suggestions fail.
+Explicit submission supports two-character strains such as K2. Menu search and
+the strain browser mark exact results and distinguish related strains; profile
+URLs accept the same aliases. Map, menu and profile filters remain in their URLs.
+
+Publish the shared search script with the page scripts, map controls and database
+refinement styles before the three HTML pages. The `20261028-search3` references
+must be uploaded together. The complete upload archive also includes the preceding
+usability release, so no earlier partial upload needs to be reconstructed.
+
+## Map opening view and clear filters
+
+The map remembers a useful viewport separately from its search/filter session.
+Returning through generic menu links restores that view, or the last city if the
+saved zoom is too wide; Amsterdam is the fallback for a new browser. Explicit city
+and Show all cities links still take priority. Low-zoom legacy sessions cannot
+restore the world overview, and startup cannot overwrite the last useful camera.
+
+The visible **Clear all filters** button clears search, strain/grower, menu and
+category filters and the selected destination, while retaining the camera and
+planned route stops. Pending search callbacks are invalidated so they cannot
+reapply a cleared filter. Publish `budfinder-map.js` and `budfinder-map-controls.css`
+before `map.html`; these references use cache version `20261029-map4`.
 
 ## Website regression checks
 
@@ -203,3 +340,23 @@ curl -I --compressed https://budfinder.org/database/home_summary.json
 The first response should redirect to HTTPS. The HTTPS response should include the
 security headers. JSON responses should be compressed and include
 `Cache-Control: public, max-age=0, must-revalidate`.
+
+## Public website pages
+
+The public site has three pages: Home (`index.html`), Map (`map.html`), and
+Price & Menus (`database.html`). Search and price help are available within
+those pages. The sitemap lists their canonical URLs.
+
+Skunkworks (`skunkworks.html`) is an unlisted personalisation page. It has a
+`noindex` instruction and is not in the public navigation or sitemap. It is not
+password-protected. Favourites and preferences use browser storage, and the map
+shows “What’s around?” when that storage is populated. Nearby distances are
+straight-line estimates; location is requested only when the visitor chooses it.
+
+Trip guides, the city and shop directories, About, and the old `locate*.html`
+pages have been retired. The hosting rules in `.htaccess` return HTTP 410 for
+their old URLs. Remove the retired files from the website root when uploading
+this change.
+
+Database exports now write data files only. Restart an already-running local
+admin application before the next export so it loads the updated code.

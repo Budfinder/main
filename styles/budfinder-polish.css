@@ -210,3 +210,12 @@ body {
 body.has-site-settings-open {
   overflow: hidden;
 }
+
+/* Supporting copy remains readable across the shared colour themes. */
+body .availability-note,
+body .note,
+body .coverage-filter-note,
+body .updates-scroll-hint,
+body .explore-filter-help,
+body .price-history-note,
+body .price-history-instructions { font-size: 13px; line-height: 1.6; }

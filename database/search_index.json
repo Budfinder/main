@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at_utc": "2026-10-28T13:12:12.235780+00:00",
+  "exported_at_utc": "2026-11-18T06:30:07.787286+00:00",
   "shops": [
     {
       "name": "'t Geeltje",
@@ -1881,10 +1881,6 @@
       "shop_count": 1
     },
     {
-      "name": "818 BANGER",
-      "shop_count": 1
-    },
-    {
       "name": "9 LIONS",
       "shop_count": 1
     },
@@ -1893,12 +1889,8 @@
       "shop_count": 1
     },
     {
-      "name": "99 PROBLEMS",
-      "shop_count": 1
-    },
-    {
       "name": "A5 HAZE",
-      "shop_count": 8
+      "shop_count": 6
     },
     {
       "name": "A5 WAGYU",
@@ -1917,6 +1909,10 @@
       "shop_count": 1
     },
     {
+      "name": "Acapulco Gold",
+      "shop_count": 1
+    },
+    {
       "name": "Ace",
       "shop_count": 1
     },
@@ -1926,7 +1922,7 @@
     },
     {
       "name": "Acris",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Adios Motherf*cker",
@@ -1950,7 +1946,7 @@
     },
     {
       "name": "AK-47",
-      "shop_count": 26
+      "shop_count": 25
     },
     {
       "name": "AKA Jordan",
@@ -2010,11 +2006,19 @@
     },
     {
       "name": "AMG",
-      "shop_count": 27
+      "shop_count": 28
     },
     {
       "name": "AMG Haze",
-      "shop_count": 26
+      "shop_count": 25
+    },
+    {
+      "name": "AMG MAC",
+      "shop_count": 1
+    },
+    {
+      "name": "Amnesia",
+      "shop_count": 1
     },
     {
       "name": "AMNESIA 1",
@@ -2034,7 +2038,7 @@
     },
     {
       "name": "AMNESIA G-13",
-      "shop_count": 18
+      "shop_count": 17
     },
     {
       "name": "Amnesia Gold",
@@ -2042,7 +2046,7 @@
     },
     {
       "name": "Amnesia Haze",
-      "shop_count": 244
+      "shop_count": 243
     },
     {
       "name": "Amnesia Haze CBD",
@@ -2050,14 +2054,10 @@
     },
     {
       "name": "Amnesia Haze Master Cut",
-      "shop_count": 5
+      "shop_count": 6
     },
     {
       "name": "Amnesia MAC Ganja",
-      "shop_count": 1
-    },
-    {
-      "name": "Amnesia Popcorn",
       "shop_count": 1
     },
     {
@@ -2065,12 +2065,8 @@
       "shop_count": 1
     },
     {
-      "name": "Amnesia Suppreme",
+      "name": "Amnesia Surpeme",
       "shop_count": 1
-    },
-    {
-      "name": "Amnesia White",
-      "shop_count": 3
     },
     {
       "name": "Amsterdam Pound Cake",
@@ -2090,7 +2086,7 @@
     },
     {
       "name": "Animal Mintz",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "Animal Runtz",
@@ -2102,11 +2098,11 @@
     },
     {
       "name": "Antidote",
-      "shop_count": 2
+      "shop_count": 5
     },
     {
       "name": "Apple Fritter",
-      "shop_count": 13
+      "shop_count": 14
     },
     {
       "name": "Apple Haze",
@@ -2114,7 +2110,7 @@
     },
     {
       "name": "Apple Kush",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Apple MAC",
@@ -2130,7 +2126,7 @@
     },
     {
       "name": "Applescotti",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Apricot Haze",
@@ -2154,7 +2150,7 @@
     },
     {
       "name": "Artic Haze",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Atomic Apples",
@@ -2162,10 +2158,6 @@
     },
     {
       "name": "Azul Runtz",
-      "shop_count": 1
-    },
-    {
-      "name": "Azulcar",
       "shop_count": 1
     },
     {
@@ -2182,7 +2174,7 @@
     },
     {
       "name": "Bacio Gelato",
-      "shop_count": 5
+      "shop_count": 6
     },
     {
       "name": "Bagheera Special",
@@ -2195,6 +2187,10 @@
     {
       "name": "Baked Animal",
       "shop_count": 5
+    },
+    {
+      "name": "Baked Z",
+      "shop_count": 1
     },
     {
       "name": "Baklava",
@@ -2222,7 +2218,7 @@
     },
     {
       "name": "Banana Drip",
-      "shop_count": 4
+      "shop_count": 6
     },
     {
       "name": "Banana Haze",
@@ -2241,12 +2237,12 @@
       "shop_count": 1
     },
     {
-      "name": "Banana Monkeyz",
-      "shop_count": 3
+      "name": "Banana Milk",
+      "shop_count": 1
     },
     {
-      "name": "Banana OG",
-      "shop_count": 1
+      "name": "Banana Monkeyz",
+      "shop_count": 3
     },
     {
       "name": "Banana Oreoz",
@@ -2269,12 +2265,20 @@
       "shop_count": 2
     },
     {
+      "name": "Banana Time",
+      "shop_count": 1
+    },
+    {
       "name": "Bat Rabies",
       "shop_count": 2
     },
     {
       "name": "Baz Zkittlez",
       "shop_count": 1
+    },
+    {
+      "name": "Bazio",
+      "shop_count": 3
     },
     {
       "name": "Bazkittle",
@@ -2318,7 +2322,7 @@
     },
     {
       "name": "Big Buddha Cheese",
-      "shop_count": 11
+      "shop_count": 8
     },
     {
       "name": "Big Buddha Haze",
@@ -2341,11 +2345,19 @@
       "shop_count": 1
     },
     {
+      "name": "Billionare Bagz",
+      "shop_count": 1
+    },
+    {
       "name": "Bio Amnesia Haze",
       "shop_count": 8
     },
     {
       "name": "Bio Blanco",
+      "shop_count": 1
+    },
+    {
+      "name": "Bio Bud",
       "shop_count": 1
     },
     {
@@ -2382,11 +2394,15 @@
     },
     {
       "name": "Biscotti",
-      "shop_count": 30
+      "shop_count": 32
     },
     {
       "name": "Biscotti Bacio",
       "shop_count": 2
+    },
+    {
+      "name": "Biscotti Blue",
+      "shop_count": 1
     },
     {
       "name": "Biscotti Mintz",
@@ -2414,6 +2430,10 @@
     },
     {
       "name": "Black Beatle",
+      "shop_count": 1
+    },
+    {
+      "name": "Black Berry Soda",
       "shop_count": 1
     },
     {
@@ -2458,11 +2478,11 @@
     },
     {
       "name": "Black Light",
-      "shop_count": 2
+      "shop_count": 4
     },
     {
       "name": "Black Magic",
-      "shop_count": 6
+      "shop_count": 3
     },
     {
       "name": "Black Mamba",
@@ -2485,6 +2505,10 @@
       "shop_count": 1
     },
     {
+      "name": "Black Truffle",
+      "shop_count": 1
+    },
+    {
       "name": "Black Water",
       "shop_count": 1
     },
@@ -2498,7 +2522,7 @@
     },
     {
       "name": "BLACK ZUSHI 424",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Blackberry",
@@ -2529,10 +2553,6 @@
       "shop_count": 1
     },
     {
-      "name": "Blacklight",
-      "shop_count": 1
-    },
-    {
       "name": "Blackout Runtz",
       "shop_count": 1
     },
@@ -2553,10 +2573,6 @@
       "shop_count": 1
     },
     {
-      "name": "Bloody Mary",
-      "shop_count": 1
-    },
-    {
       "name": "Blow Pop",
       "shop_count": 1
     },
@@ -2574,11 +2590,7 @@
     },
     {
       "name": "Blue Banger",
-      "shop_count": 3
-    },
-    {
-      "name": "Blue Basquiat",
-      "shop_count": 1
+      "shop_count": 5
     },
     {
       "name": "Blue Berry",
@@ -2590,7 +2602,7 @@
     },
     {
       "name": "Blue Berry Runtz",
-      "shop_count": 0
+      "shop_count": 1
     },
     {
       "name": "Blue Bubbble Zoap",
@@ -2610,11 +2622,11 @@
     },
     {
       "name": "Blue Cheese",
-      "shop_count": 21
+      "shop_count": 18
     },
     {
       "name": "Blue Cookies",
-      "shop_count": 6
+      "shop_count": 7
     },
     {
       "name": "Blue Dream",
@@ -2666,7 +2678,7 @@
     },
     {
       "name": "Blue Jelly",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "Blue Jelly Exclusive",
@@ -2681,6 +2693,10 @@
       "shop_count": 1
     },
     {
+      "name": "Blue Laffy Taffy",
+      "shop_count": 1
+    },
+    {
       "name": "Blue Lemons",
       "shop_count": 1
     },
@@ -2690,19 +2706,19 @@
     },
     {
       "name": "Blue Limez",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Blue Lobster",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "Blue Magic",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "Blue Meduza",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Blue Mochi",
@@ -2710,7 +2726,7 @@
     },
     {
       "name": "Blue Monster",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Blue Muffin",
@@ -2718,7 +2734,7 @@
     },
     {
       "name": "Blue Nerds",
-      "shop_count": 12
+      "shop_count": 16
     },
     {
       "name": "Blue Peaches",
@@ -2738,6 +2754,10 @@
     },
     {
       "name": "Blue Sherb x Jealousy",
+      "shop_count": 1
+    },
+    {
+      "name": "Blue Wagyu",
       "shop_count": 1
     },
     {
@@ -2770,11 +2790,7 @@
     },
     {
       "name": "Blue Zushi",
-      "shop_count": 24
-    },
-    {
-      "name": "Blue Zushi Popcorn",
-      "shop_count": 1
+      "shop_count": 23
     },
     {
       "name": "Blue Zushi x Elements",
@@ -2782,7 +2798,7 @@
     },
     {
       "name": "Blueberry",
-      "shop_count": 11
+      "shop_count": 12
     },
     {
       "name": "Blueberry CBD",
@@ -2818,14 +2834,10 @@
     },
     {
       "name": "Blueberry Pancake",
-      "shop_count": 1
+      "shop_count": 3
     },
     {
       "name": "Blueberry Pie",
-      "shop_count": 1
-    },
-    {
-      "name": "Blueberry Slushie",
       "shop_count": 1
     },
     {
@@ -2846,7 +2858,7 @@
     },
     {
       "name": "Bluzzi",
-      "shop_count": 8
+      "shop_count": 7
     },
     {
       "name": "Bolo Gummiez",
@@ -2870,11 +2882,7 @@
     },
     {
       "name": "Bomboloni",
-      "shop_count": 7
-    },
-    {
-      "name": "Bon Bonz",
-      "shop_count": 1
+      "shop_count": 6
     },
     {
       "name": "Boujee B!tch",
@@ -2909,6 +2917,10 @@
       "shop_count": 2
     },
     {
+      "name": "Brown Sugar Haze",
+      "shop_count": 1
+    },
+    {
       "name": "Bruce Banner",
       "shop_count": 6
     },
@@ -2918,7 +2930,7 @@
     },
     {
       "name": "Bubba Kush",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Bubble #41",
@@ -2958,7 +2970,7 @@
     },
     {
       "name": "Bubblegum Cherry",
-      "shop_count": 7
+      "shop_count": 6
     },
     {
       "name": "Bubblegum Diesel",
@@ -2966,11 +2978,15 @@
     },
     {
       "name": "Bubblegum Gelato",
-      "shop_count": 4
+      "shop_count": 3
+    },
+    {
+      "name": "Bubblegum Pop",
+      "shop_count": 1
     },
     {
       "name": "Bubblegum Popperz",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Bubblegum Runtz",
@@ -2986,7 +3002,7 @@
     },
     {
       "name": "Bubbles",
-      "shop_count": 13
+      "shop_count": 12
     },
     {
       "name": "Bubblicious",
@@ -3030,11 +3046,7 @@
     },
     {
       "name": "C-5 HAZE",
-      "shop_count": 1
-    },
-    {
-      "name": "Cadillac Rainbow",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Cake",
@@ -3054,6 +3066,14 @@
     },
     {
       "name": "Cali Biscuit",
+      "shop_count": 1
+    },
+    {
+      "name": "Cali Cheese",
+      "shop_count": 1
+    },
+    {
+      "name": "Cali Diamonds",
       "shop_count": 1
     },
     {
@@ -3093,6 +3113,10 @@
       "shop_count": 1
     },
     {
+      "name": "Cali Voordeelazak",
+      "shop_count": 1
+    },
+    {
       "name": "California Candy",
       "shop_count": 2
     },
@@ -3106,10 +3130,6 @@
     },
     {
       "name": "California OG",
-      "shop_count": 2
-    },
-    {
-      "name": "California Orange",
       "shop_count": 1
     },
     {
@@ -3153,16 +3173,8 @@
       "shop_count": 2
     },
     {
-      "name": "Candy Floss Gelato",
-      "shop_count": 1
-    },
-    {
-      "name": "Candy Fumes",
-      "shop_count": 1
-    },
-    {
       "name": "Candy Fumez",
-      "shop_count": 4
+      "shop_count": 6
     },
     {
       "name": "Candy Gas",
@@ -3186,7 +3198,7 @@
     },
     {
       "name": "Candy Kush",
-      "shop_count": 7
+      "shop_count": 8
     },
     {
       "name": "Candy Kush CBD",
@@ -3198,10 +3210,6 @@
     },
     {
       "name": "Candy Mac",
-      "shop_count": 1
-    },
-    {
-      "name": "Candy Paint",
       "shop_count": 1
     },
     {
@@ -3226,7 +3234,7 @@
     },
     {
       "name": "Candy Runtz",
-      "shop_count": 6
+      "shop_count": 5
     },
     {
       "name": "Candy Smalls",
@@ -3241,11 +3249,11 @@
       "shop_count": 1
     },
     {
-      "name": "Candy Zkittelz",
+      "name": "Candy Truffle",
       "shop_count": 1
     },
     {
-      "name": "Candyland",
+      "name": "Candy Zkittelz",
       "shop_count": 1
     },
     {
@@ -3265,10 +3273,6 @@
       "shop_count": 1
     },
     {
-      "name": "Caramel Monster",
-      "shop_count": 1
-    },
-    {
       "name": "Carbon Crumpet",
       "shop_count": 1
     },
@@ -3283,6 +3287,14 @@
     {
       "name": "Casey Jones",
       "shop_count": 3
+    },
+    {
+      "name": "Casey Jones x Viper",
+      "shop_count": 1
+    },
+    {
+      "name": "Caviar Lime",
+      "shop_count": 2
     },
     {
       "name": "CBD",
@@ -3306,19 +3318,15 @@
     },
     {
       "name": "Cereal Milk",
-      "shop_count": 7
+      "shop_count": 8
     },
     {
       "name": "Cereza OG",
       "shop_count": 1
     },
     {
-      "name": "Champagne Kush",
-      "shop_count": 1
-    },
-    {
       "name": "Chanel",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Chauffeur",
@@ -3330,7 +3338,7 @@
     },
     {
       "name": "Cheese Banger",
-      "shop_count": 16
+      "shop_count": 19
     },
     {
       "name": "Cheese Cake",
@@ -3347,10 +3355,6 @@
     {
       "name": "Cheese Runtz",
       "shop_count": 1
-    },
-    {
-      "name": "Cheesebanger",
-      "shop_count": 3
     },
     {
       "name": "Cheesus Christ",
@@ -3374,10 +3378,6 @@
     },
     {
       "name": "Cherries",
-      "shop_count": 1
-    },
-    {
-      "name": "Cherries of the Grass",
       "shop_count": 1
     },
     {
@@ -3429,12 +3429,16 @@
       "shop_count": 1
     },
     {
+      "name": "Cherry Cookies Grape",
+      "shop_count": 1
+    },
+    {
       "name": "Cherry Fade",
       "shop_count": 1
     },
     {
       "name": "Cherry Gelato",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Cherry Grapefruit",
@@ -3454,7 +3458,7 @@
     },
     {
       "name": "Cherry Kush",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Cherry Lemonade",
@@ -3462,7 +3466,7 @@
     },
     {
       "name": "Cherry Limeade",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Cherry Nerdz",
@@ -3478,7 +3482,7 @@
     },
     {
       "name": "Cherry Pop",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Cherry Popper Runtz",
@@ -3486,7 +3490,7 @@
     },
     {
       "name": "Cherry Popperz",
-      "shop_count": 9
+      "shop_count": 10
     },
     {
       "name": "Cherry Punch",
@@ -3494,7 +3498,7 @@
     },
     {
       "name": "Cherry Runtz",
-      "shop_count": 4
+      "shop_count": 5
     },
     {
       "name": "Cherry Soda",
@@ -3522,18 +3526,10 @@
     },
     {
       "name": "Chiizu",
-      "shop_count": 3
-    },
-    {
-      "name": "Childs Play",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "China Dolls",
-      "shop_count": 1
-    },
-    {
-      "name": "Choco Kush",
       "shop_count": 1
     },
     {
@@ -3550,11 +3546,11 @@
     },
     {
       "name": "Chocolatina",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Chocolope",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Chocolope Cream",
@@ -3563,10 +3559,6 @@
     {
       "name": "Chozi",
       "shop_count": 2
-    },
-    {
-      "name": "Churro",
-      "shop_count": 1
     },
     {
       "name": "Cinnamon Milk",
@@ -3582,7 +3574,7 @@
     },
     {
       "name": "Citrus Punch",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "City Kush",
@@ -3597,8 +3589,12 @@
       "shop_count": 1
     },
     {
-      "name": "Club Kush",
+      "name": "Cloud Palmer",
       "shop_count": 1
+    },
+    {
+      "name": "Club Kush",
+      "shop_count": 2
     },
     {
       "name": "Coco Chanel",
@@ -3617,11 +3613,11 @@
       "shop_count": 1
     },
     {
-      "name": "Cookie kush",
+      "name": "Cookies",
       "shop_count": 1
     },
     {
-      "name": "Cookies",
+      "name": "Cookies & Cake",
       "shop_count": 1
     },
     {
@@ -3630,6 +3626,14 @@
     },
     {
       "name": "Cookies Gelato",
+      "shop_count": 1
+    },
+    {
+      "name": "Cookies Mintz",
+      "shop_count": 1
+    },
+    {
+      "name": "Cool Haze",
       "shop_count": 1
     },
     {
@@ -3646,7 +3650,11 @@
     },
     {
       "name": "Cotton Candy",
-      "shop_count": 5
+      "shop_count": 4
+    },
+    {
+      "name": "Crab Legs",
+      "shop_count": 1
     },
     {
       "name": "Crazy Widow",
@@ -3661,16 +3669,12 @@
       "shop_count": 1
     },
     {
-      "name": "Cream Sicle",
-      "shop_count": 1
-    },
-    {
       "name": "Cream Smoothie",
       "shop_count": 1
     },
     {
       "name": "Creaminal Sherbert",
-      "shop_count": 7
+      "shop_count": 6
     },
     {
       "name": "Crime of Passion",
@@ -3726,7 +3730,7 @@
     },
     {
       "name": "Crystal White",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Cupcake",
@@ -3762,11 +3766,11 @@
     },
     {
       "name": "Dante's Inferno",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Dark Matter",
-      "shop_count": 4
+      "shop_count": 2
     },
     {
       "name": "Dark Queen",
@@ -3779,10 +3783,6 @@
     {
       "name": "Devil Cherries",
       "shop_count": 2
-    },
-    {
-      "name": "Devil Fruit",
-      "shop_count": 1
     },
     {
       "name": "Devil Haze",
@@ -3822,7 +3822,7 @@
     },
     {
       "name": "Diesel",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "Dior",
@@ -3845,15 +3845,15 @@
       "shop_count": 1
     },
     {
-      "name": "Dizzzy",
-      "shop_count": 1
-    },
-    {
       "name": "Doctor Haze",
       "shop_count": 1
     },
     {
       "name": "Dog Food",
+      "shop_count": 1
+    },
+    {
+      "name": "Dog Treats",
       "shop_count": 1
     },
     {
@@ -3885,6 +3885,10 @@
       "shop_count": 1
     },
     {
+      "name": "Doornroosje",
+      "shop_count": 1
+    },
+    {
       "name": "Dope Z",
       "shop_count": 2
     },
@@ -3898,7 +3902,7 @@
     },
     {
       "name": "Dosidos",
-      "shop_count": 7
+      "shop_count": 6
     },
     {
       "name": "Double Lemon",
@@ -3922,10 +3926,6 @@
     },
     {
       "name": "Dragon",
-      "shop_count": 1
-    },
-    {
-      "name": "Dragon Fruitz",
       "shop_count": 1
     },
     {
@@ -3997,10 +3997,6 @@
       "shop_count": 1
     },
     {
-      "name": "Drip Drop",
-      "shop_count": 1
-    },
-    {
       "name": "Dripping Dots",
       "shop_count": 1
     },
@@ -4010,10 +4006,6 @@
     },
     {
       "name": "Ducksauce",
-      "shop_count": 1
-    },
-    {
-      "name": "Dulce",
       "shop_count": 1
     },
     {
@@ -4045,10 +4037,6 @@
       "shop_count": 2
     },
     {
-      "name": "Dutch Kush",
-      "shop_count": 1
-    },
-    {
       "name": "Dutch Lemon Cherry Gelato",
       "shop_count": 1
     },
@@ -4069,12 +4057,8 @@
       "shop_count": 1
     },
     {
-      "name": "Dutch Zkittlez",
-      "shop_count": 1
-    },
-    {
       "name": "Dynamite",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Earth OG",
@@ -4093,8 +4077,12 @@
       "shop_count": 1
     },
     {
+      "name": "Emerald Z",
+      "shop_count": 1
+    },
+    {
       "name": "Enemy of the State",
-      "shop_count": 31
+      "shop_count": 32
     },
     {
       "name": "Enjoy Store",
@@ -4118,7 +4106,7 @@
     },
     {
       "name": "Exodus Cheese",
-      "shop_count": 38
+      "shop_count": 37
     },
     {
       "name": "Exotic Gas",
@@ -4169,12 +4157,20 @@
       "shop_count": 1
     },
     {
+      "name": "Florida Pie",
+      "shop_count": 1
+    },
+    {
       "name": "Forbbiden Fruit",
       "shop_count": 1
     },
     {
       "name": "Forbidden Fruit",
       "shop_count": 4
+    },
+    {
+      "name": "Forbidden Fruit x Tropicana Cookiez",
+      "shop_count": 1
     },
     {
       "name": "Forest Fruit Cake",
@@ -4190,7 +4186,7 @@
     },
     {
       "name": "Frank Dukez",
-      "shop_count": 4
+      "shop_count": 5
     },
     {
       "name": "French Macaron",
@@ -4226,30 +4222,18 @@
     },
     {
       "name": "Frostbite OG",
-      "shop_count": 4
+      "shop_count": 5
     },
     {
       "name": "Frosted Cake",
       "shop_count": 2
     },
     {
-      "name": "Frosted Delight",
-      "shop_count": 1
-    },
-    {
       "name": "Frosted Gas",
       "shop_count": 1
     },
     {
-      "name": "Frosted Gelato",
-      "shop_count": 1
-    },
-    {
       "name": "Frosted Kush",
-      "shop_count": 1
-    },
-    {
-      "name": "Frosted Nugz",
       "shop_count": 1
     },
     {
@@ -4286,7 +4270,7 @@
     },
     {
       "name": "Fruit Punch",
-      "shop_count": 20
+      "shop_count": 18
     },
     {
       "name": "Fruit Slurpee",
@@ -4317,10 +4301,6 @@
       "shop_count": 1
     },
     {
-      "name": "Fruity Pebbles",
-      "shop_count": 1
-    },
-    {
       "name": "Fruity Punch",
       "shop_count": 1
     },
@@ -4333,12 +4313,8 @@
       "shop_count": 1
     },
     {
-      "name": "Fugazi",
-      "shop_count": 1
-    },
-    {
       "name": "Fun Dip",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Funk Dip",
@@ -4370,7 +4346,7 @@
     },
     {
       "name": "G-13",
-      "shop_count": 14
+      "shop_count": 28
     },
     {
       "name": "G-63",
@@ -4382,15 +4358,7 @@
     },
     {
       "name": "G13 AMNESIA",
-      "shop_count": 3
-    },
-    {
-      "name": "G13 DIESEL",
-      "shop_count": 1
-    },
-    {
-      "name": "G13 HAZE",
-      "shop_count": 12
+      "shop_count": 4
     },
     {
       "name": "G13 Mr. Nice",
@@ -4406,7 +4374,7 @@
     },
     {
       "name": "G15 HAZE",
-      "shop_count": 11
+      "shop_count": 10
     },
     {
       "name": "G4",
@@ -4426,11 +4394,11 @@
     },
     {
       "name": "Galactic Warhead",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Gary Payton",
-      "shop_count": 13
+      "shop_count": 15
     },
     {
       "name": "Gas Face",
@@ -4442,10 +4410,6 @@
     },
     {
       "name": "Gas Mintz",
-      "shop_count": 1
-    },
-    {
-      "name": "Gas Nana US",
       "shop_count": 1
     },
     {
@@ -4461,11 +4425,15 @@
       "shop_count": 2
     },
     {
-      "name": "Gasolini",
-      "shop_count": 2
+      "name": "Gasolina",
+      "shop_count": 1
     },
     {
       "name": "Gass Face",
+      "shop_count": 1
+    },
+    {
+      "name": "Gassy Grass",
       "shop_count": 1
     },
     {
@@ -4473,12 +4441,8 @@
       "shop_count": 4
     },
     {
-      "name": "Gassy Zoap",
-      "shop_count": 1
-    },
-    {
       "name": "Gastronaut",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Gaz OG",
@@ -4490,15 +4454,19 @@
     },
     {
       "name": "Gelato",
-      "shop_count": 48
+      "shop_count": 49
     },
     {
       "name": "Gelato #33",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Gelato #41",
       "shop_count": 18
+    },
+    {
+      "name": "Gelato #41 x Biscotti",
+      "shop_count": 1
     },
     {
       "name": "Gelato #45",
@@ -4533,6 +4501,10 @@
       "shop_count": 2
     },
     {
+      "name": "Gelato Runtz",
+      "shop_count": 1
+    },
+    {
       "name": "Gelato Skittlez",
       "shop_count": 1
     },
@@ -4541,7 +4513,7 @@
       "shop_count": 1
     },
     {
-      "name": "Gellatti",
+      "name": "Gelatti",
       "shop_count": 1
     },
     {
@@ -4562,7 +4534,7 @@
     },
     {
       "name": "Georgia Pie",
-      "shop_count": 38
+      "shop_count": 37
     },
     {
       "name": "Ghost Cherriez",
@@ -4594,7 +4566,7 @@
     },
     {
       "name": "Girl Scout Cookies",
-      "shop_count": 19
+      "shop_count": 20
     },
     {
       "name": "Glamfruit",
@@ -4606,7 +4578,7 @@
     },
     {
       "name": "Glitter Bomb",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Globe Stopper",
@@ -4622,11 +4594,7 @@
     },
     {
       "name": "GMO Cookies",
-      "shop_count": 13
-    },
-    {
-      "name": "GMO x Cookies",
-      "shop_count": 1
+      "shop_count": 14
     },
     {
       "name": "GMO x Zkittlez",
@@ -4697,10 +4665,6 @@
       "shop_count": 1
     },
     {
-      "name": "Gorilla Breath",
-      "shop_count": 1
-    },
-    {
       "name": "Gorilla Cookies",
       "shop_count": 3
     },
@@ -4710,7 +4674,7 @@
     },
     {
       "name": "Gorilla Glue #4",
-      "shop_count": 4
+      "shop_count": 5
     },
     {
       "name": "Gorilla Glue x Mimosa",
@@ -4722,7 +4686,7 @@
     },
     {
       "name": "Gorilla Kush",
-      "shop_count": 15
+      "shop_count": 14
     },
     {
       "name": "Gorilla Z",
@@ -4797,6 +4761,10 @@
       "shop_count": 1
     },
     {
+      "name": "Grape Pie x Zkittlez",
+      "shop_count": 1
+    },
+    {
       "name": "Grape Soda",
       "shop_count": 2
     },
@@ -4817,6 +4785,10 @@
       "shop_count": 1
     },
     {
+      "name": "Gravitide",
+      "shop_count": 1
+    },
+    {
       "name": "Gravity",
       "shop_count": 1
     },
@@ -4829,10 +4801,6 @@
       "shop_count": 1
     },
     {
-      "name": "Great White Amnesia",
-      "shop_count": 1
-    },
-    {
       "name": "Great White Cherry",
       "shop_count": 1
     },
@@ -4842,7 +4810,7 @@
     },
     {
       "name": "Green Candy",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Green Crack",
@@ -4858,7 +4826,7 @@
     },
     {
       "name": "Green Highlighter",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Green Lion",
@@ -4866,10 +4834,6 @@
     },
     {
       "name": "Green Magic",
-      "shop_count": 1
-    },
-    {
-      "name": "Green Sugar",
       "shop_count": 1
     },
     {
@@ -4898,7 +4862,7 @@
     },
     {
       "name": "Guava",
-      "shop_count": 1
+      "shop_count": 3
     },
     {
       "name": "Guava Biscotti",
@@ -4918,11 +4882,11 @@
     },
     {
       "name": "Gum Drops",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Gumball",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Gumball Z",
@@ -4931,6 +4895,10 @@
     {
       "name": "Gumbo",
       "shop_count": 3
+    },
+    {
+      "name": "Gumbo Runtz",
+      "shop_count": 1
     },
     {
       "name": "Gumbo Smartiez",
@@ -4942,7 +4910,7 @@
     },
     {
       "name": "Gummiez",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Gummy Bears",
@@ -4974,7 +4942,7 @@
     },
     {
       "name": "Gushers",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Gustard Runtz",
@@ -5002,7 +4970,7 @@
     },
     {
       "name": "Happy Brother",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Happy Bubbles",
@@ -5017,8 +4985,12 @@
       "shop_count": 1
     },
     {
+      "name": "Hardcore Runtz",
+      "shop_count": 1
+    },
+    {
       "name": "Hash Burger",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Hawaii Haze",
@@ -5046,7 +5018,7 @@
     },
     {
       "name": "Hawian Haze",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Hawian Snow",
@@ -5074,7 +5046,7 @@
     },
     {
       "name": "Haze Monkeys",
-      "shop_count": 42
+      "shop_count": 41
     },
     {
       "name": "Haze Popcorn",
@@ -5098,7 +5070,7 @@
     },
     {
       "name": "Head High Haze",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Headband Crescendo",
@@ -5110,7 +5082,7 @@
     },
     {
       "name": "Headbanger",
-      "shop_count": 19
+      "shop_count": 18
     },
     {
       "name": "Headbanger OG",
@@ -5149,6 +5121,10 @@
       "shop_count": 0
     },
     {
+      "name": "Hollands Hoop",
+      "shop_count": 1
+    },
+    {
       "name": "Hollywood",
       "shop_count": 1
     },
@@ -5170,10 +5146,14 @@
     },
     {
       "name": "Horchata",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Hot Lava",
+      "shop_count": 1
+    },
+    {
+      "name": "Hot Tamalez",
       "shop_count": 1
     },
     {
@@ -5190,7 +5170,7 @@
     },
     {
       "name": "Humo Dulce",
-      "shop_count": 17
+      "shop_count": 16
     },
     {
       "name": "Hunters Lemon Haze",
@@ -5230,7 +5210,7 @@
     },
     {
       "name": "Ice Cream Cake",
-      "shop_count": 46
+      "shop_count": 45
     },
     {
       "name": "Ice Cream Cake x King Kush",
@@ -5238,7 +5218,7 @@
     },
     {
       "name": "Ice Cream Cookies",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Ice Cream Gelato",
@@ -5246,7 +5226,7 @@
     },
     {
       "name": "Ice Cream Runtz",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Ice Pie",
@@ -5290,7 +5270,7 @@
     },
     {
       "name": "Jalisco Runtz",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Jamaica",
@@ -5302,14 +5282,10 @@
     },
     {
       "name": "Jealousy",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Jealousy Cake",
-      "shop_count": 1
-    },
-    {
-      "name": "Jealousy x Permanent Marker",
       "shop_count": 1
     },
     {
@@ -5342,7 +5318,7 @@
     },
     {
       "name": "Jet Fuel Gelato",
-      "shop_count": 5
+      "shop_count": 3
     },
     {
       "name": "Jetlag",
@@ -5358,7 +5334,7 @@
     },
     {
       "name": "Jolly Rancher",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "Joop",
@@ -5374,7 +5350,7 @@
     },
     {
       "name": "Juicy Fruit OG",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Juji Fruits",
@@ -5414,7 +5390,11 @@
     },
     {
       "name": "Jus D'Orange",
-      "shop_count": 5
+      "shop_count": 6
+    },
+    {
+      "name": "Just Jack",
+      "shop_count": 1
     },
     {
       "name": "K-Hole",
@@ -5426,7 +5406,7 @@
     },
     {
       "name": "Kabosu",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Kabosu Zozi",
@@ -5474,7 +5454,7 @@
     },
     {
       "name": "Karel's Haze",
-      "shop_count": 10
+      "shop_count": 11
     },
     {
       "name": "Karma OG",
@@ -5513,12 +5493,8 @@
       "shop_count": 1
     },
     {
-      "name": "Key Lime Runtz",
-      "shop_count": 1
-    },
-    {
       "name": "Key Lime Sherbet",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Kierewiet",
@@ -5557,8 +5533,12 @@
       "shop_count": 1
     },
     {
+      "name": "King Tide",
+      "shop_count": 1
+    },
+    {
       "name": "King Toad",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "King White Willem",
@@ -5577,16 +5557,24 @@
       "shop_count": 1
     },
     {
+      "name": "KMZ",
+      "shop_count": 1
+    },
+    {
       "name": "Knetter",
       "shop_count": 1
     },
     {
       "name": "Knightsbridge OG",
-      "shop_count": 16
+      "shop_count": 14
     },
     {
       "name": "Knockout OG",
       "shop_count": 2
+    },
+    {
+      "name": "Kobussi Zizi",
+      "shop_count": 1
     },
     {
       "name": "Kool-aid Peach",
@@ -5614,7 +5602,7 @@
     },
     {
       "name": "Kosher Dreams",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Kosher Heads",
@@ -5622,11 +5610,7 @@
     },
     {
       "name": "Kosher Kush",
-      "shop_count": 52
-    },
-    {
-      "name": "Kosher OG",
-      "shop_count": 1
+      "shop_count": 53
     },
     {
       "name": "Kosher x Ozark",
@@ -5645,8 +5629,12 @@
       "shop_count": 5
     },
     {
+      "name": "Kush Family",
+      "shop_count": 1
+    },
+    {
       "name": "Kush Mintz",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "Kush x Sneeuw",
@@ -5658,7 +5646,7 @@
     },
     {
       "name": "La Banana",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "LA Confidential",
@@ -5677,6 +5665,10 @@
       "shop_count": 2
     },
     {
+      "name": "La Runtz",
+      "shop_count": 1
+    },
+    {
       "name": "La Tertulia Haze",
       "shop_count": 1
     },
@@ -5690,6 +5682,10 @@
     },
     {
       "name": "Lala Land",
+      "shop_count": 1
+    },
+    {
+      "name": "Lambo Runtz",
       "shop_count": 1
     },
     {
@@ -5742,7 +5738,7 @@
     },
     {
       "name": "Lemon Bean",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Lemon Bubble",
@@ -5762,23 +5758,23 @@
     },
     {
       "name": "Lemon Cherry Gelato",
-      "shop_count": 42
+      "shop_count": 47
     },
     {
       "name": "Lemon Cherry Haze",
       "shop_count": 1
     },
     {
-      "name": "Lemon Cherry Runtz",
-      "shop_count": 3
-    },
-    {
       "name": "Lemon Cherry Zkittlez",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Lemon Diesel",
       "shop_count": 0
+    },
+    {
+      "name": "Lemon Dosidos",
+      "shop_count": 1
     },
     {
       "name": "Lemon Drizzle",
@@ -5802,11 +5798,15 @@
     },
     {
       "name": "Lemon Haze",
-      "shop_count": 97
+      "shop_count": 98
     },
     {
       "name": "Lemon Headz",
-      "shop_count": 2
+      "shop_count": 3
+    },
+    {
+      "name": "Lemon Kush",
+      "shop_count": 1
     },
     {
       "name": "Lemon Kush OG",
@@ -5826,14 +5826,18 @@
     },
     {
       "name": "Lemon Mochi x Zizi",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "Lemon Papaya",
-      "shop_count": 19
+      "shop_count": 20
     },
     {
       "name": "Lemon Party",
+      "shop_count": 1
+    },
+    {
+      "name": "Lemon Party #424",
       "shop_count": 1
     },
     {
@@ -5850,14 +5854,14 @@
     },
     {
       "name": "Lemon Popperz",
-      "shop_count": 9
+      "shop_count": 7
     },
     {
       "name": "Lemon Popperz x Gelonade",
       "shop_count": 1
     },
     {
-      "name": "Lemon Taffy",
+      "name": "Lemon Sherbet",
       "shop_count": 1
     },
     {
@@ -5866,7 +5870,7 @@
     },
     {
       "name": "Lemon Tree",
-      "shop_count": 6
+      "shop_count": 5
     },
     {
       "name": "Lemon Tree Kush",
@@ -5934,7 +5938,7 @@
     },
     {
       "name": "Limelight",
-      "shop_count": 4
+      "shop_count": 2
     },
     {
       "name": "Limelight x Blue Magic",
@@ -5942,11 +5946,15 @@
     },
     {
       "name": "Limezii",
-      "shop_count": 7
+      "shop_count": 6
     },
     {
       "name": "Limon Chullo",
-      "shop_count": 6
+      "shop_count": 5
+    },
+    {
+      "name": "Limoncello",
+      "shop_count": 1
     },
     {
       "name": "Little Zkittlez",
@@ -5998,10 +6006,14 @@
     },
     {
       "name": "Lucky #7",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Lucky Charms",
+      "shop_count": 1
+    },
+    {
+      "name": "Lucky Ztrike",
       "shop_count": 1
     },
     {
@@ -6018,7 +6030,7 @@
     },
     {
       "name": "M8",
-      "shop_count": 8
+      "shop_count": 10
     },
     {
       "name": "MAC",
@@ -6142,7 +6154,7 @@
     },
     {
       "name": "Mango Sunsetz",
-      "shop_count": 7
+      "shop_count": 8
     },
     {
       "name": "Mango Tango",
@@ -6189,16 +6201,12 @@
       "shop_count": 1
     },
     {
-      "name": "Medellin",
-      "shop_count": 1
-    },
-    {
       "name": "Medic",
       "shop_count": 1
     },
     {
       "name": "Medusa",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Meduza",
@@ -6270,7 +6278,7 @@
     },
     {
       "name": "Melted Rainbow",
-      "shop_count": 17
+      "shop_count": 16
     },
     {
       "name": "Mexican Choco Haze",
@@ -6282,7 +6290,7 @@
     },
     {
       "name": "Mexican Melon Haze",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Mexican Silver Haze",
@@ -6298,6 +6306,10 @@
     },
     {
       "name": "Midnight Berries",
+      "shop_count": 1
+    },
+    {
+      "name": "Midnight Candy",
       "shop_count": 1
     },
     {
@@ -6330,7 +6342,7 @@
     },
     {
       "name": "Mimosa",
-      "shop_count": 12
+      "shop_count": 13
     },
     {
       "name": "Mimosa Cookies",
@@ -6358,35 +6370,23 @@
     },
     {
       "name": "Miracle Mintz",
-      "shop_count": 17
+      "shop_count": 18
     },
     {
       "name": "Moby Dick",
       "shop_count": 1
     },
     {
-      "name": "Mocha Truffle",
-      "shop_count": 1
-    },
-    {
       "name": "Mochi",
-      "shop_count": 8
+      "shop_count": 6
     },
     {
       "name": "Mochi Gelato",
       "shop_count": 1
     },
     {
-      "name": "Mochi Popcorn",
-      "shop_count": 1
-    },
-    {
       "name": "MOCHI V2",
       "shop_count": 2
-    },
-    {
-      "name": "Mochilato",
-      "shop_count": 1
     },
     {
       "name": "Mochilatti",
@@ -6402,7 +6402,7 @@
     },
     {
       "name": "Moncherry",
-      "shop_count": 7
+      "shop_count": 8
     },
     {
       "name": "Money Maker",
@@ -6417,6 +6417,10 @@
       "shop_count": 9
     },
     {
+      "name": "Monkey Runtz",
+      "shop_count": 1
+    },
+    {
       "name": "Monkeyz Cake",
       "shop_count": 1
     },
@@ -6426,7 +6430,7 @@
     },
     {
       "name": "Monster Cookies",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Monster Kush",
@@ -6469,15 +6473,11 @@
       "shop_count": 1
     },
     {
-      "name": "Moroccan Peaches",
-      "shop_count": 1
-    },
-    {
       "name": "Mother of Berries",
       "shop_count": 1
     },
     {
-      "name": "Motita Cherry",
+      "name": "Motorbreath",
       "shop_count": 1
     },
     {
@@ -6517,6 +6517,10 @@
       "shop_count": 3
     },
     {
+      "name": "Nebula",
+      "shop_count": 1
+    },
+    {
       "name": "Nectarine",
       "shop_count": 1
     },
@@ -6530,7 +6534,7 @@
     },
     {
       "name": "Neville's Haze",
-      "shop_count": 10
+      "shop_count": 11
     },
     {
       "name": "New Era Exotics",
@@ -6557,12 +6561,20 @@
       "shop_count": 2
     },
     {
+      "name": "Nitro Candy",
+      "shop_count": 1
+    },
+    {
+      "name": "NL5 HAZE",
+      "shop_count": 1
+    },
+    {
       "name": "NL5 X HAZE",
       "shop_count": 2
     },
     {
       "name": "NLX",
-      "shop_count": 5
+      "shop_count": 4
     },
     {
       "name": "No Limit Special",
@@ -6601,8 +6613,12 @@
       "shop_count": 1
     },
     {
+      "name": "Obama Cookies",
+      "shop_count": 1
+    },
+    {
       "name": "Obama Runtz",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "OG",
@@ -6622,7 +6638,7 @@
     },
     {
       "name": "OG Diesel",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "OG Haze",
@@ -6638,7 +6654,7 @@
     },
     {
       "name": "OG Kush Breath",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "OG Power Plant",
@@ -6674,7 +6690,7 @@
     },
     {
       "name": "Oishi",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Oishi x Zuru",
@@ -6706,7 +6722,7 @@
     },
     {
       "name": "Omega Z",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Orange Ade",
@@ -6718,7 +6734,7 @@
     },
     {
       "name": "Orange Cookies",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Orange Crush",
@@ -6726,6 +6742,10 @@
     },
     {
       "name": "Orange Glue",
+      "shop_count": 1
+    },
+    {
+      "name": "Orange Grape",
       "shop_count": 1
     },
     {
@@ -6742,10 +6762,18 @@
     },
     {
       "name": "Orange Milkshake",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Orange Peelz",
+      "shop_count": 1
+    },
+    {
+      "name": "Orange Pie",
+      "shop_count": 1
+    },
+    {
+      "name": "Orange Runtz",
       "shop_count": 1
     },
     {
@@ -6754,10 +6782,10 @@
     },
     {
       "name": "Orange Soda",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
-      "name": "Orange Z",
+      "name": "Orange Tangerine",
       "shop_count": 1
     },
     {
@@ -6778,14 +6806,10 @@
     },
     {
       "name": "Oreo Cookies",
-      "shop_count": 2
-    },
-    {
-      "name": "Oreo Moonrock",
       "shop_count": 1
     },
     {
-      "name": "Oreo x Biscotti",
+      "name": "Oreo Moonrock",
       "shop_count": 1
     },
     {
@@ -6794,7 +6818,7 @@
     },
     {
       "name": "Oreoz",
-      "shop_count": 23
+      "shop_count": 22
     },
     {
       "name": "Oreoz Blizzard",
@@ -6825,16 +6849,12 @@
       "shop_count": 1
     },
     {
-      "name": "Original UK Cheese",
-      "shop_count": 1
-    },
-    {
       "name": "Original Z",
       "shop_count": 1
     },
     {
       "name": "Original Zkittlez",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Orignal Z",
@@ -6881,6 +6901,10 @@
       "shop_count": 1
     },
     {
+      "name": "Panama Kush",
+      "shop_count": 1
+    },
+    {
       "name": "Papaya",
       "shop_count": 4
     },
@@ -6889,11 +6913,11 @@
       "shop_count": 1
     },
     {
-      "name": "Papaya Frosting",
+      "name": "Papaya Crush",
       "shop_count": 1
     },
     {
-      "name": "Papaya Puff",
+      "name": "Papaya Frosting",
       "shop_count": 1
     },
     {
@@ -6918,6 +6942,10 @@
     },
     {
       "name": "Parlay OG",
+      "shop_count": 1
+    },
+    {
+      "name": "Party Popperz",
       "shop_count": 1
     },
     {
@@ -6950,7 +6978,7 @@
     },
     {
       "name": "Peach Tree",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Peaches and Cream",
@@ -6958,15 +6986,11 @@
     },
     {
       "name": "Peanut Butter",
-      "shop_count": 1
-    },
-    {
-      "name": "Peanut Butter B",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Peanut Butter Breath",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Peel Out",
@@ -6990,7 +7014,7 @@
     },
     {
       "name": "Petrol Head Stash",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Peyote Breath",
@@ -7025,6 +7049,14 @@
       "shop_count": 3
     },
     {
+      "name": "Pineapple",
+      "shop_count": 1
+    },
+    {
+      "name": "Pineapple Bomb",
+      "shop_count": 1
+    },
+    {
       "name": "Pineapple Cake",
       "shop_count": 1
     },
@@ -7038,7 +7070,7 @@
     },
     {
       "name": "Pineapple Express",
-      "shop_count": 8
+      "shop_count": 9
     },
     {
       "name": "Pineapple God",
@@ -7050,11 +7082,11 @@
     },
     {
       "name": "Pineapple Haze",
-      "shop_count": 11
+      "shop_count": 10
     },
     {
       "name": "Pineapple Kush",
-      "shop_count": 3
+      "shop_count": 5
     },
     {
       "name": "Pineapple OG",
@@ -7066,18 +7098,18 @@
     },
     {
       "name": "Pineapple Z",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Pineberry",
       "shop_count": 1
     },
     {
-      "name": "Pink Cadillac",
+      "name": "Pink Caviar",
       "shop_count": 1
     },
     {
-      "name": "Pink Caviar",
+      "name": "Pink Certz",
       "shop_count": 1
     },
     {
@@ -7102,7 +7134,7 @@
     },
     {
       "name": "Pink Glue",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Pink Guava",
@@ -7118,7 +7150,7 @@
     },
     {
       "name": "Pink Honey",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Pink Limez",
@@ -7157,6 +7189,10 @@
       "shop_count": 1
     },
     {
+      "name": "Pink Zkittlez",
+      "shop_count": 1
+    },
+    {
       "name": "Pink Zoyard",
       "shop_count": 1
     },
@@ -7174,7 +7210,7 @@
     },
     {
       "name": "Pizen",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Planet Peach",
@@ -7187,10 +7223,6 @@
     {
       "name": "Platinum Gelato",
       "shop_count": 11
-    },
-    {
-      "name": "Platinum Kush",
-      "shop_count": 1
     },
     {
       "name": "Platnum Kush Breath",
@@ -7219,6 +7251,10 @@
     {
       "name": "Pomelo Gumi Fizz",
       "shop_count": 4
+    },
+    {
+      "name": "Pool Party",
+      "shop_count": 1
     },
     {
       "name": "Pop Star",
@@ -7254,11 +7290,11 @@
     },
     {
       "name": "Power Grape",
-      "shop_count": 9
+      "shop_count": 8
     },
     {
       "name": "Power Plant",
-      "shop_count": 29
+      "shop_count": 28
     },
     {
       "name": "Power Z",
@@ -7274,6 +7310,10 @@
     },
     {
       "name": "Propane Valley",
+      "shop_count": 1
+    },
+    {
+      "name": "Pruno",
       "shop_count": 1
     },
     {
@@ -7338,7 +7378,7 @@
     },
     {
       "name": "Purple Dino",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Purple Disco",
@@ -7382,7 +7422,7 @@
     },
     {
       "name": "Purple Haze",
-      "shop_count": 9
+      "shop_count": 7
     },
     {
       "name": "Purple Kosher",
@@ -7430,7 +7470,7 @@
     },
     {
       "name": "Purple Nerds",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Purple OG Kush",
@@ -7478,7 +7518,7 @@
     },
     {
       "name": "Purple Tangie",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Purple Wave",
@@ -7490,7 +7530,7 @@
     },
     {
       "name": "Queen of the South",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Quicksilver Haze",
@@ -7510,11 +7550,11 @@
     },
     {
       "name": "Rainbow Bacio",
-      "shop_count": 19
+      "shop_count": 20
     },
     {
       "name": "Rainbow Beltz",
-      "shop_count": 11
+      "shop_count": 9
     },
     {
       "name": "Rainbow Cherry",
@@ -7529,8 +7569,12 @@
       "shop_count": 1
     },
     {
+      "name": "Rainbow Peaches",
+      "shop_count": 1
+    },
+    {
       "name": "Rainbow Runtz",
-      "shop_count": 21
+      "shop_count": 20
     },
     {
       "name": "Rainbow Sherbert",
@@ -7558,7 +7602,7 @@
     },
     {
       "name": "Rainbow Zizi",
-      "shop_count": 19
+      "shop_count": 18
     },
     {
       "name": "Rainbow Zkittles",
@@ -7566,7 +7610,7 @@
     },
     {
       "name": "Rainbow Zoap",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Raspberry Ice",
@@ -7586,7 +7630,7 @@
     },
     {
       "name": "Red Amber",
-      "shop_count": 9
+      "shop_count": 7
     },
     {
       "name": "Red Beard",
@@ -7594,10 +7638,6 @@
     },
     {
       "name": "Red Bird",
-      "shop_count": 1
-    },
-    {
-      "name": "Red Biscotti",
       "shop_count": 1
     },
     {
@@ -7634,7 +7674,7 @@
     },
     {
       "name": "Red Runtz",
-      "shop_count": 14
+      "shop_count": 13
     },
     {
       "name": "Red Safari",
@@ -7650,7 +7690,7 @@
     },
     {
       "name": "Red Velvet",
-      "shop_count": 6
+      "shop_count": 8
     },
     {
       "name": "Redhotz",
@@ -7673,11 +7713,19 @@
       "shop_count": 1
     },
     {
+      "name": "Ridgeline",
+      "shop_count": 1
+    },
+    {
       "name": "RIP Uppercut",
       "shop_count": 1
     },
     {
       "name": "Ripper Haze",
+      "shop_count": 1
+    },
+    {
+      "name": "Riptide",
       "shop_count": 1
     },
     {
@@ -7717,6 +7765,10 @@
       "shop_count": 1
     },
     {
+      "name": "Rolls Royce",
+      "shop_count": 1
+    },
+    {
       "name": "Roodkapje",
       "shop_count": 1
     },
@@ -7746,7 +7798,7 @@
     },
     {
       "name": "Royal Gas",
-      "shop_count": 7
+      "shop_count": 6
     },
     {
       "name": "Royal Runtz",
@@ -7762,7 +7814,7 @@
     },
     {
       "name": "RS-11",
-      "shop_count": 36
+      "shop_count": 35
     },
     {
       "name": "RS-11 X ZKITTLEZ",
@@ -7770,7 +7822,7 @@
     },
     {
       "name": "Rubikz Cube",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Rucu Cucu OG",
@@ -7798,7 +7850,7 @@
     },
     {
       "name": "S5 AMNESIA HAZE",
-      "shop_count": 21
+      "shop_count": 20
     },
     {
       "name": "S5 HAZE",
@@ -7809,8 +7861,16 @@
       "shop_count": 1
     },
     {
+      "name": "S7",
+      "shop_count": 1
+    },
+    {
       "name": "Sakura Cookies",
-      "shop_count": 3
+      "shop_count": 2
+    },
+    {
+      "name": "Samango Kush",
+      "shop_count": 1
     },
     {
       "name": "SAMPLE BATCH A25",
@@ -7902,7 +7962,7 @@
     },
     {
       "name": "Sherbanger",
-      "shop_count": 4
+      "shop_count": 5
     },
     {
       "name": "SHERBANGER #22",
@@ -7917,10 +7977,6 @@
       "shop_count": 1
     },
     {
-      "name": "Sherbert Dab",
-      "shop_count": 1
-    },
-    {
       "name": "Sherbert Killer",
       "shop_count": 1
     },
@@ -7930,11 +7986,7 @@
     },
     {
       "name": "Sherbet",
-      "shop_count": 5
-    },
-    {
-      "name": "Sherblato",
-      "shop_count": 1
+      "shop_count": 6
     },
     {
       "name": "Shining Haze",
@@ -7962,7 +8014,7 @@
     },
     {
       "name": "Shoreline",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Shrimp Ramen",
@@ -7970,6 +8022,10 @@
     },
     {
       "name": "Shut Your Gumz",
+      "shop_count": 1
+    },
+    {
+      "name": "Silky Smoke",
       "shop_count": 1
     },
     {
@@ -7986,7 +8042,7 @@
     },
     {
       "name": "Silver Haze",
-      "shop_count": 49
+      "shop_count": 48
     },
     {
       "name": "Silver K",
@@ -8022,7 +8078,7 @@
     },
     {
       "name": "Skunk",
-      "shop_count": 6
+      "shop_count": 5
     },
     {
       "name": "Skunk .W.W",
@@ -8030,11 +8086,7 @@
     },
     {
       "name": "Skunk x Animal Mintz",
-      "shop_count": 19
-    },
-    {
-      "name": "Skunkberry",
-      "shop_count": 1
+      "shop_count": 18
     },
     {
       "name": "Sky Amnesia",
@@ -8046,7 +8098,7 @@
     },
     {
       "name": "Skywalker Kush",
-      "shop_count": 31
+      "shop_count": 30
     },
     {
       "name": "Skywalker OG",
@@ -8054,7 +8106,7 @@
     },
     {
       "name": "Slurricane",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Slush Rush",
@@ -8078,11 +8130,11 @@
     },
     {
       "name": "Smooth Operator",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Smoothiez",
-      "shop_count": 8
+      "shop_count": 9
     },
     {
       "name": "Snazzy",
@@ -8090,7 +8142,7 @@
     },
     {
       "name": "Sneeuwwitje",
-      "shop_count": 15
+      "shop_count": 17
     },
     {
       "name": "Snow Cake",
@@ -8109,11 +8161,11 @@
       "shop_count": 1
     },
     {
-      "name": "Snowman",
+      "name": "Solero",
       "shop_count": 1
     },
     {
-      "name": "Solero",
+      "name": "Sosa",
       "shop_count": 1
     },
     {
@@ -8126,6 +8178,10 @@
     },
     {
       "name": "Sour Banger",
+      "shop_count": 1
+    },
+    {
+      "name": "Sour Berry Blast",
       "shop_count": 1
     },
     {
@@ -8150,10 +8206,14 @@
     },
     {
       "name": "Sour Bubblegum",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Sour Candy Diesel",
+      "shop_count": 1
+    },
+    {
+      "name": "Sour Cheese",
       "shop_count": 1
     },
     {
@@ -8165,16 +8225,12 @@
       "shop_count": 2
     },
     {
-      "name": "Sour Crippy",
-      "shop_count": 1
-    },
-    {
       "name": "Sour Delight",
       "shop_count": 3
     },
     {
       "name": "Sour Diesel",
-      "shop_count": 8
+      "shop_count": 12
     },
     {
       "name": "Sour Dreams",
@@ -8194,7 +8250,7 @@
     },
     {
       "name": "Sour Melon",
-      "shop_count": 16
+      "shop_count": 14
     },
     {
       "name": "Sour Melon Popcorn",
@@ -8202,7 +8258,7 @@
     },
     {
       "name": "Sour OG",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Sour Power OG",
@@ -8211,10 +8267,6 @@
     {
       "name": "Sour Runtz",
       "shop_count": 2
-    },
-    {
-      "name": "Sour Satsuma",
-      "shop_count": 1
     },
     {
       "name": "Sour Strawberry",
@@ -8241,16 +8293,12 @@
       "shop_count": 1
     },
     {
-      "name": "Space Age Cake",
-      "shop_count": 1
-    },
-    {
       "name": "Space Cakes",
       "shop_count": 1
     },
     {
       "name": "Space Candy",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Space Haze",
@@ -8262,6 +8310,10 @@
     },
     {
       "name": "Space Queen",
+      "shop_count": 1
+    },
+    {
+      "name": "Space Runtz",
       "shop_count": 1
     },
     {
@@ -8286,7 +8338,7 @@
     },
     {
       "name": "Spicebomb",
-      "shop_count": 7
+      "shop_count": 6
     },
     {
       "name": "Spirit Haze",
@@ -8302,7 +8354,7 @@
     },
     {
       "name": "Spritzer",
-      "shop_count": 1
+      "shop_count": 3
     },
     {
       "name": "Starburst",
@@ -8330,7 +8382,7 @@
     },
     {
       "name": "Sticky Dreams",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Sticky Drip",
@@ -8373,7 +8425,7 @@
       "shop_count": 1
     },
     {
-      "name": "Strawberry Cookie",
+      "name": "Strawberry Cherry Pie",
       "shop_count": 1
     },
     {
@@ -8382,10 +8434,6 @@
     },
     {
       "name": "Strawberry Dream",
-      "shop_count": 1
-    },
-    {
-      "name": "Strawberry Gary",
       "shop_count": 1
     },
     {
@@ -8398,7 +8446,7 @@
     },
     {
       "name": "Strawberry Haze",
-      "shop_count": 27
+      "shop_count": 28
     },
     {
       "name": "Strawberry Knock Out",
@@ -8406,7 +8454,7 @@
     },
     {
       "name": "Strawberry Kush",
-      "shop_count": 7
+      "shop_count": 6
     },
     {
       "name": "Strawberry Lemon",
@@ -8414,7 +8462,7 @@
     },
     {
       "name": "Strawberry Lemonade",
-      "shop_count": 4
+      "shop_count": 5
     },
     {
       "name": "Strawberry Oreoz",
@@ -8425,8 +8473,12 @@
       "shop_count": 6
     },
     {
+      "name": "Strawberry Pushpop",
+      "shop_count": 1
+    },
+    {
       "name": "Strawberry Runtz",
-      "shop_count": 16
+      "shop_count": 15
     },
     {
       "name": "Strawberry Shortcake",
@@ -8458,15 +8510,11 @@
     },
     {
       "name": "Sub Zero",
-      "shop_count": 11
+      "shop_count": 14
     },
     {
       "name": "Sub Zero Popcorn",
       "shop_count": 1
-    },
-    {
-      "name": "Subzero",
-      "shop_count": 3
     },
     {
       "name": "Sugar",
@@ -8486,7 +8534,7 @@
     },
     {
       "name": "Sugar Dreams",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Sugar Rush",
@@ -8494,7 +8542,7 @@
     },
     {
       "name": "Sugar Shack",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Suitcase",
@@ -8515,6 +8563,10 @@
     {
       "name": "Summer Haze",
       "shop_count": 2
+    },
+    {
+      "name": "Summertime Squeeze",
+      "shop_count": 1
     },
     {
       "name": "Sumo Thai",
@@ -8554,11 +8606,15 @@
     },
     {
       "name": "Sunset Sherbert",
-      "shop_count": 17
+      "shop_count": 15
     },
     {
       "name": "Sunsetz",
-      "shop_count": 15
+      "shop_count": 14
+    },
+    {
+      "name": "Supa Killa",
+      "shop_count": 1
     },
     {
       "name": "Super Amnesia",
@@ -8574,18 +8630,22 @@
     },
     {
       "name": "Super Boof Cherry",
-      "shop_count": 7
-    },
-    {
-      "name": "Super Boof x LCG",
-      "shop_count": 1
+      "shop_count": 8
     },
     {
       "name": "Super Buff Cherry",
-      "shop_count": 16
+      "shop_count": 20
     },
     {
       "name": "Super Cookie",
+      "shop_count": 1
+    },
+    {
+      "name": "Super Dreams",
+      "shop_count": 1
+    },
+    {
+      "name": "Super Gumbo",
       "shop_count": 1
     },
     {
@@ -8606,7 +8666,7 @@
     },
     {
       "name": "Super Lemon Haze",
-      "shop_count": 48
+      "shop_count": 46
     },
     {
       "name": "Super Lemon Sam",
@@ -8621,10 +8681,6 @@
       "shop_count": 1
     },
     {
-      "name": "Super Nova",
-      "shop_count": 1
-    },
-    {
       "name": "Super Orange Glue",
       "shop_count": 9
     },
@@ -8634,7 +8690,7 @@
     },
     {
       "name": "Super Runtz",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "SUPER SILVER",
@@ -8654,7 +8710,7 @@
     },
     {
       "name": "Super Skunk",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Super Snow White",
@@ -8710,11 +8766,7 @@
     },
     {
       "name": "Sweet Dreams",
-      "shop_count": 2
-    },
-    {
-      "name": "Sweet Retreat",
-      "shop_count": 1
+      "shop_count": 3
     },
     {
       "name": "Sweet Royal Amnesia",
@@ -8725,16 +8777,16 @@
       "shop_count": 1
     },
     {
-      "name": "Sweet Tangie",
-      "shop_count": 1
-    },
-    {
-      "name": "Swiss Watch",
+      "name": "Swirlz",
       "shop_count": 1
     },
     {
       "name": "T-Bone",
-      "shop_count": 3
+      "shop_count": 2
+    },
+    {
+      "name": "Taffy Bomber",
+      "shop_count": 1
     },
     {
       "name": "Tahoe Banger",
@@ -8774,15 +8826,15 @@
     },
     {
       "name": "Tangie",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Tea Party",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Tea Time",
-      "shop_count": 3
+      "shop_count": 4
     },
     {
       "name": "Tear Gas",
@@ -8790,7 +8842,7 @@
     },
     {
       "name": "Tenbanger",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Terpology",
@@ -8798,7 +8850,7 @@
     },
     {
       "name": "Terpy Slurpy",
-      "shop_count": 17
+      "shop_count": 16
     },
     {
       "name": "Texel",
@@ -8833,19 +8885,15 @@
       "shop_count": 1
     },
     {
-      "name": "The Imposter",
-      "shop_count": 1
-    },
-    {
-      "name": "The Keeper",
-      "shop_count": 1
-    },
-    {
       "name": "The MAC",
       "shop_count": 1
     },
     {
       "name": "The Methode",
+      "shop_count": 1
+    },
+    {
+      "name": "The Mint",
       "shop_count": 1
     },
     {
@@ -8870,15 +8918,11 @@
     },
     {
       "name": "Tide",
-      "shop_count": 6
-    },
-    {
-      "name": "Tide Banger",
-      "shop_count": 7
+      "shop_count": 8
     },
     {
       "name": "Tidebanger",
-      "shop_count": 1
+      "shop_count": 10
     },
     {
       "name": "Tiger Mints",
@@ -8889,8 +8933,12 @@
       "shop_count": 4
     },
     {
+      "name": "Toad Breath",
+      "shop_count": 1
+    },
+    {
       "name": "Toad Venom",
-      "shop_count": 12
+      "shop_count": 16
     },
     {
       "name": "Tomahawk",
@@ -8917,16 +8965,8 @@
       "shop_count": 1
     },
     {
-      "name": "Triangle Mints #23",
-      "shop_count": 1
-    },
-    {
       "name": "Triangle OG",
       "shop_count": 2
-    },
-    {
-      "name": "TRIANGLE X RS11",
-      "shop_count": 1
     },
     {
       "name": "Trip Crown",
@@ -8942,11 +8982,7 @@
     },
     {
       "name": "Triple Platinum",
-      "shop_count": 5
-    },
-    {
-      "name": "Triple Scoop",
-      "shop_count": 1
+      "shop_count": 6
     },
     {
       "name": "Triple X Haze",
@@ -8966,10 +9002,18 @@
     },
     {
       "name": "Tropical Cherry",
-      "shop_count": 13
+      "shop_count": 14
     },
     {
       "name": "Tropical Cherry Punch",
+      "shop_count": 1
+    },
+    {
+      "name": "Tropical Cherry Strawberry",
+      "shop_count": 1
+    },
+    {
+      "name": "Tropical Fruit Burst",
       "shop_count": 1
     },
     {
@@ -8986,7 +9030,7 @@
     },
     {
       "name": "Tropical Haze",
-      "shop_count": 14
+      "shop_count": 13
     },
     {
       "name": "Tropical Kush",
@@ -8994,7 +9038,11 @@
     },
     {
       "name": "Tropical Limez",
-      "shop_count": 9
+      "shop_count": 8
+    },
+    {
+      "name": "Tropical Melon",
+      "shop_count": 1
     },
     {
       "name": "Tropical Mix Zkittlez",
@@ -9038,7 +9086,7 @@
     },
     {
       "name": "Tropicana",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Tropicana Banana",
@@ -9050,7 +9098,7 @@
     },
     {
       "name": "Tropicana Cherry",
-      "shop_count": 49
+      "shop_count": 48
     },
     {
       "name": "Tropicana Cookies",
@@ -9082,7 +9130,7 @@
     },
     {
       "name": "Tutti Frutie",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Twinkiez",
@@ -9094,7 +9142,7 @@
     },
     {
       "name": "Tzunami",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "UK Cheese",
@@ -9106,11 +9154,11 @@
     },
     {
       "name": "Ultraviolet",
-      "shop_count": 6
+      "shop_count": 5
     },
     {
       "name": "Uncle Snoop",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Uncle Snoop's Choice",
@@ -9122,11 +9170,11 @@
     },
     {
       "name": "Unleaded",
-      "shop_count": 8
+      "shop_count": 7
     },
     {
       "name": "Valley Banger",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Vanilla Glitter Glue",
@@ -9142,7 +9190,7 @@
     },
     {
       "name": "Vanilla Noir",
-      "shop_count": 12
+      "shop_count": 13
     },
     {
       "name": "Velvet",
@@ -9154,7 +9202,7 @@
     },
     {
       "name": "Versace",
-      "shop_count": 5
+      "shop_count": 6
     },
     {
       "name": "Versace #2",
@@ -9162,7 +9210,7 @@
     },
     {
       "name": "Verzace",
-      "shop_count": 4
+      "shop_count": 5
     },
     {
       "name": "Vince Vaughn",
@@ -9185,6 +9233,10 @@
       "shop_count": 1
     },
     {
+      "name": "Voordeelzak",
+      "shop_count": 1
+    },
+    {
       "name": "Waalwijks Wit",
       "shop_count": 9
     },
@@ -9194,7 +9246,7 @@
     },
     {
       "name": "Wagyu",
-      "shop_count": 4
+      "shop_count": 2
     },
     {
       "name": "Wagyu Ramen",
@@ -9237,20 +9289,16 @@
       "shop_count": 1
     },
     {
-      "name": "Watermelon Z",
-      "shop_count": 1
-    },
-    {
       "name": "Watermelon Zkittlez",
       "shop_count": 9
     },
     {
-      "name": "Watermelon-z",
-      "shop_count": 1
+      "name": "Watermelon-Z",
+      "shop_count": 4
     },
     {
       "name": "Wedding Cake",
-      "shop_count": 52
+      "shop_count": 51
     },
     {
       "name": "Wedding Cake Kush",
@@ -9270,7 +9318,7 @@
     },
     {
       "name": "Wedding Crasher",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Wedren High",
@@ -9282,11 +9330,11 @@
     },
     {
       "name": "What The Fuck",
-      "shop_count": 1
+      "shop_count": 4
     },
     {
       "name": "White Amnesia",
-      "shop_count": 24
+      "shop_count": 25
     },
     {
       "name": "White Balloon",
@@ -9314,11 +9362,11 @@
     },
     {
       "name": "White Choco",
-      "shop_count": 8
+      "shop_count": 9
     },
     {
       "name": "White Choco Haze",
-      "shop_count": 6
+      "shop_count": 5
     },
     {
       "name": "White Choco Kush",
@@ -9345,8 +9393,12 @@
       "shop_count": 1
     },
     {
+      "name": "White Gorilla Haze",
+      "shop_count": 1
+    },
+    {
       "name": "White Gorrilla",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "White Grape",
@@ -9358,7 +9410,7 @@
     },
     {
       "name": "White Haze",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "White Hulk",
@@ -9370,10 +9422,6 @@
     },
     {
       "name": "White Lady",
-      "shop_count": 1
-    },
-    {
-      "name": "White Pineapple",
       "shop_count": 1
     },
     {
@@ -9394,7 +9442,7 @@
     },
     {
       "name": "White Runtz",
-      "shop_count": 11
+      "shop_count": 10
     },
     {
       "name": "White Runtz x Blue Cookies",
@@ -9425,12 +9473,8 @@
       "shop_count": 1
     },
     {
-      "name": "White Truffle Clones",
-      "shop_count": 1
-    },
-    {
       "name": "White Trufflez",
-      "shop_count": 10
+      "shop_count": 11
     },
     {
       "name": "White Trufflez Cake",
@@ -9438,7 +9482,7 @@
     },
     {
       "name": "White Widow",
-      "shop_count": 152
+      "shop_count": 151
     },
     {
       "name": "White Widow Enemy",
@@ -9481,10 +9525,6 @@
       "shop_count": 1
     },
     {
-      "name": "Wizard OG",
-      "shop_count": 1
-    },
-    {
       "name": "Wizzy",
       "shop_count": 3
     },
@@ -9509,11 +9549,19 @@
       "shop_count": 1
     },
     {
+      "name": "X44",
+      "shop_count": 1
+    },
+    {
       "name": "Xtreme",
       "shop_count": 1
     },
     {
       "name": "Yachtzee",
+      "shop_count": 1
+    },
+    {
+      "name": "Yakuza",
       "shop_count": 1
     },
     {
@@ -9546,7 +9594,7 @@
     },
     {
       "name": "Yellow Zuzu",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Yellowfin",
@@ -9558,10 +9606,6 @@
     },
     {
       "name": "YSL",
-      "shop_count": 1
-    },
-    {
-      "name": "Yubari Gold",
       "shop_count": 1
     },
     {
@@ -9598,7 +9642,7 @@
     },
     {
       "name": "Z Lime Pie",
-      "shop_count": 4
+      "shop_count": 5
     },
     {
       "name": "Z Pie",
@@ -9610,11 +9654,11 @@
     },
     {
       "name": "Z-Pie",
-      "shop_count": 1
+      "shop_count": 2
     },
     {
       "name": "Zabaii",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Zai Zai",
@@ -9625,16 +9669,12 @@
       "shop_count": 1
     },
     {
-      "name": "Zamosa",
-      "shop_count": 1
-    },
-    {
       "name": "Zamurai",
       "shop_count": 2
     },
     {
       "name": "Zang Banger",
-      "shop_count": 10
+      "shop_count": 11
     },
     {
       "name": "Zang Banger x Toad",
@@ -9642,7 +9682,7 @@
     },
     {
       "name": "Zangria",
-      "shop_count": 8
+      "shop_count": 7
     },
     {
       "name": "Zartier",
@@ -9662,11 +9702,19 @@
     },
     {
       "name": "Zelium",
-      "shop_count": 2
+      "shop_count": 1
+    },
+    {
+      "name": "Zello",
+      "shop_count": 1
     },
     {
       "name": "Zelly",
-      "shop_count": 4
+      "shop_count": 3
+    },
+    {
+      "name": "ZELLY V3",
+      "shop_count": 1
     },
     {
       "name": "Zelonade",
@@ -9742,7 +9790,7 @@
     },
     {
       "name": "Zirkin",
-      "shop_count": 7
+      "shop_count": 9
     },
     {
       "name": "Zitronella",
@@ -9761,12 +9809,8 @@
       "shop_count": 2
     },
     {
-      "name": "Zkittles OG",
-      "shop_count": 1
-    },
-    {
       "name": "Zkittles Popcorn",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Zkittles X Mochi",
@@ -9774,18 +9818,14 @@
     },
     {
       "name": "Zkittlez",
-      "shop_count": 47
+      "shop_count": 48
     },
     {
       "name": "ZKITTLEZ BX2",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Zkittlez Explosion",
-      "shop_count": 1
-    },
-    {
-      "name": "Zkittlez Orange",
       "shop_count": 1
     },
     {
@@ -9801,8 +9841,12 @@
       "shop_count": 1
     },
     {
+      "name": "Zlimer",
+      "shop_count": 1
+    },
+    {
       "name": "Zlushi",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Zmoothie",
@@ -9810,7 +9854,7 @@
     },
     {
       "name": "Zoap",
-      "shop_count": 28
+      "shop_count": 29
     },
     {
       "name": "Zoap Lemon",
@@ -9833,6 +9877,10 @@
       "shop_count": 1
     },
     {
+      "name": "Zodiac",
+      "shop_count": 1
+    },
+    {
       "name": "Zoltar",
       "shop_count": 1
     },
@@ -9846,7 +9894,7 @@
     },
     {
       "name": "Zombie Kush",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Zombie OG",
@@ -9865,32 +9913,36 @@
       "shop_count": 1
     },
     {
+      "name": "Zour Z",
+      "shop_count": 1
+    },
+    {
       "name": "Zours",
-      "shop_count": 2
+      "shop_count": 3
     },
     {
       "name": "Zowahh",
-      "shop_count": 26
+      "shop_count": 27
     },
     {
       "name": "Zowanami",
-      "shop_count": 3
+      "shop_count": 6
     },
     {
       "name": "Zoy",
-      "shop_count": 2
+      "shop_count": 1
     },
     {
       "name": "Zoyard",
-      "shop_count": 4
+      "shop_count": 3
     },
     {
       "name": "Zoz",
-      "shop_count": 12
+      "shop_count": 11
     },
     {
       "name": "Zoza",
-      "shop_count": 3
+      "shop_count": 2
     },
     {
       "name": "Zozi",
@@ -9950,7 +10002,7 @@
     },
     {
       "name": "Zutopia",
-      "shop_count": 3
+      "shop_count": 1
     },
     {
       "name": "Zwirlz",
@@ -9964,8 +10016,8 @@
   "growers": [
     {
       "name": "Amsterdam Exotics",
-      "shop_count": 1,
-      "strain_count": 1
+      "shop_count": 2,
+      "strain_count": 2
     },
     {
       "name": "Cali Genetics",
@@ -9983,19 +10035,34 @@
       "strain_count": 3
     },
     {
+      "name": "Cookies",
+      "shop_count": 1,
+      "strain_count": 1
+    },
+    {
       "name": "Doja",
-      "shop_count": 7,
-      "strain_count": 15
+      "shop_count": 8,
+      "strain_count": 16
     },
     {
       "name": "Don Merfos",
       "shop_count": 4,
-      "strain_count": 8
+      "strain_count": 7
     },
     {
       "name": "Dreambro's",
-      "shop_count": 5,
+      "shop_count": 4,
       "strain_count": 12
+    },
+    {
+      "name": "Gas No Brakes",
+      "shop_count": 1,
+      "strain_count": 9
+    },
+    {
+      "name": "Hall of Fame",
+      "shop_count": 1,
+      "strain_count": 3
     },
     {
       "name": "Heavy Loads",
@@ -10009,7 +10076,7 @@
     },
     {
       "name": "Karma",
-      "shop_count": 9,
+      "shop_count": 10,
       "strain_count": 13
     },
     {
@@ -10019,8 +10086,8 @@
     },
     {
       "name": "Maison O Cacapo",
-      "shop_count": 9,
-      "strain_count": 17
+      "shop_count": 10,
+      "strain_count": 18
     },
     {
       "name": "Mythodic",
@@ -10034,8 +10101,13 @@
     },
     {
       "name": "RTZ",
-      "shop_count": 2,
-      "strain_count": 6
+      "shop_count": 1,
+      "strain_count": 5
+    },
+    {
+      "name": "Super Dope",
+      "shop_count": 1,
+      "strain_count": 5
     },
     {
       "name": "Terps Army Farm",
@@ -10043,9 +10115,14 @@
       "strain_count": 7
     },
     {
+      "name": "Terpz & Co.",
+      "shop_count": 1,
+      "strain_count": 2
+    },
+    {
       "name": "The TenCo",
-      "shop_count": 25,
-      "strain_count": 47
+      "shop_count": 24,
+      "strain_count": 48
     },
     {
       "name": "Trufflez",
@@ -10055,7 +10132,7 @@
     {
       "name": "Wizard Trees",
       "shop_count": 23,
-      "strain_count": 28
+      "strain_count": 45
     }
   ],
   "cities": [

@@ -301,11 +301,11 @@
     setCssVar('--mist-wash', rgba(theme.accent, isClassic ? 0.2 : 0.16));
     setCssVar('--resin-glow', rgba(theme.secondary, isClassic ? 0.22 : 0.16));
     setCssVar('--ink', theme.text);
-    setCssVar('--muted', theme.muted);
-    setCssVar('--soft', rgba(theme.text, isClassic ? 0.58 : 0.56));
+    setCssVar('--muted', `color-mix(in srgb, ${theme.muted} 80%, ${theme.text})`);
+    setCssVar('--soft', rgba(theme.text, isClassic ? 0.76 : 0.74));
     setCssVar('--panel', theme.panel);
     setCssVar('--panel-strong', theme.panelStrong);
-    setCssVar('--panel-border', theme.border);
+    setCssVar('--panel-border', rgba(theme.text, isClassic ? 0.28 : 0.26));
     setCssVar('--panel-alt', theme.panelAlt);
     setCssVar('--island-bg', theme.panel);
     setCssVar('--line', theme.border);
@@ -320,9 +320,9 @@
     setCssVar('--control-bg', isClassic ? 'rgba(255, 255, 255, 0.72)' : rgba(theme.text, 0.1));
     setCssVar('--control-bg-strong', isClassic ? 'rgba(255, 255, 255, 0.88)' : rgba(theme.text, 0.16));
     setCssVar('--control-bg-hover', isClassic ? 'rgba(255, 255, 255, 0.96)' : rgba(theme.text, 0.22));
-    setCssVar('--control-border', isClassic ? 'rgba(92, 107, 97, 0.16)' : rgba(theme.text, 0.2));
+    setCssVar('--control-border', isClassic ? 'rgba(66, 85, 73, 0.34)' : rgba(theme.text, 0.32));
     setCssVar('--control-text', theme.text);
-    setCssVar('--control-muted', theme.muted);
+    setCssVar('--control-muted', 'var(--muted)');
     setCssVar('--control-selected-bg', isClassic ? rgba(theme.accent, 0.14) : rgba(theme.accent, 0.22));
     setCssVar('--control-selected-border', rgba(theme.accent, isClassic ? 0.3 : 0.42));
     setCssVar('--amber', theme.secondary);
