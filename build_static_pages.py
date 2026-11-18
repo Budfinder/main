@@ -17,8 +17,9 @@ each JSON export (the admin's Export JSON button also runs it):
 
     python3 build_static_pages.py
 
-It only reads database/ and rewrites the three outputs above. Pages for shops
-or strains that have left the menus are removed on the next run.
+It only reads database/ and updates the three outputs above in place: pages
+that did not change are left alone, and pages for shops or strains that have
+left the menus are removed.
 """
 
 from __future__ import annotations
@@ -29,7 +30,6 @@ import html
 import json
 import os
 import re
-import shutil
 import statistics
 import sys
 import unicodedata
@@ -40,7 +40,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 from urllib.parse import quote, urlencode
 
 SITE = "https://budfinder.org"
-STYLESHEET = "/styles/budfinder-static.css?v=20261118-static1"
+STYLESHEET = "/styles/budfinder-static.css?v=20261118-static2"
 BRAND_MARK = "/images/budfinder-badge-v3-96.webp"
 SOCIAL_IMAGE = f"{SITE}/static/images/budfinder-social.png"
 MIN_STRAIN_SHOPS = 2  # single-shop strains stay in the live explorer only
@@ -52,6 +52,9 @@ TRUSTED_DATE_FIELDS = (
 )
 TYPE_ORDER = ["sativa", "indica", "hybrid", "hash"]
 GENERATED_DIRS = ("coffeeshops", "strains")
+CHECK_NOTE = '<small class="warn" title="This looks like a menu typo, so it is left out of typical and lowest prices.">Check price</small>'
+OLD_NOTE = '<small class="warn" title="This menu is over a year old, so its prices are left out of typical and lowest prices.">Old menu</small>'
+HOURS_FILE = "opening_hours.json"  # written once by scripts/fetch_opening_hours.py
 MARKER_FILE = ".generated-by-build_static_pages"
 
 
@@ -132,6 +135,14 @@ def fmt_date(moment: Optional[datetime]) -> str:
 
 def fmt_long_date(moment: Optional[datetime]) -> str:
     return f"{moment.day} {moment.strftime('%B %Y')}" if moment else "Unknown"
+
+
+def clean_address(value: Any, name: str = "") -> str:
+    """An address line without the shop name some sources put in front."""
+    text = " ".join(str(value or "").split())
+    if name and text.lower().startswith(name.strip().lower() + ","):
+        text = text[len(name.strip()) + 1:].strip()
+    return text
 
 
 def median(values: Iterable[float]) -> Optional[float]:
@@ -225,6 +236,8 @@ class Dataset:
         }
         self.shop_meta = {str(shop.get("shop_id")): shop for shop in shops}
         self.catalogue = catalogue
+        hours_path = db / HOURS_FILE
+        self.hours = json.loads(hours_path.read_text(encoding="utf-8")) if hours_path.exists() else {}
 
         self.rows: List[Dict[str, Any]] = []
         for row in offerings:
@@ -233,6 +246,11 @@ class Dataset:
             price = gram_price(row)
             item = dict(row)
             item["_price"] = price
+            # Likely typos (price_checks.py) are shown but never compared.
+            item["_checked"] = bool(str(row.get("price_check") or "").strip())
+            # So are listings from menus over a year old (the export sets old_menu).
+            item["_old"] = int(row.get("old_menu") or 0) == 1
+            item["_cmp"] = None if item["_checked"] or item["_old"] else price
             item["_date"] = listing_date(row, self.now)
             item["_strain_key"] = re.sub(r"\s+", " ", str(row.get("strain_name_normalised") or row.get("strain_name") or "").strip().lower())
             if item["_strain_key"]:
@@ -256,8 +274,11 @@ class Dataset:
             city = display_city(first.get("shop_city") or meta.get("city") or cat.get("city") or "")
             city_slug = slugify(cat.get("city_slug") or city)
             name = str(first.get("shop_name") or meta.get("name") or "Coffeeshop").strip()
-            prices = [r["_price"] for r in rows if r["_price"] is not None]
+            prices = [r["_cmp"] for r in rows if r["_cmp"] is not None]
+            own_prices = [r["_price"] for r in rows if r["_price"] is not None and not r["_checked"]]
             dates = [r["_date"] for r in rows if r["_date"]]
+            address = clean_address(meta.get("address"), name) or " ".join(
+                part for part in (cat.get("address"), cat.get("postcode")) if part).strip()
             self.shops[shop_id] = {
                 "id": shop_id,
                 "key": shop_key,
@@ -269,8 +290,13 @@ class Dataset:
                 "strain_count": len({r["_strain_key"] for r in rows}),
                 "median": median(prices),
                 "low": min(prices) if prices else None,
+                # The shop's own figures, shown on its page even for an old menu.
+                "own_median": median(own_prices),
+                "own_low": min(own_prices) if own_prices else None,
+                "old_menu": any(r["_old"] for r in rows),
+                "dated": bool(parse_time(meta.get("source_menu_date"))),
                 "latest": max(dates) if dates else None,
-                "address": " ".join(part for part in (cat.get("address"), cat.get("postcode")) if part).strip(),
+                "address": address,
                 "lat": cat.get("lat"),
                 "lng": cat.get("lng"),
                 "logo": self._logo_src(str(cat.get("logo") or "").strip()),
@@ -300,7 +326,7 @@ class Dataset:
             shop_ids = {str(r.get("shop_id")) for r in rows}
             names = Counter(str(r.get("strain_name") or "").strip() for r in rows if r.get("strain_name"))
             name = display_strain(names.most_common(1)[0][0] if names else key)
-            prices = [r["_price"] for r in rows if r["_price"] is not None]
+            prices = [r["_cmp"] for r in rows if r["_cmp"] is not None]
             types = Counter(str(r.get("base_type") or "").lower() for r in rows if r.get("base_type"))
             strain = {
                 "key": key,
@@ -326,7 +352,7 @@ class Dataset:
         self.cities: Dict[str, Dict[str, Any]] = {}
         for slug, shops in grouped.items():
             rows = [row for shop in shops for row in shop["rows"]]
-            prices = [r["_price"] for r in rows if r["_price"] is not None]
+            prices = [r["_cmp"] for r in rows if r["_cmp"] is not None]
             strain_shops: Dict[str, set] = defaultdict(set)
             for row in rows:
                 strain_shops[row["_strain_key"]].add(str(row.get("shop_id")))
@@ -432,7 +458,7 @@ def plural(count: int, word: str, many: Optional[str] = None) -> str:
 # ---------------------------------------------------------------- pages
 
 def strain_page(ds: Dataset, strain: Dict[str, Any]) -> str:
-    rows = sorted(strain["rows"], key=lambda r: (r["_price"] if r["_price"] is not None else 1e9,
+    rows = sorted(strain["rows"], key=lambda r: (r["_cmp"] if r["_cmp"] is not None else 1e9,
                                                 ds.shops[str(r["shop_id"])]["name"].lower()))
     shop_count = len(strain["shop_ids"])
     by_city: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
@@ -442,7 +468,7 @@ def strain_page(ds: Dataset, strain: Dict[str, Any]) -> str:
     city_rows = []
     for slug, items in sorted(by_city.items(), key=lambda item: (-len({str(r["shop_id"]) for r in item[1]}), item[0])):
         city = ds.cities[slug]
-        prices = [r["_price"] for r in items if r["_price"] is not None]
+        prices = [r["_cmp"] for r in items if r["_cmp"] is not None]
         city_rows.append(
             f'<tr><td><a href="{city["path"]}">{esc(city["name"])}</a></td>'
             f'<td class="num">{len({str(r["shop_id"]) for r in items})}</td>'
@@ -459,7 +485,7 @@ def strain_page(ds: Dataset, strain: Dict[str, Any]) -> str:
         listing_rows.append(
             f'<tr><td><a href="{shop["path"]}">{esc(shop["name"])}</a>{f"<small>{esc(notes)}</small>" if notes else ""}</td>'
             f'<td><a href="{ds.cities[shop["city_slug"]]["path"]}">{esc(shop["city"])}</a></td>'
-            f'<td class="num"><strong>{per_gram(row["_price"])}</strong>{f"<small>{esc(pack_label(row))}</small>" if pack_label(row) else ""}</td>'
+            f'<td class="num"><strong>{per_gram(row["_price"])}</strong>{f"<small>{esc(pack_label(row))}</small>" if pack_label(row) else ""}{CHECK_NOTE if row["_checked"] else OLD_NOTE if row["_old"] else ""}</td>'
             f'<td class="num">{esc(fmt_date(row["_date"]))}</td></tr>'
         )
     type_chip = f'<span class="chip type-{esc(strain["type"])}">{esc(strain["type"])}</span>' if strain["type"] else ""
@@ -523,8 +549,10 @@ def shop_page(ds: Dataset, shop: Dict[str, Any]) -> str:
             ]))
             strain = ds.strains.get(row["_strain_key"]) or {}
             compare = ""
-            if strain.get("median") and row["_price"] is not None and len(strain.get("shop_ids", ())) >= 2:
-                diff = (row["_price"] - strain["median"]) / strain["median"]
+            if row["_checked"]:
+                compare = CHECK_NOTE
+            elif strain.get("median") and row["_cmp"] is not None and len(strain.get("shop_ids", ())) >= 2:
+                diff = (row["_cmp"] - strain["median"]) / strain["median"]
                 if diff <= -0.1:
                     compare = '<small class="good">Below typical</small>'
                 elif diff >= 0.1:
@@ -545,6 +573,10 @@ def shop_page(ds: Dataset, shop: Dict[str, Any]) -> str:
     source = (f'<a class="button" href="{esc(shop["source_url"])}" rel="nofollow noopener" target="_blank">Menu source</a>'
               if shop["source_url"] else "")
     address = f'<p class="muted">{esc(shop["address"])}</p>' if shop["address"] else ""
+    date_words = "Menu dated" if shop["dated"] else "Menu last changed"
+    old_notice = (f'<p class="notice">This menu is from {esc(fmt_long_date(shop["latest"]))}. It is over a year old, '
+                  "so its prices are left out of typical and lowest prices on Budfinder.</p>"
+                  if shop["old_menu"] else "")
     body = f"""
     <header class="hero hero-shop">
       <div class="identity">{logo_html(shop, 64)}<div>
@@ -552,10 +584,11 @@ def shop_page(ds: Dataset, shop: Dict[str, Any]) -> str:
         <h1>{esc(shop["name"])}</h1>
       </div></div>
       {address}
-      <p class="lead">{plural(shop["strain_count"], "strain")} on the menu, from {per_gram(shop["low"])}. Menu last changed {esc(fmt_long_date(shop["latest"]))}.</p>
+      <p class="lead">{plural(shop["strain_count"], "strain")} on the menu, from {per_gram(shop["own_low"])}. {date_words} {esc(fmt_long_date(shop["latest"]))}.</p>
+      {old_notice}
       <div class="stats">
-        {stat("Typical price", per_gram(shop["median"]), "Median listing")}
-        {stat("Cheapest", per_gram(shop["low"]))}
+        {stat("Typical price", per_gram(shop["own_median"]), "Median listing")}
+        {stat("Cheapest", per_gram(shop["own_low"]))}
         {stat("Menu items", f"{len(shop['rows']):,}")}
         {stat("City typical", per_gram(city["median"]), city["name"])}
       </div>
@@ -564,7 +597,7 @@ def shop_page(ds: Dataset, shop: Dict[str, Any]) -> str:
         <a class="button" href="{esc(live_url("database.html", explore="1", detail="shop", shop_id=shop["id"]))}">Full menu tools</a>
         {source}
       </div>
-    </header>{"".join(sections)}"""
+    </header>{hours_section(ds, shop)}{"".join(sections)}"""
     extra = None
     if shop.get("lat") and shop.get("lng"):
         extra = {
@@ -578,11 +611,32 @@ def shop_page(ds: Dataset, shop: Dict[str, Any]) -> str:
     return page(
         path=shop["path"],
         title=f"{shop['name']}, {shop['city']} – menu and prices | Budfinder",
-        description=(f"{shop['name']} coffeeshop in {shop['city']}: {shop['strain_count']} strains on the menu, "
-                     f"from {per_gram(shop['low'])}, typical {per_gram(shop['median'])}. Menu last changed {fmt_long_date(shop['latest'])}."),
+        description=(f"{shop['name']} coffeeshop in {shop['city']}: {plural(shop['strain_count'], 'strain')} on the menu, "
+                     f"from {per_gram(shop['own_low'])}, typical {per_gram(shop['own_median'])}. {date_words} {fmt_long_date(shop['latest'])}."),
         crumbs=[("Home", "/"), ("Coffeeshops", "/coffeeshops/"), (shop["city"], city["path"]), (shop["name"], shop["path"])],
         body=body, dataset=ds, extra_ld=extra,
     )
+
+
+def hours_section(ds: Dataset, shop: Dict[str, Any]) -> str:
+    """Opening hours from the one-off coffeeshopdirect.com fetch, if we have them."""
+    entry = (ds.hours.get("shops") or {}).get(str(shop["id"])) or {}
+    days = [day for day in entry.get("days") or [] if day.get("day") and day.get("hours")]
+    if not days and not entry.get("summary"):
+        return ""
+    checked = fmt_long_date(parse_time(entry.get("checked_at_utc") or ds.hours.get("fetched_at_utc")))
+    if days:
+        table = "".join(f'<tr><th scope="row">{esc(day["day"])}</th><td>{esc(day["hours"])}</td></tr>' for day in days)
+        content = f'<div class="table-wrap hours"><table><tbody>{table}</tbody></table></div>'
+    else:
+        content = f'<p>{esc(entry["summary"])}</p>'
+    source = esc(entry.get("info_url") or "https://www.coffeeshopdirect.com/")
+    return f"""
+    <section>
+      <h2>Opening hours</h2>
+      {content}
+      <p class="muted">From <a href="{source}" rel="nofollow noopener" target="_blank">coffeeshopdirect.com</a>, checked {esc(checked)}. Hours change, so check before you go.</p>
+    </section>"""
 
 
 def city_page(ds: Dataset, city: Dict[str, Any]) -> str:
@@ -591,12 +645,12 @@ def city_page(ds: Dataset, city: Dict[str, Any]) -> str:
         shop_rows.append(
             f'<tr><td><span class="shop-cell">{logo_html(shop, 32)}<a href="{shop["path"]}">{esc(shop["name"])}</a></span></td>'
             f'<td class="num">{shop["strain_count"]}</td><td class="num">{per_gram(shop["median"])}</td>'
-            f'<td class="num">{per_gram(shop["low"])}</td><td class="num">{esc(fmt_date(shop["latest"]))}</td></tr>'
+            f'<td class="num">{per_gram(shop["low"])}</td><td class="num">{esc(fmt_date(shop["latest"]))}{OLD_NOTE if shop["old_menu"] else ""}</td></tr>'
         )
     top = []
     for key, shop_ids in city["top_strains"]:
-        prices = [r["_price"] for r in ds.strains[key]["rows"]
-                  if r["_price"] is not None and ds.shops[str(r["shop_id"])]["city_slug"] == city["slug"]]
+        prices = [r["_cmp"] for r in ds.strains[key]["rows"]
+                  if r["_cmp"] is not None and ds.shops[str(r["shop_id"])]["city_slug"] == city["slug"]]
         top.append(f'<li>{ds.strain_link(key)} <span>{plural(len(shop_ids), "shop")} · typical {per_gram(median(prices))}</span></li>')
     body = f"""
     <header class="hero">
@@ -698,23 +752,56 @@ def strains_index(ds: Dataset) -> str:
 
 # ---------------------------------------------------------------- output
 
-def write(path: Path, content: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+class Output:
+    """Update the generated pages in place.
 
+    Unchanged pages are left untouched (so they keep their dates and need no
+    upload), changed ones are overwritten, and only pages that are no longer
+    produced are removed. The folders themselves are never deleted and made
+    again: doing that made iCloud Drive leave empty "name 2" copies behind.
+    Any other leftover empty folder inside the generated folders is removed too.
+    """
 
-def reset_output(root: Path) -> None:
-    for name in GENERATED_DIRS:
-        target = root / name
-        if target.exists():
-            if not (target / MARKER_FILE).exists():
+    def __init__(self, root: Path):
+        self.root = root
+        self.expected: set = set()
+        self.written = 0
+        self.unchanged = 0
+        for name in GENERATED_DIRS:
+            target = root / name
+            if target.exists() and any(target.iterdir()) and not (target / MARKER_FILE).exists():
                 raise SystemExit(f"{target} exists but was not created by this script; refusing to replace it.")
-            shutil.rmtree(target)
-        target.mkdir(parents=True)
-        (target / MARKER_FILE).write_text("Generated by build_static_pages.py; safe to delete.\n", encoding="utf-8")
+            target.mkdir(parents=True, exist_ok=True)
+            self.write(target / MARKER_FILE, "Generated by build_static_pages.py; safe to delete.\n")
+
+    def write(self, path: Path, content: str) -> None:
+        self.expected.add(path)
+        data = content.encode("utf-8")
+        if path.is_file() and path.read_bytes() == data:
+            self.unchanged += 1
+            return
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+        self.written += 1
+
+    def remove_stale(self) -> int:
+        """Delete files this run did not write, then any empty folders, deepest first."""
+        removed = 0
+        for name in GENERATED_DIRS:
+            for path in sorted((self.root / name).rglob("*"), key=lambda p: len(p.parts), reverse=True):
+                try:
+                    if path.is_dir() and not path.is_symlink():
+                        if not any(path.iterdir()):
+                            path.rmdir()
+                    elif path not in self.expected:
+                        path.unlink()
+                        removed += 1
+                except OSError:
+                    continue  # a sync tool may be busy with it; the next run tidies it up
+        return removed
 
 
-def sitemap(ds: Dataset, root: Path) -> int:
+def sitemap(ds: Dataset, out: Output) -> int:
     lastmod = ds.exported.strftime("%Y-%m-%d")
     urls = [("/", "daily"), ("/map.html", "weekly"), ("/database.html", "daily"),
             ("/coffeeshops/", "weekly"), ("/strains/", "weekly")]
@@ -726,24 +813,26 @@ def sitemap(ds: Dataset, root: Path) -> int:
     lines += [f"  <url><loc>{SITE}{esc(path)}</loc><lastmod>{lastmod}</lastmod><changefreq>{freq}</changefreq></url>"
               for path, freq in urls]
     lines.append("</urlset>")
-    (root / "sitemap.xml").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    out.write(out.root / "sitemap.xml", "\n".join(lines) + "\n")
     return len(urls)
 
 
 def build(root: Path) -> Dict[str, int]:
     ds = Dataset(root)
-    reset_output(root)
-    write(root / "coffeeshops" / "index.html", cities_index(ds))
+    out = Output(root)
+    out.write(root / "coffeeshops" / "index.html", cities_index(ds))
     for city in ds.cities.values():
-        write(root / city["path"].strip("/") / "index.html", city_page(ds, city))
+        out.write(root / city["path"].strip("/") / "index.html", city_page(ds, city))
     for shop in ds.shops.values():
-        write(root / shop["path"].strip("/") / "index.html", shop_page(ds, shop))
-    write(root / "strains" / "index.html", strains_index(ds))
+        out.write(root / shop["path"].strip("/") / "index.html", shop_page(ds, shop))
+    out.write(root / "strains" / "index.html", strains_index(ds))
     published = [s for s in ds.strains.values() if s["published"]]
     for strain in published:
-        write(root / strain["path"].strip("/") / "index.html", strain_page(ds, strain))
-    urls = sitemap(ds, root)
-    return {"cities": len(ds.cities), "shops": len(ds.shops), "strains": len(published), "sitemap_urls": urls}
+        out.write(root / strain["path"].strip("/") / "index.html", strain_page(ds, strain))
+    urls = sitemap(ds, out)
+    removed = out.remove_stale()
+    return {"cities": len(ds.cities), "shops": len(ds.shops), "strains": len(published), "sitemap_urls": urls,
+            "files_written": out.written, "files_unchanged": out.unchanged, "files_removed": removed}
 
 
 def main() -> int:

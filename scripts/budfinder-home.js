@@ -374,7 +374,7 @@
         <li class="insight-item">
           <a href="${escapeHtml(`${url.pathname.split('/').pop()}${url.search}`)}">
             <b>${escapeHtml(displayName(row.name))}</b>
-            <span>${shopCount.toLocaleString()} active shop${shopCount === 1 ? '' : 's'} · ${escapeHtml(price(row.average_price))}</span>
+            <span>${shopCount.toLocaleString()} active shop${shopCount === 1 ? '' : 's'}${row.average_price == null ? '' : ` · ${escapeHtml(price(row.average_price))}`}</span>
           </a>
         </li>
       `;
@@ -434,9 +434,12 @@
     const averageNote = byId('home-average-note');
     if (averageLabel) averageLabel.textContent = hasMedian ? 'Typical price nationwide' : 'Nationwide average strain price';
     if (averageNote) {
-      averageNote.textContent = hasMedian
-        ? `Half of all ${Number(network.active_listings || 0).toLocaleString()} listed prices are below this.`
-        : 'Each strain contributes its average listed price once.';
+      const comparedCount = Number(network.median_listing_count);
+      averageNote.textContent = !hasMedian
+        ? 'Each strain contributes its average listed price once.'
+        : Number.isFinite(comparedCount) && comparedCount > 0
+          ? `Half of the ${comparedCount.toLocaleString()} current prices are below this. Menus over a year old are left out.`
+          : `Half of all ${Number(network.active_listings || 0).toLocaleString()} listed prices are below this.`;
     }
     byId('home-most-common').textContent = topStrains.length ? `Top ${topStrains.length}` : 'Unavailable';
     byId('home-most-common-note').textContent =

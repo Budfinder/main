@@ -834,3 +834,23 @@ body.database-results-open .database-search-input > label { display: none; }
 html[data-budfinder-mode="dark"] .strain-art:not(:has(img)) .strain-art-fallback {
   color: var(--accent);
 }
+
+/* A price the export marked as a likely typo: shown, but not compared. */
+.price-judgement.price-check {
+  border-style: dashed;
+  border-color: var(--amber);
+  background: transparent;
+  color: var(--amber);
+  cursor: help;
+}
+
+.shop-menu-old-note {
+  margin: 6px 0 0;
+  padding: 4px 10px;
+  border: 1px dashed var(--amber);
+  border-radius: 8px;
+  color: var(--amber);
+  font-size: 0.86rem;
+  width: fit-content;
+  max-width: 100%;
+}

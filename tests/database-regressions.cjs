@@ -308,23 +308,51 @@ test('an unknown menu price never receives a bargain badge', () => {
   assert.match(result, /Menu date unknown/);
 });
 
-test('compact headers keep statistics available on demand and existing menu actions', () => {
+test('shop headers show the address, key prices, opening hours and the existing menu actions', () => {
   const { context: c, state } = harness();
   const row = { shopId: '105', shopName: 'Dampkring', shopKey: 'cs-dampkring', city: 'Amsterdam', shopUrl: 'https://example.com/menu' };
-  state.shopById.set('105', { shop_id: 105, city: 'Amsterdam' });
+  state.shopById.set('105', { shop_id: 105, city: 'Amsterdam', address: 'Handboogstraat 29, 1012 XM Amsterdam' });
+  state.offerings = [
+    { shop_id: 105, shop_city: 'Amsterdam', price_amount: 16, price_unit: 'g', price_currency: '€' },
+    { shop_id: 106, shop_city: 'Amsterdam', price_amount: 10, price_unit: 'g', price_currency: '€' },
+    { shop_id: 107, shop_city: 'Amsterdam', price_amount: 12, price_unit: 'g', price_currency: '€' }
+  ];
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  state.openingHours = { 105: { info_url: 'https://www.coffeeshopdirect.com/dampkring.html', checked_at_utc: '2026-11-18T10:00:00Z',
+    days: days.map(day => ({ day, hours: day === 'Sunday' ? 'Closed' : '10:00–01:00' })) } };
   const result = c.shopMenuHeaderHtml(row, [{ price_amount: 16, source_menu_date: '2026-08-01' }], { detail: true });
   assert.match(result, /<h2 class="shop-menu-name">Dampkring<\/h2>/);
-  assert.match(result, /Amsterdam · 1 menu item/);
-  assert.match(result, /<details class="shop-menu-overview">/);
-  assert.doesNotMatch(result, /<details[^>]*\bopen\b/);
-  assert.match(result, /<summary>Menu details/);
-  assert.match(result, /Average price/);
+  assert.match(result, /Coffeeshop in Amsterdam/);
+  assert.match(result, /<p class="shop-menu-address">Handboogstraat 29, 1012 XM Amsterdam<\/p>/);
+  assert.match(result, /1 menu item/);
+  assert.match(result, /<dt>Typical price<\/dt><dd>€16\/g<\/dd>/);
+  assert.match(result, /<dt>Amsterdam typical<\/dt><dd>€12\/g<\/dd>/);
   assert.match(result, /Source menu/);
+  assert.match(result, /<details class="shop-menu-hours">/);
+  assert.doesNotMatch(result, /<details[^>]*\bopen\b/);
+  assert.match(result, /<th scope="row">Sunday<\/th><td>Closed<\/td>/);
+  assert.match(result, /class="is-today"/);
+  assert.match(result, /Hours change, so check before you go/);
   assert.match(result, /data-toggle-map-shop="105"/);
   assert.match(result, /aria-pressed="false"/);
-  const map = result.match(/<a href="([^"]+)">View on map/)[1].replaceAll('&amp;', '&');
+  const map = result.match(/<a class="is-primary" href="([^"]+)">View on map/)[1].replaceAll('&amp;', '&');
   assert.equal(new URL(map, 'https://budfinder.org').searchParams.get('shops'), '105');
-  assert.doesNotMatch(result, /full current menu snapshot|PRICED LISTINGS/);
+  state.openingHours = {};
+  state.shopById.set('105', { shop_id: 105, city: 'Amsterdam' });
+  const bare = c.shopMenuHeaderHtml(row, [{ price_amount: 16, source_menu_date: '2026-08-01' }], { detail: true });
+  assert.doesNotMatch(bare, /shop-menu-hours|shop-menu-address/, 'missing hours and addresses are simply left out');
+});
+
+test('menu rows tag only clear differences from the strain average', () => {
+  const { context: c } = harness();
+  const listing = (shop, price, extra = {}) => ({ shop_id: shop, strain_name: 'Test', price_amount: price, price_unit: 'g', price_currency: '€', ...extra });
+  const others = [listing(1, 10), listing(2, 14)];
+  assert.match(c.menuPriceTagHtml(listing(3, 9), [...others, listing(3, 9)]), /is-below[^>]*>18% below average/);
+  assert.match(c.menuPriceTagHtml(listing(3, 15), [...others, listing(3, 15)]), /is-above[^>]*>15% above average/);
+  assert.equal(c.menuPriceTagHtml(listing(3, 11.5), [...others, listing(3, 11.5)]), '', 'within 5% gets no tag');
+  assert.equal(c.menuPriceTagHtml(listing(3, 9), [listing(3, 9)]), '', 'one shop is not a comparison');
+  assert.match(c.menuPriceTagHtml(listing(3, 1, { price_check: 'below_floor' }), others), /Check price/);
+  assert.equal(c.menuPriceTagHtml(listing(3, 5, { old_menu: 1 }), others), '', 'the header already explains an old menu');
 });
 
 test('category links target unique headings in both menu views without dropping any pack options', () => {
@@ -341,7 +369,7 @@ test('category links target unique headings in both menu views without dropping 
   assert.ok(detail.indexOf('>Sativa<span>') < detail.indexOf('>Indica<span>'));
   assert.ok(detail.indexOf('>Indica<span>') < detail.indexOf('>Hybrid<span>'));
   for (const markup of [detail, browser]) {
-    assert.equal((markup.match(/class="menu-listing-card menu-row"/g) || []).length, 4);
+    assert.equal((markup.match(/class="menu-line"/g) || []).length, 4);
     for (const [, target] of markup.matchAll(/href="#([^"]+)"/g)) {
       assert.ok(markup.includes(`id="${target}" tabindex="-1"`));
     }
@@ -504,4 +532,53 @@ test('menu searches and strain profile URLs share aliases without merging relate
     assert.equal(c.getStatByKey(query).key,'g-13');
   }
   assert.equal(c.getStatByKey('G13 Haze').key,'g13 haze');
+});
+
+test('a price marked for checking stays visible but never sets the lowest price or a bargain badge', () => {
+  const h = harness({ shared: true });
+  const listing = { strain_name: 'Gelato', strain_name_normalised: 'gelato', price_unit: 'g', price_currency: '€' };
+  h.state.offerings = [
+    { ...listing, shop_id: 1, shop_name: 'Canal', shop_city: 'Amsterdam', price_amount: 1, price_check: 'below_floor' },
+    { ...listing, shop_id: 2, shop_name: 'Harbour', shop_city: 'Amsterdam', price_amount: 9 },
+    { ...listing, shop_id: 3, shop_name: 'Square', shop_city: 'Amsterdam', price_amount: 12 }
+  ];
+  h.state.shopById = new Map(h.state.offerings.map(row => [String(row.shop_id), { name: row.shop_name, city: row.shop_city }]));
+  h.context.buildStats();
+  h.navigate('?detail=strain&strain=Gelato');
+  h.context.applyInitialUrlState();
+  h.context.renderDetailContents();
+  const view = h.elements.get('detail-view');
+  assert.match(view.innerHTML, /Lowest price<\/span>\s*<strong>€9\/g/);
+  const rows = view.innerHTML.match(/<tr class="listing-row">[\s\S]*?<\/tr>/g);
+  assert.equal(rows.length, 3);
+  assert.match(rows[2], /<strong>Canal<\/strong>[\s\S]*€1\/g[\s\S]*Check price/, 'flagged price sorts last and is labelled');
+  assert.doesNotMatch(rows[2], /Great price|Good price/);
+  const profile = h.context.priceProfileForListings(h.state.offerings);
+  assert.equal(profile.low, 9);
+  assert.equal(profile.count, 2);
+  assert.match(h.context.priceComparisonHtml(h.state.offerings[0], h.state.offerings, 'median'), /Check price/);
+});
+
+test('a listing from an old menu keeps its price and date but is left out of comparisons', () => {
+  const h = harness({ shared: true });
+  const listing = { strain_name: 'Gelato', strain_name_normalised: 'gelato', price_unit: 'g', price_currency: '€' };
+  h.state.offerings = [
+    { ...listing, shop_id: 1, shop_name: 'Canal', shop_city: 'Amsterdam', price_amount: 5, old_menu: 1, source_menu_date: '2016-01-28' },
+    { ...listing, shop_id: 2, shop_name: 'Harbour', shop_city: 'Amsterdam', price_amount: 9 },
+    { ...listing, shop_id: 3, shop_name: 'Square', shop_city: 'Amsterdam', price_amount: 12 }
+  ];
+  h.state.shopById = new Map(h.state.offerings.map(row => [String(row.shop_id), { name: row.shop_name, city: row.shop_city }]));
+  h.context.buildStats();
+  h.navigate('?detail=strain&strain=Gelato');
+  h.context.applyInitialUrlState();
+  h.context.renderDetailContents();
+  const view = h.elements.get('detail-view');
+  assert.match(view.innerHTML, /Lowest price<\/span>\s*<strong>€9\/g/);
+  const rows = view.innerHTML.match(/<tr class="listing-row">[\s\S]*?<\/tr>/g);
+  assert.match(rows[2], /<strong>Canal<\/strong>[\s\S]*€5\/g[\s\S]*Old menu[\s\S]*28 Jan 2016/, 'old menu sorts last with its date');
+  const profile = h.context.priceProfileForListings(h.state.offerings);
+  assert.equal(profile.low, 9);
+  assert.equal(profile.count, 2);
+  assert.match(h.context.priceComparisonHtml(h.state.offerings[0], h.state.offerings, 'median'), /Old menu/);
+  assert.equal(h.context.priceComparisonHtml(h.state.offerings[0], h.state.offerings, 'average', { oldMenuBadge: false }), '');
 });

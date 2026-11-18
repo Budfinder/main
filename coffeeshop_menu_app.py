@@ -70,6 +70,7 @@ from urllib.parse import unquote, urlparse
 
 from flask import Flask, Response, jsonify, redirect, render_template_string, request, send_file, url_for
 from price_history import build_price_history
+import price_checks
 
 # -----------------------------------------------------------------------------
 # Configuration
@@ -1126,7 +1127,10 @@ def _home_summary(
     def normalise_name(value: Any) -> str:
         return re.sub(r"\s+", " ", str(value or "").strip().lower())
 
-    def strain_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def strain_rows(rows: List[Dict[str, Any]], compared_only: bool = True) -> List[Dict[str, Any]]:
+        """One row per strain. With compared_only (what visitors see) likely
+        typos and old menus do not set the average; without it, every price
+        counts, matching the recorded price history."""
         grouped: Dict[str, Dict[str, Any]] = {}
         for row in rows:
             name = str(row.get("strain_name_normalised") or row.get("strain_name") or "").strip()
@@ -1145,7 +1149,11 @@ def _home_summary(
                     "shop_ids": set(),
                 },
             )
-            group["prices"].append(price)
+            # Every shop counts towards how widely a strain is listed, but only
+            # compared prices set its average, matching the strain pages in
+            # Menus & prices.
+            if not compared_only or price_checks.is_comparable(row):
+                group["prices"].append(price)
             if row.get("shop_id") is not None:
                 group["shop_ids"].add(str(row["shop_id"]))
 
@@ -1156,7 +1164,7 @@ def _home_summary(
                 {
                     "name": group["name"],
                     "shop_count": len(group["shop_ids"]),
-                    "average_price": round(sum(prices) / len(prices), 2),
+                    "average_price": round(sum(prices) / len(prices), 2) if prices else None,
                 }
             )
         return output
@@ -1164,6 +1172,8 @@ def _home_summary(
     def listing_prices(rows: List[Dict[str, Any]]) -> List[float]:
         prices = []
         for row in rows:
+            if not price_checks.is_comparable(row):
+                continue  # likely typo or old menu; see price_checks.py
             try:
                 price = float(row.get("price_amount"))
             except (TypeError, ValueError):
@@ -1181,8 +1191,12 @@ def _home_summary(
         return round(value, 2)
 
     def scope_summary(rows: List[Dict[str, Any]], source_shop_count: int) -> Dict[str, Any]:
-        rows_by_strain = strain_rows(rows)
-        averages = [row["average_price"] for row in rows_by_strain]
+        # average_strain_price is the price history's "current" point, which is
+        # built from every recorded price; changing its basis would put a false
+        # jump in the chart. The homepage shows the median instead.
+        rows_by_strain = strain_rows(rows, compared_only=False)
+        averages = [row["average_price"] for row in rows_by_strain if row["average_price"] is not None]
+        compared = listing_prices(rows)
         return {
             "source_shop_records": source_shop_count,
             "active_shops": len({str(row.get("shop_id")) for row in rows if row.get("shop_id") is not None}),
@@ -1190,7 +1204,8 @@ def _home_summary(
             "active_strains": len(rows_by_strain),
             "average_strain_price": round(sum(averages) / len(averages), 2) if averages else None,
             # The homepage headline: what a typical menu listing costs.
-            "median_listing_price": median(listing_prices(rows)),
+            "median_listing_price": median(compared),
+            "median_listing_count": len(compared),
         }
 
     amsterdam_rows = [
@@ -1272,7 +1287,8 @@ def _home_summary(
         "exported_at_utc": exported_at_utc,
         "latest_menu_signal_utc": latest_menu_signal,
         "definitions": {
-            "median_listing_price": "The middle per-gram price across all active listings in that scope.",
+            "median_listing_price": "The middle per-gram price across the compared listings in that scope (likely typos and menus over a year old are left out).",
+            "median_listing_count": "How many listings that median is taken from.",
             "active_shop": "An open, visible shop with at least one current menu listing.",
             "active_listing": "One current strain-and-price row from an active shop.",
             "source_shop_record": "A visible shop record before menu-status and source-conflict exclusions.",
@@ -1465,6 +1481,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                COALESCE(s.is_closed, 0) AS is_closed,
                s.created_at,
                s.updated_at,
+               COALESCE(s.address, '') AS address,
+               COALESCE(m.source_menu_date, '') AS source_menu_date,
                COALESCE(m.status, '') AS menu_status,
                COALESCE(m.fetched_at_utc, '') AS fetched_at_utc,
                COALESCE(m.image_url, '') AS image_url,
@@ -1500,6 +1518,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                 "shop_url": r["shop_url"],
                 "show_in_admin": int(r["show_in_admin"] or 0),
                 "is_closed": int(r["is_closed"] or 0),
+                "address": r["address"] or "",
+                "source_menu_date": r["source_menu_date"] or "",
                 "menu_status": r["menu_status"],
                 "fetched_at_utc": r["fetched_at_utc"],
                 "image_url": r["image_url"],
@@ -1553,6 +1573,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                so.package_price_amount,
                so.package_weight_g,
                so.notes,
+               COALESCE(m.source_menu_date, '') AS source_menu_date,
                COALESCE(mh_new.menu_changed_at_utc, '') AS menu_changed_at_utc,
                COALESCE(m.fetched_at_utc, '') AS menu_checked_at_utc,
                COALESCE(m.status, '') AS menu_status,
@@ -1598,6 +1619,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "package_price_amount": float(r["package_price_amount"] or r["price_amount"]),
             "package_weight_g": float(r["package_weight_g"] or 1),
             "notes": r["notes"] or "",
+            "source_menu_date": r["source_menu_date"] or "",
+            "old_menu": 1 if price_checks.is_old_menu(r["source_menu_date"], exported_at_utc) else 0,
             "menu_changed_at_utc": r["menu_changed_at_utc"] or "",
             "menu_checked_at_utc": r["menu_checked_at_utc"] or "",
             "menu_status": r["menu_status"] or "",
@@ -1619,6 +1642,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                 "shop_key": item["shop_key"],
                 "shop_name": item["shop_name"],
                 "shop_city": item["shop_city"],
+                "source_menu_date": item["source_menu_date"],
                 "menu_changed_at_utc": item["menu_changed_at_utc"],
                 "menu_checked_at_utc": item["menu_checked_at_utc"],
                 "menu_status": item["menu_status"],
@@ -1643,6 +1667,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "package_price_amount": float(r["package_price_amount"] or r["price_amount"]),
             "package_weight_g": float(r["package_weight_g"] or 1),
             "notes": r["notes"] or "",
+            "source_menu_date": r["source_menu_date"] or "",
+            "old_menu": 1 if price_checks.is_old_menu(r["source_menu_date"], exported_at_utc) else 0,
             "menu_changed_at_utc": r["menu_changed_at_utc"] or "",
             "menu_checked_at_utc": r["menu_checked_at_utc"] or "",
             "menu_status": r["menu_status"] or "",
@@ -1665,6 +1691,7 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
                    me.package_price_amount,
                    me.package_weight_g,
                    me.notes,
+                   COALESCE(m.source_menu_date, '') AS source_menu_date,
                    COALESCE(mh_new.menu_changed_at_utc, '') AS menu_changed_at_utc,
                    COALESCE(m.fetched_at_utc, '') AS menu_checked_at_utc,
                    COALESCE(m.status, '') AS menu_status,
@@ -1724,6 +1751,13 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
         ).fetchall()
     ]
 
+    # Flag likely price typos once, so the map, menus, generated pages and
+    # homepage all make the same decision. Confirmed prices are never flagged.
+    for item, reasons in zip(active_offerings, price_checks.check_prices(active_offerings, load_price_confirmations(conn))):
+        item["price_check"] = ",".join(reasons)
+    price_check_count = sum(1 for item in active_offerings if item["price_check"])
+    old_menu_count = sum(1 for item in active_offerings if item["old_menu"])
+
     json_dump(os.path.join(out_dir, "shops.json"), shops, compact=True)
     json_dump(os.path.join(out_dir, "shop_lookup.json"), shop_lookup, compact=True)
     json_dump(os.path.join(out_dir, "strains.json"), strains, compact=True)
@@ -1779,6 +1813,8 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
             "search_cities": len(search_index["cities"]),
             "home_active_shops": home_summary["network"]["active_shops"],
             "home_active_listings": home_summary["network"]["active_listings"],
+            "price_checks": price_check_count,
+            "old_menu_listings": old_menu_count,
         },
         "files": [
             "shops.json",
@@ -1799,7 +1835,20 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
         },
     }
     json_dump(os.path.join(out_dir, "manifest.json"), manifest)
-    return manifest
+    # Keep the crawlable pages and sitemap in step with every export, including
+    # the automatic ones after menu edits and scrapes.
+    return {**manifest, "static_pages": build_static_pages_after_export(out_dir)}
+
+
+def load_price_confirmations(conn: sqlite3.Connection) -> List[price_checks.ConfirmationKey]:
+    """Prices confirmed as correct in the admin (see the Price checks page)."""
+    try:
+        rows = conn.execute(
+            "SELECT shop_id, strain_id, package_weight_g, is_legal, price_amount FROM price_confirmations;"
+        ).fetchall()
+    except sqlite3.OperationalError:
+        return []
+    return [price_checks.confirmation_key(dict(row), float(row["price_amount"])) for row in rows]
 
 
 def build_static_pages_after_export(out_dir: str) -> str:
@@ -1905,6 +1954,16 @@ def db_init(conn: sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS app_settings (
             key TEXT PRIMARY KEY,
             value TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS price_confirmations (
+            shop_id INTEGER NOT NULL,
+            strain_id INTEGER NOT NULL,
+            package_weight_g REAL NOT NULL,
+            is_legal INTEGER NOT NULL DEFAULT 0,
+            price_amount REAL NOT NULL,
+            confirmed_at_utc TEXT NOT NULL,
+            PRIMARY KEY(shop_id, strain_id, package_weight_g, is_legal)
         );
 
         CREATE TABLE IF NOT EXISTS site_updates (
@@ -2033,6 +2092,11 @@ def db_init(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE shops ADD COLUMN show_in_admin INTEGER NOT NULL DEFAULT 1;")
     if "is_closed" not in shop_cols:
         conn.execute("ALTER TABLE shops ADD COLUMN is_closed INTEGER NOT NULL DEFAULT 0;")
+    # Details read from each coffeeshopmenus page by scrape_update_menus.py.
+    for table, column_name in (("shops", "address"), ("shops", "info_url"), ("menus", "source_menu_date")):
+        existing = {str(r["name"]) for r in conn.execute(f"PRAGMA table_info({table});").fetchall()}
+        if column_name not in existing:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {column_name} TEXT NOT NULL DEFAULT '';")
 
     migration_columns = {
         "menu_entries": [
@@ -4837,6 +4901,7 @@ MAIN_TMPL = """
       <a class="pill" href="{{ url_for('growers') }}">Growers</a>
       <a class="pill" href="{{ url_for('site_updates') }}">Homepage updates</a>
       <a class="pill" href="{{ url_for('shop_coverage') }}">Shop coverage</a>
+      <a class="pill{{ ' warn' if price_check_count else '' }}" href="{{ url_for('price_checks_page') }}">Price checks{% if price_check_count %} ({{ price_check_count }}){% endif %}</a>
       <a class="pill" href="{{ url_for('browse') }}">Browse DB</a>
       <a class="pill" href="{{ url_for('database_explorer') }}">Explorer</a>
       <a class="pill" href="{{ url_for('strain_consolidate') }}">Consolidate strains</a>
@@ -5124,6 +5189,91 @@ GROWERS_TMPL = """
 </body>
 </html>
 """
+
+PRICE_CHECKS_TMPL = """
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Price checks</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>{{ css }}</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><div class="logo"></div><div>Price checks<div class="small">Prices that are probably typos. The website still shows them on the shop's menu, but leaves them out of lowest and typical prices.</div></div></div>
+    <div class="btnrow"><a class="pill" href="{{ url_for('main_menu') }}">Main menu</a></div>
+  </div>
+  {% if message %}<div id="toast" class="toast good">{{ message }}</div>{% endif %}
+  <div style="padding:14px; overflow:auto;">
+    <div class="card" style="max-width:1100px; margin:0 auto;">
+      <div class="cardHeader"><div>
+        <b>{{ rows|length }} price{{ '' if rows|length == 1 else 's' }} to check</b>
+        <div class="small">From the export of {{ exported or 'unknown date' }}. Fix a typo by editing the entry on the shop's menu page; the next export clears the flag. If a price is real, mark it correct.</div>
+        <div class="small">Rules: {{ rules|join(' · ') }}.</div>
+      </div></div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Shop</th><th>Strain</th><th>Price</th><th>Why it was flagged</th><th>Actions</th></tr></thead>
+          <tbody>
+          {% for r in rows %}
+            <tr>
+              <td><b>{{ r.shop_name }}</b><div class="small">{{ r.shop_city }}</div></td>
+              <td>{{ r.strain_name }}{% if r.is_legal %}<div class="small">Legal project</div>{% endif %}</td>
+              <td>€{{ '%.2f'|format(r.price_amount) }}/g<div class="small">€{{ '%.2f'|format(r.package_price_amount) }} for {{ '%g'|format(r.package_weight_g) }}g</div></td>
+              <td class="small">{{ r.reason_text }}</td>
+              <td><div class="btnrow">
+                <a class="pill" href="{{ url_for('shop_view', shop_id=r.shop_id) }}">Open menu</a>
+                <form method="post" action="{{ url_for('confirm_price_check') }}">
+                  <input type="hidden" name="shop_id" value="{{ r.shop_id }}">
+                  <input type="hidden" name="strain_id" value="{{ r.strain_id }}">
+                  <input type="hidden" name="package_weight_g" value="{{ r.package_weight_g }}">
+                  <input type="hidden" name="is_legal" value="{{ r.is_legal }}">
+                  <input type="hidden" name="price_amount" value="{{ r.price_amount }}">
+                  <button class="ghost" type="submit">Price is correct</button>
+                </form>
+              </div></td>
+            </tr>
+          {% endfor %}
+          {% if not rows %}<tr><td colspan="5" class="small">No prices need checking.</td></tr>{% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% if confirmations %}
+    <div class="card" style="max-width:1100px; margin:14px auto 0;">
+      <div class="cardHeader"><div><b>Prices marked correct</b><div class="small">These stay unflagged until the price changes.</div></div></div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Shop</th><th>Strain</th><th>Price</th><th>Confirmed</th><th></th></tr></thead>
+          <tbody>
+          {% for r in confirmations %}
+            <tr>
+              <td><b>{{ r.shop_name or ('Shop ' ~ r.shop_id) }}</b><div class="small">{{ r.shop_city or '' }}</div></td>
+              <td>{{ r.strain_name or ('Strain ' ~ r.strain_id) }}</td>
+              <td>€{{ '%.2f'|format(r.price_amount) }}/g<div class="small">{{ '%g'|format(r.package_weight_g) }}g pack</div></td>
+              <td class="small">{{ r.confirmed_at_utc }}</td>
+              <td>
+                <form method="post" action="{{ url_for('undo_price_check') }}">
+                  <input type="hidden" name="shop_id" value="{{ r.shop_id }}">
+                  <input type="hidden" name="strain_id" value="{{ r.strain_id }}">
+                  <input type="hidden" name="package_weight_g" value="{{ r.package_weight_g }}">
+                  <input type="hidden" name="is_legal" value="{{ r.is_legal }}">
+                  <button class="ghost" type="submit">Undo</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
+"""
+
 
 UPDATES_TMPL = """
 <!doctype html>
@@ -6822,10 +6972,18 @@ def create_app(
             for filename in ("generate_watch_data.py", "upload_watch_map.py")
         )
 
+        price_check_count = 0
+        try:
+            with open(os.path.join(app.config["JSON_EXPORT_DIR"], "manifest.json"), encoding="utf-8") as handle:
+                price_check_count = int(json.load(handle).get("counts", {}).get("price_checks", 0) or 0)
+        except (OSError, ValueError, TypeError):
+            pass
+
         return Response(
             render_template_string(
                 MAIN_TMPL,
                 css=BASE_CSS,
+                price_check_count=price_check_count,
                 message=message,
                 menu_counts=menu_counts,
                 db_counts=db_counts,
@@ -6969,6 +7127,106 @@ def create_app(
         export_json_snapshot(c, app.config["JSON_EXPORT_DIR"])
         c.close()
         return redirect(url_for("site_updates", msg=f"Saved homepage update: {title}"))
+
+    def _price_option_from_form() -> Optional[Tuple[int, int, float, int]]:
+        try:
+            return (
+                int(request.form.get("shop_id", "")),
+                int(request.form.get("strain_id", "")),
+                round(float(request.form.get("package_weight_g", "1")), 3),
+                1 if str(request.form.get("is_legal", "0")) in {"1", "True", "true"} else 0,
+            )
+        except (TypeError, ValueError):
+            return None
+
+    @app.get("/price-checks")
+    def price_checks_page() -> Response:
+        """List prices flagged by the last export (see price_checks.py)."""
+        message = request.args.get("msg", "")
+        export_dir = app.config["JSON_EXPORT_DIR"]
+        try:
+            with open(os.path.join(export_dir, "active_offerings.json"), encoding="utf-8") as handle:
+                offerings = json.load(handle)
+        except (OSError, ValueError):
+            offerings = []
+        try:
+            with open(os.path.join(export_dir, "manifest.json"), encoding="utf-8") as handle:
+                exported = str(json.load(handle).get("exported_at_utc", ""))[:16].replace("T", " ")
+        except (OSError, ValueError):
+            exported = ""
+        rows = price_checks.flagged_rows(offerings)
+        for row in rows:
+            row["reason_text"] = price_checks.describe(str(row.get("price_check") or "").split(","))
+        c = conn()
+        try:
+            confirmations = c.execute(
+                """
+                SELECT pc.shop_id, pc.strain_id, pc.package_weight_g, pc.is_legal, pc.price_amount,
+                       pc.confirmed_at_utc, s.name AS shop_name, s.city AS shop_city,
+                       st.name_display AS strain_name
+                FROM price_confirmations pc
+                LEFT JOIN shops s ON s.id = pc.shop_id
+                LEFT JOIN strains st ON st.id = pc.strain_id
+                ORDER BY pc.confirmed_at_utc DESC;
+                """
+            ).fetchall()
+        finally:
+            c.close()
+        return Response(
+            render_template_string(
+                PRICE_CHECKS_TMPL,
+                css=BASE_CSS,
+                message=message,
+                rows=rows,
+                confirmations=confirmations,
+                exported=exported,
+                rules=list(price_checks.REASONS.values()),
+            )
+        )
+
+    @app.post("/price-checks/confirm")
+    def confirm_price_check() -> Response:
+        """Trust one pack option at its current price, then re-export."""
+        option = _price_option_from_form()
+        try:
+            price = float(request.form.get("price_amount", ""))
+        except (TypeError, ValueError):
+            price = 0.0
+        if not option or price <= 0:
+            return redirect(url_for("price_checks_page", msg="That price could not be confirmed."))
+        c = conn()
+        try:
+            c.execute(
+                """
+                INSERT OR REPLACE INTO price_confirmations(
+                    shop_id, strain_id, package_weight_g, is_legal, price_amount, confirmed_at_utc
+                ) VALUES(?, ?, ?, ?, ?, ?);
+                """,
+                (*option, price, utc_now_iso()),
+            )
+            c.commit()
+            export_json_snapshot(c, app.config["JSON_EXPORT_DIR"])
+        finally:
+            c.close()
+        return redirect(url_for("price_checks_page", msg=f"Marked €{price:.2f}/g as correct. The site uses it again from this export."))
+
+    @app.post("/price-checks/undo")
+    def undo_price_check() -> Response:
+        """Remove a confirmation so the price is checked again."""
+        option = _price_option_from_form()
+        if not option:
+            return redirect(url_for("price_checks_page", msg="That confirmation could not be removed."))
+        c = conn()
+        try:
+            c.execute(
+                "DELETE FROM price_confirmations WHERE shop_id = ? AND strain_id = ? AND package_weight_g = ? AND is_legal = ?;",
+                option,
+            )
+            c.commit()
+            export_json_snapshot(c, app.config["JSON_EXPORT_DIR"])
+        finally:
+            c.close()
+        return redirect(url_for("price_checks_page", msg="Confirmation removed; the price is checked again."))
 
     @app.post("/updates/<int:update_id>/toggle")
     def toggle_site_update(update_id: int) -> Response:
@@ -7718,7 +7976,10 @@ def create_app(
             f"(shops={counts.get('shops', 0)}, strains={counts.get('strains', 0)}, "
             f"active_offerings={counts.get('active_offerings', 0)})."
         )
-        msg = f"{msg} {build_static_pages_after_export(out_dir)}"
+        checks = int(counts.get("price_checks", 0) or 0)
+        if checks:
+            msg = f"{msg} {checks} price{'s' if checks != 1 else ''} need checking: see Price checks."
+        msg = f"{msg} {manifest.get('static_pages', '')}".strip()
         return redirect(url_for("main_menu", msg=msg))
 
     @app.post("/watch/update")
@@ -8576,7 +8837,8 @@ def main() -> int:
             f"menu_entries={counts.get('menu_entries', 0)}",
             f"strain_index={counts.get('strain_index', 0)}",
         )
-        print(f"[PAGES] {build_static_pages_after_export(json_export_dir)}")
+        print(f"[PRICES] {counts.get('price_checks', 0)} prices need checking (python3 data_quality_report.py lists them)")
+        print(f"[PAGES] {manifest.get('static_pages', '')}")
 
     c.close()
 

@@ -197,7 +197,13 @@ test('dashboard prices retain integer zeroes and display fractions without inven
     const app = harness({ averagePrice: value });
     await settle();
     assert.equal(app.get('home-average-price').textContent, expected, `Price input ${String(value)}`);
-    assert.ok(app.get('home-most-common-list').innerHTML.includes(expected), `Ranking price input ${String(value)}`);
+    const ranking = app.get('home-most-common-list').innerHTML;
+    if (value == null) {
+      // No compared price (for example only old menus): show the shop count alone.
+      assert.doesNotMatch(ranking, /Unavailable|undefined|null|€/, `Ranking price input ${String(value)}`);
+    } else {
+      assert.ok(ranking.includes(expected), `Ranking price input ${String(value)}`);
+    }
     assert.equal(app.timers.pending, 0, 'Completed requests must release their timeout timers');
   }
 });

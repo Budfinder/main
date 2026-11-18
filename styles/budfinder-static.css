@@ -267,3 +267,15 @@ td small.warn { color: var(--amber); }
 .search:focus { outline: 3px solid var(--amber); outline-offset: 2px; }
 
 button.button { font: inherit; font-weight: 700; cursor: pointer; }
+
+.notice {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border: 1px dashed var(--amber);
+  border-radius: 10px;
+  color: var(--ink);
+  max-width: 62ch;
+}
+
+.hours { max-width: 420px; }
+.hours th { width: 45%; background: transparent; color: var(--ink); font-size: 0.95rem; text-transform: none; letter-spacing: 0; font-weight: 400; }

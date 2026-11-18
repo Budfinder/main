@@ -368,17 +368,22 @@ browser, so `build_static_pages.py` writes plain HTML from the exported JSON:
 The pages use `styles/budfinder-static.css` and
 `images/budfinder-badge-v3-96.webp`, need no JavaScript, and link back into the
 map and Menus & prices. Shop exclusions match the homepage summary. **Export
-JSON** in the admin (and `--export-json-only`) rebuilds them automatically;
+JSON** in the admin, the automatic export after menu edits and scrapes, and
+`--export-json-only` all rebuild them;
 to rebuild by hand:
 
 ```sh
 python3 build_static_pages.py
 ```
 
-The script replaces `coffeeshops/` and `strains/` on each run, so pages for
-shops or strains that left the menus disappear. Upload both folders and
-`sitemap.xml` after the data snapshot. `404.html` is the branded not-found
-page used by `.htaccess`.
+The script updates `coffeeshops/` and `strains/` in place: unchanged pages
+keep their dates, changed pages are overwritten, and pages for shops or
+strains that left the menus are deleted (so delete them on the server too, or
+let your upload tool mirror deletions). It never deletes and recreates the
+folders, because that made iCloud Drive leave empty "name 2" copies behind;
+empty leftover folders inside them are removed on each run. Upload both
+folders and `sitemap.xml` after the data snapshot. `404.html` is the branded
+not-found page used by `.htaccess`.
 
 ### Logo thumbnails
 
@@ -390,6 +395,56 @@ and upload the `thumbs` folder:
 ```sh
 python3 scripts/build_logo_thumbs.py
 ```
+
+### Price checks
+
+Every JSON export runs `price_checks.py` over the active listings and stores
+the result on each one as `price_check` (empty when the price looks fine).
+A listing is flagged when its euro price per gram is:
+
+- under €4/g or over €40/g (this also catches a 1g price saved as a 3.5g pack), or
+- under 40% or over 2.5× that strain's median price, once at least four shops
+  list it. Cali and regular listings are compared separately.
+
+Flagged prices stay on the shop's menu with a "Check price" note, but are left
+out of lowest, typical and median prices, "great price" badges, map price
+labels and the generated pages. The price history is unchanged.
+
+There is no extra step. The admin's main menu shows **Price checks (N)** after
+each export, and `python3 data_quality_report.py` lists them. Fix a typo by
+editing the entry; the next export clears the flag. If a price is real, press
+**Price is correct** on the Price checks page. That confirmation is tied to
+the price, so the listing is checked again if the price changes, and it can be
+undone on the same page. Thresholds live at the top of `price_checks.py`.
+
+### Menu dates, addresses and opening hours
+
+Each coffeeshopmenus shop page shows when its current menu was posted. The
+scraper saves that date as `menus.source_menu_date` (and the page's address
+and coffeeshopdirect.com link on the shop row), and the export puts it on
+every listing as `source_menu_date`. The website shows that date instead of
+the day the scraper first saw the menu. Contributor names are not kept.
+
+A menu posted more than a year ago is exported with `old_menu` = 1. It stays
+on the shop's page with its date and an "Old menu" note, but its prices are
+left out of comparisons, exactly like flagged prices. The limit is
+`OLD_MENU_DAYS` in `price_checks.py`.
+
+Normal scrapes keep the dates current. To fill them in without downloading
+menus, run:
+
+```bash
+python3 scrape_update_menus.py --shops database/csd.csv --db database/coffeeshops.sqlite --details-only
+```
+
+A date is only saved when the page still shows the menu already in the
+database; otherwise the next normal scrape picks up the new menu and its date.
+
+Opening hours come from coffeeshopdirect.com and were fetched once with
+`python3 scripts/fetch_opening_hours.py`, which writes
+`database/opening_hours.json`. Generated shop pages show them with the date
+they were checked and a "check before you go" note. Run it again only if you
+want to refresh them.
 
 ### Files kept off the public site
 

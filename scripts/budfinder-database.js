@@ -3,6 +3,9 @@ const state = {
   offerings: [],
   shops: [],
   shopById: new Map(),
+  // Opening hours by shop ID, fetched once from coffeeshopdirect.com (scripts/fetch_opening_hours.py).
+  openingHours: {},
+  openingHoursCheckedAt: '',
   shopLogoByKey: new Map(),
   shopCoordinatesByKey: new Map(),
   shopCoordinatesByNameCity: new Map(),
@@ -638,6 +641,35 @@ function ageBadgeHtml(value, item = null) {
   return `<span class="age-badge ${age.className}">${escapeHtml(label)}</span>`;
 }
 
+// The export marks likely typos (price_checks.py). They stay on menus with a
+// note, but never set a lowest, typical or "great price" figure.
+function isPriceChecked(item) {
+  return Boolean(item && String(item.price_check || '').trim());
+}
+
+// Menus posted more than a year ago (old_menu, also set by the export) keep
+// their prices and dates on the menu, but are left out of comparisons too.
+function isOldMenu(item) {
+  return Boolean(item) && Number(item.old_menu) === 1;
+}
+
+function hasComparablePrice(item) {
+  return !isPriceChecked(item) && !isOldMenu(item);
+}
+
+const PRICE_CHECK_NOTE = 'Check price: this looks like a menu typo, so it is left out of comparisons.';
+const OLD_MENU_NOTE = 'Old menu: this menu is over a year old, so its prices are left out of comparisons.';
+
+function priceCheckBadgeHtml(item, tag = 'span') {
+  if (isPriceChecked(item)) {
+    return `<${tag} class="price-judgement price-check" title="${escapeHtmlAttr(PRICE_CHECK_NOTE)}">Check price</${tag}>`;
+  }
+  if (isOldMenu(item)) {
+    return `<${tag} class="price-judgement price-check" title="${escapeHtmlAttr(OLD_MENU_NOTE)}">Old menu</${tag}>`;
+  }
+  return '';
+}
+
 function pricePerGram(item) {
   const listedPrice = item?.price_amount;
   if (listedPrice == null || String(listedPrice).trim() === '') return null;
@@ -770,6 +802,7 @@ function listingCheckBatchNote() {
 
 function priceProfileForListings(listings) {
   const usableListings = (Array.isArray(listings) ? listings : [])
+    .filter(hasComparablePrice)
     .map(item => ({ item, price: pricePerGram(item) }))
     .filter(row => Number.isFinite(row.price));
   const prices = usableListings.map(row => row.price);
@@ -796,8 +829,8 @@ function priceProfileForListings(listings) {
 
 function sortListingsByPrice(items) {
   return (Array.isArray(items) ? items.slice() : []).sort((a, b) => {
-    const priceDiff = (Number.isFinite(Number(a.price_amount)) ? Number(a.price_amount) : Infinity) -
-      (Number.isFinite(Number(b.price_amount)) ? Number(b.price_amount) : Infinity);
+    const sortable = item => (hasComparablePrice(item) && Number.isFinite(Number(item.price_amount)) ? Number(item.price_amount) : Infinity);
+    const priceDiff = sortable(a) - sortable(b);
     if (priceDiff !== 0) return priceDiff;
     return compareShopName(a, b);
   });
@@ -964,7 +997,7 @@ function shopCaliCount(row) {
 
 function shopValueScore(row) {
   const offerings = Array.isArray(row && row.offerings) ? row.offerings : [];
-  const prices = offerings.map(item => Number(item.price_amount)).filter(Number.isFinite).sort((a, b) => a - b);
+  const prices = offerings.filter(hasComparablePrice).map(item => Number(item.price_amount)).filter(Number.isFinite).sort((a, b) => a - b);
   const menuMedian = prices.length ? median(prices) : null;
   const menuAverage = prices.length ? average(prices) : null;
   const price = menuMedian == null
@@ -1775,7 +1808,7 @@ function statsFromOfferings(offerings) {
   });
 
   return Array.from(byStrain.values()).map(stat => {
-    const prices = stat.offerings.map(item => item.price_amount == null || String(item.price_amount).trim() === '' ? NaN : Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
+    const prices = stat.offerings.filter(hasComparablePrice).map(item => item.price_amount == null || String(item.price_amount).trim() === '' ? NaN : Number(item.price_amount)).filter(value => Number.isFinite(value) && value > 0);
     const cheapest = prices.length ? Math.min(...prices) : null;
     const avg = average(prices);
     const topType = Array.from(stat.types.entries()).sort((a, b) => b[1] - a[1])[0];
@@ -1808,7 +1841,7 @@ function populateFilters() {
 }
 
 function setupPriceBand() {
-  const prices = state.offerings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+  const prices = state.offerings.filter(hasComparablePrice).map(item => Number(item.price_amount)).filter(Number.isFinite);
   const min = prices.length ? Math.floor(Math.min(...prices) * 2) / 2 : 0;
   const max = prices.length ? Math.ceil(Math.max(...prices) * 2) / 2 : 50;
   state.priceBounds = { min, max };
@@ -1914,7 +1947,7 @@ function getFilteredStats(options = {}) {
     .filter(stat => keys.has(stat.key))
     .map(stat => {
       const matchingOfferings = stat.offerings.filter(item => offeringMatches(item, filters));
-      const prices = matchingOfferings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+      const prices = matchingOfferings.filter(hasComparablePrice).map(item => Number(item.price_amount)).filter(Number.isFinite);
       const filteredDeals = belowAverageDealsForOfferings(matchingOfferings);
       const matchingTypes = new Map();
       matchingOfferings.forEach(item => {
@@ -2720,7 +2753,7 @@ function shopRowsFromOfferings(offerings) {
     grouped.get(shopId).offerings.push(item);
   });
   return Array.from(grouped.values()).map(row => {
-    const priced = row.offerings.map(pricePerGram).filter(Number.isFinite);
+    const priced = row.offerings.filter(hasComparablePrice).map(pricePerGram).filter(Number.isFinite);
     const latestTime = latestListingTime(row.offerings);
     return {
       ...row,
@@ -3365,11 +3398,13 @@ function averageComparisonBadgeHtml(price, averagePrice) {
   return `<span class="price-judgement average-comparison is-above">${rounded}% above average</span>`;
 }
 
-function priceComparisonHtml(item, listings, baseline = 'average') {
+function priceComparisonHtml(item, listings, baseline = 'average', { oldMenuBadge = true } = {}) {
   const price = pricePerGram(item);
   if (!Number.isFinite(price) || price <= 0) return '';
+  if (!hasComparablePrice(item)) return isOldMenu(item) && !isPriceChecked(item) && !oldMenuBadge ? '' : priceCheckBadgeHtml(item);
   const currency = String(item.price_currency || '€');
   const compared = (listings || []).filter(row =>
+    hasComparablePrice(row) &&
     String(row.price_currency || '€') === currency &&
     Number.isFinite(pricePerGram(row)) && pricePerGram(row) > 0
   );
@@ -3422,9 +3457,33 @@ function commonMenuDateItem(listings) {
   return listings.every(item => displayListingDateValue(item) && listingUpdatedLabel(item) === label) ? first : null;
 }
 
+// A small tag only when a price is clearly below or above that strain's average
+// across Budfinder; the full explanation lives on the strain's own page.
+function menuPriceTagHtml(item, listings) {
+  const price = pricePerGram(item);
+  if (!Number.isFinite(price) || price <= 0) return '';
+  if (isPriceChecked(item)) return priceCheckBadgeHtml(item);
+  if (isOldMenu(item)) return '';
+  const currency = String(item.price_currency || '€');
+  const compared = (listings || []).filter(row =>
+    hasComparablePrice(row) &&
+    String(row.price_currency || '€') === currency &&
+    Number.isFinite(pricePerGram(row)) && pricePerGram(row) > 0
+  );
+  const shopCount = new Set(compared.map(row => String(row.shop_id || row.shop_key ||
+    [row.shop_name, row.shop_city].filter(Boolean).join('|'))).filter(Boolean)).size;
+  if (shopCount < 2) return '';
+  const typical = average(compared.map(pricePerGram));
+  if (!Number.isFinite(typical) || typical <= 0) return '';
+  const difference = ((price - typical) / typical) * 100;
+  if (Math.abs(difference) < 5) return '';
+  const direction = difference < 0 ? 'below' : 'above';
+  const title = `Average ${money(typical, currency)} across ${shopCount} shops`;
+  return `<span class="price-judgement average-comparison menu-line-tag is-${direction}" title="${escapeHtmlAttr(title)}">${Math.round(Math.abs(difference))}% ${direction} average</span>`;
+}
+
 function menuListingCardHtml(item, { showAge = true } = {}) {
   const stat = getStatByKey(item.strain_name_normalised || normalise(item.strain_name));
-  const price = pricePerGram(item);
   const priceParts = menuPriceParts(item);
   const meta = [
     Number(item.is_cali) === 1 ? 'Cali' : '',
@@ -3432,24 +3491,23 @@ function menuListingCardHtml(item, { showAge = true } = {}) {
     item.grower ? `Grower: ${item.grower}` : ''
   ].filter(Boolean).join(' · ');
   const notes = String(item.notes || '').trim();
+  const hasPrice = item.price_amount != null && String(item.price_amount).trim() !== '';
   return `
-    <article class="menu-listing-card menu-row">
-      <div class="menu-listing-main">
-        ${getStrainImageHtml(item.strain_name || 'Unknown strain')}
-        <div class="menu-row-copy">
-          <button type="button" class="menu-listing-title" data-open-strain-detail="${escapeHtmlAttr(item.strain_name_normalised || normalise(item.strain_name))}">${escapeHtml(item.strain_name || 'Unknown strain')}</button>
-        </div>
-      </div>
-      <div class="menu-listing-price">
-        <strong>${escapeHtml(priceParts.primary)}</strong>
-        ${priceParts.secondary ? `<small>${escapeHtml(priceParts.secondary)}</small>` : ''}
-      </div>
-      <div class="menu-row-signals">
-        ${meta ? `<span class="menu-listing-meta">${escapeHtml(meta)}</span>` : ''}
-        ${item.price_amount != null && String(item.price_amount).trim() !== '' && Number.isFinite(price) && price > 0 ? priceComparisonHtml(item, stat ? stat.offerings : [item]) : ''}
+    <article class="menu-line">
+      ${getStrainImageHtml(item.strain_name || 'Unknown strain')}
+      <div class="menu-line-copy">
+        <button type="button" class="menu-line-name" data-open-strain-detail="${escapeHtmlAttr(item.strain_name_normalised || normalise(item.strain_name))}">${escapeHtml(item.strain_name || 'Unknown strain')}</button>
+        ${meta ? `<span class="menu-line-meta">${escapeHtml(meta)}</span>` : ''}
+        ${notes ? `<span class="menu-line-note">${escapeHtml(notes)}</span>` : ''}
         ${showAge ? ageBadgeHtml(displayListingDateValue(item), item) : ''}
       </div>
-      ${notes ? `<p class="listing-note">${escapeHtml(notes)}</p>` : ''}
+      <div class="menu-line-end">
+        ${hasPrice ? menuPriceTagHtml(item, stat ? stat.offerings : [item]) : ''}
+        <div class="menu-line-price">
+          <strong>${escapeHtml(priceParts.primary)}</strong>
+          ${priceParts.secondary ? `<small>${escapeHtml(priceParts.secondary)}</small>` : ''}
+        </div>
+      </div>
     </article>
   `;
 }
@@ -3464,7 +3522,9 @@ const DETAIL_SORTS = {
 function sortStrainListings(listings, sort = state.detailSort) {
   const key = DETAIL_SORTS[sort && sort.key] ? sort.key : 'price';
   const direction = sort && sort.dir === 'desc' ? -1 : 1;
-  const byPrice = (a, b) => (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity);
+  // Prices marked for checking, and old menus, sort with the unknown prices at the bottom.
+  const sortPrice = item => (hasComparablePrice(item) ? pricePerGram(item) : null);
+  const byPrice = (a, b) => (sortPrice(a) ?? Infinity) - (sortPrice(b) ?? Infinity);
   const byDate = (a, b) => (displayListingTime(a) ?? -Infinity) - (displayListingTime(b) ?? -Infinity);
   const primary = {
     price: byPrice,
@@ -3474,7 +3534,7 @@ function sortStrainListings(listings, sort = state.detailSort) {
   }[key];
   return listings.slice().sort((a, b) => {
     // Unknown prices and dates stay at the bottom in either direction.
-    if (key === 'price' && (pricePerGram(a) == null) !== (pricePerGram(b) == null)) return pricePerGram(a) == null ? 1 : -1;
+    if (key === 'price' && (sortPrice(a) == null) !== (sortPrice(b) == null)) return sortPrice(a) == null ? 1 : -1;
     if (key === 'date' && (displayListingTime(a) == null) !== (displayListingTime(b) == null)) return displayListingTime(a) == null ? 1 : -1;
     return (primary(a, b) * direction) || byPrice(a, b) || compareShopName(a, b);
   });
@@ -3503,7 +3563,7 @@ function strainListingRowHtml(item, profile, options = {}) {
   const priceParts = menuPriceParts(item);
   const priceText = Number.isFinite(perGram) && perGram > 0 ? money(perGram, String(item.price_currency || '€')) : priceParts.primary;
   const packText = priceParts.secondary ? priceParts.primary : '';
-  const judgement = Number.isFinite(perGram) && perGram > 0 && profile && profile.shopCount >= 2
+  const judgement = hasComparablePrice(item) && Number.isFinite(perGram) && perGram > 0 && profile && profile.shopCount >= 2
     ? priceJudgementFor(perGram, profile.median)
     : null;
   const notes = [
@@ -3528,6 +3588,7 @@ function strainListingRowHtml(item, profile, options = {}) {
         <strong>${escapeHtml(priceText)}</strong>
         ${packText ? `<small>${escapeHtml(packText)}</small>` : ''}
         ${judgement && judgement.rank !== 2 ? `<small class="price-judgement ${judgement.className}">${escapeHtml(judgement.label)}</small>` : ''}
+        ${priceCheckBadgeHtml(item, 'small')}
       </td>
       <td class="num listing-date">${ageBadgeHtml(displayListingDateValue(item), item)}</td>
       <td class="listing-row-actions">
@@ -3538,39 +3599,82 @@ function strainListingRowHtml(item, profile, options = {}) {
   `;
 }
 
-function shopMenuHeaderHtml(row, listings, { detail = false, visibleCount = listings.length } = {}) {
-  const prices = listings.map(pricePerGram).filter(value => Number.isFinite(value) && value > 0);
+function shopAddress(shopId) {
+  const shop = state.shopById.get(String(shopId));
+  return String((shop && shop.address) || '').trim();
+}
+
+function shopOpeningHours(shopId) {
+  const entry = state.openingHours && state.openingHours[String(shopId)];
+  return entry && Array.isArray(entry.days) && entry.days.some(day => day && day.day && day.hours) ? entry : null;
+}
+
+// Coffeeshops keep Dutch time, wherever the visitor is.
+function dutchWeekday(now = new Date()) {
+  try {
+    return new Intl.DateTimeFormat('en-GB', { weekday: 'long', timeZone: 'Europe/Amsterdam' }).format(now);
+  } catch (error) {
+    return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][now.getDay()];
+  }
+}
+
+function shopHoursHtml(hours) {
+  if (!hours) return '';
+  const today = dutchWeekday();
+  const todayEntry = hours.days.find(day => day.day === today);
+  const checked = formatDate(hours.checked_at_utc || state.openingHoursCheckedAt);
+  return `
+    <details class="shop-menu-hours">
+      <summary>Opening hours${todayEntry ? ` <span>· today ${escapeHtml(todayEntry.hours)}</span>` : ''}</summary>
+      <table>
+        <tbody>${hours.days.filter(day => day && day.day && day.hours).map(day => `
+          <tr${day.day === today ? ' class="is-today"' : ''}><th scope="row">${escapeHtml(day.day)}</th><td>${escapeHtml(day.hours)}</td></tr>`).join('')}
+        </tbody>
+      </table>
+      <p>From <a href="${escapeHtmlAttr(hours.info_url || 'https://www.coffeeshopdirect.com/')}" target="_blank" rel="noopener noreferrer">coffeeshopdirect.com</a>${checked ? `, checked ${escapeHtml(checked)}` : ''}. Hours change, so check before you go.</p>
+    </details>
+  `;
+}
+
+function shopMenuHeaderHtml(row, listings, { detail = false } = {}) {
+  // The shop's own figures: an old menu still has a cheapest price of its own.
+  const prices = listings.filter(item => !isPriceChecked(item)).map(pricePerGram).filter(value => Number.isFinite(value) && value > 0);
+  const cityKey = normalise(row.city || '');
+  const cityPrices = (state.offerings || [])
+    .filter(item => cityKey && normalise(item.shop_city || '') === cityKey && hasComparablePrice(item))
+    .map(pricePerGram).filter(value => Number.isFinite(value) && value > 0);
+  const oldMenu = listings.length > 0 && listings.every(isOldMenu);
   const newestTime = latestListingTime(listings);
   const newestDate = newestTime ? new Date(newestTime).toISOString() : '';
   const heading = detail ? 'h2' : 'h3';
   const selected = isShopSelected(row.shopId);
   const mapUrl = buildShopMapLink(row.shopId);
+  const address = shopAddress(row.shopId);
   const count = `${listings.length.toLocaleString()} menu item${listings.length === 1 ? '' : 's'}`;
+  const stat = (label, value) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`;
   return `
     <header class="${detail ? 'detail-header' : 'shop-menu-hero'} shop-menu-header">
       <div class="shop-menu-identity">
         ${getShopLogoHtml(row.shopKey, row.shopName)}
         <div class="shop-menu-copy">
-          <p class="shop-menu-eyebrow">Coffeeshop menu</p>
+          <p class="shop-menu-eyebrow">Coffeeshop in ${escapeHtml(row.city || 'an unknown city')}</p>
           <${heading} class="shop-menu-name">${escapeHtml(row.shopName)}</${heading}>
-          <p class="shop-menu-location">${escapeHtml(row.city || 'City unknown')} · ${escapeHtml(count)}</p>
+          ${address ? `<p class="shop-menu-address">${escapeHtml(address)}</p>` : ''}
+          <p class="shop-menu-location">${escapeHtml(count)} ${ageBadgeHtml(newestDate, commonMenuDateItem(listings))}</p>
         </div>
-        ${ageBadgeHtml(newestDate, commonMenuDateItem(listings))}
       </div>
+      ${oldMenu ? '<p class="shop-menu-old-note">This menu is over a year old, so its prices are left out of comparisons.</p>' : ''}
+      <dl class="shop-menu-stats">
+        ${stat('Typical price', prices.length ? money(median(prices)) : 'Unknown')}
+        ${stat('Cheapest', prices.length ? money(Math.min(...prices)) : 'Unknown')}
+        ${stat(`${row.city || 'City'} typical`, cityPrices.length ? money(median(cityPrices)) : 'Unknown')}
+      </dl>
       <div class="shop-menu-actions">
-        <a href="${escapeHtmlAttr(mapUrl)}">View on map</a>
+        <a class="is-primary" href="${escapeHtmlAttr(mapUrl)}">View on map</a>
         <a href="${escapeHtmlAttr(row.shopUrl || shopLinkForId(row.shopId))}" target="_blank" rel="noopener noreferrer">Menu source</a>
         <button type="button" data-toggle-map-shop="${escapeHtmlAttr(row.shopId)}" class="${selected ? 'is-active' : ''}" aria-pressed="${selected}">${selected ? 'Saved shop' : 'Save shop'}</button>
       </div>
-      <details class="shop-menu-overview">
-        <summary>Menu details${prices.length ? ` <span>· from ${escapeHtml(money(Math.min(...prices)))}</span>` : ''}</summary>
-        <div class="shop-menu-summary-grid">
-          ${statTileHtml('Menu items', listings.length.toLocaleString(), `${visibleCount.toLocaleString()} visible`)}
-          ${statTileHtml('Priced items', prices.length.toLocaleString(), prices.length ? `Low ${money(Math.min(...prices))}` : 'No usable prices')}
-          ${statTileHtml('Average price', prices.length ? money(average(prices)) : 'Unknown', 'Known shop listings')}
-          ${statTileHtml('Latest menu date', newestDate ? formatDate(newestDate) : 'Unknown', ageBreakdownLabel(ageBreakdownForListings(listings)))}
-        </div>
-      </details>
+      ${shopHoursHtml(shopOpeningHours(row.shopId))}
     </header>
   `;
 }
@@ -3584,6 +3688,7 @@ function shopMenuSectionsHtml(groups, prefix, { detail = false, sharedDateItem =
     ${categories.length > 1 ? `<nav class="shop-menu-jumps" aria-label="Jump to menu category">
       ${categories.map(([category, items], index) => `<a href="#${escapeHtmlAttr(prefix)}-${index}">${escapeHtml(label(category))}<span>${items.length.toLocaleString()}</span></a>`).join('')}
     </nav>` : ''}
+    <p class="shop-menu-key">Tags show prices clearly below or above that strain's average across Budfinder. Tap a strain to compare every shop.</p>
     ${categories.map(([category, items], index) => `
       <section class="${detail ? 'detail-section ' : ''}menu-category-group shop-menu-category" aria-labelledby="${escapeHtmlAttr(prefix)}-${index}">
         <div class="menu-category-head">
@@ -3646,7 +3751,7 @@ function renderShopMenuBrowser() {
     groups.get(category).push(item);
   });
   els.shopMenuBrowser.innerHTML = `
-    ${shopMenuHeaderHtml(row, allListings, { visibleCount: filtered.length })}
+    ${shopMenuHeaderHtml(row, allListings)}
     ${groups.size ? shopMenuSectionsHtml(groups, `browser-menu-${row.shopId}`, { sharedDateItem: commonMenuDateItem(allListings) }) : '<div class="empty">No menu listings match these shop menu filters.</div>'}
   `;
 }
@@ -4003,7 +4108,7 @@ function renderFreshStrainRows(stats) {
       const latestItem = latestItems[0];
       const latestTime = displayListingTime(latestItem) || 0;
       const shopIds = shopIdsForListings(latestItems);
-      const prices = latestItems.map(pricePerGram).filter(Number.isFinite);
+      const prices = latestItems.filter(hasComparablePrice).map(pricePerGram).filter(Number.isFinite);
       return {
         stat,
         latestItems,
@@ -4147,6 +4252,7 @@ function belowAverageDealsForOfferings(offerings) {
     const stat = getStatByKey(key);
     const averagePrice = Number(stat && stat.avg);
     const price = Number(item.price_amount);
+    if (!hasComparablePrice(item)) return;
     if (!key || !Number.isFinite(price) || !Number.isFinite(averagePrice) || averagePrice <= 0 || price >= averagePrice) return;
     const percentBelow = Math.round(((averagePrice - price) / averagePrice) * 100);
     if (percentBelow <= 0) return;
@@ -4576,7 +4682,7 @@ function renderShops(filteredOfferings) {
     : '';
   const rows = Array.from(grouped.values()).map(row => {
     const selectedMatches = row.offerings.filter(item => selected.has(item.strain_name_normalised || normalise(item.strain_name)));
-    const prices = row.offerings.map(item => Number(item.price_amount)).filter(Number.isFinite);
+    const prices = row.offerings.filter(hasComparablePrice).map(item => Number(item.price_amount)).filter(Number.isFinite);
     const belowAverageDeals = belowAverageDealsForOfferings(row.offerings);
     const enrichedRow = {
       ...row,
@@ -4960,14 +5066,18 @@ async function init() {
   els.status.textContent = 'Loading nationwide menu data...';
   els.discoverySuggestions.hidden = true;
   try {
-    const [offerings, shops, manifest, imageMapCsv, locationCatalog] = await Promise.all([
+    const [offerings, shops, manifest, imageMapCsv, locationCatalog, openingHours] = await Promise.all([
       loadJson('database/active_offerings.json'),
       // Shop records are required to validate listings and saved shop IDs.
       loadJson('database/shops.json'),
       loadJson('database/manifest.json').catch(() => null),
       loadText('database/strain_image_map.csv').catch(() => ''),
-      loadLocationCatalog()
+      loadLocationCatalog(),
+      // Optional: shop pages simply leave hours out without it.
+      loadJson('database/opening_hours.json').catch(() => null)
     ]);
+    state.openingHours = (openingHours && typeof openingHours.shops === 'object' && openingHours.shops) || {};
+    state.openingHoursCheckedAt = (openingHours && openingHours.fetched_at_utc) || '';
     // Never replace a visitor's saved shops using a missing or malformed catalogue.
     if (!Array.isArray(offerings) || !Array.isArray(shops) ||
         !shops.some(shop => shop && String(shop.shop_id ?? '').trim())) {

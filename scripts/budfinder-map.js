@@ -3625,6 +3625,21 @@
       return Boolean(id && dbUnavailableShopIds.has(id));
     }
 
+    // The export marks likely menu typos (price_checks.py). Their prices still
+    // show in menus, but never set a marker price, an average or a cheapest shop.
+    function isPriceChecked(row) {
+      return Boolean(row && String(row.price_check || '').trim());
+    }
+
+    // Menus posted over a year ago (old_menu) are treated the same way.
+    function isOldMenuRow(row) {
+      return Boolean(row) && Number(row.old_menu) === 1;
+    }
+
+    function isLeftOutOfComparisons(row) {
+      return isPriceChecked(row) || isOldMenuRow(row);
+    }
+
     function isActiveOfferingRowAvailable(row) {
       const shopId = parseInt(row && row.shop_id, 10);
       return !Number.isFinite(shopId) || !isUnavailableDbShopId(shopId);
@@ -3829,7 +3844,7 @@
         if (!strainKey) return;
 
         const priceEntry = getOfferingPriceEntry(row);
-        if (!priceEntry) return;
+        if (!priceEntry || isLeftOutOfComparisons(row)) return;
 
         const compareKey = getPriceCompareKey(priceEntry);
         if (!compareKey) return;
@@ -4074,7 +4089,7 @@
         }
 
         const amount = parseFloat(r && r.price_amount);
-        if (!Number.isFinite(amount)) return;
+        if (!Number.isFinite(amount) || isLeftOutOfComparisons(r)) return;
         const currency = ((r && r.price_currency) || '€').toString().trim() || '€';
         const unit = ((r && r.price_unit) || 'g').toString().trim() || 'g';
         const priceEntry = { amount, currency, unit };
@@ -4443,7 +4458,10 @@
         entry.legalListingCount += 1;
       }
       const priceEntry = getOfferingPriceEntry(row);
-      if (priceEntry) {
+      if (priceEntry && isLeftOutOfComparisons(row)) {
+        const why = isPriceChecked(row) ? 'check price' : 'old menu';
+        entry.prices.add(`${formatPriceValue(priceEntry.amount, priceEntry.currency, priceEntry.unit)} (${why})`);
+      } else if (priceEntry) {
         entry.priceEntries.push(priceEntry);
         entry.prices.add(formatPriceValue(priceEntry.amount, priceEntry.currency, priceEntry.unit));
       }
@@ -8405,7 +8423,8 @@
     function getCategoryFilterLabel(cat) {
       const labels = {
         all: 'All',
-        favourites: 'Saved'
+        favourites: 'Saved',
+        mattVisited: 'Visited'
       };
       if (labels[cat]) return labels[cat];
       return (cat || '')
@@ -8879,7 +8898,7 @@
           entry.updatedAt = updatedAt;
         }
         const amount = parseFloat(row && row.price_amount);
-        if (Number.isFinite(amount)) {
+        if (Number.isFinite(amount) && !isLeftOutOfComparisons(row)) {
           entry.priceEntries.push({
             amount,
             currency: ((row && row.price_currency) || '€').toString().trim() || '€',

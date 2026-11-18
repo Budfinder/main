@@ -15,6 +15,7 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from price_history import price_history_errors, shop_price_history_errors
+import price_checks
 
 
 ROOT = Path(__file__).resolve().parent
@@ -157,6 +158,11 @@ def report_freshness(rows: list[dict], warnings: list[str], now: datetime | None
         print(f"Bulk timestamps only: {report['batch_only']:,} listings (included in unknown, not fresh).")
     if report["source_fields"]:
         print("Usable date fields: " + ", ".join(f"{field} ({count:,})" for field, count in sorted(report["source_fields"].items())))
+    old_rows = [row for row in rows if int(row.get("old_menu") or 0)]
+    if old_rows:
+        old_shops = sorted({f"{row.get('shop_name')} ({row.get('shop_city')})" for row in old_rows})
+        print(f"Menus over a year old (shown, but left out of comparisons): {len(old_rows):,} listings at {len(old_shops):,} shops")
+        print("  " + ", ".join(old_shops[:30]) + (" …" if len(old_shops) > 30 else ""))
     latest = report["latest"]
     if latest:
         age_days = (current.astimezone(timezone.utc).date() - latest.date()).days
@@ -171,6 +177,34 @@ def report_freshness(rows: list[dict], warnings: list[str], now: datetime | None
         warnings.append(f"{unknown:,} of {total:,} active listings ({unknown / total:.1%}) have unknown source age; bulk refresh dates are not menu verification")
     if report["future_dates"]:
         warnings.append(f"{report['future_dates']:,} listings have future source dates and are counted as unknown")
+
+
+def report_price_checks(rows: list[dict], warnings: list[str], limit: int = 40) -> None:
+    """List prices that are probably typos (see price_checks.py). Informational only."""
+    if rows and not any("price_check" in row for row in rows):
+        # Older export without the field: work it out the same way.
+        flagged_codes = price_checks.check_prices(rows)
+        rows = [{**row, "price_check": ",".join(codes)} for row, codes in zip(rows, flagged_codes)]
+    flagged = price_checks.flagged_rows(rows)
+    print("\nPrice checks")
+    print("------------")
+    print("Likely typos stay on shop menus but are left out of lowest and typical prices.")
+    print("Fix the entry, or use Price checks > Price is correct in the admin for a real price.")
+    if not flagged:
+        print("No prices need checking.")
+        return
+    by_shop = Counter(f"{row.get('shop_name', '')} ({row.get('shop_city', '')})" for row in flagged)
+    print(f"{len(flagged):,} prices need checking across {len(by_shop):,} shops. Most: "
+          + ", ".join(f"{name} {count}" for name, count in by_shop.most_common(5)))
+    for row in flagged[:limit]:
+        price = price_checks.per_gram(row) or 0
+        pack = f"€{float(row.get('package_price_amount') or 0):.2f} for {float(row.get('package_weight_g') or 1):g}g"
+        reasons = price_checks.describe(str(row.get("price_check") or "").split(","))
+        print(f"- {row.get('shop_name', '')} ({row.get('shop_city', '')}): {row.get('strain_name', '')} "
+              f"€{price:.2f}/g ({pack}) — {reasons}")
+    if len(flagged) > limit:
+        print(f"… and {len(flagged) - limit:,} more (all are listed on the admin's Price checks page).")
+    warnings.append(f"{len(flagged):,} prices look like typos and are left out of lowest and typical prices")
 
 
 def main() -> int:
@@ -339,6 +373,7 @@ def main() -> int:
     if active_path.exists():
         active = load_json(active_path)
         report_freshness(active, warnings)
+        report_price_checks(active, warnings)
 
         summary_path = DATABASE_DIR / "home_summary.json"
         if summary_path.exists():

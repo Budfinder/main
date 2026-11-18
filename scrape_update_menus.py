@@ -26,6 +26,17 @@ What happens when a menu is unchanged
 - A menu_history row records that the same menu was seen again.
 - Active offerings for that shop get a timestamped offering_history observation.
 
+Menu date and shop details
+--------------------------
+Each shop page says when its current menu was posted ("6 August 2026"). That
+date is saved as menus.source_menu_date, so the website shows the real age of
+a menu rather than the day this script first saw it. The page's address and
+its coffeeshopdirect.com link are saved on the shop row.
+
+--details-only fetches the shop pages and saves just those details, without
+downloading menus. A date is only saved when the page still shows the menu
+already in the database.
+
 Error handling
 --------------
 - If scraping fails for a shop that already has a known menu row, we preserve that
@@ -42,6 +53,7 @@ Inputs
 Run
 ---
   python scrape_update_menus.py --shops database/csd.csv --db database/coffeeshops.sqlite --out-dir menus_downloaded
+  python scrape_update_menus.py --shops database/csd.csv --db database/coffeeshops.sqlite --details-only
 """
 
 from __future__ import annotations
@@ -49,6 +61,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import html as html_lib
 import os
 import re
 import sqlite3
@@ -95,6 +108,7 @@ class ShopRow:
     shop_url: str
     show_in_admin: bool
     is_closed: bool
+    address: str = ""
 
 
 # -----------------------------
@@ -278,6 +292,7 @@ def db_init(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE shops ADD COLUMN show_in_admin INTEGER NOT NULL DEFAULT 1;")
     if "is_closed" not in shop_cols:
         conn.execute("ALTER TABLE shops ADD COLUMN is_closed INTEGER NOT NULL DEFAULT 0;")
+    add_detail_columns(conn)
     migration_columns = {
         "menu_entries": [
             ("grower", "TEXT NOT NULL DEFAULT ''"),
@@ -308,6 +323,19 @@ def db_init(conn: sqlite3.Connection) -> None:
             """
         )
     conn.commit()
+
+
+def add_detail_columns(conn: sqlite3.Connection) -> None:
+    """Columns for details read from the shop page (shared with the Flask app)."""
+    wanted = {
+        "shops": [("address", "TEXT NOT NULL DEFAULT ''"), ("info_url", "TEXT NOT NULL DEFAULT ''")],
+        "menus": [("source_menu_date", "TEXT NOT NULL DEFAULT ''")],
+    }
+    for table, columns in wanted.items():
+        existing = {str(r["name"]) for r in conn.execute(f"PRAGMA table_info({table});").fetchall()}
+        for column_name, column_sql in columns:
+            if column_name not in existing:
+                conn.execute(f"ALTER TABLE {table} ADD COLUMN {column_name} {column_sql};")
 
 
 def utc_now_iso() -> str:
@@ -721,7 +749,9 @@ def read_shops_csv(path: str) -> List[ShopRow]:
       - optional admin toggle: `show_in_admin` (or `enabled`)
       - optional closure flag: `is_closed` (or `closed`)
 
-    Extra columns (e.g. `address`) are ignored.
+    - optional `address`, used when the shop page shows none
+
+    Other extra columns are ignored.
     """
     if not os.path.exists(path):
         raise FileNotFoundError(path)
@@ -762,6 +792,7 @@ def read_shops_csv(path: str) -> List[ShopRow]:
                     shop_url=shop_url,
                     show_in_admin=show,
                     is_closed=is_closed,
+                    address=" ".join((r.get("address") or "").split()),
                 )
             )
 
@@ -993,6 +1024,120 @@ def choose_latest_menu_url(urls: List[str]) -> Optional[str]:
     return chosen[0] if chosen else None
 
 
+MONTHS = {
+    name: number
+    for number, names in enumerate(
+        [
+            ("january", "jan"), ("february", "feb"), ("march", "mar"), ("april", "apr"),
+            ("may",), ("june", "jun"), ("july", "jul"), ("august", "aug"),
+            ("september", "sep", "sept"), ("october", "oct"), ("november", "nov"), ("december", "dec"),
+        ],
+        start=1,
+    )
+    for name in names
+}
+_MENU_DATE_RE = re.compile(r"\b(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\.?,?\s+(\d{4})\b")
+
+
+def _page_text(fragment: str) -> str:
+    """Visible text of an HTML fragment, on one line."""
+    text = re.sub(r"(?is)<(script|style)\b.*?</\1>", " ", fragment)
+    text = re.sub(r"(?s)<[^>]+>", " ", text)
+    return " ".join(html_lib.unescape(text).split())
+
+
+def parse_menu_date(html: str) -> str:
+    """The posted date of the current menu, as YYYY-MM-DD, or '' if not shown.
+
+    Shop pages put it between the last rule and the first menu picture:
+    ``<hr> ... 6 August 2026 <br> by sincitysmoker ... <img class="MenuPic">``.
+    """
+    pic = re.search(r'(?i)<img[^>]+class="[^"]*MenuPic', html)
+    end = pic.start() if pic else len(html)
+    start = html.lower().rfind("<hr", 0, end)
+    text = _page_text(html[start if start >= 0 else 0:end])
+    for day, month_name, year in _MENU_DATE_RE.findall(text):
+        month = MONTHS.get(month_name.lower())
+        if not month:
+            continue
+        try:
+            return datetime(int(year), month, int(day)).date().isoformat()
+        except ValueError:
+            continue
+    return ""
+
+
+def parse_shop_address(html: str) -> str:
+    """The address line under the logo, without the shop name in front."""
+    m = re.search(r"(?is)</h1>(.*?)<br", html)
+    if not m:
+        return ""
+    line = re.sub(r"(?is)^\s*<b>.*?</b>", "", m.group(1), count=1)
+    return _page_text(line).lstrip(" ,").strip()
+
+
+def parse_info_url(page_url: str, html: str) -> str:
+    """The shop's coffeeshopdirect.com page, linked as "More general info"."""
+    parser = _TagCollector()
+    parser.feed(html)
+    for href in parser.anchor_hrefs:
+        url = urljoin(page_url, href)
+        if urlparse(url).netloc.lower().endswith("coffeeshopdirect.com"):
+            return url
+    return ""
+
+
+def parse_shop_page_details(page_url: str, html: str) -> Dict[str, str]:
+    """Menu date, address and info link from one coffeeshopmenus shop page."""
+    return {
+        "menu_date": parse_menu_date(html),
+        "address": parse_shop_address(html),
+        "info_url": parse_info_url(page_url, html),
+    }
+
+
+def save_shop_details(conn: sqlite3.Connection, shop_id: int, details: Dict[str, str], fallback_address: str = "") -> None:
+    """Store the page's address (or the CSV one) and info link on the shop row."""
+    address = details.get("address") or fallback_address
+    conn.execute(
+        """
+        UPDATE shops
+        SET address = CASE WHEN ? <> '' THEN ? ELSE address END,
+            info_url = CASE WHEN ? <> '' THEN ? ELSE info_url END
+        WHERE id = ?;
+        """,
+        (address, address, details.get("info_url", ""), details.get("info_url", ""), shop_id),
+    )
+    conn.commit()
+
+
+def save_menu_date(conn: sqlite3.Connection, shop_id: int, menu_date: str) -> None:
+    """Store the posted date of the shop's current menu."""
+    if not menu_date:
+        return
+    conn.execute("UPDATE menus SET source_menu_date = ? WHERE shop_id = ?;", (menu_date, shop_id))
+    conn.commit()
+
+
+def stored_menu_image_urls(conn: sqlite3.Connection, shop_id: int) -> List[str]:
+    """Image URLs of the menu already saved for a shop, in page order."""
+    rows = conn.execute(
+        """
+        SELECT mi.image_url
+        FROM menu_images mi
+        JOIN menus m ON m.id = mi.menu_id
+        WHERE m.shop_id = ?
+        ORDER BY mi.position;
+        """,
+        (shop_id,),
+    ).fetchall()
+    urls = [str(r["image_url"] or "") for r in rows]
+    if not urls:
+        row = conn.execute("SELECT image_url FROM menus WHERE shop_id = ?;", (shop_id,)).fetchone()
+        urls = [str(row["image_url"] or "")] if row and row["image_url"] else []
+    return [normalise_url(url) for url in urls if url]
+
+
 def save_image(out_dir: str, city: str, shop: str, sha: str, image_url: str, data: bytes) -> str:
     """
     Save the menu image bytes with a logical filename.
@@ -1020,6 +1165,11 @@ def main() -> int:
     ap.add_argument("--shops", required=True, help="Path to csd.csv containing shops.")
     ap.add_argument("--db", required=True, help="SQLite DB path (shared with app).")
     ap.add_argument("--out-dir", default="menus_downloaded", help="Folder to store downloaded images.")
+    ap.add_argument(
+        "--details-only",
+        action="store_true",
+        help="Only save menu dates, addresses and info links; download no menus.",
+    )
     args = ap.parse_args()
 
     shops = read_shops_csv(args.shops)
@@ -1027,6 +1177,9 @@ def main() -> int:
 
     conn = db_connect(args.db)
     db_init(conn)
+
+    if args.details_only:
+        return update_details_only(conn, shops, args.db)
 
     new_count = 0
     unchanged = 0
@@ -1055,6 +1208,8 @@ def main() -> int:
 
         try:
             html = download_text(shop_url)
+            details = parse_shop_page_details(shop_url, html)
+            save_shop_details(conn, shop_id, details, s.address)
             urls = extract_menu_image_urls(shop_url, html)
             menu_urls = choose_latest_menu_urls(urls)
             if not menu_urls:
@@ -1113,6 +1268,7 @@ def main() -> int:
                     num_bytes=total_bytes,
                 )
                 replace_menu_images(conn, shop_id, stored_images)
+                save_menu_date(conn, shop_id, details["menu_date"])
                 menu_history_id = record_menu_history(
                     conn,
                     shop_id=shop_id,
@@ -1157,6 +1313,9 @@ def main() -> int:
                 error="",
             )
             replace_menu_images(conn, shop_id, stored_images)
+            # A new menu must never keep the old menu's date.
+            conn.execute("UPDATE menus SET source_menu_date = ? WHERE shop_id = ?;", (details["menu_date"], shop_id))
+            conn.commit()
             menu_history_id = record_menu_history(
                 conn,
                 shop_id=shop_id,
@@ -1200,6 +1359,48 @@ def main() -> int:
     print(f"  Errors:         {errors}")
     print(f"  DB:             {os.path.abspath(args.db)}")
     print(f"  Images folder:  {os.path.abspath(args.out_dir)}")
+    return 0
+
+
+def update_details_only(conn: sqlite3.Connection, shops: List[ShopRow], db_path: str) -> int:
+    """Save menu dates, addresses and info links without touching menus."""
+    dated = skipped = changed = errors = 0
+    for i, s in enumerate(shops, start=1):
+        shop_url = s.shop_url
+        if shop_url.startswith("/"):
+            shop_url = urljoin("https://www.coffeeshopmenus.org/", shop_url)
+        shop_url = normalise_url(shop_url)
+        row = conn.execute("SELECT id FROM shops WHERE name = ? AND city = ?;", (s.shop.strip(), s.city.strip())).fetchone()
+        if not row or s.is_closed or not s.show_in_admin:
+            skipped += 1
+            continue
+        shop_id = int(row["id"])
+        try:
+            html = download_text(shop_url)
+        except Exception as e:
+            errors += 1
+            print(f"[{i}/{len(shops)}] {s.city} - {s.shop}: [ERROR] {e}")
+            time.sleep(SLEEP_BETWEEN_SHOPS_SEC)
+            continue
+        details = parse_shop_page_details(shop_url, html)
+        save_shop_details(conn, shop_id, details, s.address)
+        page_urls = choose_latest_menu_urls(extract_menu_image_urls(shop_url, html))
+        if page_urls and page_urls == stored_menu_image_urls(conn, shop_id):
+            save_menu_date(conn, shop_id, details["menu_date"])
+            dated += 1 if details["menu_date"] else 0
+            note = details["menu_date"] or "no date on page"
+        else:
+            changed += 1
+            note = "page shows a different menu; run a normal scrape"
+        print(f"[{i}/{len(shops)}] {s.city} - {s.shop}: {note}")
+        time.sleep(SLEEP_BETWEEN_SHOPS_SEC)
+    conn.close()
+    print("\n[SUMMARY]")
+    print(f"  Menu dates saved: {dated}")
+    print(f"  Menu changed:     {changed}")
+    print(f"  Skipped:          {skipped}")
+    print(f"  Errors:           {errors}")
+    print(f"  DB:               {os.path.abspath(db_path)}")
     return 0
 
 

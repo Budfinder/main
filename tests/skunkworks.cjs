@@ -91,7 +91,7 @@ test('deals use the map average, count shops once and ignore the old absolute pr
   const fs=require('node:fs');
   const vm=require('node:vm');
   const source=fs.readFileSync(require.resolve('../scripts/budfinder-map.js'),'utf8');
-  const names=['getOfferingPriceEntry','getPriceCompareKey','buildStrainAveragePriceMap','getAveragePriceComparisonForEntries'];
+  const names=['isPriceChecked','isOldMenuRow','isLeftOutOfComparisons','getOfferingPriceEntry','getPriceCompareKey','buildStrainAveragePriceMap','getAveragePriceComparisonForEntries'];
   const context=vm.createContext({normaliseText:skunk.normalise,
     normaliseNameCityKey:(name,city)=>`${skunk.normalise(name)}|${skunk.normalise(city)}`,
     findLocationIndexForShopMatch:id=>Number.isFinite(id)?id:null,
@@ -124,6 +124,10 @@ test('deals use the map average, count shops once and ignore the old absolute pr
   assert.equal(result.favourites[0].strain,'Rare');
   assert.ok(!result.deals.some(item=>item.strain==='Rare'),'A single-shop strain has no comparable average');
   assert.ok(!result.deals.some(item=>item.strain==='Cheap But Above'),'Low price alone does not imply a deal');
+  const withTypo=context.buildStrainAveragePriceMap([...eligible,row(4,'Premium',1.5,{price_check:'below_floor'})]);
+  assert.equal(withTypo.get(skunk.normalise('Premium')).get('€|g').count,2,'A price marked for checking never joins the map average');
+  const withOldMenu=context.buildStrainAveragePriceMap([...eligible,row(5,'Premium',30,{old_menu:1})]);
+  assert.equal(withOldMenu.get(skunk.normalise('Premium')).get('€|g').count,2,'A menu over a year old never joins the map average');
 });
 
 test('deal threshold, sample size and date preference rank transparent leads', () => {

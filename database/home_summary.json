@@ -1,9 +1,10 @@
 {
   "version": 1,
-  "exported_at_utc": "2026-11-18T06:30:07.787286+00:00",
-  "latest_menu_signal_utc": "2026-11-18T06:30:06.999597+00:00",
+  "exported_at_utc": "2026-11-18T12:37:11.432348+00:00",
+  "latest_menu_signal_utc": "2026-11-18T08:55:42.115967+00:00",
   "definitions": {
-    "median_listing_price": "The middle per-gram price across all active listings in that scope.",
+    "median_listing_price": "The middle per-gram price across the compared listings in that scope (likely typos and menus over a year old are left out).",
+    "median_listing_count": "How many listings that median is taken from.",
     "active_shop": "An open, visible shop with at least one current menu listing.",
     "active_listing": "One current strain-and-price row from an active shop.",
     "source_shop_record": "A visible shop record before menu-status and source-conflict exclusions."
@@ -13,45 +14,47 @@
     "active_shops": 150,
     "active_listings": 2549,
     "active_strains": 1133,
-    "average_strain_price": 16.31,
-    "median_listing_price": 13.0,
+    "average_strain_price": 16.32,
+    "median_listing_price": 13.5,
+    "median_listing_count": 1907,
     "mapped_shops": 163,
     "excluded_listings": 35
   },
   "network": {
     "source_shop_records": 444,
     "active_shops": 301,
-    "active_listings": 6509,
+    "active_listings": 6507,
     "active_strains": 2037,
-    "average_strain_price": 14.26,
+    "average_strain_price": 14.28,
     "median_listing_price": 11.0,
+    "median_listing_count": 5169,
     "excluded_listings": 35
   },
   "top_strains": [
     {
       "name": "amnesia haze",
       "shop_count": 243,
-      "average_price": 9.98
+      "average_price": 9.76
     },
     {
       "name": "white widow",
       "shop_count": 151,
-      "average_price": 9.15
+      "average_price": 9.25
     },
     {
       "name": "super silver haze",
       "shop_count": 114,
-      "average_price": 10.3
+      "average_price": 10.26
     },
     {
       "name": "lemon haze",
       "shop_count": 98,
-      "average_price": 10.86
+      "average_price": 10.72
     },
     {
       "name": "kosher kush",
       "shop_count": 53,
-      "average_price": 13.45
+      "average_price": 13.29
     }
   ],
   "rare_strain_count": 376,
@@ -59,12 +62,12 @@
     {
       "name": "3CHEMS",
       "shop_count": 2,
-      "average_price": 10.5
+      "average_price": null
     },
     {
       "name": "afghan skunk",
       "shop_count": 2,
-      "average_price": 9.5
+      "average_price": null
     },
     {
       "name": "alaskan crab legs",
@@ -79,7 +82,7 @@
     {
       "name": "amazon haze",
       "shop_count": 2,
-      "average_price": 14.0
+      "average_price": null
     },
     {
       "name": "AMNESIA 2",
@@ -94,12 +97,12 @@
     {
       "name": "apple haze",
       "shop_count": 2,
-      "average_price": 13.0
+      "average_price": null
     },
     {
       "name": "apple kush",
       "shop_count": 3,
-      "average_price": 10.67
+      "average_price": 10.0
     },
     {
       "name": "apple mintz",
@@ -109,7 +112,7 @@
     {
       "name": "applescotti",
       "shop_count": 3,
-      "average_price": 11.0
+      "average_price": 9.5
     },
     {
       "name": "arctic haze",
@@ -129,7 +132,7 @@
     {
       "name": "banana monkeyz",
       "shop_count": 3,
-      "average_price": 14.25
+      "average_price": 17.0
     },
     {
       "name": "banana runtz",
@@ -149,7 +152,7 @@
     {
       "name": "bazkittle",
       "shop_count": 2,
-      "average_price": 10.0
+      "average_price": null
     },
     {
       "name": "berry cream",
@@ -214,8 +217,8 @@
       "active_shops": 150,
       "active_listings": 2549,
       "active_strains": 1133,
-      "average_strain_price": 16.31,
-      "median_listing_price": 13.0
+      "average_strain_price": 16.32,
+      "median_listing_price": 13.5
     },
     {
       "name": "den Haag",
@@ -223,7 +226,7 @@
       "active_shops": 27,
       "active_listings": 772,
       "active_strains": 550,
-      "average_strain_price": 13.76,
+      "average_strain_price": 13.78,
       "median_listing_price": 12.0
     },
     {
@@ -232,17 +235,17 @@
       "active_shops": 14,
       "active_listings": 626,
       "active_strains": 220,
-      "average_strain_price": 9.3,
+      "average_strain_price": 9.31,
       "median_listing_price": 9.0
     },
     {
       "name": "Nijmegen",
       "map_location": "",
       "active_shops": 11,
-      "active_listings": 431,
+      "active_listings": 430,
       "active_strains": 201,
-      "average_strain_price": 9.72,
-      "median_listing_price": 9.5
+      "average_strain_price": 9.77,
+      "median_listing_price": 9.0
     },
     {
       "name": "Rotterdam",
@@ -250,8 +253,8 @@
       "active_shops": 19,
       "active_listings": 392,
       "active_strains": 266,
-      "average_strain_price": 14.49,
-      "median_listing_price": 11.0
+      "average_strain_price": 14.33,
+      "median_listing_price": 12.0
     },
     {
       "name": "Breda",
@@ -260,7 +263,7 @@
       "active_listings": 326,
       "active_strains": 179,
       "average_strain_price": 9.78,
-      "median_listing_price": 10.0
+      "median_listing_price": 9.0
     },
     {
       "name": "Tilburg",
@@ -275,9 +278,9 @@
       "name": "Arnhem",
       "map_location": "",
       "active_shops": 7,
-      "active_listings": 314,
+      "active_listings": 313,
       "active_strains": 170,
-      "average_strain_price": 9.53,
+      "average_strain_price": 10.23,
       "median_listing_price": 10.0
     },
     {
@@ -286,7 +289,7 @@
       "active_shops": 16,
       "active_listings": 274,
       "active_strains": 199,
-      "average_strain_price": 14.17,
+      "average_strain_price": 14.24,
       "median_listing_price": 12.0
     },
     {
@@ -296,7 +299,7 @@
       "active_listings": 199,
       "active_strains": 119,
       "average_strain_price": 9.51,
-      "median_listing_price": 9.5
+      "median_listing_price": 9.0
     },
     {
       "name": "Leeuwarden",
@@ -305,7 +308,7 @@
       "active_listings": 93,
       "active_strains": 71,
       "average_strain_price": 12.68,
-      "median_listing_price": 10.0
+      "median_listing_price": 11.0
     },
     {
       "name": "Utrecht",
@@ -314,7 +317,7 @@
       "active_listings": 75,
       "active_strains": 61,
       "average_strain_price": 11.54,
-      "median_listing_price": 11.5
+      "median_listing_price": 12.0
     },
     {
       "name": "Alkmaar",
@@ -323,7 +326,7 @@
       "active_listings": 61,
       "active_strains": 50,
       "average_strain_price": 11.28,
-      "median_listing_price": 11.11
+      "median_listing_price": 10.0
     },
     {
       "name": "Delft",
@@ -341,7 +344,7 @@
       "active_listings": 37,
       "active_strains": 33,
       "average_strain_price": 12.35,
-      "median_listing_price": 11.75
+      "median_listing_price": 11.5
     }
   ]
 }
