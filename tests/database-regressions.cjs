@@ -439,7 +439,7 @@ test('strain profile city choices count shops, update prices, and retain the oth
   selectCity('Rotterdam');
   assert.match(view.innerHTML, /value="Amsterdam">Amsterdam · 1 shop</);
   assert.match(view.innerHTML, /Lowest price<\/span>\s*<strong>€12\/g/);
-  const cards = view.innerHTML.match(/<article class="listing-card">[\s\S]*?<\/article>/g);
+  const cards = view.innerHTML.match(/<tr class="listing-row">[\s\S]*?<\/tr>/g);
   assert.equal(cards.length, 1);
   assert.match(cards[0], /<a class="listing-menu-link" href="[^\"]*detail=shop[^\"]*shop_id=2"[^>]*>[^]*?<strong>Harbour<\/strong>/);
   assert.equal((cards[0].match(/<a href="map\.html\?/g) || []).length, 1);

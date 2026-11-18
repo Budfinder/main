@@ -93,6 +93,13 @@ manifest mismatches still fail QA. The report never changes the data.
 
 The JSON export also writes `database/home_summary.json`. The homepage loads only this
 small aggregate; the full offerings dataset is reserved for map and menu exploration.
+Its headline "typical price" is `median_listing_price` (the middle per-gram price of
+all active listings), which matches what visitors see on menus; the older
+strain-weighted `average_strain_price` is kept as a fallback for earlier snapshots.
+The large public JSON files are written compactly (no indentation) to cut download
+and parse time; `home_summary.json`, `updates.json` and `manifest.json` stay indented.
+The map draws markers from `shops.json` first and loads `active_offerings.json`
+once the first view is on screen, unless a search or menu filter needs it sooner.
 If the manifest completion marker is briefly stale or unavailable during publishing,
 the homepage keeps the summary visible and adds a publication note instead of hiding
 all coverage and price figures.
@@ -343,9 +350,52 @@ security headers. JSON responses should be compressed and include
 
 ## Public website pages
 
-The public site has three pages: Home (`index.html`), Map (`map.html`), and
+The interactive site has three pages: Home (`index.html`), Map (`map.html`), and
 Price & Menus (`database.html`). Search and price help are available within
-those pages. The sitemap lists their canonical URLs.
+those pages.
+
+### Crawlable city, shop and strain pages
+
+Search engines cannot see results that the interactive pages build in the
+browser, so `build_static_pages.py` writes plain HTML from the exported JSON:
+
+- `coffeeshops/` – an index of cities, one page per city
+  (`coffeeshops/amsterdam/`) and one per shop with a menu
+  (`coffeeshops/amsterdam/barneys/`).
+- `strains/` – an A–Z index and one page per strain listed by at least two shops.
+- `sitemap.xml` – the main pages plus every generated page.
+
+The pages use `styles/budfinder-static.css` and
+`images/budfinder-badge-v3-96.webp`, need no JavaScript, and link back into the
+map and Menus & prices. Shop exclusions match the homepage summary. **Export
+JSON** in the admin (and `--export-json-only`) rebuilds them automatically;
+to rebuild by hand:
+
+```sh
+python3 build_static_pages.py
+```
+
+The script replaces `coffeeshops/` and `strains/` on each run, so pages for
+shops or strains that left the menus disappear. Upload both folders and
+`sitemap.xml` after the data snapshot. `404.html` is the branded not-found
+page used by `.htaccess`.
+
+### Logo thumbnails
+
+Logos display at 34–76px, so the site loads 128px WebP copies from
+`images/logos/thumbs/` and falls back to the original PNG. After adding or
+replacing logos, rebuild them (needs Pillow: `python3 -m pip install pillow`)
+and upload the `thumbs` folder:
+
+```sh
+python3 scripts/build_logo_thumbs.py
+```
+
+### Files kept off the public site
+
+`.htaccess` answers 404 for the SQLite database, `database/csd.csv`, Markdown,
+Python and test files, and hidden files such as `.DS_Store`, even if they are
+uploaded by mistake. The pages never load them.
 
 Skunkworks (`skunkworks.html`) is an unlisted personalisation page. It has a
 `noindex` instruction and is not in the public navigation or sitemap. It is not

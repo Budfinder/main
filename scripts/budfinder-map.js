@@ -227,6 +227,28 @@
       }
     }
 
+    // The full menu listing file is the largest download on the map. Markers
+    // only need the shop index, so fetch and parse the listings once the first
+    // view is on screen. Searches and active menu filters still request it
+    // straight away through loadActiveOfferingsRows().
+    let resolveInitialMapReady = null;
+    const initialMapReady = new Promise(resolve => { resolveInitialMapReady = resolve; });
+
+    function scheduleSharedMenuFiltersInit() {
+      const filtersActive = Boolean(menuExplore && menuExplore.active(sharedMenuFilters).length);
+      if (filtersActive) {
+        initSharedMenuFilters();
+        return;
+      }
+      const whenIdle = callback => (typeof window.requestIdleCallback === 'function'
+        ? window.requestIdleCallback(callback, { timeout: 1200 })
+        : window.setTimeout(callback, 60));
+      Promise.race([
+        initialMapReady,
+        new Promise(resolve => window.setTimeout(resolve, 2500))
+      ]).then(() => whenIdle(() => initSharedMenuFilters()));
+    }
+
     let locationSearchAreaAnchorCache = { key: '', anchors: [] };
     let mapSearchCandidates = [];
     let mapSearchSuggestionRows = [];
@@ -5431,7 +5453,7 @@
       host.hidden = !name;
       if (!name) return;
       document.getElementById('map-strain-result-name').textContent = name;
-      document.getElementById('map-match-rule').textContent = 'Exact name only · Each shop counted once · Listed menus, not live stock';
+      document.getElementById('map-match-rule').textContent = '';
       const info = mapSearchAreaInfo({ shopsOnly: true });
       document.getElementById('map-strain-result-count').textContent = localMapSearchCity()
         ? `Listed by ${info.local} shop${info.local === 1 ? '' : 's'} in ${info.city}${info.elsewhere ? ` · ${info.elsewhere} elsewhere` : ''}`
@@ -7209,7 +7231,7 @@
       const scopeControl = L.control({ position: 'bottomleft' });
       scopeControl.onAdd = () => {
         const note = L.DomUtil.create('div', 'map-scope-note');
-        note.innerHTML = '<strong id="map-scope-summary">Search covers all Netherlands</strong><span>Lines connect spaced logos to their locations.</span>';
+        note.innerHTML = '<strong id="map-scope-summary">Search covers all Netherlands</strong>';
         L.DomEvent.disableClickPropagation(note);
         return note;
       };
@@ -7683,6 +7705,7 @@
         initialMapReadyFallbackTimer = null;
       }
       document.body.classList.remove('map-is-loading');
+      if (resolveInitialMapReady) resolveInitialMapReady();
       if (initialMapPanelHideTimer) window.clearTimeout(initialMapPanelHideTimer);
       initialMapPanelHideTimer = window.setTimeout(() => {
         initialMapPanelHideTimer = null;
@@ -9872,10 +9895,15 @@
         }
 
         const card = e.target.closest('[data-best-match-index]');
-        if (!card) return;
+        if (!card || e.target.closest('a')) return;
         const index = parseInt(card.getAttribute('data-best-match-index') || '', 10);
         if (!Number.isInteger(index) || !locations[index]) return;
         selectDestinationIndex(index);
+        focusDestinationOnMap(index, {
+          minZoom: isCompactMobileLayout() ? 15 : 16,
+          animate: true,
+          duration: 0.45
+        });
       });
     }
 
@@ -11253,16 +11281,16 @@
             `<div class="best-match-identity">` +
               bestMatchLogoHtml(loc) +
               `<div class="best-match-main">` +
-                `<span class="best-match-name">${escapeHtml(item.name)}</span>` +
+                // The name opens the shop; the whole card does the same on click.
+                `<button type="button" class="best-match-action best-match-name" data-best-match-action="details" data-best-match-index="${item.index}" aria-label="Show ${escapeHtmlAttr(item.name)} on the map">${escapeHtml(item.name)}</button>` +
                 `<span class="best-match-reason">${escapeHtml(reason)}</span>` +
                 (savedSummary ? `<span class="best-match-saved">${escapeHtml(savedSummary)}</span>` : '') +
                 (badges ? `<span class="best-match-meta">${badges}</span>` : '') +
               `</div>` +
             `</div>` +
             `<div class="best-match-actions">` +
-              `<button type="button" class="best-match-action is-primary" data-best-match-action="details" data-best-match-index="${item.index}">View</button>` +
-              `<button type="button" class="best-match-action${inItinerary ? ' is-primary' : ''}" data-best-match-action="itinerary" data-best-match-index="${item.index}" aria-pressed="${inItinerary ? 'true' : 'false'}">${inItinerary ? 'Added' : 'Add to route'}</button>` +
-              (researchUrl ? `<a class="best-match-action" href="${escapeHtmlAttr(researchUrl)}">Prices</a>` : '') +
+              `<button type="button" class="best-match-action best-match-link${inItinerary ? ' is-added' : ''}" data-best-match-action="itinerary" data-best-match-index="${item.index}" aria-pressed="${inItinerary ? 'true' : 'false'}">${inItinerary ? '✓ In your route' : '+ Add to route'}</button>` +
+              (researchUrl ? `<a class="best-match-action best-match-link" href="${escapeHtmlAttr(researchUrl)}">Prices &amp; menu</a>` : '') +
             `</div>` +
           `</article>`
         );
@@ -12305,7 +12333,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-      initSharedMenuFilters();
+      scheduleSharedMenuFiltersInit();
       applyPersonalisation();
       updateControlsSummary();
     }, { once: true });

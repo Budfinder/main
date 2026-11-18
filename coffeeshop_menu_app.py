@@ -447,10 +447,17 @@ def derive_shop_key(name: str, city: str, shop_url: str) -> str:
     return slug_token(f"{name}-{city}")
 
 
-def json_dump(path: str, data: Any) -> None:
-    """Write pretty JSON with UTF-8 encoding."""
+def json_dump(path: str, data: Any, compact: bool = False) -> None:
+    """Write JSON with UTF-8 encoding.
+
+    Large public data files are written compactly: browsers download and parse
+    them on every map visit, and indentation roughly doubles their size.
+    """
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        if compact:
+            json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+        else:
+            json.dump(data, f, ensure_ascii=False, indent=2)
         f.write("\n")
 
 
@@ -1154,6 +1161,25 @@ def _home_summary(
             )
         return output
 
+    def listing_prices(rows: List[Dict[str, Any]]) -> List[float]:
+        prices = []
+        for row in rows:
+            try:
+                price = float(row.get("price_amount"))
+            except (TypeError, ValueError):
+                continue
+            if price > 0:
+                prices.append(price)
+        return prices
+
+    def median(values: List[float]) -> Optional[float]:
+        if not values:
+            return None
+        ordered = sorted(values)
+        middle = len(ordered) // 2
+        value = ordered[middle] if len(ordered) % 2 else (ordered[middle - 1] + ordered[middle]) / 2
+        return round(value, 2)
+
     def scope_summary(rows: List[Dict[str, Any]], source_shop_count: int) -> Dict[str, Any]:
         rows_by_strain = strain_rows(rows)
         averages = [row["average_price"] for row in rows_by_strain]
@@ -1163,6 +1189,8 @@ def _home_summary(
             "active_listings": len(rows),
             "active_strains": len(rows_by_strain),
             "average_strain_price": round(sum(averages) / len(averages), 2) if averages else None,
+            # The homepage headline: what a typical menu listing costs.
+            "median_listing_price": median(listing_prices(rows)),
         }
 
     amsterdam_rows = [
@@ -1215,6 +1243,7 @@ def _home_summary(
                 "active_listings": summary["active_listings"],
                 "active_strains": summary["active_strains"],
                 "average_strain_price": summary["average_strain_price"],
+                "median_listing_price": summary["median_listing_price"],
             }
         )
     location_summaries.sort(key=lambda row: (-int(row["active_listings"]), str(row["name"]).lower()))
@@ -1243,6 +1272,7 @@ def _home_summary(
         "exported_at_utc": exported_at_utc,
         "latest_menu_signal_utc": latest_menu_signal,
         "definitions": {
+            "median_listing_price": "The middle per-gram price across all active listings in that scope.",
             "active_shop": "An open, visible shop with at least one current menu listing.",
             "active_listing": "One current strain-and-price row from an active shop.",
             "source_shop_record": "A visible shop record before menu-status and source-conflict exclusions.",
@@ -1694,13 +1724,13 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
         ).fetchall()
     ]
 
-    json_dump(os.path.join(out_dir, "shops.json"), shops)
-    json_dump(os.path.join(out_dir, "shop_lookup.json"), shop_lookup)
-    json_dump(os.path.join(out_dir, "strains.json"), strains)
-    json_dump(os.path.join(out_dir, "active_offerings.json"), active_offerings)
-    json_dump(os.path.join(out_dir, "menu_entries.json"), menu_entries)
-    json_dump(os.path.join(out_dir, "strain_index.json"), strain_index)
-    json_dump(os.path.join(out_dir, "search_index.json"), search_index)
+    json_dump(os.path.join(out_dir, "shops.json"), shops, compact=True)
+    json_dump(os.path.join(out_dir, "shop_lookup.json"), shop_lookup, compact=True)
+    json_dump(os.path.join(out_dir, "strains.json"), strains, compact=True)
+    json_dump(os.path.join(out_dir, "active_offerings.json"), active_offerings, compact=True)
+    json_dump(os.path.join(out_dir, "menu_entries.json"), menu_entries, compact=True)
+    json_dump(os.path.join(out_dir, "strain_index.json"), strain_index, compact=True)
+    json_dump(os.path.join(out_dir, "search_index.json"), search_index, compact=True)
     json_dump(os.path.join(out_dir, "updates.json"), site_updates)
     mapped_amsterdam_shops = count_open_map_coffeeshops(
         os.path.join(out_dir, "locations", DEFAULT_LOCATION_FILES["Amsterdam"])
@@ -1729,10 +1759,10 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
         "shops": [{"shop_id": row["shop_id"], "name": row["name"],
                    "city": shops_by_id.get(row["shop_id"], {}).get("city", ""),
                    "points": row["points"]} for row in individual_series],
-    })
+    }, compact=True)
     price_history["series"] = [row for row in price_history["series"]
                                if row["kind"] != "shop" or row["shop_id"] in benchmark_ids]
-    json_dump(os.path.join(out_dir, "price_history.json"), price_history)
+    json_dump(os.path.join(out_dir, "price_history.json"), price_history, compact=True)
 
     manifest = {
         "exported_at_utc": exported_at_utc,
@@ -1770,6 +1800,25 @@ def export_json_snapshot(conn: sqlite3.Connection, out_dir: str) -> Dict[str, An
     }
     json_dump(os.path.join(out_dir, "manifest.json"), manifest)
     return manifest
+
+
+def build_static_pages_after_export(out_dir: str) -> str:
+    """Regenerate the crawlable city/shop/strain pages beside the website files.
+
+    Only runs when the export went to the website's own database/ folder, so a
+    test or scratch export never writes pages elsewhere. Failures are reported
+    rather than raised: the JSON export itself has already succeeded.
+    """
+    site_root = os.path.dirname(os.path.abspath(out_dir))
+    if os.path.basename(os.path.abspath(out_dir)) != "database" or not os.path.exists(os.path.join(site_root, "index.html")):
+        return "Static pages skipped (export folder is not the website's database/ folder)."
+    try:
+        import build_static_pages
+        counts = build_static_pages.build(Path(site_root))
+    except Exception as exc:  # pragma: no cover - reported to the admin instead
+        return f"Static pages were not rebuilt: {exc}"
+    return (f"Static pages rebuilt: {counts['cities']} cities, {counts['shops']} shops, "
+            f"{counts['strains']} strains; sitemap has {counts['sitemap_urls']} URLs.")
 
 
 def load_price_benchmark(conn: sqlite3.Connection, out_dir: str) -> List[int]:
@@ -7669,6 +7718,7 @@ def create_app(
             f"(shops={counts.get('shops', 0)}, strains={counts.get('strains', 0)}, "
             f"active_offerings={counts.get('active_offerings', 0)})."
         )
+        msg = f"{msg} {build_static_pages_after_export(out_dir)}"
         return redirect(url_for("main_menu", msg=msg))
 
     @app.post("/watch/update")
@@ -8526,6 +8576,7 @@ def main() -> int:
             f"menu_entries={counts.get('menu_entries', 0)}",
             f"strain_index={counts.get('strain_index', 0)}",
         )
+        print(f"[PAGES] {build_static_pages_after_export(json_export_dir)}")
 
     c.close()
 

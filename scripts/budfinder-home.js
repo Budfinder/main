@@ -1,8 +1,11 @@
 (() => {
   // Keep release metadata here as the single source of truth. The homepage
   // script URL in index.html is cache-busted whenever these values change.
-  const APP_VERSION = '1.32';
-  const APP_UPDATED = '31 October 2026';
+  // APP_UPDATED is the floor: "Site updated" shows the later of this date and
+  // the Last-Modified time the server sends for index.html, so uploading new
+  // pages updates it without editing this file.
+  const APP_VERSION = '1.33';
+  const APP_UPDATED = '2026-11-18';
   const SUMMARY_URL = 'database/home_summary.json';
   const MANIFEST_URL = 'database/manifest.json';
   const SEARCH_INDEX_URL = 'database/search_index.json';
@@ -61,6 +64,15 @@
       month: 'long',
       year: 'numeric'
     });
+  }
+
+  function siteUpdatedDate() {
+    const floor = new Date(`${APP_UPDATED}T00:00:00Z`);
+    // Without a Last-Modified header, browsers report the current time, so a
+    // value within a minute of now is treated as unknown.
+    const modified = new Date(typeof document !== 'undefined' && document.lastModified ? document.lastModified : '');
+    const known = !Number.isNaN(modified.getTime()) && Math.abs(Date.now() - modified.getTime()) > 60000;
+    return known && modified > floor ? modified : floor;
   }
 
   function price(value) {
@@ -369,11 +381,16 @@
     }).join('');
   }
 
+  // Median listing price where the snapshot has it, else the older strain mean.
+  const locationPrice = row => (price(row.median_listing_price) !== 'Unavailable'
+    ? row.median_listing_price
+    : row.average_strain_price);
+
   function renderLocations(rows) {
     const container = byId('random-location-prices');
     if (!container) return;
     const available = shuffled((Array.isArray(rows) ? rows : [])
-      .filter(row => price(row.average_strain_price) !== 'Unavailable'))
+      .filter(row => price(locationPrice(row)) !== 'Unavailable'))
       .slice(0, 5);
     if (!available.length) {
       container.innerHTML = '<p class="location-price-empty">Location price averages are unavailable in this snapshot.</p>';
@@ -386,7 +403,7 @@
       return `
         <a class="location-price-card" href="${escapeHtml(`${url.pathname.split('/').pop()}${url.search}`)}">
           <span>${escapeHtml(displayCity(row.name))}</span>
-          <strong>${escapeHtml(price(row.average_strain_price))}</strong>
+          <strong>${escapeHtml(price(locationPrice(row)))}</strong>
           <small>${Number(row.active_strains || 0).toLocaleString()} listed strains · ${Number(row.active_shops || 0).toLocaleString()} shops with menus</small>
         </a>
       `;
@@ -400,13 +417,27 @@
     const rareStrains = shuffled(summary.rare_strains).slice(0, 5);
     const mappedAmsterdamShops = Number(amsterdam.mapped_shops || amsterdam.active_shops || 0);
     const menuCoveredAmsterdamShops = Number(amsterdam.active_shops || 0);
+    const cityCount = Array.isArray(summary.locations) ? summary.locations.length : 0;
+    // The median listing matches what visitors see on menus. Older snapshots
+    // only carry the strain-weighted mean, so fall back to it with its own label.
+    const hasMedian = price(network.median_listing_price) !== 'Unavailable';
 
     byId('snapshot-date').textContent = formatDate(summary.exported_at_utc);
     byId('database-snapshot-date').textContent = formatDate(summary.exported_at_utc);
-    byId('catalog-shop-count').textContent = mappedAmsterdamShops.toLocaleString();
-    byId('catalog-shop-label').textContent = 'mapped Amsterdam shops';
-    byId('catalog-listing-count').textContent = Number(amsterdam.active_listings || 0).toLocaleString();
-    byId('home-average-price').textContent = price(network.average_strain_price);
+    byId('catalog-shop-count').textContent = Number(network.active_shops || 0).toLocaleString();
+    byId('catalog-shop-label').textContent = cityCount
+      ? `shops with menus in ${cityCount.toLocaleString()} cities`
+      : 'shops with menus nationwide';
+    byId('catalog-listing-count').textContent = Number(network.active_listings || 0).toLocaleString();
+    byId('home-average-price').textContent = price(hasMedian ? network.median_listing_price : network.average_strain_price);
+    const averageLabel = byId('home-average-label');
+    const averageNote = byId('home-average-note');
+    if (averageLabel) averageLabel.textContent = hasMedian ? 'Typical price nationwide' : 'Nationwide average strain price';
+    if (averageNote) {
+      averageNote.textContent = hasMedian
+        ? `Half of all ${Number(network.active_listings || 0).toLocaleString()} listed prices are below this.`
+        : 'Each strain contributes its average listed price once.';
+    }
     byId('home-most-common').textContent = topStrains.length ? `Top ${topStrains.length}` : 'Unavailable';
     byId('home-most-common-note').textContent =
       `Ranked across ${Number(network.active_shops || 0).toLocaleString()} shops with menu listings nationwide.`;
@@ -420,9 +451,10 @@
       : '<li class="insight-empty">No 2–3 shop strains are available in this snapshot.</li>';
 
     byId('coverage-definition').textContent =
-      'Mapped shops are marked open in our Amsterdam catalogue. A menu listing is one strain-and-price entry retained in the latest database.';
+      'A menu listing is one strain-and-price entry from a shop\'s latest recorded menu. Menu dates vary, so check a menu before travelling for one item.';
+    const excluded = Number(network.excluded_listings || 0);
     byId('coverage-filter-note').textContent =
-      `${menuCoveredAmsterdamShops.toLocaleString()} of ${mappedAmsterdamShops.toLocaleString()} mapped Amsterdam shops have menu listings. Amsterdam excludes ${Number(amsterdam.excluded_listings || 0).toLocaleString()} listing${Number(amsterdam.excluded_listings || 0) === 1 ? '' : 's'} marked unavailable. Nationwide figures use ${Number(network.active_listings || 0).toLocaleString()} listings across ${Number(network.active_shops || 0).toLocaleString()} shops, after excluding ${Number(network.excluded_listings || 0).toLocaleString()} listing${Number(network.excluded_listings || 0) === 1 ? '' : 's'} marked unavailable.`;
+      `${excluded.toLocaleString()} listing${excluded === 1 ? ' is' : 's are'} left out because the shop is closed or its menu is marked unavailable. In Amsterdam, ${menuCoveredAmsterdamShops.toLocaleString()} of ${mappedAmsterdamShops.toLocaleString()} mapped shops have menus.`;
 
     renderLocations(summary.locations);
   }
@@ -532,7 +564,7 @@
 
   async function init() {
     byId('app-version').textContent = `v${APP_VERSION}`;
-    byId('app-updated').textContent = APP_UPDATED;
+    byId('app-updated').textContent = formatDate(siteUpdatedDate());
     bindSearch();
     applyPersonalisation();
     window.addEventListener('budfinder:namechange', applyPersonalisation);

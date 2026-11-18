@@ -36,13 +36,14 @@
   <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
   <!-- Keep base styles before shared polish, followed by homepage overrides. -->
   <link rel="stylesheet" href="styles/budfinder-home-base.css?v=20260905-refine1" />
-  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261028-review2" />
-  <link rel="stylesheet" href="styles/budfinder-home-search.css?v=20261117-home-ux" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261118-review1" />
+  <link rel="stylesheet" href="styles/budfinder-home-search.css?v=20261118-review1" />
   <link id="budfinder-home-tlc" rel="stylesheet" href="styles/budfinder-home-layout.css?v=20261028-review2" />
-  <link rel="stylesheet" href="styles/budfinder-price-history.css?v=20261028-price3" />
+  <link rel="stylesheet" href="styles/budfinder-price-history.css?v=20261118-review1" />
 </head>
-<body>
+<body class="has-floating-nav nav-floats-wide">
   <a class="skip-link" href="#home-search-input">Skip to search</a>
+  <div class="nav-band" aria-hidden="true"></div>
   <nav class="app-mode-toggle" aria-label="Main navigation">
     <a href="index.html" aria-current="page">Home</a>
     <a href="map.html">Map</a>
@@ -83,14 +84,10 @@
           <p id="home-search-status" class="home-search-status" role="status"></p>
         </form>
 
-        <nav class="intent-actions" aria-label="Quick links">
-          <a class="intent-action" href="map.html?source=home&amp;intent=nearby">Near me</a>
-          <a class="intent-action" href="database.html?browser=shops">Browse menus</a>
-          <a class="intent-action" href="database.html">Find a strain</a>
-          <a class="intent-action" href="map.html?source=home&amp;intent=itinerary">Plan a route</a>
-        </nav>
-
-        <p class="availability-note">Menus change. Use Budfinder to plan, then check before travelling. Location stays off until you choose a location feature.</p>
+        <div class="hero-follow">
+          <a class="intent-action" href="map.html?source=home&amp;intent=nearby">Coffeeshops near me</a>
+          <p class="availability-note">Prices come from published menus and can change. <a href="#market-snapshot-title">How this works</a></p>
+        </div>
       </div>
 
       <aside class="hero-media" aria-label="Budfinder map preview">
@@ -111,16 +108,15 @@
     <section class="home-discovery" aria-labelledby="home-discovery-title">
       <div class="insights-head">
         <div><span class="eyebrow">Explore menus</span><h2 id="home-discovery-title">Find somewhere worth a visit.</h2></div>
-        <p>Explore by city or start with a strain.</p>
+        <p><a href="/coffeeshops/">Browse by city</a> · <a href="/strains/">All strains A–Z</a></p>
       </div>
       <div class="home-discovery-grid">
         <article class="insight-panel location-price-panel">
           <div class="location-price-head">
             <div>
               <span>Prices around the Netherlands</span>
-              <strong>Explore five featured locations</strong>
+              <strong>Typical price in five cities</strong>
             </div>
-            <p>Average listed prices for each location, using the same database refresh.</p>
           </div>
           <div id="random-location-prices" class="location-price-grid" aria-live="polite">
             <p class="location-price-empty">Loading location price averages…</p>
@@ -136,7 +132,7 @@
         <article class="insight-panel market-list-card">
           <span>Random 2–3 shop finds</span>
           <strong id="home-rare-count">Loading…</strong>
-          <p>A new selection on each visit, drawn from strains listed by exactly two or three shops in the database.</p>
+          <p>Strains only two or three shops stock. Shuffled on each visit.</p>
           <ul id="home-rare-list" class="insight-list" aria-label="Random strains listed in two or three shops"></ul>
           <a class="market-list-footer" href="database.html?mode=rare">Explore all 2–3 shop finds →</a>
         </article>
@@ -149,25 +145,25 @@
           <span class="eyebrow">About the menu data</span>
           <h2 id="market-snapshot-title">Coverage, prices and menu dates</h2>
         </div>
-        <p>Database refreshed <strong id="snapshot-date">Loading…</strong>. Menu dates vary; check each menu before travelling.</p>
+        <p>Database refreshed <strong id="snapshot-date">Loading…</strong>.</p>
       </div>
       <div id="amsterdam-insights" class="insights-grid market-signal-grid">
         <article class="insight-panel coverage-panel">
           <span>Data coverage</span>
           <div class="coverage-counts">
-            <span><strong id="catalog-shop-count">Loading…</strong><small id="catalog-shop-label">mapped Amsterdam shops</small></span>
-            <span><strong id="catalog-listing-count">Loading…</strong><small>Amsterdam menu listings</small></span>
+            <span><strong id="catalog-shop-count">Loading…</strong><small id="catalog-shop-label">shops with menus</small></span>
+            <span><strong id="catalog-listing-count">Loading…</strong><small id="catalog-listing-label">menu listings</small></span>
           </div>
           <details class="coverage-details">
             <summary>How these figures work</summary>
-            <p id="coverage-definition">Mapped shops are marked open in our Amsterdam catalogue. A menu listing is one strain-and-price entry retained in the latest database.</p>
+            <p id="coverage-definition">A menu listing is one strain-and-price entry from a shop's latest recorded menu. Menu dates vary, so check a menu before travelling for one item.</p>
             <p id="coverage-filter-note" class="coverage-filter-note">Loading menu coverage…</p>
           </details>
         </article>
         <a class="insight-panel market-signal-card" href="database.html">
-          <span>Nationwide average strain price</span>
+          <span id="home-average-label">Typical price nationwide</span>
           <strong id="home-average-price">Loading…</strong>
-          <p>Each strain contributes its average listed price once, so strains with more listings do not dominate the figure.</p>
+          <p id="home-average-note">Half of all listed prices are below this.</p>
         </a>
         <article id="price-history" class="price-history" aria-labelledby="price-history-title" aria-busy="true">
           <div class="price-history-head">
@@ -189,16 +185,16 @@
             </div>
           </div>
           <div class="price-history-readout">
-            <div><strong id="price-history-value">Loading…</strong><span id="price-history-date"></span></div>
+            <div><strong id="price-history-value">Loading…</strong><span id="price-history-change" class="price-history-change" hidden></span><span id="price-history-date"></span></div>
             <p id="price-history-coverage"></p>
           </div>
           <div id="price-history-trace-control" class="price-history-trace-control" hidden>
             <span class="price-history-main-legend">Benchmark average</span>
-            <label><input id="price-history-trace-toggle" type="checkbox" checked /> Show individual shop traces</label>
+            <label><input id="price-history-trace-toggle" type="checkbox" /> Show individual shop traces</label>
           </div>
           <p id="price-history-status" class="price-history-status" role="status">Loading recorded averages…</p>
           <div id="price-history-plot" class="price-history-plot" role="group" aria-label="Interactive average price chart" aria-describedby="price-history-instructions price-history-note" hidden></div>
-          <p id="price-history-instructions" class="price-history-instructions">Markers are recorded observations; the line connects them. Tap or hover to inspect, or focus the chart and use ← →, Home or End.</p>
+          <p id="price-history-instructions" class="price-history-instructions">Tap or hover a marker to see that day, or focus the chart and use ← → Home End.</p>
           <p id="price-history-note" class="price-history-note">Shop and strain coverage changes over time. These are database averages, rather than a measure of like-for-like market price changes.</p>
           <p id="price-history-live" class="price-history-sr-only" role="status" aria-live="polite"></p>
           <details id="price-history-benchmark" class="price-history-details" hidden>
@@ -249,17 +245,17 @@
       </div>
     </section>
 
-    <p class="note">For adults planning responsibly. Follow local laws and coffeeshop rules, and check before travelling across town for a specific item.</p>
+    <p class="note">For adults 18+. Follow local laws and coffeeshop rules. <a href="/coffeeshops/">Coffeeshops by city</a> · <a href="/strains/">Strain prices A–Z</a></p>
   </main>
 
-  <script src="scripts/budfinder-logos.js?v=20260830-missing1"></script>
+  <script src="scripts/budfinder-logos.js?v=20261118-thumbs1"></script>
   <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
   <script src="scripts/budfinder-page-settings.js?v=20261115-benchmark1"></script>
   <script src="scripts/budfinder-data.js?v=20261031-usability1"></script>
   <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
   <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
-  <script src="scripts/budfinder-home.js?v=20261117-home-ux"></script>
+  <script src="scripts/budfinder-home.js?v=20261118-review1"></script>
   <script src="scripts/budfinder-benchmark.js?v=20261115-benchmark1"></script>
-  <script src="scripts/budfinder-price-history.js?v=20261115-benchmark1"></script>
+  <script src="scripts/budfinder-price-history.js?v=20261118-review1"></script>
 </body>
 </html>

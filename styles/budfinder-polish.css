@@ -10,7 +10,7 @@ body {
    * Brand asset handoff: the upcoming logo can replace this single image
    * without changing lockup markup, spacing, or responsive layout.
    */
-  --budfinder-brand-mark-image: url("../images/budfinder-badge-v3.png");
+  --budfinder-brand-mark-image: url("../images/budfinder-badge-v3-96.webp");
   --budfinder-brand-mark-size: 40px;
 }
 
@@ -219,3 +219,26 @@ body .updates-scroll-hint,
 body .explore-filter-help,
 body .price-history-note,
 body .price-history-instructions { font-size: 13px; line-height: 1.6; }
+
+/* Content pages: the main navigation floats at the top right, so give it a
+   header band. Content now scrolls beneath a solid strip instead of being cut
+   off by the pill. Phones use the bottom navigation bar and skip this. */
+.nav-band {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 9;
+  display: none;
+  height: var(--floating-nav-band, 80px);
+  background: linear-gradient(to bottom, var(--bg-top, #06100e) 78%, transparent);
+  pointer-events: none;
+}
+
+body.has-floating-nav:not(.nav-floats-wide) { --floating-nav-band: 90px; }
+
+@media (min-width: 981px) {
+  body.has-floating-nav .nav-band { display: block; }
+}
+
+@media (min-width: 681px) and (max-width: 980px) {
+  body.has-floating-nav:not(.nav-floats-wide) .nav-band { display: block; }
+}

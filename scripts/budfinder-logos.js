@@ -5,6 +5,10 @@
   // missing logo produces one inexpensive miss instead of retrying equivalent
   // relative paths from the same page.
   const LOGO_BASE_PATH = '/images/logos/';
+  // Small WebP copies built by scripts/build_logo_thumbs.py. Logos never show
+  // larger than ~76px, so the thumbnail is tried first and the original stays
+  // as the fallback for any logo that has not been converted yet.
+  const LOGO_THUMB_PATH = '/images/logos/thumbs/';
   const LOGO_FILE_ALIASES = new Map([
     ['best_friends_centrum.png', 'best_friends_oost.png'],
     ['bulldog_energy.png', 'bulldog_rockshop.png'],
@@ -66,9 +70,13 @@
     if (!clean) return;
     const parts = clean.split('/').filter(Boolean);
     const basename = parts[parts.length - 1] || clean;
+    const stem = basename.replace(/\.[a-z0-9]+$/i, '');
+    const thumb = stem && /\.(?:png|jpe?g|gif|webp)$/i.test(basename)
+      ? `${LOGO_THUMB_PATH}${encodeURIComponent(stem)}.webp`
+      : '';
     const paths = clean.includes('/') && !/^images\/logos\//i.test(clean)
       ? [`/${clean}`, `${LOGO_BASE_PATH}${encodeURIComponent(basename)}`]
-      : [`${LOGO_BASE_PATH}${encodeURIComponent(basename)}`];
+      : [thumb, `${LOGO_BASE_PATH}${encodeURIComponent(basename)}`].filter(Boolean);
     paths.forEach(path => {
       if (seen.has(path) || FAILED_LOGO_URLS.has(absoluteLogoUrl(path))) return;
       seen.add(path);

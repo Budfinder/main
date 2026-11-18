@@ -27,14 +27,15 @@
   </script>
   <link rel="icon" type="image/x-icon" href="images/budfinder-badge-v3.ico" />
   <link rel="stylesheet" href="styles/budfinder-database.css?v=20260905-clarity1" />
-  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261028-review2" />
-  <link rel="stylesheet" href="styles/budfinder-database-refinements.css?v=20261117-city-menus" />
+  <link rel="stylesheet" href="styles/budfinder-polish.css?v=20261118-review1" />
+  <link rel="stylesheet" href="styles/budfinder-database-refinements.css?v=20261118-review1" />
   <link rel="stylesheet" href="styles/budfinder-menu.css?v=20261028-review2" />
   <link rel="stylesheet" href="styles/budfinder-explore.css?v=20261028-explore1" />
 
 </head>
-<body>
+<body class="has-floating-nav">
   <a id="database-skip" class="database-skip-link" href="#search">Skip to search</a>
+  <div class="nav-band" aria-hidden="true"></div>
   <nav class="app-mode-toggle" aria-label="Switch app view">
     <a href="index.html">Home</a>
     <a href="map.html">Map</a>
@@ -52,7 +53,7 @@
       <div class="brand">
         <span class="kicker" id="database-personal-greeting">Explore the database</span>
         <h1>Find a coffeeshop, strain, grower or area</h1>
-        <p class="intro-copy">Start with a name. Budfinder will keep everything else out of the way until you need it.</p>
+        <p class="intro-copy">Search a strain, coffeeshop, grower or town to compare menu prices.</p>
       </div>
     </header>
 
@@ -92,7 +93,7 @@
 
     <p id="status" class="status is-visible" role="status" aria-live="polite" aria-atomic="true">Loading nationwide menu data...</p>
 
-    <p id="database-data-note" class="database-data-note">Menu dates describe source menus or observations. Prices and availability may have changed.</p>
+    <p id="database-data-note" class="database-data-note">Prices come from published menus and can change.</p>
 
     <section id="discovery-suggestions" class="discovery-suggestions" aria-labelledby="discovery-suggestions-title">
       <h2 id="discovery-suggestions-title" class="discovery-intro">A few useful places to begin.</h2>
@@ -421,12 +422,12 @@
 
   <button id="jump-top" class="jump-top-btn" type="button">Top</button>
 
-  <script src="scripts/budfinder-logos.js?v=20260830-missing1"></script>
+  <script src="scripts/budfinder-logos.js?v=20261118-thumbs1"></script>
   <script src="scripts/budfinder-theme.js?v=20261028-review2"></script>
   <script src="scripts/budfinder-page-settings.js?v=20261115-benchmark1"></script>
   <script src="scripts/budfinder-data.js?v=20261031-usability1"></script>
   <script src="scripts/budfinder-search.js?v=20261028-search3"></script>
   <script src="scripts/budfinder-explore.js?v=20261028-explore1"></script>
-  <script src="scripts/budfinder-database.js?v=20261117-city-menus"></script>
+  <script src="scripts/budfinder-database.js?v=20261118-review1"></script>
 </body>
 </html>

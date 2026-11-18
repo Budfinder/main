@@ -411,3 +411,25 @@
     padding-inline: 9px;
   }
 }
+
+/* Lead with the direction of travel for the period on screen. */
+.price-history-readout .price-history-change {
+  display: inline-block;
+  margin: 2px 0 4px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.price-history-readout .price-history-change[hidden] {
+  display: none;
+}
+
+.price-history-readout .price-history-change[data-trend="down"] {
+  color: var(--accent);
+}
+
+.price-history-readout .price-history-change[data-trend="up"] {
+  color: var(--amber, #f0b854);
+}

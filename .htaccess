@@ -12,6 +12,23 @@
   RewriteRule ^(?:about|locate[2-7]?)\.html(?:/|$) - [G,NC]
 </IfModule>
 
+# Branded page for missing URLs (also used by the rules below).
+ErrorDocument 404 /404.html
+
+<IfModule mod_alias.c>
+  # Working files that the public pages never load: the SQLite database, the
+  # shop CSV used by the admin, project notes and source, and hidden files
+  # such as .DS_Store. They answer 404 rather than downloading.
+  RedirectMatch 404 (?i)\.(?:sqlite3?|db|py|pyc|md|cjs|bak|log)$
+  RedirectMatch 404 (?i)^/database/csd\.csv$
+  RedirectMatch 404 /\.(?!well-known/)
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType image/avif .avif
+</IfModule>
+
 <IfModule mod_headers.c>
   Header always set Strict-Transport-Security "max-age=31536000"
   Header always set X-Content-Type-Options "nosniff"

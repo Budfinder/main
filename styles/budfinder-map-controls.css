@@ -457,3 +457,30 @@ body:not(.compact-layout) .mobile-shop-sheet.is-place-panel {
   height: auto;
   max-height: max(0px, calc(100dvh - var(--app-map-top-clearance, 88px) - 36px - var(--app-map-action-height, 56px)));
 }
+
+/* Result cards: the card and its name open the shop on the map, so the route
+   and menu actions can be light text links instead of three large buttons. */
+html body .controls .best-match-list .best-match-card { cursor: pointer; }
+html body .controls .best-match-list .best-match-actions {
+  display: flex; flex-wrap: wrap; gap: 0 18px; margin: 2px 0 0; padding: 0;
+}
+html body .controls .best-match-list .best-match-action.best-match-link,
+html body .controls .best-match-list .best-match-action.best-match-name {
+  flex: 0 0 auto; width: auto; margin: 0; padding: 0;
+  border: 0 !important; border-radius: 0; background: none !important; box-shadow: none !important;
+  font: inherit; text-align: left; cursor: pointer;
+}
+html body .controls .best-match-list .best-match-action.best-match-link {
+  display: inline-flex; align-items: center; min-height: 36px;
+  color: var(--accent-strong) !important; font-size: 13px; font-weight: 800;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+:root[data-map-theme-tone="dark"] body .controls .best-match-list .best-match-action.best-match-link { color: var(--accent) !important; }
+html body .controls .best-match-list .best-match-action.best-match-link.is-added { color: var(--control-text, var(--ink)) !important; text-decoration: none; }
+html body .controls .best-match-list .best-match-action.best-match-name {
+  display: block; justify-self: start; justify-content: flex-start;
+  min-height: 0; color: var(--control-text, var(--ink)) !important;
+  font-size: 14px; font-weight: 900; line-height: 1.25; overflow-wrap: anywhere;
+}
+html body .controls .best-match-list .best-match-action.best-match-name:hover,
+html body .controls .best-match-list .best-match-action.best-match-name:focus-visible { text-decoration: underline; }

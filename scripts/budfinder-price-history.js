@@ -108,13 +108,32 @@
       benchmarkDescription: byId('price-history-benchmark-description'),
       traceControl: byId('price-history-trace-control'), traceToggle: byId('price-history-trace-toggle') };
     els.note = byId('price-history-note');
-    const state = { data: null, period: 'all', points: [], geometry: null, selected: -1, showTraces: true, customWarning: '' };
+    els.change = byId('price-history-change');
+    // Shop traces are opt-in: with them on, the scale must fit every shop
+    // (roughly €5–€30) and the benchmark line looks flat.
+    const state = { data: null, period: 'all', points: [], geometry: null, selected: -1, showTraces: false, customWarning: '' };
+
+    function showChange(point) {
+      if (!els.change) return;
+      const first = state.geometry && state.geometry.points[0];
+      if (!point || !first || point === first || !(first.average_price > 0)) {
+        els.change.textContent = '';
+        els.change.hidden = true;
+        return;
+      }
+      const percent = Math.round((point.average_price - first.average_price) / first.average_price * 1000) / 10;
+      const sign = percent > 0 ? '+' : percent < 0 ? '−' : '±';
+      els.change.textContent = `${sign}${Math.abs(percent).toFixed(1)}% since ${dateLabel(first.date)}`;
+      els.change.dataset.trend = percent > 0 ? 'up' : percent < 0 ? 'down' : 'flat';
+      els.change.hidden = false;
+    }
 
     function paint(announce = false) {
       const scope = state.data.series.find(row => row.id === els.scope.value) || state.data.series[0];
       const point = state.geometry.points[state.selected];
       els.plot.innerHTML = chartSvg(state.geometry, state.selected, scope.name);
       els.value.textContent = money(point.average_price);
+      showChange(point);
       els.date.textContent = `${point.kind === 'current' ? 'Latest snapshot' : 'Recorded average'} · ${dateLabel(point.date)}`;
       const strainCoverage = scope.id === 'custom-benchmark'
         ? `${point.strain_count.toLocaleString()} shop strain ${point.strain_count === 1 ? 'entry' : 'entries'}`
@@ -157,6 +176,7 @@
         els.plot.hidden = true;
         els.plot.removeAttribute('tabindex');
         els.value.textContent = 'No recorded price';
+        showChange(null);
         els.date.textContent = scope.name;
         els.coverage.textContent = '';
         els.status.hidden = false;

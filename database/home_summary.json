@@ -3,6 +3,7 @@
   "exported_at_utc": "2026-11-18T06:30:07.787286+00:00",
   "latest_menu_signal_utc": "2026-11-18T06:30:06.999597+00:00",
   "definitions": {
+    "median_listing_price": "The middle per-gram price across all active listings in that scope.",
     "active_shop": "An open, visible shop with at least one current menu listing.",
     "active_listing": "One current strain-and-price row from an active shop.",
     "source_shop_record": "A visible shop record before menu-status and source-conflict exclusions."
@@ -13,6 +14,7 @@
     "active_listings": 2549,
     "active_strains": 1133,
     "average_strain_price": 16.31,
+    "median_listing_price": 13.0,
     "mapped_shops": 163,
     "excluded_listings": 35
   },
@@ -22,6 +24,7 @@
     "active_listings": 6509,
     "active_strains": 2037,
     "average_strain_price": 14.26,
+    "median_listing_price": 11.0,
     "excluded_listings": 35
   },
   "top_strains": [
@@ -211,7 +214,8 @@
       "active_shops": 150,
       "active_listings": 2549,
       "active_strains": 1133,
-      "average_strain_price": 16.31
+      "average_strain_price": 16.31,
+      "median_listing_price": 13.0
     },
     {
       "name": "den Haag",
@@ -219,7 +223,8 @@
       "active_shops": 27,
       "active_listings": 772,
       "active_strains": 550,
-      "average_strain_price": 13.76
+      "average_strain_price": 13.76,
+      "median_listing_price": 12.0
     },
     {
       "name": "Maastricht",
@@ -227,7 +232,8 @@
       "active_shops": 14,
       "active_listings": 626,
       "active_strains": 220,
-      "average_strain_price": 9.3
+      "average_strain_price": 9.3,
+      "median_listing_price": 9.0
     },
     {
       "name": "Nijmegen",
@@ -235,7 +241,8 @@
       "active_shops": 11,
       "active_listings": 431,
       "active_strains": 201,
-      "average_strain_price": 9.72
+      "average_strain_price": 9.72,
+      "median_listing_price": 9.5
     },
     {
       "name": "Rotterdam",
@@ -243,7 +250,8 @@
       "active_shops": 19,
       "active_listings": 392,
       "active_strains": 266,
-      "average_strain_price": 14.49
+      "average_strain_price": 14.49,
+      "median_listing_price": 11.0
     },
     {
       "name": "Breda",
@@ -251,7 +259,8 @@
       "active_shops": 8,
       "active_listings": 326,
       "active_strains": 179,
-      "average_strain_price": 9.78
+      "average_strain_price": 9.78,
+      "median_listing_price": 10.0
     },
     {
       "name": "Tilburg",
@@ -259,7 +268,8 @@
       "active_shops": 10,
       "active_listings": 321,
       "active_strains": 142,
-      "average_strain_price": 9.01
+      "average_strain_price": 9.01,
+      "median_listing_price": 9.0
     },
     {
       "name": "Arnhem",
@@ -267,7 +277,8 @@
       "active_shops": 7,
       "active_listings": 314,
       "active_strains": 170,
-      "average_strain_price": 9.53
+      "average_strain_price": 9.53,
+      "median_listing_price": 10.0
     },
     {
       "name": "Haarlem",
@@ -275,7 +286,8 @@
       "active_shops": 16,
       "active_listings": 274,
       "active_strains": 199,
-      "average_strain_price": 14.17
+      "average_strain_price": 14.17,
+      "median_listing_price": 12.0
     },
     {
       "name": "Groningen",
@@ -283,7 +295,8 @@
       "active_shops": 9,
       "active_listings": 199,
       "active_strains": 119,
-      "average_strain_price": 9.51
+      "average_strain_price": 9.51,
+      "median_listing_price": 9.5
     },
     {
       "name": "Leeuwarden",
@@ -291,7 +304,8 @@
       "active_shops": 9,
       "active_listings": 93,
       "active_strains": 71,
-      "average_strain_price": 12.68
+      "average_strain_price": 12.68,
+      "median_listing_price": 10.0
     },
     {
       "name": "Utrecht",
@@ -299,7 +313,8 @@
       "active_shops": 7,
       "active_listings": 75,
       "active_strains": 61,
-      "average_strain_price": 11.54
+      "average_strain_price": 11.54,
+      "median_listing_price": 11.5
     },
     {
       "name": "Alkmaar",
@@ -307,7 +322,8 @@
       "active_shops": 5,
       "active_listings": 61,
       "active_strains": 50,
-      "average_strain_price": 11.28
+      "average_strain_price": 11.28,
+      "median_listing_price": 11.11
     },
     {
       "name": "Delft",
@@ -315,7 +331,8 @@
       "active_shops": 4,
       "active_listings": 39,
       "active_strains": 27,
-      "average_strain_price": 12.15
+      "average_strain_price": 12.15,
+      "median_listing_price": 11.0
     },
     {
       "name": "Eindhoven",
@@ -323,7 +340,8 @@
       "active_shops": 5,
       "active_listings": 37,
       "active_strains": 33,
-      "average_strain_price": 12.35
+      "average_strain_price": 12.35,
+      "median_listing_price": 11.75
     }
   ]
 }

@@ -659,3 +659,178 @@ body.database-results-open .database-search-input > label { display: none; }
   .strain-profile-header .detail-actions { margin: 0; gap: 8px; }
   .strain-profile-header .detail-actions > * { flex: 1 1 0; min-width: 0; }
 }
+
+/* Strain profile: one sortable table instead of a card per shop. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.detail-listing-table {
+  overflow-x: auto;
+  border: 1px solid var(--panel-border, var(--line));
+  border-radius: 16px;
+  background: var(--panel);
+}
+
+.detail-listing-table:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.detail-listing-table table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.detail-listing-table th,
+.detail-listing-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.detail-listing-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.detail-listing-table tbody tr:hover {
+  background: var(--accent-soft);
+}
+
+.detail-listing-table th {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.detail-listing-table th button {
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.detail-listing-table th[aria-sort="ascending"] button,
+.detail-listing-table th[aria-sort="descending"] button {
+  color: var(--ink);
+}
+
+.detail-listing-table .num {
+  text-align: right;
+}
+
+.detail-listing-table th.num button {
+  margin-left: auto;
+}
+
+.detail-listing-table small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.detail-listing-table .listing-menu-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.detail-listing-table .listing-menu-link strong {
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 3px;
+}
+
+.detail-listing-table .listing-menu-link:hover strong {
+  text-decoration-color: currentColor;
+}
+
+.detail-listing-table .listing-menu-link .shop-art {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  flex: none;
+  border-radius: 8px;
+}
+
+.detail-listing-table .listing-price strong {
+  font-size: 15px;
+}
+
+.detail-listing-table .listing-price .price-judgement {
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.detail-listing-table .listing-date .age-badge {
+  white-space: nowrap;
+}
+
+.detail-listing-table .listing-row-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.detail-listing-table .listing-row-actions a,
+.detail-listing-table .listing-row-actions button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin-left: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.detail-listing-table .listing-row-actions button.is-active {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* Strains without artwork get a flat monogram tile in the theme colours, so
+   they sit consistently beside the illustrated strains. */
+.strain-art:not(:has(img)) {
+  border: 1px solid var(--line);
+  background: var(--accent-soft);
+  box-shadow: none;
+}
+
+.strain-art:not(:has(img)) .strain-art-fallback {
+  color: var(--accent-strong);
+  font-family: "Trebuchet MS", "Gill Sans", Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+html[data-budfinder-mode="dark"] .strain-art:not(:has(img)) .strain-art-fallback {
+  color: var(--accent);
+}

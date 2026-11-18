@@ -39,10 +39,12 @@ const state = {
   detail: null,
   detailReturnSearch: '',
   detailReturnStack: [],
-  detailVisibleLimit: 12
+  detailVisibleLimit: 25,
+  // Strain profile table order: cheapest first unless the visitor re-sorts.
+  detailSort: { key: 'price', dir: 'asc' }
 };
 
-const DETAIL_LISTING_STEP = 12;
+const DETAIL_LISTING_STEP = 25;
 const explore = window.BudfinderExplore;
 let exploreFilters = explore ? explore.fromUrl(window.location.href) : {};
 let exploreFilterControls = [];
@@ -3452,6 +3454,90 @@ function menuListingCardHtml(item, { showAge = true } = {}) {
   `;
 }
 
+const DETAIL_SORTS = {
+  price: { label: 'Price', defaultDir: 'asc' },
+  shop: { label: 'Coffeeshop', defaultDir: 'asc' },
+  city: { label: 'City', defaultDir: 'asc' },
+  date: { label: 'Menu date', defaultDir: 'desc' }
+};
+
+function sortStrainListings(listings, sort = state.detailSort) {
+  const key = DETAIL_SORTS[sort && sort.key] ? sort.key : 'price';
+  const direction = sort && sort.dir === 'desc' ? -1 : 1;
+  const byPrice = (a, b) => (pricePerGram(a) ?? Infinity) - (pricePerGram(b) ?? Infinity);
+  const byDate = (a, b) => (displayListingTime(a) ?? -Infinity) - (displayListingTime(b) ?? -Infinity);
+  const primary = {
+    price: byPrice,
+    shop: (a, b) => compareShopName(a, b),
+    city: (a, b) => compareText(a.shop_city || '', b.shop_city || ''),
+    date: byDate
+  }[key];
+  return listings.slice().sort((a, b) => {
+    // Unknown prices and dates stay at the bottom in either direction.
+    if (key === 'price' && (pricePerGram(a) == null) !== (pricePerGram(b) == null)) return pricePerGram(a) == null ? 1 : -1;
+    if (key === 'date' && (displayListingTime(a) == null) !== (displayListingTime(b) == null)) return displayListingTime(a) == null ? 1 : -1;
+    return (primary(a, b) * direction) || byPrice(a, b) || compareShopName(a, b);
+  });
+}
+
+function strainListingHeaderHtml() {
+  const sort = state.detailSort || { key: 'price', dir: 'asc' };
+  const header = (key, className = '') => {
+    const active = sort.key === key;
+    const ariaSort = active ? (sort.dir === 'desc' ? 'descending' : 'ascending') : 'none';
+    const arrow = active ? (sort.dir === 'desc' ? ' ↓' : ' ↑') : '';
+    return `<th scope="col" class="${className}" aria-sort="${ariaSort}"><button type="button" data-detail-sort="${key}">${escapeHtml(DETAIL_SORTS[key].label)}<span aria-hidden="true">${arrow}</span></button></th>`;
+  };
+  return `<thead><tr>${header('shop')}${header('city')}${header('price', 'num')}${header('date', 'num')}<th scope="col"><span class="sr-only">Actions</span></th></tr></thead>`;
+}
+
+function strainListingRowHtml(item, profile, options = {}) {
+  const shopId = String(item.shop_id || '');
+  const shopName = item.shop_name || 'Unknown shop';
+  const menuUrl = detailUrl({ detail: 'shop', shop_id: shopId });
+  const mapUrl = buildShopMapLink(shopId, {
+    strainName: options.strainName || item.strain_name || '',
+    strainShopIds: profile && Array.isArray(profile.shopIds) ? profile.shopIds : [shopId]
+  });
+  const perGram = pricePerGram(item);
+  const priceParts = menuPriceParts(item);
+  const priceText = Number.isFinite(perGram) && perGram > 0 ? money(perGram, String(item.price_currency || '€')) : priceParts.primary;
+  const packText = priceParts.secondary ? priceParts.primary : '';
+  const judgement = Number.isFinite(perGram) && perGram > 0 && profile && profile.shopCount >= 2
+    ? priceJudgementFor(perGram, profile.median)
+    : null;
+  const notes = [
+    normalise(item.strain_name) !== normalise(options.strainName) ? item.strain_name : '',
+    Number(item.is_cali) === 1 ? 'Cali' : '',
+    Number(item.is_legal) === 1 ? 'Legal project' : '',
+    item.grower ? `Grower: ${item.grower}` : '',
+    String(item.notes || '').trim()
+  ].filter(Boolean).join(' · ');
+  const selected = isShopSelected(shopId);
+  return `
+    <tr class="listing-row">
+      <td class="listing-shop">
+        <a class="listing-menu-link" href="${escapeHtmlAttr(menuUrl)}" data-focus-shop-menu="${escapeHtmlAttr(shopId)}" aria-label="View full menu for ${escapeHtmlAttr(shopName)}">
+          ${getShopLogoHtml(item.shop_key, shopName)}
+          <strong>${escapeHtml(shopName)}</strong>
+        </a>
+        ${notes ? `<small>${escapeHtml(notes)}</small>` : ''}
+      </td>
+      <td class="listing-city">${escapeHtml(item.shop_city || '')}</td>
+      <td class="num listing-price">
+        <strong>${escapeHtml(priceText)}</strong>
+        ${packText ? `<small>${escapeHtml(packText)}</small>` : ''}
+        ${judgement && judgement.rank !== 2 ? `<small class="price-judgement ${judgement.className}">${escapeHtml(judgement.label)}</small>` : ''}
+      </td>
+      <td class="num listing-date">${ageBadgeHtml(displayListingDateValue(item), item)}</td>
+      <td class="listing-row-actions">
+        <a href="${escapeHtmlAttr(mapUrl)}" aria-label="View ${escapeHtmlAttr(shopName)} on map">Map</a>
+        <button type="button" data-toggle-map-shop="${escapeHtmlAttr(shopId)}" class="${selected ? 'is-active' : ''}" aria-pressed="${selected}" aria-label="${selected ? 'Remove saved shop' : 'Save shop'} ${escapeHtmlAttr(shopName)}">${selected ? 'Saved' : 'Save'}</button>
+      </td>
+    </tr>
+  `;
+}
+
 function shopMenuHeaderHtml(row, listings, { detail = false, visibleCount = listings.length } = {}) {
   const prices = listings.map(pricePerGram).filter(value => Number.isFinite(value) && value > 0);
   const newestTime = latestListingTime(listings);
@@ -3801,7 +3887,7 @@ function renderDetailContents() {
     });
     const filteredStat = statsFromOfferings(listings)[0] || { topType: '', caliCount: 0 };
     const profile = priceProfileForListings(listings);
-    const visibleListings = listings.slice(0, state.detailVisibleLimit);
+    const visibleListings = sortStrainListings(listings).slice(0, state.detailVisibleLimit);
     const remainingListings = Math.max(0, listings.length - visibleListings.length);
     const shopIds = shopIdsForListings(listings);
     const mapUrl = mapUrlForShopIds(shopIds, { strainName: stat.name, strainShopIds: shopIds });
@@ -3839,11 +3925,14 @@ function renderDetailContents() {
       <section class="detail-section">
         <div>
           <h3>Where to find it</h3>
-          <p class="muted">${listings.length.toLocaleString()} current listing${listings.length === 1 ? '' : 's'} across ${shopIds.length.toLocaleString()} shop${shopIds.length === 1 ? '' : 's'}. Select a shop to see its full known menu.</p>
+          <p class="muted">${listings.length.toLocaleString()} listing${listings.length === 1 ? '' : 's'} at ${shopIds.length.toLocaleString()} shop${shopIds.length === 1 ? '' : 's'}. Select a column to sort, or a shop for its full menu.</p>
         </div>
-        <div class="detail-listing-grid">
-          ${visibleListings.length ? visibleListings.map(item => listingCardHtml(item, profile, { strainName: stat.name })).join('') : '<div class="empty">No listings match these filters. Clear a filter above to see more.</div>'}
-        </div>
+        ${visibleListings.length ? `<div class="detail-listing-table" role="region" aria-label="Where to find ${escapeHtmlAttr(stat.name)}" tabindex="0">
+          <table>
+            ${strainListingHeaderHtml()}
+            <tbody>${visibleListings.map(item => strainListingRowHtml(item, profile, { strainName: stat.name })).join('')}</tbody>
+          </table>
+        </div>` : '<div class="empty">No listings match these filters. Clear a filter above to see more.</div>'}
         ${remainingListings ? `
           <div class="detail-load-more-row">
             <button type="button" data-load-more-detail>
@@ -4887,7 +4976,7 @@ async function init() {
     state.snapshotTime = parseTime(manifest && manifest.exported_at_utc) || Date.now();
     if (els.dataNote) {
       const snapshotDate = formatDate(manifest && manifest.exported_at_utc);
-      els.dataNote.textContent = `${snapshotDate ? `Data snapshot ${snapshotDate}. ` : ''}Menu dates describe source menus or observations. Prices and availability may have changed.`;
+      els.dataNote.textContent = `${snapshotDate ? `Data snapshot ${snapshotDate}. ` : ''}Prices come from published menus and can change.`;
     }
     const catalogCityLabels = new Map(
       (Array.isArray(locationCatalog && locationCatalog.datasets) ? locationCatalog.datasets : [])
@@ -5495,9 +5584,21 @@ if (els.detailView) {
       const previousLimit = state.detailVisibleLimit;
       state.detailVisibleLimit += DETAIL_LISTING_STEP;
       renderDetail();
-      const firstNewListing = els.detailView.querySelectorAll('.detail-listing-grid > .listing-card')[previousLimit];
+      const firstNewListing = els.detailView.querySelectorAll('.detail-listing-table tbody > tr')[previousLimit];
       const firstAction = firstNewListing?.querySelector('a, button');
       if (firstAction) firstAction.focus({ preventScroll: true });
+      return;
+    }
+    const sortButton = event.target.closest('[data-detail-sort]');
+    if (sortButton) {
+      const key = sortButton.dataset.detailSort;
+      if (!DETAIL_SORTS[key]) return;
+      const current = state.detailSort || {};
+      state.detailSort = current.key === key
+        ? { key, dir: current.dir === 'asc' ? 'desc' : 'asc' }
+        : { key, dir: DETAIL_SORTS[key].defaultDir };
+      renderDetail();
+      els.detailView.querySelector(`[data-detail-sort="${key}"]`)?.focus({ preventScroll: true });
       return;
     }
     const closeButton = event.target.closest('[data-close-detail]');
