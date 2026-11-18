@@ -3602,6 +3602,7 @@
         show_in_admin: raw && raw.show_in_admin,
         fetched_at_utc: ((raw && raw.fetched_at_utc) || '').toString().trim(),
         updated_at: ((raw && raw.updated_at) || '').toString().trim(),
+        source_menu_date: ((raw && raw.source_menu_date) || '').toString().trim(),
       };
     }
 
@@ -4599,6 +4600,30 @@
       if (typeof loc.Coffeeshop === 'boolean') return loc.Coffeeshop;
       const coffeeKey = Object.keys(loc).find(k => normaliseText(k) === 'coffeeshop');
       return coffeeKey ? !!loc[coffeeKey] : false;
+    }
+
+    // Which places get a full-size logo when the map is crowded (see
+    // budfinder-marker-layout.js). The selected place and search matches with a
+    // price always come first; after that saved and visited places, then shops
+    // with a current menu, newest first. Old or unknown menus come last. A small
+    // fixed tie-breaker per shop spreads full logos evenly instead of A to Z.
+    function markerLayoutPriority(index) {
+      const loc = locations[index];
+      if (!loc) return 0;
+      let score = 0;
+      if (favorites.includes(index)) score += 3000;
+      if (loc.visited) score += 800;
+      if (isCoffeeShopLocation(loc)) score += 300;
+      const meta = loc.db_shop_id ? dbShopMetaById.get(loc.db_shop_id) : null;
+      const posted = Date.parse((meta && meta.source_menu_date) || '');
+      if (Number.isFinite(posted)) {
+        const ageDays = (Date.now() - posted) / 86400000;
+        if (ageDays <= 365) score += 400 + Math.round(200 * (1 - Math.max(0, ageDays) / 365));
+      }
+      const key = String(loc.shop_key || loc.name || index);
+      let hash = 0;
+      for (let i = 0; i < key.length; i += 1) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+      return score + (hash % 100) / 2;
     }
 
     function isAreaLocation(loc) {
@@ -7224,7 +7249,8 @@
           id: locations[index].shop_key || locations[index].shop_id || index,
           name: locations[index].name,
           visible: marker._budfinderVisible !== false,
-          selected: activePopupLocationIndex === index || selectedIndex === index
+          selected: activePopupLocationIndex === index || selectedIndex === index,
+          priority: markerLayoutPriority(index)
         }));
       });
 

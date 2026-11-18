@@ -179,8 +179,8 @@ test('fresh offscreen icons are wrapped and scaled before entering the viewport'
   assert.ok(content, 'Offscreen content must not retain its original unscaled size');
   assert.equal(content.style.width, '44px');
   assert.equal(content.style.height, '44px');
-  assert.equal(content.style.transform, 'scale(0.5)');
-  assert.equal(place.icon.style.width, '22px');
+  assert.match(content.style.transform, /scale\(0\.5909/, 'Scaled from 44px to the 26px full logo at zoom 12');
+  assert.equal(place.icon.style.width, '26px');
   assert.equal(place.icon.tabIndex, -1);
   assert.equal(app.container.dataset.visibleLogoCount, '0');
   app.map.panX = 300;
@@ -193,28 +193,29 @@ test('fresh offscreen icons are wrapped and scaled before entering the viewport'
   assert.deepEqual(place.coords, { lat: 100, lng: -200 });
 });
 
-test('panning a displaced marker offscreen resets its popup offset without auto-panning back', () => {
+test('a crowded neighbour shows a small logo at its shop, and its popup follows the real spot', () => {
   const first = marker('a', 120, 160);
-  const displaced = marker('b', 120, 160);
-  const app = harness([first, displaced]);
+  const crowded = marker('b', 120, 160);
+  const app = harness([first, crowded]);
+  app.entries[0].priority = 2;
   app.flush();
-  assert.notEqual(displaced.icon.dataset.markerOffset, '0,0');
-  const previousOffset = Array.from(displaced.popup.options.offset);
-  displaced.popupOpen = true;
+  assert.ok(!first.icon.className.includes('is-mini'), 'The more important place keeps its full logo');
+  assert.ok(crowded.icon.className.includes('is-mini'), 'The other place gets a small copy of its logo');
+  assert.ok(parseFloat(crowded.icon.style.width) < parseFloat(first.icon.style.width));
+  assert.equal(crowded.icon.querySelectorAll('.bf-marker-leader').length, 0, 'No lines back to a pushed-away logo');
+  const [dx, dy] = crowded.icon.dataset.markerOffset.split(',').map(Number);
+  assert.ok(Math.hypot(dx, dy) <= 26, 'A small logo stays beside its shop');
+  crowded.popupOpen = true;
   app.map.panX = -1000;
   app.map.emit('moveend');
   app.flush();
-  assert.equal(displaced.icon.dataset.markerOffset, '0,0');
-  assert.equal(displaced.icon.style.marginLeft, '-11px');
-  assert.equal(displaced.icon.style.marginTop, '-11px');
-  assert.equal(displaced.icon.querySelector('.bf-marker-leader').hidden, true);
-  assert.equal(displaced.icon.querySelector('.bf-marker-point').hidden, true);
-  assert.notDeepEqual(Array.from(displaced.popup.options.offset), previousOffset);
-  // Leaflet adds the icon's [2, -44] anchor to this offset, leaving [0, -14].
-  assert.deepEqual(Array.from(displaced.popup.options.offset), [-2, 30]);
-  assert.deepEqual(displaced.popup.updates.at(-1), { offset: [-2, 30], autoPan: false });
-  assert.equal(displaced.popup.options.autoPan, true, 'Original popup behavior must be restored');
-  assert.deepEqual(displaced.coords, { lat: 160, lng: 120 });
+  assert.deepEqual(crowded.popup.updates.at(-1).autoPan, false, 'Panning away never pulls the map back');
+  assert.equal(crowded.popup.options.autoPan, true, 'Original popup behavior must be restored');
+  assert.deepEqual(crowded.coords, { lat: 160, lng: 120 });
+  app.entries[1].selected = true;
+  app.controller.schedule();
+  app.flush();
+  assert.ok(!crowded.icon.className.includes('is-mini'), 'Selecting a place always gives it a full logo');
 });
 
 test('unloading a map cancels pending layout and disables its controller keyboard action', () => {
@@ -267,36 +268,25 @@ function renderedBox(app, place) {
     width: parseFloat(place.icon.style.width), height: parseFloat(place.icon.style.height) };
 }
 
-test('323 coincident logos shrink as one stable layout through world zoom without merging or repacking', () => {
+test('323 places in one spot keep one full logo (the selected one) and small logos for the rest at every zoom', () => {
   const places = Array.from({ length: 323 }, (_, id) => marker(String(id), 180.25, 240.75));
   const app = harness(places);
   app.map.zoom = 11;
-  app.entries[0].selected = true;
+  app.entries[5].selected = true;
   app.flush();
-  const builds = app.container.dataset.markerLayoutBuilds;
-  let previousBoxes = places.map(place => renderedBox(app, place));
-  for (let zoom = 10; zoom >= 0; zoom -= 1) {
+  for (let zoom = 11; zoom >= 0; zoom -= 1) {
     app.map.zoom = zoom;
     app.map.emit('zoomend');
     app.flush();
-    const boxes = places.map(place => renderedBox(app, place));
-    boxes.forEach((box, i) => {
-      const previous = previousBoxes[i];
-      assert.ok(Math.abs(box.width * 2 - previous.width) < 1e-9);
-      assert.ok(Math.abs(box.left * 2 - previous.left) < 1e-9, 'Fractional anchors scale without pixel-rounding collisions');
-      assert.ok(Math.abs(box.top * 2 - previous.top) < 1e-9);
-      boxes.slice(i + 1).forEach(other => {
-        assert.ok(box.left + box.width <= other.left + 1e-9 || other.left + other.width <= box.left + 1e-9 ||
-          box.top + box.height <= other.top + 1e-9 || other.top + other.height <= box.top + 1e-9);
-      });
-      assert.equal(places[i].icon.querySelector('.bf-marker-leader').hidden, true);
-      assert.equal(places[i].icon.dataset.placeId, String(i));
-      assert.deepEqual(places[i].coords, { lat: 240.75, lng: 180.25 });
+    const full = places.filter(place => !place.icon.className.includes('is-mini'));
+    assert.deepEqual(full.map(place => place.id), ['5'], `Zoom ${zoom}: only the selected place is full size`);
+    places.forEach((place, i) => {
+      assert.equal(place.icon.dataset.placeId, String(i));
+      assert.deepEqual(place.coords, { lat: 240.75, lng: 180.25 });
     });
-    assert.equal(app.container.dataset.markerLayoutBuilds, builds);
-    previousBoxes = boxes;
   }
-  assert.ok(previousBoxes[0].width < 0.01, 'Selected logos must also shrink, without a fixed-size halo');
+  assert.ok(parseFloat(places[0].icon.style.width) < 0.1, 'From very far away small logos are only a speckle');
+  assert.equal(parseFloat(places[5].icon.style.width), 20 * 1.15, 'The selected logo stays recognisable');
 });
 
 test('distant pans and resizes reuse positions with no marker layout measurements', () => {
@@ -311,8 +301,8 @@ test('distant pans and resizes reuse positions with no marker layout measurement
   app.map.emit('moveend');
   app.flush();
   const after = renderedBox(app, places[1]);
-  assert.equal(after.left - before.left, 50);
-  assert.equal(after.top - before.top, 25);
+  assert.ok(Math.abs(after.left - before.left - 50) < 1e-9);
+  assert.ok(Math.abs(after.top - before.top - 25) < 1e-9);
   app.map.emit('resize');
   app.flush();
   assert.equal(app.container.dataset.markerLayoutBuilds, builds);
@@ -351,7 +341,8 @@ test('distant layout responds to filters and changed icon bounds, retaining keyb
   app.controller.schedule();
   app.flush();
   assert.equal(app.container.dataset.markerLayoutBuilds, '3');
-  assert.ok(renderedBox(app, places[1]).height > renderedBox(app, places[0]).height);
+  const tall = renderedBox(app, places[1]);
+  assert.ok(Math.abs(tall.height / tall.width - 80 / 44) < 1e-9, 'A changed icon shape is measured again');
   places[1].icon.press(' ');
   assert.equal(places[1].clicks, 1);
   places[1].popupOpen = true;

@@ -1,89 +1,115 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { layout, logoSize } = require('../scripts/budfinder-marker-layout.js');
+const { layout, logoSize, miniSize } = require('../scripts/budfinder-marker-layout.js');
 
-function check(points, result, viewport, gap = 0) {
-  assert.equal(result.length, points.length, 'Every place keeps its own marker');
+// Every place keeps its own logo (full or small) close to its real spot, and
+// full logos never overlap each other.
+function check(points, result, gap = 2) {
+  assert.equal(result.length, points.length, 'Every place keeps its own logo');
   assert.deepEqual(result.map(item => item.id), points.map(item => item.id));
   result.forEach((item, i) => {
+    const point = points[i];
     assert.ok(item.width > 0 && item.height > 0);
-    assert.ok(item.x - item.width / 2 >= -0.001);
-    assert.ok(item.y - item.height / 2 >= -0.001);
-    assert.ok(item.x + item.width / 2 <= viewport.width + 0.001);
-    assert.ok(item.y + item.height / 2 <= viewport.height + 0.001);
-    assert.ok(Math.abs(item.x - item.dx - points[i].x) < 0.001, 'The leader retains the true map point');
-    assert.ok(Math.abs(item.y - item.dy - points[i].y) < 0.001);
-    result.slice(i + 1).forEach(other => {
-      const clearX = Math.abs(item.x - other.x) >= (item.width + other.width) / 2 + gap - 0.001;
-      const clearY = Math.abs(item.y - other.y) >= (item.height + other.height) / 2 + gap - 0.001;
-      assert.ok(clearX || clearY, `${item.id} overlaps ${other.id}`);
-    });
+    assert.ok(['full', 'mini'].includes(item.tier));
+    assert.ok(Math.abs(item.x - item.dx - point.x) < 1e-9, 'The offset is measured from the real spot');
+    assert.ok(Math.abs(item.y - item.dy - point.y) < 1e-9);
+    const shift = Math.hypot(item.dx, item.dy);
+    if (item.tier === 'full') {
+      assert.equal(item.width, point.width);
+      assert.ok(shift <= Math.min(point.width, point.height) / 2 + 1e-9, `${item.id} drifted ${shift}px from its shop`);
+    } else {
+      assert.ok(item.width < point.width, 'A small logo is smaller than a full one');
+      const largest = Math.max(...points.map(p => Math.max(p.width, p.height)));
+      assert.ok(shift <= Math.max(item.width, item.height) + largest / 2 + 1e-9, `${item.id} drifted ${shift}px`);
+    }
   });
+  const full = result.filter(item => item.tier === 'full');
+  full.forEach((item, i) => full.slice(i + 1).forEach(other => {
+    if (points[result.indexOf(item)].force || points[result.indexOf(other)].force) return;
+    const clearX = Math.abs(item.x - other.x) >= (item.width + other.width) / 2 + gap - 1e-9;
+    const clearY = Math.abs(item.y - other.y) >= (item.height + other.height) / 2 + gap - 1e-9;
+    assert.ok(clearX || clearY, `Full logos ${item.id} and ${other.id} overlap`);
+  }));
 }
 
-test('logo sizing stays positive with no pixel floor and is continuous through town zoom', () => {
+test('full logos stay recognisable at every zoom while small ones shrink when far out', () => {
   let previous = 0;
   for (let zoom = 0; zoom <= 20; zoom += 0.25) {
-    const size = logoSize(zoom);
-    assert.ok(size > 0 && size <= 44);
-    assert.ok(size >= previous);
-    if (previous) assert.ok(size - previous <= 3.6);
-    previous = size;
+    const full = logoSize(zoom);
+    assert.ok(full >= 20 && full <= 44, `Full logo at zoom ${zoom} is ${full}px`);
+    assert.ok(full >= previous);
+    if (previous) assert.ok(full - previous <= 3.6, 'Sizes change smoothly');
+    previous = full;
+    assert.ok(miniSize(zoom) < full, 'A small logo is always smaller than a full one');
   }
-  for (let zoom = -5; zoom < 12; zoom += 1) {
-    assert.equal(logoSize(zoom + 1), logoSize(zoom) * 2, 'Every distant zoom step scales with the map');
+  assert.equal(logoSize(18), 44);
+  for (let zoom = 0; zoom + 1.5 <= 11; zoom += 0.5) {
+    assert.ok(Math.abs(miniSize(zoom + 1.5) / miniSize(zoom) - 2) < 1e-9, 'Far out, small logos shrink with the map');
   }
-  assert.ok(logoSize(0) < 0.01, 'World view must not retain a minimum-size blob');
-  assert.ok(Math.abs(logoSize(12 - 0.00001) - logoSize(12)) < 0.001);
+  assert.ok(miniSize(0) < 0.1, 'From very far away a city of small logos is only a speckle');
+  assert.ok(Math.abs(miniSize(11 - 1e-9) - miniSize(11)) < 1e-6);
 });
 
-test('hundreds of coincident places stay separate and clickable on a phone', () => {
-  const viewport = { width: 360, height: 640 };
-  const points = Array.from({ length: 323 }, (_, id) => ({ id, x: 180, y: 290, width: 14, height: 14 }));
-  const original = JSON.stringify(points);
-  const result = layout(points, viewport);
-  check(points, result, viewport, 3);
-  assert.equal(JSON.stringify(points), original, 'Source coordinates must not be mutated');
-  assert.deepEqual(layout(points, viewport), result, 'Layout remains deterministic');
-});
-
-test('sparse logos stay anchored and close pairs separate including price labels', () => {
-  const viewport = { width: 900, height: 600 };
+test('sparse logos stay exactly on their shop at full size', () => {
   const points = [
-    { id: 'a', x: 100, y: 100, width: 44, height: 62 },
-    { id: 'b', x: 110, y: 100, width: 54, height: 62 },
-    { id: 'c', x: 700, y: 450, width: 44, height: 44 }
+    { id: 'a', x: 100, y: 100, width: 28, height: 28 },
+    { id: 'b', x: 300, y: 120, width: 28, height: 40 },
+    { id: 'c', x: 700, y: 450, width: 28, height: 28 }
   ];
-  const result = layout(points, viewport);
-  check(points, result, viewport, 3);
-  assert.equal(result[0].dx, 0);
-  assert.equal(result[2].dx, 0);
-  assert.equal(result[2].dy, 0);
-  assert.ok(Math.hypot(result[1].dx, result[1].dy) > 0);
+  const result = layout(points);
+  check(points, result);
+  result.forEach(item => {
+    assert.equal(item.tier, 'full');
+    assert.equal(item.dx, 0);
+    assert.equal(item.dy, 0);
+  });
 });
 
-test('selected places keep their position before neighbours are spaced', () => {
-  const viewport = { width: 400, height: 400 };
-  const points = Array.from({ length: 30 }, (_, id) => ({ id, x: 150, y: 150, width: 18, height: 18 }));
-  points[20] = { id: 20, x: 150, y: 150, width: 36, height: 36, priority: 1 };
-  const result = layout(points, viewport);
-  check(points, result, viewport, 3);
-  assert.equal(result[20].x, 150);
-  assert.equal(result[20].y, 150);
-  assert.equal(result[20].width, 36);
+test('a close neighbour moves a few pixels when that makes room, otherwise it gets a small logo', () => {
+  const near = [{ id: 'a', x: 100, y: 100, width: 28, height: 28, priority: 2 },
+    { id: 'b', x: 120, y: 100, width: 28, height: 28, priority: 1 }];
+  const moved = layout(near);
+  check(near, moved);
+  assert.deepEqual(moved.map(item => item.tier), ['full', 'full']);
+  assert.equal(moved[0].dx, 0, 'The more important place does not move');
+  assert.ok(Math.hypot(moved[1].dx, moved[1].dy) > 0);
+  const same = [{ id: 'a', x: 100, y: 100, width: 28, height: 28, priority: 2 },
+    { id: 'b', x: 101, y: 100, width: 28, height: 28, priority: 1 }];
+  const crowded = layout(same);
+  check(same, crowded);
+  assert.deepEqual(crowded.map(item => item.tier), ['full', 'mini']);
 });
 
-test('edge points and changing filters never remove or merge a venue', () => {
-  const viewport = { width: 320, height: 240 };
-  const points = Array.from({ length: 60 }, (_, id) => ({ id,
-    x: id % 2 ? 318 : -4, y: id < 30 ? 2 : 239, width: 22, height: 22 }));
-  check(points, layout(points, viewport), viewport);
+test('priority decides which crowded places get full logos, and a selected place always does', () => {
+  const points = Array.from({ length: 40 }, (_, id) => ({ id, x: 150 + (id % 5), y: 150 + Math.floor(id / 5), width: 28, height: 28, priority: id }));
+  const result = layout(points);
+  check(points, result);
+  assert.deepEqual(result.filter(item => item.tier === 'full').map(item => item.id), [39], 'Highest priority wins');
+  const selected = points.map(point => (point.id === 3 ? { ...point, force: true, width: 32, height: 32 } : point));
+  const chosen = layout(selected);
+  check(selected, chosen);
+  assert.equal(chosen[3].tier, 'full');
+  assert.equal(chosen[3].width, 32);
+  assert.equal(chosen.filter(item => item.tier === 'full').length, 1, 'The selected place takes the spot');
+});
+
+test('hundreds of places in one spot each keep a logo near that spot, deterministically', () => {
+  const points = Array.from({ length: 323 }, (_, id) => ({ id, x: 180, y: 290, width: 26, height: 26, miniWidth: 11, miniHeight: 11 }));
+  const original = JSON.stringify(points);
+  const result = layout(points);
+  check(points, result);
+  assert.equal(result.filter(item => item.tier === 'full').length, 1);
+  assert.equal(result.filter(item => item.tier === 'mini').length, 322);
+  assert.ok(result.every(item => item.tier === 'full' || item.width === 11));
+  assert.equal(JSON.stringify(points), original, 'Source coordinates must not be mutated');
+  assert.deepEqual(layout(points), result, 'Layout remains deterministic');
+});
+
+test('filters change who is shown but never merge or drop a shown place', () => {
+  const points = Array.from({ length: 60 }, (_, id) => ({ id, x: (id % 10) * 12, y: Math.floor(id / 10) * 12, width: 28, height: 28 }));
+  check(points, layout(points));
   const filtered = points.filter(point => point.id % 3 === 0);
-  check(filtered, layout(filtered, viewport), viewport);
-});
-
-test('an unusually small viewport retains every marker with non-overlapping bounds', () => {
-  const viewport = { width: 90, height: 80 };
-  const points = Array.from({ length: 80 }, (_, id) => ({ id, x: 45, y: 40, width: 44, height: 60 }));
-  check(points, layout(points, viewport), viewport);
+  const result = layout(filtered);
+  check(filtered, result);
+  assert.equal(result.length, 20);
 });

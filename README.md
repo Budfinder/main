@@ -272,6 +272,22 @@ planned route stops. Pending search callbacks are invalidated so they cannot
 reapply a cleared filter. Publish `budfinder-map.js` and `budfinder-map-controls.css`
 before `map.html`; these references use cache version `20261029-map4`.
 
+## Map logos: full and small
+
+Every place always shows its own logo, at its real spot
+(`scripts/budfinder-marker-layout.js`). Where a full-size logo has room it
+gets one; otherwise the place shows a small copy of the same logo (about 40% of
+the size, with a larger invisible tap area). Logos move at most half their own
+size to make room, and nothing is grouped, hidden or connected by lines.
+Zooming in gives more places full logos.
+
+Who gets a full logo when it is crowded, in order: the selected place, search
+matches showing a price (the cheapest first), saved places, visited places,
+coffeeshops with a menu dated within the last year (newest first), then
+everything else. A fixed tie-breaker per shop spreads full logos evenly rather
+than alphabetically (`markerLayoutPriority` in `budfinder-map.js`). While a
+search shows prices, small logos fade slightly so the matches stand out.
+
 ## Website regression checks
 
 Run the complete publication check with Python 3.10+ and Node.js 18+ (no packages
